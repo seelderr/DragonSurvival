@@ -258,7 +258,7 @@ public class ClawToolHandler {
             return;
         }
 
-        double bonus = handler.getLevel().value().breakSpeedMultiplier();
+        double bonus = handler.getStage().value().breakSpeedMultiplier();
         BlockState state = event.getState();
 
         if (!state.is(handler.getType().harvestableBlocks()) || handler.hasValidClawTool(state)) {

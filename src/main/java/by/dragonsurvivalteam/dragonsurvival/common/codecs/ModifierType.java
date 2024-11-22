@@ -15,7 +15,7 @@ import java.util.Objects;
 public enum ModifierType implements StringRepresentable {
     DRAGON_TYPE("type"),
     DRAGON_BODY("body"),
-    DRAGON_LEVEL("level");
+    DRAGON_STAGE("stage");
 
     public static final Codec<ModifierType> CODEC = StringRepresentable.fromEnum(ModifierType::values);
 
@@ -34,18 +34,6 @@ public enum ModifierType implements StringRepresentable {
         String attributeId = attribute.getRegisteredName().replace(":", ".");
         int hash = Objects.hash(String.valueOf(RANDOM.nextInt(100_000)), operation.getSerializedName());
         return DragonSurvival.res(path() + hash  + "/" + attributeId);
-    }
-
-    public static boolean isRelevant(final ResourceLocation id) {
-        String path = id.getPath();
-
-        for (ModifierType type : values()) {
-            if (path.startsWith(type.path())) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     @Override

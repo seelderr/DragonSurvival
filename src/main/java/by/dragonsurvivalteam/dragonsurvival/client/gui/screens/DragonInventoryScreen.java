@@ -226,7 +226,7 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
 
         guiGraphics.blit(CLAWS_TEXTURE, leftPos - 80, topPos, 0, 0, 77, 170);
 
-        Holder<DragonStage> level = handler.getLevel();
+        Holder<DragonStage> level = handler.getStage();
         float progress = (float) level.value().getProgress(handler.getSize());
 
         int size = 34;
@@ -300,7 +300,7 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
             }
 
             DragonStateHandler handler = DragonStateProvider.getData(player);
-            DragonStage dragonStage = handler.getLevel().value();
+            DragonStage dragonStage = handler.getStage().value();
 
             double percentage = Math.clamp(dragonStage.getProgress(handler.getSize()), 0, 1);
             String ageInformation = NumberFormat.getPercentInstance().format(percentage);
@@ -319,7 +319,7 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
 
             List<GrowthComponent> growthItems = new ArrayList<>();
 
-            handler.getLevel().value().growthItems().forEach(growthItem -> {
+            handler.getStage().value().growthItems().forEach(growthItem -> {
                 // A bit of wasted processing since not all are shown
                 growthItem.items().forEach(item -> growthItems.add(new GrowthComponent(item.value(), growthItem.growthInTicks())));
             });
@@ -333,7 +333,7 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
             int max = Math.min(growthItems.size(), scroll + MAX_SHOWN);
 
             List<Either<FormattedText, TooltipComponent>> components = new ArrayList<>();
-            components.add(Either.left(Component.translatable(GROWTH_STAGE).append(DragonStage.translatableName(Objects.requireNonNull(handler.getLevel().getKey())))));
+            components.add(Either.left(Component.translatable(GROWTH_STAGE).append(DragonStage.translatableName(Objects.requireNonNull(handler.getStage().getKey())))));
             components.add(Either.left(Component.translatable(GROWTH_AGE, ageInformation)));
             components.add(Either.left(Component.translatable(GROWTH_INFO).append(Component.literal(" [" + Math.min(growthItems.size(), scroll + MAX_SHOWN) + " / " + growthItems.size() + "]").withStyle(ChatFormatting.DARK_GRAY))));
 

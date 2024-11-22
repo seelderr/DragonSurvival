@@ -110,7 +110,7 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
     private static final String WIKI_URL = "https://github.com/DragonSurvivalTeam/DragonSurvival/wiki/3.-Customization";
     private static final ArrayList<String> SEEN_SKINS = new ArrayList<>();
 
-    private static Holder<DragonStage> dragonLevel;
+    private static Holder<DragonStage> dragonStage;
     private static ResourceLocation skinTexture;
     private static ResourceLocation glowTexture;
     private static String playerName;
@@ -145,8 +145,8 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
         //noinspection DataFlowIssue -> player should not be null
         SkinCap skinData = DragonStateProvider.getData(localPlayer).getSkinData();
 
-        if (dragonLevel == null) {
-            dragonLevel = DragonStage.get(localPlayer.registryAccess(), Double.MAX_VALUE);
+        if (dragonStage == null) {
+            dragonStage = DragonStage.get(localPlayer.registryAccess(), Double.MAX_VALUE);
         }
     }
 
@@ -188,7 +188,7 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
             }
 
             handler.setHasFlight(true);
-            handler.setClientSize(dragonLevel);
+            handler.setClientSize(dragonStage);
 
             if (handler.getBody() == null) {
                 handler.setBody(playerData.getBody());
@@ -199,7 +199,7 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
             if (noSkin && Objects.equals(playerName, minecraft.player.getGameProfile().getName())) {
                 handler.getSkinData().skinPreset.deserializeNBT(minecraft.player.registryAccess(), playerData.getSkinData().skinPreset.serializeNBT(minecraft.player.registryAccess()));
             } else {
-                handler.getSkinData().get(dragonLevel.getKey()).get().defaultSkin = true;
+                handler.getSkinData().get(dragonStage.getKey()).get().defaultSkin = true;
             }
 
             FakeClientPlayerUtils.getFakePlayer(0, handler).animationSupplier = () -> "fly_head_locked_magic";
@@ -215,7 +215,7 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
         guiGraphics.blit(BACKGROUND_TEXTURE, startX + 128, startY, 0, 0, 164, 256);
         drawNonShadowString(guiGraphics, minecraft.font, Component.translatable(SETTINGS).withStyle(ChatFormatting.BLACK), startX + 128 + imageWidth / 2, startY + 7, -1);
         guiGraphics.drawCenteredString(minecraft.font, Component.translatable(TOGGLE), startX + 128 + imageWidth / 2, startY + 30, -1);
-        drawNonShadowString(guiGraphics, minecraft.font, Component.empty().append(playerName + " - ").append(DragonStage.translatableName(Objects.requireNonNull(dragonLevel.getKey()))).withStyle(ChatFormatting.GRAY), startX + 15, startY - 15, -1);
+        drawNonShadowString(guiGraphics, minecraft.font, Component.empty().append(playerName + " - ").append(DragonStage.translatableName(Objects.requireNonNull(dragonStage.getKey()))).withStyle(ChatFormatting.GRAY), startX + 15, startY - 15, -1);
 
         if (!loading && noSkin) {
             if (playerName.equals(minecraft.player.getGameProfile().getName())) {
@@ -359,7 +359,7 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
                 Pair<ResourceKey<DragonStage>, String> skin = skins.get(random.nextInt(skins.size()));
 
                 if (skin != null) {
-                    dragonLevel = Objects.requireNonNull(player).registryAccess().holderOrThrow(skin.first);
+                    dragonStage = Objects.requireNonNull(player).registryAccess().holderOrThrow(skin.first);
                     playerName = skin.second;
 
                     SEEN_SKINS.add(skin.second);
@@ -374,17 +374,17 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
         }).bounds(startX + 35, startY + 128, 60, 20).tooltip(Tooltip.create(Component.translatable(RANDOM_INFO))).build());
 
         addRenderableWidget(new Button(startX + 90, startY - 20, 11, 17, Component.empty(), button -> {
-            ResourceKey<DragonStage> nextLevel = dragonLevel.getKey();
+            ResourceKey<DragonStage> nextLevel = dragonStage.getKey();
 
-            if (dragonLevel.is(DragonStages.newborn)) {
+            if (dragonStage.is(DragonStages.newborn)) {
                 nextLevel = DragonStages.young;
-            } else if (dragonLevel.is(DragonStages.young)) {
+            } else if (dragonStage.is(DragonStages.young)) {
                 nextLevel = DragonStages.adult;
-            } else if (dragonLevel.is(DragonStages.adult)) {
+            } else if (dragonStage.is(DragonStages.adult)) {
                 nextLevel = DragonStages.newborn;
             }
 
-            dragonLevel = Objects.requireNonNull(player).registryAccess().holderOrThrow(Objects.requireNonNull(nextLevel));
+            dragonStage = Objects.requireNonNull(player).registryAccess().holderOrThrow(Objects.requireNonNull(nextLevel));
 
             setTextures();
         }, Supplier::get) {
@@ -399,17 +399,17 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
         });
 
         addRenderableWidget(new Button(startX - 70, startY - 20, 11, 17, Component.empty(), button -> {
-            ResourceKey<DragonStage> nextLevel = dragonLevel.getKey();
+            ResourceKey<DragonStage> nextLevel = dragonStage.getKey();
 
-            if (dragonLevel.is(DragonStages.adult)) {
+            if (dragonStage.is(DragonStages.adult)) {
                 nextLevel = DragonStages.young;
-            } else if (dragonLevel.is(DragonStages.young)) {
+            } else if (dragonStage.is(DragonStages.young)) {
                 nextLevel = DragonStages.newborn;
-            } else if (dragonLevel.is(DragonStages.newborn)) {
+            } else if (dragonStage.is(DragonStages.newborn)) {
                 nextLevel = DragonStages.adult;
             }
 
-            dragonLevel = Objects.requireNonNull(player).registryAccess().holderOrThrow(Objects.requireNonNull(nextLevel));
+            dragonStage = Objects.requireNonNull(player).registryAccess().holderOrThrow(Objects.requireNonNull(nextLevel));
 
             setTextures();
         }, Supplier::get) {
@@ -457,7 +457,7 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
     public void setTextures() {
         loading = true;
 
-        ResourceLocation skinTexture = DragonSkins.getPlayerSkin(playerName, Objects.requireNonNull(dragonLevel.getKey()));
+        ResourceLocation skinTexture = DragonSkins.getPlayerSkin(playerName, Objects.requireNonNull(dragonStage.getKey()));
         ResourceLocation glowTexture = null;
         boolean defaultSkin = false;
 
@@ -467,14 +467,14 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
         }
 
         if (skinTexture != null) {
-            glowTexture = DragonSkins.getPlayerGlow(playerName, dragonLevel.getKey());
+            glowTexture = DragonSkins.getPlayerGlow(playerName, dragonStage.getKey());
         }
 
         SkinsScreen.glowTexture = glowTexture;
         SkinsScreen.skinTexture = skinTexture;
 
         if (Objects.equals(lastPlayerName, playerName) || lastPlayerName == null) {
-            zoom = DragonEditorScreen.setZoom(dragonLevel);
+            zoom = DragonEditorScreen.setZoom(dragonStage);
         }
 
         noSkin = defaultSkin;

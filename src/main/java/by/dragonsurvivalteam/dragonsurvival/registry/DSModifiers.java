@@ -117,13 +117,13 @@ public class DSModifiers {
         }
 
         ((AttributeMapAccessor) player.getAttributes()).dragonSurvival$getAttributes().values().forEach(instance -> instance.getModifiers().forEach(modifier -> {
-            if (modifier.id().getPath().startsWith(ModifierType.DRAGON_LEVEL.path())) {
+            if (modifier.id().getPath().startsWith(ModifierType.DRAGON_STAGE.path())) {
                 instance.removeModifier(modifier);
             }
         }));
 
         if (handler.isDragon()) {
-            handler.getLevel().value().applyModifiers(player);
+            handler.getStage().value().applyModifiers(player);
         }
     }
 

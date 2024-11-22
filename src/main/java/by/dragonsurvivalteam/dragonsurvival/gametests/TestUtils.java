@@ -57,7 +57,7 @@ public class TestUtils {
     }
 
     @SuppressWarnings("DataFlowIssue") // ignore
-    public static void setToDragon(final GameTestHelper helper, final Player player, final AbstractDragonType dragonType, final ResourceKey<DragonBody> dragonBody, final ResourceKey<DragonStage> dragonLevel) {
+    public static void setToDragon(final GameTestHelper helper, final Player player, final AbstractDragonType dragonType, final ResourceKey<DragonBody> dragonBody, final ResourceKey<DragonStage> dragonStage) {
         DragonStateHandler data = DragonStateProvider.getData(player);
 
         data.setType(dragonType, player);
@@ -67,9 +67,9 @@ public class TestUtils {
         data.setBody(body, player);
         helper.assertTrue(DragonUtils.isBody(data, body), String.format("Dragon type was [%s] - expected [%s]", data.getBody(), dragonBody));
 
-        Holder<DragonStage> level = player.registryAccess().holderOrThrow(dragonLevel);
+        Holder<DragonStage> level = player.registryAccess().holderOrThrow(dragonStage);
         data.setSize(player, level);
-        helper.assertTrue(data.getLevel().is(level), String.format("Dragon level was [%s] - expected [%s]", data.getLevel().getKey().location(), level.getKey().location()));
+        helper.assertTrue(data.getStage().is(level), String.format("Dragon level was [%s] - expected [%s]", data.getStage().getKey().location(), level.getKey().location()));
 
         helper.assertTrue(data.isDragon(), "Player is not a dragon - expected player to be a dragon");
     }
@@ -90,8 +90,8 @@ public class TestUtils {
         Holder<DragonBody> dragonBody = data.getBody();
         helper.assertTrue(dragonBody == null, String.format("Dragon body was [%s] - expected [null]", dragonBody));
 
-        Holder<DragonStage> dragonLevel = data.getLevel();
-        helper.assertTrue(dragonLevel == null, String.format("Dragon level was [%s] - expected [null]", dragonLevel));
+        Holder<DragonStage> dragonStage = data.getStage();
+        helper.assertTrue(dragonStage == null, String.format("Dragon level was [%s] - expected [null]", dragonStage));
 
         double size = data.getSize();
         helper.assertTrue(size == DragonStateHandler.NO_SIZE, String.format("Size was [%f] - expected [0]", size));

@@ -41,7 +41,7 @@ public class ColorSelectorComponent extends AbstractContainerEventHandler implem
         this.xSize = xSize;
         this.ySize = ySize;
 
-        settingsSupplier = () -> screen.preset.get(Objects.requireNonNull(screen.dragonLevel.getKey())).get().layerSettings.get(layer).get();
+        settingsSupplier = () -> screen.preset.get(Objects.requireNonNull(screen.dragonStage.getKey())).get().layerSettings.get(layer).get();
 
         LayerSettings settings = settingsSupplier.get();
         DragonPart dragonPart = DragonEditorHandler.getDragonPart(layer, settings.selectedSkin, DragonEditorScreen.HANDLER.getType());
@@ -49,7 +49,7 @@ public class ColorSelectorComponent extends AbstractContainerEventHandler implem
         glowing = new ExtendedCheckbox(x + 3, y, 20, 20, 20, Component.translatable(LangKey.GUI_GLOWING), settings.glowing, box -> {
             settingsSupplier.get().glowing = !settingsSupplier.get().glowing;
             box.selected = settingsSupplier.get().glowing;
-            DragonEditorScreen.HANDLER.getSkinData().compileSkin(screen.dragonLevel);
+            DragonEditorScreen.HANDLER.getSkinData().compileSkin(screen.dragonStage);
         });
 
         Color defaultColor = Color.decode(Objects.requireNonNull(dragonPart).defaultColor());
@@ -66,7 +66,7 @@ public class ColorSelectorComponent extends AbstractContainerEventHandler implem
             settingsSupplier.get().brightness = hsb[2];
             settingsSupplier.get().modifiedColor = true;
 
-            DragonEditorScreen.HANDLER.getSkinData().compileSkin(screen.dragonLevel);
+            DragonEditorScreen.HANDLER.getSkinData().compileSkin(screen.dragonStage);
             screen.update();
         });
     }

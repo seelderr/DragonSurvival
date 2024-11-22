@@ -29,7 +29,7 @@ import java.util.function.Function;
 public class GrowthHUD {
     public static final Function<Integer, String> CIRCLE_BASE = number -> "textures/gui/growth/circle_" + number + ".png";
     public static final Function<String, String> CIRCLE_TEXTURE = dragonType -> "textures/gui/growth/circle_" + dragonType + ".png";
-    public static final BiFunction<String, ResourceLocation, String> ICON = (dragonType, dragonLevel) -> "textures/gui/growth/" + dragonType + "/" + dragonLevel.getPath() + ".png";
+    public static final BiFunction<String, ResourceLocation, String> ICON = (dragonType, dragonStage) -> "textures/gui/growth/" + dragonType + "/" + dragonStage.getPath() + ".png";
 
     private static final HashMap<String, ResourceLocation> CACHE = new HashMap<>();
     private static final Color COLOR = new Color(99, 99, 99);
@@ -58,16 +58,16 @@ public class GrowthHUD {
             return;
         }
 
-        double growth = DragonGrowthHandler.getGrowth(handler.getLevel(), stack.getItem());
+        double growth = DragonGrowthHandler.getGrowth(handler.getStage(), stack.getItem());
         double newSize = DragonStage.getBoundedSize(handler.getSize() + growth);
 
         if (handler.getSize() == newSize) {
             return;
         }
 
-        Holder<DragonStage> dragonLevel = handler.getLevel();
-        float progress = (float) dragonLevel.value().getProgress(handler.getSize());
-        float nextProgress = (float) dragonLevel.value().getProgress(handler.getSize() + growth);
+        Holder<DragonStage> dragonStage = handler.getStage();
+        float progress = (float) dragonStage.value().getProgress(handler.getSize());
+        float nextProgress = (float) dragonStage.value().getProgress(handler.getSize() + growth);
 
         progress = Math.min(1, progress);
         nextProgress = Math.min(1, nextProgress);
@@ -109,7 +109,7 @@ public class GrowthHUD {
 
         guiGraphics.pose().pushPose();
         guiGraphics.pose().translate(0, 0, 300);
-        ResourceLocation levelLocation = Objects.requireNonNull(dragonLevel.getKey()).location();
+        ResourceLocation levelLocation = Objects.requireNonNull(dragonStage.getKey()).location();
         guiGraphics.blit(getOrCreate(levelLocation.getNamespace(), ICON.apply(handler.getTypeNameLowerCase(), levelLocation)), circleX + 6, circleY + 6, 0, 0, 20, 20, 20, 20);
         guiGraphics.pose().popPose();
     }

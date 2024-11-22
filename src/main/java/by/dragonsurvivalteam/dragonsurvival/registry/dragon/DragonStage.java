@@ -115,13 +115,13 @@ public record DragonStage(
         }
     }
 
-    private static boolean isValid(final StringBuilder builder, @Nullable final HolderLookup.Provider provider, final ResourceKey<DragonStage> levelKey) {
-        Optional<Holder.Reference<DragonStage>> optional = get(provider, levelKey);
+    private static boolean isValid(final StringBuilder builder, @Nullable final HolderLookup.Provider provider, final ResourceKey<DragonStage> stageKey) {
+        Optional<Holder.Reference<DragonStage>> optional = get(provider, stageKey);
 
         if (optional.isPresent()) {
             return true;
         } else {
-            builder.append("\n- ").append(levelKey.location());
+            builder.append("\n- ").append(stageKey.location());
             return false;
         }
     }
@@ -139,16 +139,16 @@ public record DragonStage(
         event.dataPackRegistry(REGISTRY, DIRECT_CODEC, DIRECT_CODEC);
     }
 
-    public static boolean isBuiltinLevel(final ResourceKey<DragonStage> dragonLevel) {
-        return dragonLevel == DragonStages.newborn || dragonLevel == DragonStages.young || dragonLevel == DragonStages.adult;
+    public static boolean isBuiltinLevel(final ResourceKey<DragonStage> dragonStage) {
+        return dragonStage == DragonStages.newborn || dragonStage == DragonStages.young || dragonStage == DragonStages.adult;
     }
 
-    public static Component translatableName(final ResourceKey<DragonStage> dragonLevel) {
-        return Component.translatable(Translation.Type.STAGE.wrap(dragonLevel.location().getNamespace(), dragonLevel.location().getPath()));
+    public static Component translatableName(final ResourceKey<DragonStage> dragonStage) {
+        return Component.translatable(Translation.Type.STAGE.wrap(dragonStage.location().getNamespace(), dragonStage.location().getPath()));
     }
 
-    public static Component translatableDescription(final ResourceKey<DragonStage> dragonLevel) {
-        return Component.translatable(Translation.Type.STAGE_DESCRIPTION.wrap(dragonLevel.location().getNamespace(), dragonLevel.location().getPath()));
+    public static Component translatableDescription(final ResourceKey<DragonStage> dragonStage) {
+        return Component.translatable(Translation.Type.STAGE_DESCRIPTION.wrap(dragonStage.location().getNamespace(), dragonStage.location().getPath()));
     }
 
     /** Used for the skin texture name */

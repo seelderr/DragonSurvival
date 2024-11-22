@@ -29,8 +29,8 @@ public class Condition {
         return EntityPredicate.Builder.entity().subPredicate(DragonPredicate.Builder.dragon().type(type).build());
     }
 
-    public static EntityPredicate.Builder dragonLevel(final Holder<DragonStage> dragonLevel) {
-        return EntityPredicate.Builder.entity().subPredicate(DragonPredicate.Builder.dragon().level(dragonLevel).build());
+    public static EntityPredicate.Builder dragonStage(final Holder<DragonStage> dragonStage) {
+        return EntityPredicate.Builder.entity().subPredicate(DragonPredicate.Builder.dragon().level(dragonStage).build());
     }
 
     public static EntityPredicate.Builder dragonBody(final Holder<DragonBody> dragonBody) {

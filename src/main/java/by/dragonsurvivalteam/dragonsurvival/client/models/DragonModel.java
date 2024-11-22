@@ -2,7 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.models;
 
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEditorHandler;
-import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonLevelCustomization;
+import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonStageCustomization;
 import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
@@ -177,21 +177,21 @@ public class DragonModel extends GeoModel<DragonEntity> {
         }
 
         DragonStateHandler handler = DragonStateProvider.getData(player);
-        DragonLevelCustomization customization = handler.getSkinData().get(handler.getLevel().getKey()).get();
+        DragonStageCustomization customization = handler.getSkinData().get(handler.getStage().getKey()).get();
 
         if (handler.getSkinData().blankSkin) {
             return ResourceLocation.fromNamespaceAndPath(MODID, "textures/dragon/blank_skin_" + handler.getTypeNameLowerCase() + ".png");
         }
 
-        ResourceKey<DragonStage> levelKey = handler.getLevel().getKey();
+        ResourceKey<DragonStage> stageKey = handler.getStage().getKey();
 
-        if (handler.getSkinData().recompileSkin.getOrDefault(levelKey, true)) {
+        if (handler.getSkinData().recompileSkin.getOrDefault(stageKey, true)) {
             if (ClientConfig.forceCPUSkinGeneration) {
                 if (textureRegisterFuture.isDone()) {
                     CompletableFuture<List<Pair<NativeImage, ResourceLocation>>> imageGenerationFuture = DragonEditorHandler.generateSkinTextures(dragon);
                     textureRegisterFuture = imageGenerationFuture.thenRunAsync(() -> {
-                        handler.getSkinData().isCompiled.put(levelKey, true);
-                        handler.getSkinData().recompileSkin.put(levelKey, false);
+                        handler.getSkinData().isCompiled.put(stageKey, true);
+                        handler.getSkinData().recompileSkin.put(stageKey, false);
                         for (Pair<NativeImage, ResourceLocation> pair : imageGenerationFuture.join()) {
                             RenderingUtils.uploadTexture(pair.getFirst(), pair.getSecond());
                         }
@@ -199,18 +199,18 @@ public class DragonModel extends GeoModel<DragonEntity> {
                 }
             } else {
                 DragonEditorHandler.generateSkinTexturesGPU(dragon);
-                handler.getSkinData().isCompiled.put(handler.getLevel().getKey(), true);
-                handler.getSkinData().recompileSkin.put(handler.getLevel().getKey(), false);
+                handler.getSkinData().isCompiled.put(handler.getStage().getKey(), true);
+                handler.getSkinData().recompileSkin.put(handler.getStage().getKey(), false);
             }
         }
 
         // Show the default skin while we are compiling if we haven't already compiled the skin
-        if (customization.defaultSkin || !handler.getSkinData().isCompiled.getOrDefault(levelKey, false)) {
-            return ResourceLocation.fromNamespaceAndPath(MODID, "textures/dragon/" + handler.getTypeNameLowerCase() + "_" + Objects.requireNonNull(levelKey).location().getPath() + ".png");
+        if (customization.defaultSkin || !handler.getSkinData().isCompiled.getOrDefault(stageKey, false)) {
+            return ResourceLocation.fromNamespaceAndPath(MODID, "textures/dragon/" + handler.getTypeNameLowerCase() + "_" + Objects.requireNonNull(stageKey).location().getPath() + ".png");
         }
 
         String uuid = player.getStringUUID();
-        return ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_normal_" + uuid + "_" + Objects.requireNonNull(levelKey).location().getPath());
+        return ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_normal_" + uuid + "_" + Objects.requireNonNull(stageKey).location().getPath());
     }
 
     @Override

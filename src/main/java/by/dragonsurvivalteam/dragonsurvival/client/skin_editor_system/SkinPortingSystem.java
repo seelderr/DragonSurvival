@@ -2,8 +2,8 @@ package by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system;
 
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.loader.DefaultPartLoader;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.loader.DragonPartLoader;
-import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonLevelCustomization;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonPart;
+import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonStageCustomization;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.LayerSettings;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SavedSkinPresets;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
@@ -25,14 +25,14 @@ public class SkinPortingSystem {
     public static void upgrade0to3(SavedSkinPresets presets) {
         for (String type : presets.skinPresets.keySet()) {
             for (int saveSlot : presets.skinPresets.get(type).keySet()) {
-                for (ResourceKey<DragonStage> dragonLevel : DragonStage.keys(null)) {
-                    Lazy<DragonLevelCustomization> lazy = presets.skinPresets.get(type).get(saveSlot).get(dragonLevel);
+                for (ResourceKey<DragonStage> dragonStage : DragonStage.keys(null)) {
+                    Lazy<DragonStageCustomization> lazy = presets.skinPresets.get(type).get(saveSlot).get(dragonStage);
 
                     if (lazy == null) {
-                        lazy = Lazy.of(DragonLevelCustomization::new);
+                        lazy = Lazy.of(DragonStageCustomization::new);
                     }
 
-                    DragonLevelCustomization customization = lazy.get();
+                    DragonStageCustomization customization = lazy.get();
 
                     for (EnumSkinLayer layer : customization.layerSettings.keySet()) {
                         Map<EnumSkinLayer, List<DragonPart>> partMap = DragonPartLoader.DRAGON_PARTS.get(type.toLowerCase(Locale.ENGLISH));
@@ -42,7 +42,7 @@ public class SkinPortingSystem {
                         List<DragonPart> parts = partMap.get(actualLayer);
 
                         if (parts != null) {
-                            String partKey = DefaultPartLoader.getDefaultPartKey(DragonTypes.getStatic(type), dragonLevel.location(), layer);
+                            String partKey = DefaultPartLoader.getDefaultPartKey(DragonTypes.getStatic(type), dragonStage.location(), layer);
                             LayerSettings settings = customization.layerSettings.get(layer).get();
 
                             for (DragonPart part : parts) {

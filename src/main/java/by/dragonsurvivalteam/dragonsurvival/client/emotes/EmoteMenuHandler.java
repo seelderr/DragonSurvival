@@ -411,11 +411,11 @@ public class EmoteMenuHandler {
             }
 
             if (emote.requirements.age != null) {
-                String dragonLevel = Objects.requireNonNull(handler.getLevel().getKey()).location().toString();
+                String dragonStage = Objects.requireNonNull(handler.getStage().getKey()).location().toString();
                 boolean hasAge = false;
 
                 for (String level : emote.requirements.age) {
-                    if (level.equals(dragonLevel)) {
+                    if (level.equals(dragonStage)) {
                         hasAge = true;
                         break;
                     }

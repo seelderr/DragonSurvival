@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 /** Saved customization per dragon level */
-public class DragonLevelCustomization implements INBTSerializable<CompoundTag> {
+public class DragonStageCustomization implements INBTSerializable<CompoundTag> {
     public static final String HAS_WINGS = "wings";
     public static final String IS_DEFAULT_SKIN = "defaultSkin";
 
@@ -26,7 +26,7 @@ public class DragonLevelCustomization implements INBTSerializable<CompoundTag> {
     public boolean wings = true;
     public boolean defaultSkin;
 
-    public DragonLevelCustomization(final ResourceLocation dragonLevel, final AbstractDragonType type) {
+    public DragonStageCustomization(final ResourceLocation dragonStage, final AbstractDragonType type) {
         this();
 
         for (EnumSkinLayer layer : EnumSkinLayer.values()) {
@@ -36,7 +36,7 @@ public class DragonLevelCustomization implements INBTSerializable<CompoundTag> {
             Map<EnumSkinLayer, List<DragonPart>> partMap = DragonPartLoader.DRAGON_PARTS.get(type.getTypeNameLowerCase());
             List<DragonPart> parts = partMap.get(actualLayer);
 
-            String partKey = DefaultPartLoader.getDefaultPartKey(type, dragonLevel, layer);
+            String partKey = DefaultPartLoader.getDefaultPartKey(type, dragonStage, layer);
 
             if (parts != null) {
                 for (DragonPart part : parts) {
@@ -51,7 +51,7 @@ public class DragonLevelCustomization implements INBTSerializable<CompoundTag> {
         }
     }
 
-    public DragonLevelCustomization() {
+    public DragonStageCustomization() {
         for (EnumSkinLayer layer : EnumSkinLayer.values()) {
             layerSettings.computeIfAbsent(layer, key -> Lazy.of(LayerSettings::new));
         }

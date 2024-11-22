@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities;
 
-import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonLevelCustomization;
+import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonStageCustomization;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
@@ -30,12 +30,12 @@ public class SkinCap extends SubCap {
         super(handler);
     }
 
-    public void compileSkin(final Holder<DragonStage> dragonLevel) {
-        recompileSkin.put(dragonLevel.getKey(), true);
+    public void compileSkin(final Holder<DragonStage> dragonStage) {
+        recompileSkin.put(dragonStage.getKey(), true);
     }
 
-    public Lazy<DragonLevelCustomization> get(final ResourceKey<DragonStage> dragonLevel) {
-        return skinPreset.get(dragonLevel);
+    public Lazy<DragonStageCustomization> get(final ResourceKey<DragonStage> dragonStage) {
+        return skinPreset.get(dragonStage);
     }
 
     @Override

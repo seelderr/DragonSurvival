@@ -207,8 +207,8 @@ public class ClientDragonRenderer {
             float partialRenderTick = renderPlayerEvent.getPartialTick();
             float yaw = player.getViewYRot(partialRenderTick);
 
-            Holder<DragonStage> dragonLevel = handler.getLevel();
-            ResourceLocation texture = DragonSkins.getPlayerSkin(player, Objects.requireNonNull(Objects.requireNonNull(dragonLevel).getKey()));
+            Holder<DragonStage> dragonStage = handler.getStage();
+            ResourceLocation texture = DragonSkins.getPlayerSkin(player, Objects.requireNonNull(Objects.requireNonNull(dragonStage).getKey()));
             PoseStack poseStack = renderPlayerEvent.getPoseStack();
 
             try {
@@ -253,7 +253,7 @@ public class ClientDragonRenderer {
                     if (size > DragonStage.MAX_HANDLED_SIZE) {
                         poseStack.translate(0, -0.55, 0);
                     } else {
-                        poseStack.translate(0, -0.15 - size / /* DragonLevel.ADULT.size */ 40 * 0.2, 0);
+                        poseStack.translate(0, -0.15 - size / /* dragonStage.ADULT.size */ 40 * 0.2, 0);
                     }
                 }
 

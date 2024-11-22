@@ -657,8 +657,8 @@ public class DSAdvancements implements AdvancementProvider.AdvancementGenerator 
         return beDragon(Condition.dragonSizeAtLeast(size));
     }
 
-    public Criterion<BeDragonTrigger.Instance> beDragon(final ResourceKey<DragonStage> dragonLevel) {
-        return beDragon(Condition.dragonLevel(registries.holderOrThrow(dragonLevel)));
+    public Criterion<BeDragonTrigger.Instance> beDragon(final ResourceKey<DragonStage> dragonStage) {
+        return beDragon(Condition.dragonStage(registries.holderOrThrow(dragonStage)));
     }
 
     public Criterion<BeDragonTrigger.Instance> beDragon(final AbstractDragonType type, double size) {

@@ -14,14 +14,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 
 public class SkinPreset implements INBTSerializable<CompoundTag> {
-    private final Lazy<HashMap<ResourceLocation, Lazy<DragonLevelCustomization>>> skins = Lazy.of(this::initialize);
+    private final Lazy<HashMap<ResourceLocation, Lazy<DragonStageCustomization>>> skins = Lazy.of(this::initialize);
 
-    public Lazy<DragonLevelCustomization> get(final ResourceKey<DragonStage> dragonLevel) {
-        return skins.get().get(dragonLevel.location());
+    public Lazy<DragonStageCustomization> get(final ResourceKey<DragonStage> dragonStage) {
+        return skins.get().get(dragonStage.location());
     }
 
-    public void put(final ResourceKey<DragonStage> dragonLevel, final Lazy<DragonLevelCustomization> customization) {
-        skins.get().put(dragonLevel.location(), customization);
+    public void put(final ResourceKey<DragonStage> dragonStage, final Lazy<DragonStageCustomization> customization) {
+        skins.get().put(dragonStage.location(), customization);
     }
 
     public void initDefaults(final DragonStateHandler handler) {
@@ -33,16 +33,16 @@ public class SkinPreset implements INBTSerializable<CompoundTag> {
             return;
         }
 
-        for (ResourceKey<DragonStage> dragonLevel : DragonStage.keys(null)) {
-            skins.get().put(dragonLevel.location(), Lazy.of(() -> new DragonLevelCustomization(dragonLevel.location(), type)));
+        for (ResourceKey<DragonStage> dragonStage : DragonStage.keys(null)) {
+            skins.get().put(dragonStage.location(), Lazy.of(() -> new DragonStageCustomization(dragonStage.location(), type)));
         }
     }
 
-    public HashMap<ResourceLocation, Lazy<DragonLevelCustomization>> initialize() {
-        HashMap<ResourceLocation, Lazy<DragonLevelCustomization>> customizations = new HashMap<>();
+    public HashMap<ResourceLocation, Lazy<DragonStageCustomization>> initialize() {
+        HashMap<ResourceLocation, Lazy<DragonStageCustomization>> customizations = new HashMap<>();
 
-        for (ResourceKey<DragonStage> dragonLevel : DragonStage.keys(null)) {
-            customizations.computeIfAbsent(dragonLevel.location(), location -> Lazy.of(DragonLevelCustomization::new));
+        for (ResourceKey<DragonStage> dragonStage : DragonStage.keys(null)) {
+            customizations.computeIfAbsent(dragonStage.location(), location -> Lazy.of(DragonStageCustomization::new));
         }
 
         return customizations;
@@ -52,8 +52,8 @@ public class SkinPreset implements INBTSerializable<CompoundTag> {
     public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider) {
         CompoundTag tag = new CompoundTag();
 
-        for (ResourceKey<DragonStage> dragonLevel : DragonStage.keys(provider)) {
-            tag.put(dragonLevel.location().toString(), skins.get().getOrDefault(dragonLevel.location(), Lazy.of(DragonLevelCustomization::new)).get().serializeNBT(provider));
+        for (ResourceKey<DragonStage> dragonStage : DragonStage.keys(provider)) {
+            tag.put(dragonStage.location().toString(), skins.get().getOrDefault(dragonStage.location(), Lazy.of(DragonStageCustomization::new)).get().serializeNBT(provider));
         }
 
         return tag;
@@ -63,9 +63,9 @@ public class SkinPreset implements INBTSerializable<CompoundTag> {
     public void deserializeNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag base) {
         for (ResourceKey<DragonStage> level : DragonStage.keys(provider)) {
             skins.get().put(level.location(), Lazy.of(() -> {
-                        DragonLevelCustomization group = new DragonLevelCustomization();
-                        CompoundTag dragonLevelData = base.getCompound(level.location().toString());
-                        group.deserializeNBT(provider, dragonLevelData);
+                        DragonStageCustomization group = new DragonStageCustomization();
+                        CompoundTag dragonStageData = base.getCompound(level.location().toString());
+                        group.deserializeNBT(provider, dragonStageData);
                         return group;
                     })
             );

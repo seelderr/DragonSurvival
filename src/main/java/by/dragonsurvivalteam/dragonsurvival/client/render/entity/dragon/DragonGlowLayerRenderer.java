@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
-import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonLevelCustomization;
+import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonStageCustomization;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.client.skins.DragonSkins;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
@@ -50,8 +50,8 @@ public class DragonGlowLayerRenderer extends GeoRenderLayer<DragonEntity> {
         DragonStateHandler handler = DragonStateProvider.getData(player);
         SkinPreset preset = handler.getSkinData().skinPreset;
 
-        DragonLevelCustomization customization = preset.get(Objects.requireNonNull(handler.getLevel().getKey())).get();
-        ResourceLocation glowTexture = DragonSkins.getGlowTexture(player, handler.getLevel().getKey());
+        DragonStageCustomization customization = preset.get(Objects.requireNonNull(handler.getStage().getKey())).get();
+        ResourceLocation glowTexture = DragonSkins.getGlowTexture(player, handler.getStage().getKey());
 
         if (glowTexture == null || glowTexture.getPath().contains("/" + handler.getTypeNameLowerCase() + "_")) {
             if (dragonRenderer.glowTexture != null) {
@@ -59,8 +59,8 @@ public class DragonGlowLayerRenderer extends GeoRenderLayer<DragonEntity> {
             }
         }
 
-        if (glowTexture == null && handler.getSkinData().get(handler.getLevel().getKey()).get().defaultSkin) {
-            ResourceLocation location = ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/dragon/" + handler.getTypeNameLowerCase() + "_" + handler.getLevel().getKey().location().getPath() + "_glow.png");
+        if (glowTexture == null && handler.getSkinData().get(handler.getStage().getKey()).get().defaultSkin) {
+            ResourceLocation location = ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/dragon/" + handler.getTypeNameLowerCase() + "_" + handler.getStage().getKey().location().getPath() + "_glow.png");
 
             if (Minecraft.getInstance().getResourceManager().getResource(location).isPresent()) {
                 glowTexture = location;
@@ -74,7 +74,7 @@ public class DragonGlowLayerRenderer extends GeoRenderLayer<DragonEntity> {
             VertexConsumer vertexConsumer = bufferSource.getBuffer(type);
             dragonRenderer.actuallyRender(poseStack, animatable, bakedModel, type, bufferSource, vertexConsumer, true, partialTick, packedLight, OverlayTexture.NO_OVERLAY, renderer.getRenderColor(animatable, partialTick, packedLight).getColor());
         } else {
-            ResourceLocation dynamicGlowKey = ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "dynamic_glow_" + animatable.getPlayer().getStringUUID() + "_" + handler.getLevel().getKey().location().getPath());
+            ResourceLocation dynamicGlowKey = ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "dynamic_glow_" + animatable.getPlayer().getStringUUID() + "_" + handler.getStage().getKey().location().getPath());
 
             if (customization.layerSettings.values().stream().anyMatch(layerSettings -> layerSettings.get().glowing)) {
                 RenderType type = RenderType.EYES.apply(dynamicGlowKey, RenderType.LIGHTNING_TRANSPARENCY);

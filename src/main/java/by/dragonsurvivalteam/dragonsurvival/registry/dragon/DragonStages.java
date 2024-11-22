@@ -18,7 +18,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import java.util.List;
 import java.util.Optional;
 
-import static by.dragonsurvivalteam.dragonsurvival.common.codecs.ModifierType.DRAGON_LEVEL;
+import static by.dragonsurvivalteam.dragonsurvival.common.codecs.ModifierType.DRAGON_STAGE;
 
 public class DragonStages {
     @Translation(type = Translation.Type.STAGE, comments = "Newborn")
@@ -37,16 +37,16 @@ public class DragonStages {
                 Optional.of(young),
                 List.of(
                         /* Constant */
-                        Modifier.constant(DRAGON_LEVEL, Attributes.SUBMERGED_MINING_SPEED, 1, AttributeModifier.Operation.ADD_VALUE, DragonTypes.SEA.getTypeNameLowerCase()),
-                        Modifier.constant(DRAGON_LEVEL, Attributes.MAX_HEALTH, -7, AttributeModifier.Operation.ADD_VALUE),
-                        Modifier.constant(DRAGON_LEVEL, Attributes.ATTACK_DAMAGE, 1, AttributeModifier.Operation.ADD_VALUE),
-                        Modifier.constant(DRAGON_LEVEL, Attributes.JUMP_STRENGTH, 0.025f, AttributeModifier.Operation.ADD_VALUE),
-                        Modifier.constant(DRAGON_LEVEL, Attributes.SAFE_FALL_DISTANCE, 0.25f, AttributeModifier.Operation.ADD_VALUE),
-                        Modifier.constant(DRAGON_LEVEL, DSAttributes.DRAGON_BREATH_RANGE, 1.5f, AttributeModifier.Operation.ADD_VALUE),
+                        Modifier.constant(DRAGON_STAGE, Attributes.SUBMERGED_MINING_SPEED, 1, AttributeModifier.Operation.ADD_VALUE, DragonTypes.SEA.getTypeNameLowerCase()),
+                        Modifier.constant(DRAGON_STAGE, Attributes.MAX_HEALTH, -7, AttributeModifier.Operation.ADD_VALUE),
+                        Modifier.constant(DRAGON_STAGE, Attributes.ATTACK_DAMAGE, 1, AttributeModifier.Operation.ADD_VALUE),
+                        Modifier.constant(DRAGON_STAGE, Attributes.JUMP_STRENGTH, 0.025f, AttributeModifier.Operation.ADD_VALUE),
+                        Modifier.constant(DRAGON_STAGE, Attributes.SAFE_FALL_DISTANCE, 0.25f, AttributeModifier.Operation.ADD_VALUE),
+                        Modifier.constant(DRAGON_STAGE, DSAttributes.DRAGON_BREATH_RANGE, 1.5f, AttributeModifier.Operation.ADD_VALUE),
                         /* Per size */
-                        Modifier.perSize(DRAGON_LEVEL, Attributes.MOVEMENT_SPEED, 0.0015f, AttributeModifier.Operation.ADD_VALUE),
-                        Modifier.perSize(DRAGON_LEVEL, Attributes.MAX_HEALTH, 0.5f, AttributeModifier.Operation.ADD_VALUE),
-                        Modifier.perSize(DRAGON_LEVEL, DSAttributes.DRAGON_BREATH_RANGE, 0.05f, AttributeModifier.Operation.ADD_VALUE)
+                        Modifier.perSize(DRAGON_STAGE, Attributes.MOVEMENT_SPEED, 0.0015f, AttributeModifier.Operation.ADD_VALUE),
+                        Modifier.perSize(DRAGON_STAGE, Attributes.MAX_HEALTH, 0.5f, AttributeModifier.Operation.ADD_VALUE),
+                        Modifier.perSize(DRAGON_STAGE, DSAttributes.DRAGON_BREATH_RANGE, 0.05f, AttributeModifier.Operation.ADD_VALUE)
                 ),
                 0,
                 1.5,
@@ -66,18 +66,18 @@ public class DragonStages {
                 Optional.of(adult),
                 List.of(
                         /* Constant */
-                        Modifier.constant(DRAGON_LEVEL, Attributes.SUBMERGED_MINING_SPEED, 2, AttributeModifier.Operation.ADD_VALUE, DragonTypes.SEA.getTypeNameLowerCase()),
-                        Modifier.constant(DRAGON_LEVEL, Attributes.STEP_HEIGHT, 0.25f, AttributeModifier.Operation.ADD_VALUE),
-                        Modifier.constant(DRAGON_LEVEL, Attributes.ATTACK_DAMAGE, 2, AttributeModifier.Operation.ADD_VALUE),
-                        Modifier.constant(DRAGON_LEVEL, Attributes.JUMP_STRENGTH, 0.05f, AttributeModifier.Operation.ADD_VALUE),
-                        Modifier.constant(DRAGON_LEVEL, Attributes.SAFE_FALL_DISTANCE, 0.5f, AttributeModifier.Operation.ADD_VALUE),
-                        Modifier.constant(DRAGON_LEVEL, DSAttributes.DRAGON_BREATH_RANGE, 2.5f, AttributeModifier.Operation.ADD_VALUE),
+                        Modifier.constant(DRAGON_STAGE, Attributes.SUBMERGED_MINING_SPEED, 2, AttributeModifier.Operation.ADD_VALUE, DragonTypes.SEA.getTypeNameLowerCase()),
+                        Modifier.constant(DRAGON_STAGE, Attributes.STEP_HEIGHT, 0.25f, AttributeModifier.Operation.ADD_VALUE),
+                        Modifier.constant(DRAGON_STAGE, Attributes.ATTACK_DAMAGE, 2, AttributeModifier.Operation.ADD_VALUE),
+                        Modifier.constant(DRAGON_STAGE, Attributes.JUMP_STRENGTH, 0.05f, AttributeModifier.Operation.ADD_VALUE),
+                        Modifier.constant(DRAGON_STAGE, Attributes.SAFE_FALL_DISTANCE, 0.5f, AttributeModifier.Operation.ADD_VALUE),
+                        Modifier.constant(DRAGON_STAGE, DSAttributes.DRAGON_BREATH_RANGE, 2.5f, AttributeModifier.Operation.ADD_VALUE),
                         /* Per size */
-                        Modifier.perSize(DRAGON_LEVEL, Attributes.MOVEMENT_SPEED, 0.0015f, AttributeModifier.Operation.ADD_VALUE),
-                        Modifier.perSize(DRAGON_LEVEL, Attributes.ENTITY_INTERACTION_RANGE, 0.01f, AttributeModifier.Operation.ADD_VALUE),
-                        Modifier.perSize(DRAGON_LEVEL, Attributes.BLOCK_INTERACTION_RANGE, 0.01f, AttributeModifier.Operation.ADD_VALUE),
-                        Modifier.perSize(DRAGON_LEVEL, Attributes.MAX_HEALTH, 0.5f, AttributeModifier.Operation.ADD_VALUE),
-                        Modifier.perSize(DRAGON_LEVEL, DSAttributes.DRAGON_BREATH_RANGE, 0.05f, AttributeModifier.Operation.ADD_VALUE)
+                        Modifier.perSize(DRAGON_STAGE, Attributes.MOVEMENT_SPEED, 0.0015f, AttributeModifier.Operation.ADD_VALUE),
+                        Modifier.perSize(DRAGON_STAGE, Attributes.ENTITY_INTERACTION_RANGE, 0.01f, AttributeModifier.Operation.ADD_VALUE),
+                        Modifier.perSize(DRAGON_STAGE, Attributes.BLOCK_INTERACTION_RANGE, 0.01f, AttributeModifier.Operation.ADD_VALUE),
+                        Modifier.perSize(DRAGON_STAGE, Attributes.MAX_HEALTH, 0.5f, AttributeModifier.Operation.ADD_VALUE),
+                        Modifier.perSize(DRAGON_STAGE, DSAttributes.DRAGON_BREATH_RANGE, 0.05f, AttributeModifier.Operation.ADD_VALUE)
                 ),
                 1,
                 2,
@@ -96,18 +96,18 @@ public class DragonStages {
                 Optional.empty(),
                 List.of(
                         /* Constant */
-                        Modifier.constant(DRAGON_LEVEL, Attributes.SUBMERGED_MINING_SPEED, 3, AttributeModifier.Operation.ADD_VALUE, DragonTypes.SEA.getTypeNameLowerCase()),
-                        Modifier.constant(DRAGON_LEVEL, Attributes.STEP_HEIGHT, 0.5f, AttributeModifier.Operation.ADD_VALUE),
-                        Modifier.constant(DRAGON_LEVEL, Attributes.ATTACK_DAMAGE, 3, AttributeModifier.Operation.ADD_VALUE),
-                        Modifier.constant(DRAGON_LEVEL, Attributes.JUMP_STRENGTH, 0.1f, AttributeModifier.Operation.ADD_VALUE),
-                        Modifier.constant(DRAGON_LEVEL, Attributes.SAFE_FALL_DISTANCE, 1, AttributeModifier.Operation.ADD_VALUE),
-                        Modifier.constant(DRAGON_LEVEL, DSAttributes.DRAGON_BREATH_RANGE, 4, AttributeModifier.Operation.ADD_VALUE),
+                        Modifier.constant(DRAGON_STAGE, Attributes.SUBMERGED_MINING_SPEED, 3, AttributeModifier.Operation.ADD_VALUE, DragonTypes.SEA.getTypeNameLowerCase()),
+                        Modifier.constant(DRAGON_STAGE, Attributes.STEP_HEIGHT, 0.5f, AttributeModifier.Operation.ADD_VALUE),
+                        Modifier.constant(DRAGON_STAGE, Attributes.ATTACK_DAMAGE, 3, AttributeModifier.Operation.ADD_VALUE),
+                        Modifier.constant(DRAGON_STAGE, Attributes.JUMP_STRENGTH, 0.1f, AttributeModifier.Operation.ADD_VALUE),
+                        Modifier.constant(DRAGON_STAGE, Attributes.SAFE_FALL_DISTANCE, 1, AttributeModifier.Operation.ADD_VALUE),
+                        Modifier.constant(DRAGON_STAGE, DSAttributes.DRAGON_BREATH_RANGE, 4, AttributeModifier.Operation.ADD_VALUE),
                         /* Per size */
-                        Modifier.perSize(DRAGON_LEVEL, Attributes.MOVEMENT_SPEED, 0.0015f, AttributeModifier.Operation.ADD_VALUE),
-                        Modifier.perSize(DRAGON_LEVEL, Attributes.ENTITY_INTERACTION_RANGE, 0.01f, AttributeModifier.Operation.ADD_VALUE),
-                        Modifier.perSize(DRAGON_LEVEL, Attributes.BLOCK_INTERACTION_RANGE, 0.01f, AttributeModifier.Operation.ADD_VALUE),
-                        Modifier.perSize(DRAGON_LEVEL, Attributes.MAX_HEALTH, 0.5f, AttributeModifier.Operation.ADD_VALUE),
-                        Modifier.perSize(DRAGON_LEVEL, DSAttributes.DRAGON_BREATH_RANGE, 0.05f, AttributeModifier.Operation.ADD_VALUE)
+                        Modifier.perSize(DRAGON_STAGE, Attributes.MOVEMENT_SPEED, 0.0015f, AttributeModifier.Operation.ADD_VALUE),
+                        Modifier.perSize(DRAGON_STAGE, Attributes.ENTITY_INTERACTION_RANGE, 0.01f, AttributeModifier.Operation.ADD_VALUE),
+                        Modifier.perSize(DRAGON_STAGE, Attributes.BLOCK_INTERACTION_RANGE, 0.01f, AttributeModifier.Operation.ADD_VALUE),
+                        Modifier.perSize(DRAGON_STAGE, Attributes.MAX_HEALTH, 0.5f, AttributeModifier.Operation.ADD_VALUE),
+                        Modifier.perSize(DRAGON_STAGE, DSAttributes.DRAGON_BREATH_RANGE, 0.05f, AttributeModifier.Operation.ADD_VALUE)
                 ),
                 1,
                 3,

@@ -15,6 +15,7 @@ import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
+import java.util.Objects;
 
 public class ColorSelectorButton extends ExtendedButton {
     public final EnumSkinLayer layer;
@@ -40,7 +41,7 @@ public class ColorSelectorButton extends ExtendedButton {
     @Override
     public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
-        active = !screen.preset.get(screen.dragonLevel.getKey()).get().defaultSkin;
+        active = !screen.preset.get(Objects.requireNonNull(screen.dragonStage.getKey())).get().defaultSkin;
 
         if (visible) {
             RenderingUtils.drawGradientRect(guiGraphics.pose().last().pose(), 100, getX() + 2, getY() + 2, getX() + xSize - 2, getY() + ySize - 2, new int[]{Color.red.getRGB(), Color.GREEN.getRGB(), Color.BLUE.getRGB(), Color.yellow.getRGB()});
@@ -53,7 +54,7 @@ public class ColorSelectorButton extends ExtendedButton {
             screen.renderables.removeIf(s -> s == renderButton);
         }
 
-        DragonPart part = DragonEditorHandler.getDragonPart(layer, screen.preset.get(screen.dragonLevel.getKey()).get().layerSettings.get(layer).get().selectedSkin, DragonEditorScreen.HANDLER.getType());
+        DragonPart part = DragonEditorHandler.getDragonPart(layer, screen.preset.get(screen.dragonStage.getKey()).get().layerSettings.get(layer).get().selectedSkin, DragonEditorScreen.HANDLER.getType());
         visible = part != null && part.isColorable();
     }
 
@@ -65,7 +66,7 @@ public class ColorSelectorButton extends ExtendedButton {
     @Override
     public void onPress() {
         if (!toggled) {
-            DragonPart part = DragonEditorHandler.getDragonPart(layer, screen.preset.get(screen.dragonLevel.getKey()).get().layerSettings.get(layer).get().selectedSkin, DragonEditorScreen.HANDLER.getType());
+            DragonPart part = DragonEditorHandler.getDragonPart(layer, screen.preset.get(screen.dragonStage.getKey()).get().layerSettings.get(layer).get().selectedSkin, DragonEditorScreen.HANDLER.getType());
 
             if (part == null) {
                 return;

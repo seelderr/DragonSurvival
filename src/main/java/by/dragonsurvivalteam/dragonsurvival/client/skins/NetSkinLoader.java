@@ -20,8 +20,8 @@ abstract public class NetSkinLoader {
 
     abstract public boolean ping();
 
-    protected String makeResourceName(String playerName, ResourceKey<DragonStage> dragonLevel, String... extra) {
-        String playerKey = playerName + "_" + dragonLevel.location().getPath();
+    protected String makeResourceName(String playerName, ResourceKey<DragonStage> dragonStage, String... extra) {
+        String playerKey = playerName + "_" + dragonStage.location().getPath();
         String[] text = ArrayUtils.addAll(new String[]{playerKey}, extra);
         return StringUtils.join(text, "_");
     }

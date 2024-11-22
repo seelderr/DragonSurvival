@@ -87,7 +87,7 @@ public class ClientProxy {
             AbstractDragonType type = data.getType();
 
             //noinspection DataFlowIssue -> level and key are present
-            int selectedSaveSlot = savedCustomizations.current.getOrDefault(type.getTypeNameLowerCase(), new HashMap<>()).getOrDefault(data.getLevel().getKey().location().toString(), 0);
+            int selectedSaveSlot = savedCustomizations.current.getOrDefault(type.getTypeNameLowerCase(), new HashMap<>()).getOrDefault(data.getStage().getKey().location().toString(), 0);
             SkinPreset preset = savedCustomizations.skinPresets.getOrDefault(type.getTypeNameLowerCase(), new HashMap<>()).getOrDefault(selectedSaveSlot, new SkinPreset());
             PacketDistributor.sendToServer(new SyncPlayerSkinPreset.Data(localPlayer.getId(), preset.serializeNBT(localPlayer.registryAccess())));
         } else {
@@ -110,7 +110,7 @@ public class ClientProxy {
 
             if (type != null) {
                 //noinspection DataFlowIssue -> level and key are present
-                int selectedSaveSlot = savedCustomizations.current.getOrDefault(type.getTypeNameLowerCase(), new HashMap<>()).getOrDefault(data.getLevel().getKey().location().toString(), 0);
+                int selectedSaveSlot = savedCustomizations.current.getOrDefault(type.getTypeNameLowerCase(), new HashMap<>()).getOrDefault(data.getStage().getKey().location().toString(), 0);
                 SkinPreset preset = savedCustomizations.skinPresets.getOrDefault(type.getTypeNameLowerCase(), new HashMap<>()).getOrDefault(selectedSaveSlot, new SkinPreset());
                 context.reply(new SyncPlayerSkinPreset.Data(sender.getId(), preset.serializeNBT(sender.registryAccess())));
             }
@@ -132,7 +132,7 @@ public class ClientProxy {
                     handler.getSkinData().skinPreset = preset;
 
                     if (handler.isDragon()) {
-                        handler.getSkinData().compileSkin(handler.getLevel());
+                        handler.getSkinData().compileSkin(handler.getStage());
                     }
                 });
             }

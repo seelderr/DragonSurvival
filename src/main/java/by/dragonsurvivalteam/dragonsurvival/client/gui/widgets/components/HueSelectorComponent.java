@@ -57,7 +57,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
         this.xSize = xSize;
         this.ySize = ySize;
 
-        settingsSupplier = () -> screen.preset.get(Objects.requireNonNull(screen.dragonLevel.getKey())).get().layerSettings.get(layer).get();
+        settingsSupplier = () -> screen.preset.get(Objects.requireNonNull(screen.dragonStage.getKey())).get().layerSettings.get(layer).get();
         LayerSettings settings = settingsSupplier.get();
         DragonPart dragonPart = DragonEditorHandler.getDragonPart(layer, settings.selectedSkin, DragonEditorScreen.HANDLER.getType());
 
@@ -65,7 +65,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
             final Function<Boolean, Boolean> setGlowingAction = value -> {
                 settingsSupplier.get().glowing = value;
                 this.selected = settingsSupplier.get().glowing;
-                DragonEditorScreen.HANDLER.getSkinData().compileSkin(screen.dragonLevel);
+                DragonEditorScreen.HANDLER.getSkinData().compileSkin(screen.dragonStage);
                 screen.update();
                 return !value;
             };
@@ -94,7 +94,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
             private final Function<Integer, Integer> setHueAction = value -> {
                 settingsSupplier.get().hue = value / 360f;
                 settingsSupplier.get().modifiedColor = hasModifiedColor(dragonPart);
-                DragonEditorScreen.HANDLER.getSkinData().compileSkin(screen.dragonLevel);
+                DragonEditorScreen.HANDLER.getSkinData().compileSkin(screen.dragonStage);
                 screen.update();
 
                 return previousHue;
@@ -146,7 +146,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
             private final Function<Integer, Integer> setSaturationAction = value -> {
                 settingsSupplier.get().saturation = value / 360f;
                 settingsSupplier.get().modifiedColor = hasModifiedColor(dragonPart);
-                DragonEditorScreen.HANDLER.getSkinData().compileSkin(screen.dragonLevel);
+                DragonEditorScreen.HANDLER.getSkinData().compileSkin(screen.dragonStage);
                 screen.update();
 
                 return previousSaturation;
@@ -207,7 +207,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
             private final Function<Integer, Integer> setBrightnessAction = value -> {
                 settingsSupplier.get().brightness = value / 360f;
 
-                DragonEditorScreen.HANDLER.getSkinData().compileSkin(screen.dragonLevel);
+                DragonEditorScreen.HANDLER.getSkinData().compileSkin(screen.dragonStage);
                 screen.update();
 
                 return previousBrightness;

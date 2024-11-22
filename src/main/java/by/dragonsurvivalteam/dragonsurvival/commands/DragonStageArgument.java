@@ -20,10 +20,12 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import javax.annotation.Nullable;
 
-public class DragonLevelArgument implements ArgumentType<Holder<DragonStage>> {
+public class DragonStageArgument implements ArgumentType<Holder<DragonStage>> {
+    public static final String ID = "dragon_stage";
+
     private final HolderLookup.RegistryLookup<DragonStage> lookup;
 
-    public DragonLevelArgument(final CommandBuildContext context) {
+    public DragonStageArgument(final CommandBuildContext context) {
         lookup = context.lookupOrThrow(DragonStage.REGISTRY);
     }
 
@@ -35,7 +37,7 @@ public class DragonLevelArgument implements ArgumentType<Holder<DragonStage>> {
 
     public static Holder<DragonStage> get(final CommandContext<?> context) {
         //noinspection unchecked -> type is valid
-        return (Holder<DragonStage>) context.getArgument("dragon_level", Holder.class);
+        return (Holder<DragonStage>) context.getArgument(ID, Holder.class);
     }
 
     @Override

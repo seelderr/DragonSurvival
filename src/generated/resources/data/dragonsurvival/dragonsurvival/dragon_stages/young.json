@@ -23,44 +23,44 @@
   },
   "modifiers": [
     {
-      "type": "dragonsurvival/level/",
+      "type": "dragonsurvival/stage/",
       "attribute": "minecraft:player.submerged_mining_speed",
       "dragon_type": "sea",
       "operation": "add_value",
       "per_size": 2.0
     },
     {
-      "type": "dragonsurvival/level/",
+      "type": "dragonsurvival/stage/",
       "attribute": "minecraft:generic.step_height",
       "operation": "add_value",
       "per_size": 0.25
     },
     {
-      "type": "dragonsurvival/level/",
+      "type": "dragonsurvival/stage/",
       "attribute": "minecraft:generic.attack_damage",
       "operation": "add_value",
       "per_size": 2.0
     },
     {
-      "type": "dragonsurvival/level/",
+      "type": "dragonsurvival/stage/",
       "attribute": "minecraft:generic.jump_strength",
       "operation": "add_value",
       "per_size": 0.05
     },
     {
-      "type": "dragonsurvival/level/",
+      "type": "dragonsurvival/stage/",
       "attribute": "minecraft:generic.safe_fall_distance",
       "operation": "add_value",
       "per_size": 0.5
     },
     {
-      "type": "dragonsurvival/level/",
+      "type": "dragonsurvival/stage/",
       "attribute": "dragonsurvival:dragon_breath_range",
       "operation": "add_value",
       "per_size": 2.5
     },
     {
-      "type": "dragonsurvival/level/",
+      "type": "dragonsurvival/stage/",
       "attribute": "minecraft:generic.movement_speed",
       "operation": "add_value",
       "per_size": {
@@ -70,7 +70,7 @@
       }
     },
     {
-      "type": "dragonsurvival/level/",
+      "type": "dragonsurvival/stage/",
       "attribute": "minecraft:player.entity_interaction_range",
       "operation": "add_value",
       "per_size": {
@@ -80,7 +80,7 @@
       }
     },
     {
-      "type": "dragonsurvival/level/",
+      "type": "dragonsurvival/stage/",
       "attribute": "minecraft:player.block_interaction_range",
       "operation": "add_value",
       "per_size": {
@@ -90,7 +90,7 @@
       }
     },
     {
-      "type": "dragonsurvival/level/",
+      "type": "dragonsurvival/stage/",
       "attribute": "minecraft:generic.max_health",
       "operation": "add_value",
       "per_size": {
@@ -100,7 +100,7 @@
       }
     },
     {
-      "type": "dragonsurvival/level/",
+      "type": "dragonsurvival/stage/",
       "attribute": "dragonsurvival:dragon_breath_range",
       "operation": "add_value",
       "per_size": {

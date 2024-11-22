@@ -36,7 +36,7 @@ public class DragonEditorDropdownButton extends DropDownButton {
     public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float pPartialTicks) {
         active = visible = dragonEditorScreen.showUi;
         super.renderWidget(guiGraphics, mouseX, mouseY, pPartialTicks);
-        String currentValue = DragonEditorScreen.partToTranslation(dragonEditorScreen.preset.get(Objects.requireNonNull(dragonEditorScreen.dragonLevel.getKey())).get().layerSettings.get(layers).get().selectedSkin);
+        String currentValue = DragonEditorScreen.partToTranslation(dragonEditorScreen.preset.get(Objects.requireNonNull(dragonEditorScreen.dragonStage.getKey())).get().layerSettings.get(layers).get().selectedSkin);
 
         if (!Objects.equals(currentValue, current)) {
             current = currentValue;
@@ -52,7 +52,7 @@ public class DragonEditorDropdownButton extends DropDownButton {
         valueList = valueList.stream().map(DragonEditorScreen::partToTranslation).toList();
 
         values = valueList.toArray(new String[0]);
-        active = !dragonEditorScreen.preset.get(dragonEditorScreen.dragonLevel.getKey()).get().defaultSkin;
+        active = !dragonEditorScreen.preset.get(dragonEditorScreen.dragonStage.getKey()).get().defaultSkin;
     }
 
     @Override

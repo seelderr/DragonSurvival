@@ -23,7 +23,7 @@ public class DragonSizeCommand {
             DragonStateHandler handler = DragonStateProvider.getData(serverPlayer);
 
             if (handler.isDragon()) {
-                handler.setSize(serverPlayer, handler.getLevel(), size);
+                handler.setSize(serverPlayer, handler.getStage(), size);
             }
 
             return 1;

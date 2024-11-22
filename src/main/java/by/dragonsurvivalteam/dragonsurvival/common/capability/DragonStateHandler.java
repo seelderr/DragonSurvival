@@ -94,7 +94,7 @@ public class DragonStateHandler extends EntityStateHandler {
 
     private AbstractDragonType dragonType;
     private Holder<DragonBody> dragonBody;
-    private Holder<DragonStage> dragonLevel;
+    private Holder<DragonStage> dragonStage;
 
     private int passengerId = -1;
     private boolean hasFlight;
@@ -138,15 +138,15 @@ public class DragonStateHandler extends EntityStateHandler {
         setClientSize(null, size);
     }
 
-    public void setClientSize(@Nullable final Holder<DragonStage> dragonLevel) {
-        setClientSize(dragonLevel, NO_SIZE);
+    public void setClientSize(@Nullable final Holder<DragonStage> dragonStage) {
+        setClientSize(dragonStage, NO_SIZE);
     }
 
-    public void setClientSize(@Nullable final Holder<DragonStage> dragonLevel, double size) {
-        Holder<DragonStage> oldLevel = this.dragonLevel;
-        updateSizeAndLevel(dragonLevel, size);
+    public void setClientSize(@Nullable final Holder<DragonStage> dragonStage, double size) {
+        Holder<DragonStage> oldLevel = this.dragonStage;
+        updateSizeAndStage(dragonStage, size);
 
-        if (oldLevel == null || this.dragonLevel != null && !this.dragonLevel.is(oldLevel)) {
+        if (oldLevel == null || this.dragonStage != null && !this.dragonStage.is(oldLevel)) {
             if (FMLEnvironment.dist.isClient()) { // When deserializing nbt there is no player context
                 // Only need to update when the level changes (for the skin)
                 ClientProxy.sendClientData();
@@ -154,26 +154,26 @@ public class DragonStateHandler extends EntityStateHandler {
         }
     }
 
-    public void setSize(final Player player, @Nullable final Holder<DragonStage> dragonLevel) {
-        setSize(player, dragonLevel, NO_SIZE);
+    public void setSize(final Player player, @Nullable final Holder<DragonStage> dragonStage) {
+        setSize(player, dragonStage, NO_SIZE);
     }
 
     public void setSize(final Player player, double size) {
         setSize(player, null, size);
     }
 
-    public void setSize(final Player player, @Nullable final Holder<DragonStage> dragonLevel, double size) {
+    public void setSize(final Player player, @Nullable final Holder<DragonStage> dragonStage, double size) {
         if (!(player instanceof ServerPlayer serverPlayer)) {
-            setClientSize(dragonLevel, size);
+            setClientSize(dragonStage, size);
             return;
         }
 
         double oldSize = this.size;
-        Holder<DragonStage> oldLevel = this.dragonLevel;
-        updateSizeAndLevel(dragonLevel, size);
+        Holder<DragonStage> oldLevel = this.dragonStage;
+        updateSizeAndStage(dragonStage, size);
 
-        if (oldSize != this.size || oldLevel == null || this.dragonLevel != null && !this.dragonLevel.is(oldLevel)) {
-            PacketDistributor.sendToPlayersTrackingEntityAndSelf(serverPlayer, new SyncSize(serverPlayer.getId(), getLevel(), getSize()));
+        if (oldSize != this.size || oldLevel == null || this.dragonStage != null && !this.dragonStage.is(oldLevel)) {
+            PacketDistributor.sendToPlayersTrackingEntityAndSelf(serverPlayer, new SyncSize(serverPlayer.getId(), getStage(), getSize()));
             DSAdvancementTriggers.BE_DRAGON.get().trigger(serverPlayer);
             serverPlayer.refreshDimensions();
 
@@ -182,12 +182,12 @@ public class DragonStateHandler extends EntityStateHandler {
         }
     }
 
-    private void updateSizeAndLevel(@Nullable final Holder<DragonStage> dragonLevel, double size) {
-        if (dragonLevel != null && !dragonLevel.value().sizeRange().matches(size)) {
+    private void updateSizeAndStage(@Nullable final Holder<DragonStage> dragonStage, double size) {
+        if (dragonStage != null && !dragonStage.value().sizeRange().matches(size)) {
             this.size = DragonStage.getBoundedSize(size);
-            this.dragonLevel = DragonStage.get(null, this.size);
+            this.dragonStage = DragonStage.get(null, this.size);
         } else {
-            this.dragonLevel = dragonLevel;
+            this.dragonStage = dragonStage;
             this.size = size;
         }
     }
@@ -214,8 +214,8 @@ public class DragonStateHandler extends EntityStateHandler {
         return dragonType;
     }
 
-    public Holder<DragonStage> getLevel() {
-        return dragonLevel;
+    public Holder<DragonStage> getStage() {
+        return dragonStage;
     }
 
     public Holder<DragonBody> getBody() {
@@ -340,7 +340,7 @@ public class DragonStateHandler extends EntityStateHandler {
         int harvestLevel = 0;
 
         if (state == null || state.is(getType().harvestableBlocks())) {
-            harvestLevel = getLevel().value().harvestLevelBonus();
+            harvestLevel = getStage().value().harvestLevelBonus();
         }
 
         return harvestLevel;
@@ -379,7 +379,7 @@ public class DragonStateHandler extends EntityStateHandler {
     }
 
     public boolean isDragon() {
-        return dragonType != null && dragonBody != null && dragonLevel != null;
+        return dragonType != null && dragonBody != null && dragonStage != null;
     }
 
     public int getPassengerId() {
@@ -411,7 +411,7 @@ public class DragonStateHandler extends EntityStateHandler {
         tag.putString("type", dragonType != null ? dragonType.getTypeName() : "none");
         tag.putString("subtype", dragonType != null ? dragonType.getSubtypeName() : "none");
         tag.putString(DRAGON_BODY, dragonBody != null ? Objects.requireNonNull(dragonBody.getKey()).location().toString() : "none");
-        tag.putString(DRAGON_LEVEL, dragonLevel != null ? Objects.requireNonNull(dragonLevel.getKey()).location().toString() : "none");
+        tag.putString(DRAGON_STAGE, dragonStage != null ? Objects.requireNonNull(dragonStage.getKey()).location().toString() : "none");
 
         if (isDragon()) {
             tag.put("typeData", dragonType.writeNBT());
@@ -495,9 +495,9 @@ public class DragonStateHandler extends EntityStateHandler {
         } catch (ResourceLocationException ignored) {}
 
         try {
-            ResourceLocation levelLocation = ResourceLocation.parse(tag.getString(DRAGON_LEVEL));
+            ResourceLocation levelLocation = ResourceLocation.parse(tag.getString(DRAGON_STAGE));
             Optional<Holder.Reference<DragonStage>> optionalLevel = provider.holder(DragonStages.key(levelLocation));
-            optionalLevel.ifPresent(level -> dragonLevel = level);
+            optionalLevel.ifPresent(level -> dragonStage = level);
         } catch (ResourceLocationException ignored) {}
 
         if (dragonType != null) {
@@ -517,10 +517,10 @@ public class DragonStateHandler extends EntityStateHandler {
             getMovementData().spinCooldown = tag.getInt("spinCooldown");
             getMovementData().spinAttack = tag.getInt("spinAttack");
 
-            if (dragonLevel == null) {
+            if (dragonStage == null) {
                 setClientSize(tag.getDouble("size"));
             } else {
-                setClientSize(dragonLevel, tag.getDouble("size"));
+                setClientSize(dragonStage, tag.getDouble("size"));
             }
 
             setDestructionEnabled(tag.getBoolean("destructionEnabled"));
@@ -574,7 +574,7 @@ public class DragonStateHandler extends EntityStateHandler {
 
         if (isDragon()) {
             refreshBody = true;
-            getSkinData().compileSkin(getLevel());
+            getSkinData().compileSkin(getStage());
         }
     }
 
@@ -628,7 +628,7 @@ public class DragonStateHandler extends EntityStateHandler {
     }
 
     public static final String DRAGON_BODY = "dragon_body";
-    public static final String DRAGON_LEVEL = "dragon_level";
+    public static final String DRAGON_STAGE = "dragon_stage";
     public static final String ENTITY_STATE = "entity_state";
 
     public static final String STAR_HEART_STATE = "star_heart_state";

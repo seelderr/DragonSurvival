@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 
 public record LevelPredicate(
-        Optional<ResourceKey<DragonStage>> dragonLevel,
+        Optional<ResourceKey<DragonStage>> dragonStage,
         Optional<MinMaxBounds.Doubles> size
 ) implements EntitySubPredicate {
 

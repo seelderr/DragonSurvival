@@ -83,20 +83,20 @@ public class DragonBonusTests {
         data.getClawToolData().set(ClawInventory.Slot.PICKAXE, ItemStack.EMPTY);
 
         speed = player.getDigSpeed(state, position);
-        double expectedSpeed = defaultSpeed * data.getLevel().value().breakSpeedMultiplier();
+        double expectedSpeed = defaultSpeed * data.getStage().value().breakSpeedMultiplier();
         helper.assertTrue(speed == expectedSpeed, String.format("Dig speed for [%s] was [%f] - expected [%f]", state, speed, expectedSpeed));
 
         // Test reduction to the bonus when a relevant tool is in the claw inventory
         data.getClawToolData().set(ClawInventory.Slot.PICKAXE, Items.WOODEN_PICKAXE.getDefaultInstance());
         speed = player.getDigSpeed(state, position);
-        expectedSpeed = defaultSpeed * ClawToolHandler.getReducedBonus(data.getLevel().value().breakSpeedMultiplier());
+        expectedSpeed = defaultSpeed * ClawToolHandler.getReducedBonus(data.getStage().value().breakSpeedMultiplier());
         helper.assertTrue(speed == expectedSpeed, String.format("Dig speed for [%s] was [%f] - expected [%f]", state, speed, expectedSpeed));
 
         // Test reduction to the bonus when the block is not part of the harvestable blocks for that dragon type
         state = TestUtils.setBlock(helper, Blocks.OAK_WOOD);
         data.getClawToolData().set(ClawInventory.Slot.PICKAXE, ItemStack.EMPTY);
         speed = player.getDigSpeed(state, position);
-        expectedSpeed = defaultSpeed * ClawToolHandler.getReducedBonus(data.getLevel().value().breakSpeedMultiplier());
+        expectedSpeed = defaultSpeed * ClawToolHandler.getReducedBonus(data.getStage().value().breakSpeedMultiplier());
         helper.assertTrue(speed == expectedSpeed, String.format("Dig speed for [%s] was [%f] - expected [%f]", state, speed, expectedSpeed));
 
         // Test that no bonus applies if the player is holding a tool

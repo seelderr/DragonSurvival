@@ -34,20 +34,20 @@ public class DefaultPartLoader extends SimpleJsonResourceReloadListener {
         map.forEach((location, value) -> {
             // Location path is without the specified directory
             String dragonType = location.getPath();
-            JsonObject dragonLevelMap = value.getAsJsonObject();
+            JsonObject dragonStageMap = value.getAsJsonObject();
 
-            for (String dragonLevel : dragonLevelMap.keySet()) {
-                JsonObject partMap = dragonLevelMap.get(dragonLevel).getAsJsonObject();
+            for (String dragonStage : dragonStageMap.keySet()) {
+                JsonObject partMap = dragonStageMap.get(dragonStage).getAsJsonObject();
 
                 for (String part : partMap.keySet()) {
-                    DEFAULT_PARTS.get(dragonType).computeIfAbsent(dragonLevel, key -> new HashMap<>()).put(EnumSkinLayer.valueOf(part.toUpperCase(Locale.ENGLISH)), partMap.get(part).getAsString());
+                    DEFAULT_PARTS.get(dragonType).computeIfAbsent(dragonStage, key -> new HashMap<>()).put(EnumSkinLayer.valueOf(part.toUpperCase(Locale.ENGLISH)), partMap.get(part).getAsString());
                 }
             }
         });
     }
 
-    public static String getDefaultPartKey(final AbstractDragonType type, final ResourceLocation dragonLevel, final EnumSkinLayer layer) {
-        HashMap<EnumSkinLayer, String> partMap = DEFAULT_PARTS.get(type.getTypeNameLowerCase()).get(dragonLevel.toString());
+    public static String getDefaultPartKey(final AbstractDragonType type, final ResourceLocation dragonStage, final EnumSkinLayer layer) {
+        HashMap<EnumSkinLayer, String> partMap = DEFAULT_PARTS.get(type.getTypeNameLowerCase()).get(dragonStage.toString());
         String partKey = partMap != null ? partMap.getOrDefault(layer, NO_PART) : NO_PART;
 
         if (layer == EnumSkinLayer.BASE && partKey.equals(NO_PART)) {

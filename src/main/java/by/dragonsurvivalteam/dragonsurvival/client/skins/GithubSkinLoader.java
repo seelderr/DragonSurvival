@@ -84,15 +84,15 @@ public class GithubSkinLoader extends NetSkinLoader {
 
     private static final String GLOW = "_glow";
 
-    public InputStream querySkinImage(final String skinName, final ResourceKey<DragonStage> dragonLevel) {
+    public InputStream querySkinImage(final String skinName, final ResourceKey<DragonStage> dragonStage) {
         try {
             String fetchName;
 
             if (skinName.endsWith(GLOW)) {
                 fetchName = skinName.replace(GLOW, "");
-                fetchName = SKIN + fetchName + "_" + dragonLevel.location().getPath() + GLOW + ".png";
+                fetchName = SKIN + fetchName + "_" + dragonStage.location().getPath() + GLOW + ".png";
             } else {
-                fetchName = SKIN + skinName + "_" + dragonLevel.location().getPath() + ".png";
+                fetchName = SKIN + skinName + "_" + dragonStage.location().getPath() + ".png";
             }
 
             URL url = new URL(fetchName);

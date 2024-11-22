@@ -5,7 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.Dra
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.buttons.CopySettingsButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownList;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ExtendedCheckbox;
-import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonLevelCustomization;
+import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonStageCustomization;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
@@ -64,20 +64,20 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 
             @Override
             public void onPress() {
-                Lazy<DragonLevelCustomization> lazy = screen.preset.get(Objects.requireNonNull(screen.dragonLevel.getKey()));
+                Lazy<DragonStageCustomization> lazy = screen.preset.get(Objects.requireNonNull(screen.dragonStage.getKey()));
 
                 if (lazy == null) {
-                    lazy = Lazy.of(DragonLevelCustomization::new);
+                    lazy = Lazy.of(DragonStageCustomization::new);
                 }
 
-                DragonLevelCustomization preset = lazy.get();
+                DragonStageCustomization preset = lazy.get();
                 RegistryAccess access = Objects.requireNonNull(Minecraft.getInstance().player).registryAccess();
 
                 if (newborn.active && newborn.selected()) {
                     Holder<DragonStage> newborn = access.holderOrThrow(DragonStages.newborn);
 
                     screen.preset.put(Objects.requireNonNull(newborn.getKey()), Lazy.of(() -> {
-                        DragonLevelCustomization customization = new DragonLevelCustomization();
+                        DragonStageCustomization customization = new DragonStageCustomization();
                         customization.deserializeNBT(access, preset.serializeNBT(access));
                         return customization;
                     }));
@@ -87,7 +87,7 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
                     Holder<DragonStage> young = access.holderOrThrow(DragonStages.young);
 
                     screen.preset.put(Objects.requireNonNull(young.getKey()), Lazy.of(() -> {
-                        DragonLevelCustomization customization = new DragonLevelCustomization();
+                        DragonStageCustomization customization = new DragonStageCustomization();
                         customization.deserializeNBT(access, preset.serializeNBT(access));
                         return customization;
                     }));
@@ -97,7 +97,7 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
                     Holder<DragonStage> adult = access.holderOrThrow(DragonStages.adult);
 
                     screen.preset.put(Objects.requireNonNull(adult.getKey()), Lazy.of(() -> {
-                        DragonLevelCustomization customization = new DragonLevelCustomization();
+                        DragonStageCustomization customization = new DragonStageCustomization();
                         customization.deserializeNBT(access, preset.serializeNBT(access));
                         return customization;
                     }));
@@ -133,7 +133,7 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
             @Override
             public void renderWidget(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks) {
                 super.renderWidget(guiGraphics, pMouseX, pMouseY, pPartialTicks);
-                if (screen.dragonLevel.getKey() == DragonStages.newborn) {
+                if (screen.dragonStage.getKey() == DragonStages.newborn) {
                     selected = true;
                     active = false;
                 } else {
@@ -146,7 +146,7 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
             @Override
             public void renderWidget(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks) {
                 super.renderWidget(guiGraphics, pMouseX, pMouseY, pPartialTicks);
-                if (screen.dragonLevel.getKey() == DragonStages.young) {
+                if (screen.dragonStage.getKey() == DragonStages.young) {
                     selected = true;
                     active = false;
                 } else {
@@ -159,7 +159,7 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
             @Override
             public void renderWidget(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks) {
                 super.renderWidget(guiGraphics, pMouseX, pMouseY, pPartialTicks);
-                if (screen.dragonLevel.getKey() == DragonStages.adult) {
+                if (screen.dragonStage.getKey() == DragonStages.adult) {
                     selected = true;
                     active = false;
                 } else {

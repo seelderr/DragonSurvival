@@ -40,7 +40,7 @@ public class DragonGrowthHandler {
             return;
         }
 
-        double growth = getGrowth(data.getLevel(), event.getItemStack().getItem());
+        double growth = getGrowth(data.getStage(), event.getItemStack().getItem());
 
         if (growth == 0) {
             return;
@@ -53,24 +53,24 @@ public class DragonGrowthHandler {
             return;
         }
 
-        data.setSize(player, data.getLevel(), newSize);
+        data.setSize(player, data.getStage(), newSize);
 
         if (!player.isCreative()) {
             event.getItemStack().shrink(1);
         }
     }
 
-    public static double getGrowth(final Holder<DragonStage> dragonLevel, final Item item) {
+    public static double getGrowth(final Holder<DragonStage> dragonStage, final Item item) {
         int growth = 0;
 
-        for (MiscCodecs.GrowthItem growthItem : dragonLevel.value().growthItems()) {
+        for (MiscCodecs.GrowthItem growthItem : dragonStage.value().growthItems()) {
             // Select the largest number (independent on positive / negative)
             if ((growth == 0 || Math.abs(growthItem.growthInTicks()) > Math.abs(growth)) && growthItem.items().contains(item.builtInRegistryHolder())) {
                 growth = growthItem.growthInTicks();
             }
         }
 
-        return dragonLevel.value().ticksToSize(growth);
+        return dragonStage.value().ticksToSize(growth);
     }
 
     @SubscribeEvent
@@ -85,7 +85,7 @@ public class DragonGrowthHandler {
             return;
         }
 
-        DragonStage dragonStage = data.getLevel().value();
+        DragonStage dragonStage = data.getStage().value();
         double newSize = DragonStage.getBoundedSize(data.getSize() + dragonStage.ticksToSize(getInterval()));
         Optional<EntityPredicate> isNaturalGrowthStopped = dragonStage.isNaturalGrowthStopped();
 
@@ -102,7 +102,7 @@ public class DragonGrowthHandler {
         }
 
         if (serverPlayer.tickCount % getInterval() == 0) {
-            data.setSize(serverPlayer, data.getLevel(), newSize);
+            data.setSize(serverPlayer, data.getStage(), newSize);
         }
     }
 

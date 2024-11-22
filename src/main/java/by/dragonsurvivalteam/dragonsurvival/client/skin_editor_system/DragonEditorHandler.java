@@ -3,8 +3,8 @@ package by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.loader.DefaultPartLoader;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.loader.DragonPartLoader;
-import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonLevelCustomization;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonPart;
+import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonStageCustomization;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.LayerSettings;
 import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
@@ -152,12 +152,12 @@ public class DragonEditorHandler {
         normalTarget.clear(true);
         glowTarget.clear(true);
 
-        ResourceKey<DragonStage> levelKey = Objects.requireNonNull(handler.getLevel().getKey());
-        DragonLevelCustomization customization = handler.getSkinData().get(levelKey).get();
+        ResourceKey<DragonStage> stageKey = Objects.requireNonNull(handler.getStage().getKey());
+        DragonStageCustomization customization = handler.getSkinData().get(stageKey).get();
         String uuid = player.getStringUUID();
 
-        ResourceLocation dynamicNormalKey = ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_normal_" + uuid + "_" + levelKey.location().getPath());
-        ResourceLocation dynamicGlowKey = ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_glow_" + uuid + "_" + levelKey.location().getPath());
+        ResourceLocation dynamicNormalKey = ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_normal_" + uuid + "_" + stageKey.location().getPath());
+        ResourceLocation dynamicGlowKey = ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_glow_" + uuid + "_" + stageKey.location().getPath());
 
         for (EnumSkinLayer layer : EnumSkinLayer.values()) {
             LayerSettings settings = customization.layerSettings.get(layer).get();
@@ -241,7 +241,7 @@ public class DragonEditorHandler {
 
         DragonStateHandler handler = DragonStateProvider.getData(player);
         List<Pair<NativeImage, ResourceLocation>> texturesToRegister = new ArrayList<>();
-        DragonLevelCustomization customization = handler.getSkinData().get(handler.getLevel().getKey()).get();
+        DragonStageCustomization customization = handler.getSkinData().get(handler.getStage().getKey()).get();
         NativeImage normal = new NativeImage(512, 512, true);
         NativeImage glow = new NativeImage(512, 512, true);
 
@@ -288,8 +288,8 @@ public class DragonEditorHandler {
         String uuid = player.getStringUUID();
 
         //noinspection DataFlowIssue -> level and key are present
-        ResourceLocation dynamicNormalKey = ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_normal_" + uuid + "_" + handler.getLevel().getKey().location().getPath());
-        ResourceLocation dynamicGlowKey = ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_glow_" + uuid + "_" + handler.getLevel().getKey().location().getPath());
+        ResourceLocation dynamicNormalKey = ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_normal_" + uuid + "_" + handler.getStage().getKey().location().getPath());
+        ResourceLocation dynamicGlowKey = ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_glow_" + uuid + "_" + handler.getStage().getKey().location().getPath());
 
         texturesToRegister.add(new Pair<>(normal, dynamicNormalKey));
         texturesToRegister.add(new Pair<>(glow, dynamicGlowKey));
