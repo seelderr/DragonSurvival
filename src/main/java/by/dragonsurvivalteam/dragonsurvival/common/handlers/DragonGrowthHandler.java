@@ -92,8 +92,7 @@ public class DragonGrowthHandler {
         }
 
         DragonLevel dragonLevel = data.getLevel().value();
-        int increment = Functions.secondsToTicks(60);
-        double newSize = DragonLevel.getBoundedSize(data.getSize() + dragonLevel.ticksToSize(increment));
+        double newSize = DragonLevel.getBoundedSize(data.getSize() + dragonLevel.ticksToSize(getInterval()));
 
         if (newSize == data.getSize() || !DragonLevel.getBounds().matches(data.getSize()) || !dragonLevel.canNaturallyGrow().matches(serverPlayer.serverLevel(), serverPlayer.position(), serverPlayer)) {
             if (data.isGrowing) {
@@ -107,11 +106,15 @@ public class DragonGrowthHandler {
             PacketDistributor.sendToPlayer(serverPlayer, new SyncGrowthState.Data(true));
         }
 
-        if (serverPlayer.tickCount % increment == 0) {
+        if (serverPlayer.tickCount % getInterval() == 0) {
             data.setSize(newSize, serverPlayer);
             PacketDistributor.sendToPlayersTrackingEntityAndSelf(serverPlayer, new SyncSize.Data(serverPlayer.getId(), data.getSize()));
             DSAdvancementTriggers.BE_DRAGON.get().trigger(serverPlayer, data.getSize(), data.getTypeName());
             serverPlayer.refreshDimensions();
         }
+    }
+
+    public static int getInterval() {
+        return Functions.secondsToTicks(60);
     }
 }

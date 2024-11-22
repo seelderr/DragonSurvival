@@ -1,6 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets;
 
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
@@ -10,8 +12,18 @@ import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 
+import java.text.NumberFormat;
+
 public class ClientGrowthComponent implements ClientTooltipComponent {
+    @Translation(type = Translation.Type.MISC, comments = "%s %s:%s:%s")
+    private static final String TIME = Translation.Type.GUI.wrap("growth.time");
+
+    private static final NumberFormat FORMAT = NumberFormat.getInstance();
     private static final int ICON_SIZE = 20;
+
+    static {
+        FORMAT.setMinimumIntegerDigits(2);
+    }
 
     private final GrowthComponent component;
     private final Component tooltip;
@@ -21,25 +33,15 @@ public class ClientGrowthComponent implements ClientTooltipComponent {
         this.tooltip = Component.translatable(component.item().getDescriptionId()).append(": ").append(time(component.growth()));
     }
 
-    private Component time(int ticks) { // TODO :: red for negative, green for positive?
+    private Component time(int ticks) {
         int hours = (int) (Functions.ticksToHours(ticks));
         int minutes = (int) (Functions.ticksToMinutes(ticks - Functions.hoursToTicks(hours)));
         int seconds = (int) (Functions.ticksToSeconds(ticks - Functions.hoursToTicks(hours) - Functions.minutesToTicks(minutes)));
-        StringBuilder builder = new StringBuilder();
+        return Component.translatable(TIME, ticks > 0 ? "+" : "-", format(hours), format(minutes), format(seconds)).withStyle(ticks > 0 ? ChatFormatting.GREEN : ChatFormatting.RED);
+    }
 
-        if (hours != 0) {
-            builder.append(hours).append("h ");
-        }
-
-        if (minutes != 0) {
-            builder.append(minutes).append("m ");
-        }
-
-        if (seconds != 0) {
-            builder.append(seconds).append("s");
-        }
-
-        return Component.literal(builder.toString());
+    private String format(int number) {
+        return FORMAT.format(Math.abs(number));
     }
 
     @Override
