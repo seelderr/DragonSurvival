@@ -184,7 +184,8 @@ public class DragonStateHandler extends EntityStateHandler {
 
         this.dragonLevel = dragonLevel;
 
-        if (isSameLevel && player != null && player.level().isClientSide()) {
+        if (!isSameLevel && player != null && player.level().isClientSide()) {
+            // Only need to update when the level changes (for the skin)
             ClientProxy.sendClientData();
         }
 
