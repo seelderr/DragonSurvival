@@ -17,7 +17,10 @@
               "location": {
                 "dimension": "minecraft:overworld"
               },
-              "nbt": "{\"neoforge:attachments\":{\"dragonsurvival:dragon_handler\":{type:\"forest\"}}}"
+              "type_specific": {
+                "type": "dragonsurvival:dragon_predicate",
+                "dragon_type": "forest"
+              }
             }
           }
         ]

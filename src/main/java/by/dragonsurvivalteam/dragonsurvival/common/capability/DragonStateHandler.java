@@ -155,6 +155,8 @@ public class DragonStateHandler extends EntityStateHandler {
 
         if (dragonLevel == null || !dragonLevel.value().sizeRange().matches(size)) {
             levelToSet = DragonLevel.get(player != null ? player.registryAccess() : null, size);
+            // FIXME :: check can grow into -> that check is server side, therefor this method needs to be server-side
+            //  meaning there will be a separate method called 'setRenderingSize' or sth. like that
         }
 
         setSize(levelToSet, size, player);

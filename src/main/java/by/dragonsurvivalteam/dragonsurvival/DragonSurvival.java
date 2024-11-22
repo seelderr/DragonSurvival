@@ -80,6 +80,7 @@ public class DragonSurvival {
         DSTrades.DS_POI_TYPES.register(bus);
         DSTrades.DS_VILLAGER_PROFESSIONS.register(bus);
         DSStructurePlacementTypes.DS_STRUCTURE_PLACEMENT_TYPES.register(bus);
+        DSSubPredicates.REGISTRY.register(bus);
         DSAdvancementTriggers.DS_TRIGGERS.register(bus);
         DSCommands.ARGUMENT_TYPES.register(bus);
         GLM.register(bus);

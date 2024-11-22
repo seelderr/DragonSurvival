@@ -8,6 +8,7 @@ import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.Pair;
+import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
@@ -23,10 +24,19 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.registries.DataPackRegistryEvent;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import javax.annotation.Nullable;
+
+/*
+TODO ::
+    add 'can_naturally_grow' boolean
+        or should this be a predicate as well?
+    add 'can_grow_into' predicate
+        what if you have [1:ok, 2:not_ok, 3:ok] dragon levels? should it stay at 1 or move to 3?
+        if it should stay at 1 the size would probably also be limited to the max. size of that level
+*/
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public record DragonLevel(
@@ -35,7 +45,9 @@ public record DragonLevel(
         List<Modifier> modifiers,
         int harvestLevelBonus,
         double breakSpeedMultiplier,
-        List<MiscCodecs.GrowthItem> growthItems
+        List<MiscCodecs.GrowthItem> growthItems,
+        Optional<EntityPredicate> canNaturallyGrow,
+        Optional<EntityPredicate> canGrowInto
 ) implements AttributeModifierSupplier {
     public static final ResourceKey<Registry<DragonLevel>> REGISTRY = ResourceKey.createRegistryKey(DragonSurvival.res("dragon_levels"));
 
@@ -45,14 +57,16 @@ public record DragonLevel(
             Modifier.CODEC.listOf().fieldOf("modifiers").forGetter(DragonLevel::modifiers),
             ExtraCodecs.intRange(0, 4).fieldOf("harvest_level_bonus").forGetter(DragonLevel::harvestLevelBonus),
             MiscCodecs.doubleRange(1, 10).fieldOf("break_speed_multiplier").forGetter(DragonLevel::breakSpeedMultiplier),
-            MiscCodecs.GrowthItem.CODEC.listOf().optionalFieldOf("growth_items", List.of()).forGetter(DragonLevel::growthItems)
+            MiscCodecs.GrowthItem.CODEC.listOf().optionalFieldOf("growth_items", List.of()).forGetter(DragonLevel::growthItems),
+            EntityPredicate.CODEC.optionalFieldOf("can_naturally_grow").forGetter(DragonLevel::canNaturallyGrow),
+            EntityPredicate.CODEC.optionalFieldOf("can_grow_into").forGetter(DragonLevel::canGrowInto)
     ).apply(instance, instance.stable(DragonLevel::new)));
 
     public static final Codec<Holder<DragonLevel>> CODEC = RegistryFixedCodec.create(REGISTRY);
     public static final StreamCodec<RegistryFriendlyByteBuf, Holder<DragonLevel>> STREAM_CODEC = ByteBufCodecs.holderRegistry(REGISTRY);
 
     /** Currently used for certain mechanics / animations */
-    public static final double MAX_HANDLED_SIZE = 60; // TODO level :: remove
+    public static final double MAX_HANDLED_SIZE = 60; // TODO :: remove
 
     private static DragonLevel smallest;
     private static DragonLevel largest;
@@ -119,10 +133,16 @@ public record DragonLevel(
         return registry.listElementIds().toList();
     }
 
+    public double getSizeWithinRange(double size) {
+        return Math.clamp(size, sizeRange().min(), sizeRange().max());
+    }
+
+    /** Returns the size that is clamped to the smallest and largest dragon sizes */
     public static double getBoundedSize(double size) {
         return Math.clamp(size, smallest.sizeRange().min(), largest.sizeRange().max());
     }
 
+    /** Returns the bounds between the smallest and largest dragon sizes */
     public static MiscCodecs.Bounds getBounds() {
         return new MiscCodecs.Bounds(smallest.sizeRange().min(), largest.sizeRange().max());
     }

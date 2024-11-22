@@ -29,7 +29,6 @@ import net.minecraft.core.HolderSet;
 import net.minecraft.core.component.DataComponentPredicate;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.FluidTags;
@@ -48,7 +47,6 @@ import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.*;
-import net.neoforged.neoforge.attachment.AttachmentHolder;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.AdvancementProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
@@ -60,6 +58,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import static by.dragonsurvivalteam.dragonsurvival.common.codecs.Condition.*;
 import static by.dragonsurvivalteam.dragonsurvival.registry.datagen.advancements.LangKey.*;
 
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType") // ignore
@@ -519,24 +518,6 @@ public class DSAdvancements implements AdvancementProvider.AdvancementGenerator 
 
     private LocationPredicate.Builder light(final MinMaxBounds.Ints bounds) {
         return LocationPredicate.Builder.location().setLight(LightPredicate.Builder.light().setComposite(bounds));
-    }
-
-    private EntityPredicate.Builder dragonType(final AbstractDragonType type) {
-        return EntityPredicate.Builder.entity().nbt(new NbtPredicate(dragonNBT(type)));
-    }
-
-    private CompoundTag dragonNBT(final AbstractDragonType dragonType) {
-        CompoundTag type = new CompoundTag();
-        type.putString("type", dragonType.getTypeName());
-
-        CompoundTag data = new CompoundTag();
-        //noinspection DataFlowIssue -> ignore
-        data.put(DragonSurvival.DRAGON_HANDLER.getKey().location().toString(), type);
-
-        CompoundTag nbt = new CompoundTag();
-        nbt.put(AttachmentHolder.ATTACHMENTS_NBT_KEY, data);
-
-        return nbt;
     }
 
     @SuppressWarnings("deprecation") // ignore

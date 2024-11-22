@@ -11,7 +11,10 @@
               "location": {
                 "structures": "#minecraft:shipwreck"
               },
-              "nbt": "{\"neoforge:attachments\":{\"dragonsurvival:dragon_handler\":{type:\"sea\"}}}"
+              "type_specific": {
+                "type": "dragonsurvival:dragon_predicate",
+                "dragon_type": "sea"
+              }
             }
           }
         ]

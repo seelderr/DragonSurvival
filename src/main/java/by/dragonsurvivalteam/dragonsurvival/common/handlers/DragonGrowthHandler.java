@@ -4,12 +4,15 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.MiscCodecs;
-import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncSize;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAdvancementTriggers;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+import net.minecraft.ChatFormatting;
+import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.core.Holder;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -19,9 +22,16 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
+import java.util.Optional;
 
 @EventBusSubscriber(modid = DragonSurvival.MODID)
 public class DragonGrowthHandler {
+    @Translation(type = Translation.Type.MISC, comments = "You have reached the largest size")
+    private static final String REACHED_LARGEST = Translation.Type.GUI.wrap("system.reached_largest");
+
+    @Translation(type = Translation.Type.MISC, comments = "You have reached the smallest size")
+    private static final String REACHED_SMALLEST = Translation.Type.GUI.wrap("system.reached_smallest");
+
     @SubscribeEvent
     public static void onItemUse(PlayerInteractEvent.RightClickItem event) {
         Player player = event.getEntity();
@@ -40,7 +50,7 @@ public class DragonGrowthHandler {
         double newSize = DragonLevel.getBoundedSize(data.getSize() + growth);
 
         if (data.getSize() == newSize) {
-            // TODO :: send system message?
+            player.sendSystemMessage(Component.translatable(growth > 0 ? REACHED_LARGEST : REACHED_SMALLEST).withStyle(ChatFormatting.RED));
             return;
         }
 
@@ -73,32 +83,41 @@ public class DragonGrowthHandler {
 
     @SubscribeEvent
     public static void onPlayerUpdate(PlayerTickEvent.Pre event) {
-        Player player = event.getEntity();
-
-        if (!ServerConfig.naturalGrowth || player.level().isClientSide()) {
+        if (!(event.getEntity() instanceof ServerPlayer serverPlayer)) {
             return;
         }
 
-        DragonStateHandler data = DragonStateProvider.getData(player);
+        DragonStateHandler data = DragonStateProvider.getData(serverPlayer);
 
-        if (!data.isDragon() || !data.isGrowing) {
+        if (!data.isDragon()) {
+            return;
+        }
+
+        DragonLevel dragonLevel = data.getLevel().value();
+        Optional<EntityPredicate> canNaturallyGrow = dragonLevel.canNaturallyGrow();
+
+        if (canNaturallyGrow.isPresent() && !canNaturallyGrow.get().matches(serverPlayer.serverLevel(), serverPlayer.position(), serverPlayer)) {
+            return;
+        }
+
+        if (!data.isDragon() || /* FIXME :: probably remove? */ !data.isGrowing) {
             return;
         }
 
         int increment = Functions.secondsToTicks(60);
 
-        if (player.tickCount % increment != 0) {
+        if (serverPlayer.tickCount % increment != 0) {
             return;
         }
 
-        DragonLevel level = data.getLevel().value();
-        double growth = level.ticksToSize(increment);
+        double oldSize = data.getSize();
+        double newSize = dragonLevel.getSizeWithinRange(oldSize + dragonLevel.ticksToSize(increment));
 
-        if (growth > 0) {
-            data.setSize(data.getSize() + growth, player);
-            PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncSize.Data(player.getId(), data.getSize()));
-            DSAdvancementTriggers.BE_DRAGON.get().trigger((ServerPlayer) player, data.getSize(), data.getTypeName());
-            player.refreshDimensions();
+        if (newSize != oldSize) {
+            data.setSize(newSize, serverPlayer);
+            PacketDistributor.sendToPlayersTrackingEntityAndSelf(serverPlayer, new SyncSize.Data(serverPlayer.getId(), data.getSize()));
+            DSAdvancementTriggers.BE_DRAGON.get().trigger(serverPlayer, data.getSize(), data.getTypeName());
+            serverPlayer.refreshDimensions();
         }
     }
 }

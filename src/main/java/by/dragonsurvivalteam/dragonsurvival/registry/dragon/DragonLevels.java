@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.dragon;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.Condition;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.MiscCodecs;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.Modifier;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
@@ -15,6 +16,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 
 import java.util.List;
+import java.util.Optional;
 
 import static by.dragonsurvivalteam.dragonsurvival.common.codecs.ModifierType.DRAGON_LEVEL;
 
@@ -55,7 +57,9 @@ public class DragonLevels {
                         MiscCodecs.GrowthItem.create(Functions.minutesToTicks(30), DSItems.WEAK_DRAGON_HEART.value()),
                         MiscCodecs.GrowthItem.create(Functions.minutesToTicks(10), DSItems.DRAGON_HEART_SHARD.value()),
                         MiscCodecs.GrowthItem.create(Functions.hoursToTicks(-1), DSItems.STAR_BONE.value())
-                )
+                ),
+                Optional.empty(),
+                Optional.empty()
         ));
 
         context.register(young, new DragonLevel(
@@ -82,7 +86,9 @@ public class DragonLevels {
                         MiscCodecs.GrowthItem.create(Functions.hoursToTicks(1), DSItems.ELDER_DRAGON_HEART.value()),
                         MiscCodecs.GrowthItem.create(Functions.minutesToTicks(30), DSItems.WEAK_DRAGON_HEART.value()),
                         MiscCodecs.GrowthItem.create(Functions.hoursToTicks(-1), DSItems.STAR_BONE.value())
-                )
+                ),
+                Optional.empty(),
+                Optional.empty()
         ));
 
         context.register(adult, new DragonLevel(
@@ -108,7 +114,9 @@ public class DragonLevels {
                 List.of(
                         MiscCodecs.GrowthItem.create(Functions.hoursToTicks(1), DSItems.ELDER_DRAGON_HEART.value()),
                         MiscCodecs.GrowthItem.create(Functions.hoursToTicks(-1), DSItems.STAR_BONE.value())
-                )
+                ),
+                Optional.of(Condition.dragonSize(40, 50).build()), // FIXME :: (test) remove
+                Optional.empty()
         ));
     }
 
