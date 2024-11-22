@@ -368,15 +368,6 @@ public class ClientProxy {
         }
     }
 
-    public static void handleSyncSize(final SyncSize.Data message) {
-        Entity entity = Minecraft.getInstance().level.getEntity(message.playerId());
-
-        if (entity instanceof Player player) {
-            DragonStateProvider.getOptional(player).ifPresent(handler -> handler.setSize(message.size(), player));
-            player.refreshDimensions();
-        }
-    }
-
     public static void handleDiggingStatus(final SyncDiggingStatus.Data message) {
         Player localPlayer = Minecraft.getInstance().player;
 

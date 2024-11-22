@@ -12,18 +12,11 @@ import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 
-import java.text.NumberFormat;
-
 public class ClientGrowthComponent implements ClientTooltipComponent {
     @Translation(type = Translation.Type.MISC, comments = "%s %s:%s:%s")
     private static final String TIME = Translation.Type.GUI.wrap("growth.time");
 
-    private static final NumberFormat FORMAT = NumberFormat.getInstance();
     private static final int ICON_SIZE = 20;
-
-    static {
-        FORMAT.setMinimumIntegerDigits(2);
-    }
 
     private final GrowthComponent component;
     private final Component tooltip;
@@ -34,14 +27,8 @@ public class ClientGrowthComponent implements ClientTooltipComponent {
     }
 
     private Component time(int ticks) {
-        int hours = (int) (Functions.ticksToHours(ticks));
-        int minutes = (int) (Functions.ticksToMinutes(ticks - Functions.hoursToTicks(hours)));
-        int seconds = (int) (Functions.ticksToSeconds(ticks - Functions.hoursToTicks(hours) - Functions.minutesToTicks(minutes)));
-        return Component.translatable(TIME, ticks > 0 ? "+" : "-", format(hours), format(minutes), format(seconds)).withStyle(ticks > 0 ? ChatFormatting.GREEN : ChatFormatting.RED);
-    }
-
-    private String format(int number) {
-        return FORMAT.format(Math.abs(number));
+        Functions.Time time = Functions.Time.fromTicks(ticks);
+        return Component.translatable(TIME, ticks > 0 ? "+" : "-", time.format(time.hours()), time.format(time.minutes()), time.format(time.seconds())).withStyle(ticks > 0 ? ChatFormatting.GREEN : ChatFormatting.RED);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.screens;
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.TabButton;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
@@ -173,8 +174,12 @@ public class InventoryScreenHandler {
         Minecraft minecraft = Minecraft.getInstance();
         LocalPlayer player = Minecraft.getInstance().player;
 
+
         if (player == null || !DragonStateProvider.isDragon(minecraft.player))
             return;
+
+        DragonStateHandler data = DragonStateProvider.getData(player);
+        data.tickCount++;
 
         if (Keybind.DRAGON_INVENTORY.consumeClick()) {
             if (minecraft.screen == null) {

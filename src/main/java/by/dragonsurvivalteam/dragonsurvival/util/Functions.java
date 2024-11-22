@@ -12,6 +12,8 @@ import net.minecraft.world.entity.player.Player;
 import org.joml.Vector3f;
 import software.bernie.geckolib.util.RenderUtil;
 
+import java.text.NumberFormat;
+
 public class Functions {
     public static int daysToTicks(double days) {
         return hoursToTicks(days) * 24;
@@ -39,6 +41,33 @@ public class Functions {
 
     public static double ticksToSeconds(int ticks) {
         return ticks / 20d;
+    }
+
+    public record Time(int hours, int minutes, int seconds) {
+        private static final NumberFormat FORMAT = NumberFormat.getInstance();
+
+        static {
+            FORMAT.setMinimumIntegerDigits(2);
+        }
+
+        public static Time fromTicks(int ticks) {
+            int hours = (int) (Functions.ticksToHours(ticks));
+            int minutes = (int) (Functions.ticksToMinutes(ticks - Functions.hoursToTicks(hours)));
+            int seconds = (int) (Functions.ticksToSeconds(ticks - Functions.hoursToTicks(hours) - Functions.minutesToTicks(minutes)));
+            return new Time(hours, minutes, seconds);
+        }
+
+        public boolean hasTime() {
+            return hours() != 0 || minutes() != 0 || seconds() != 0;
+        }
+
+        public String format() {
+            return format(hours()) + ":" + format(minutes()) + ":" + format(seconds());
+        }
+
+        public String format(int number) {
+            return FORMAT.format(Math.abs(number));
+        }
     }
 
     /**

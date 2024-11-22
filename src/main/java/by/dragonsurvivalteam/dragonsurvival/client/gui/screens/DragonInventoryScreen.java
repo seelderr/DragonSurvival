@@ -7,7 +7,6 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.H
 import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonGrowthHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawRender;
@@ -82,12 +81,6 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
     private static final ResourceLocation CLAWS_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/dragon_claws.png");
     private static final ResourceLocation DRAGON_CLAW_BUTTON = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/dragon_claws_button.png");
     private static final ResourceLocation DRAGON_CLAW_CHECKMARK = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/dragon_claws_checked.png");
-
-    private static final NumberFormat FORMAT = NumberFormat.getInstance();
-
-    static {
-        FORMAT.setMinimumIntegerDigits(2);
-    }
 
     public static double mouseX = -1;
     public static double mouseY = -1;
@@ -313,21 +306,12 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
             String ageInformation = NumberFormat.getPercentInstance().format(percentage);
 
             if (handler.isGrowing) {
-                double missing = dragonLevel.sizeRange().max() - handler.getSize();
-                double increment = (dragonLevel.sizeRange().max() - dragonLevel.sizeRange().min()) / dragonLevel.ticksUntilGrown();
-                double missingTicks = Functions.ticksToSeconds((int) (missing / increment));
+                double sizeToTicks = (dragonLevel.sizeRange().max() - dragonLevel.sizeRange().min()) / dragonLevel.ticksUntilGrown();
+                double missingSize = dragonLevel.sizeRange().max() - handler.getSize();
+                Functions.Time time = Functions.Time.fromTicks((int) (missingSize / sizeToTicks));
 
-                if (missingTicks > 0) {
-                    int minutes = (int) (missingTicks / 60);
-                    int hours = minutes / 60;
-                    // The server updates the size based on the interval - therefor we calculate the amount of seconds passed on the client (since we don't have the actual data)
-                    // Since the tick count is not the same (between server and client) the minute (or hour) might change 1-3 seconds too early or too late
-                    // (We could add a field to the dragon data and have the server update it on size changes and otherwise increment it per tick on the client side)
-                    int seconds = (int) Functions.ticksToSeconds(DragonGrowthHandler.getInterval() - player.tickCount % DragonGrowthHandler.getInterval());
-                    minutes -= hours * 60;
-
-                    ageInformation += " (" + FORMAT.format(hours) + ":" + FORMAT.format(minutes) + ":" + FORMAT.format(seconds) + ")";
-
+                if (time.hasTime()) {
+                    ageInformation += " (" + time.format() + ")";
                 }
             } else {
                 ageInformation += " (§4--:--:--§r)";

@@ -5,8 +5,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.MiscCodecs;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncGrowthState;
-import by.dragonsurvivalteam.dragonsurvival.network.player.SyncSize;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSAdvancementTriggers;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
@@ -57,13 +55,6 @@ public class DragonGrowthHandler {
         if (!player.isCreative()) {
             event.getItemStack().shrink(1);
         }
-
-        if (player.level().isClientSide()) {
-            return;
-        }
-
-        PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncSize.Data(player.getId(), data.getSize()));
-        DSAdvancementTriggers.BE_DRAGON.get().trigger((ServerPlayer) player, data.getSize(), data.getTypeName());
     }
 
     public static double getGrowth(final Holder<DragonLevel> dragonLevel, final Item item) {
@@ -108,13 +99,10 @@ public class DragonGrowthHandler {
 
         if (serverPlayer.tickCount % getInterval() == 0) {
             data.setSize(newSize, serverPlayer);
-            PacketDistributor.sendToPlayersTrackingEntityAndSelf(serverPlayer, new SyncSize.Data(serverPlayer.getId(), data.getSize()));
-            DSAdvancementTriggers.BE_DRAGON.get().trigger(serverPlayer, data.getSize(), data.getTypeName());
-            serverPlayer.refreshDimensions();
         }
     }
 
     public static int getInterval() {
-        return Functions.secondsToTicks(60);
+        return Functions.secondsToTicks(1);
     }
 }

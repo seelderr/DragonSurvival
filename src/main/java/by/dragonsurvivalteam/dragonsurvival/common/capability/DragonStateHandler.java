@@ -11,6 +11,8 @@ import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.mixins.PlayerEndMixin;
 import by.dragonsurvivalteam.dragonsurvival.mixins.PlayerStartMixin;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
+import by.dragonsurvivalteam.dragonsurvival.network.player.SyncSize;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSAdvancementTriggers;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBodies;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
@@ -24,11 +26,13 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -44,7 +48,8 @@ public class DragonStateHandler extends EntityStateHandler {
     @SuppressWarnings("unchecked")
     public final Supplier<SubCap>[] caps = new Supplier[]{this::getSkinData, this::getMagicData, this::getEmoteData, this::getClawToolData};
 
-    // Weapon / tool swap data - START
+    // --- Tool swap --- //
+
     /** Used in {@link PlayerStartMixin} and {@link PlayerEndMixin} */
     public ItemStack storedMainHandWeapon = ItemStack.EMPTY;
     public boolean switchedWeapon;
@@ -52,15 +57,20 @@ public class DragonStateHandler extends EntityStateHandler {
     public ItemStack storedMainHandTool = ItemStack.EMPTY;
     public boolean switchedTool;
     public int switchedToolSlot = -1;
+
     /** To track the state if a tool swap is triggered within a tool swap (should only swap back if the last tool swap finishes) */
     public int toolSwapLayer;
-    // Weapon / tool swap data - END
+
+    // --- Other --- //
 
     /** Translucent rendering in the inventory screen leads to issues (invisible model) */
     public boolean isBeingRenderedInInventory;
+
     /** Only needs to be updated on effect removal (server -> client) */
     private int hunterStacks;
 
+    /** Tick count from the server - client increments it */
+    public int tickCount;
     public boolean isGrowing = true;
     public StarHeartItem.State starHeartState = StarHeartItem.State.INACTIVE;
 
@@ -74,7 +84,7 @@ public class DragonStateHandler extends EntityStateHandler {
     public boolean refreshBody;
 
     /** Last timestamp the server synchronized the player */
-    public int lastSync = 0;
+    public int lastSync;
 
     private final DragonMovementData movementData = new DragonMovementData();
     private final ClawInventory clawToolData = new ClawInventory(this);
@@ -161,7 +171,9 @@ public class DragonStateHandler extends EntityStateHandler {
     }
 
     public void setSize(@NotNull final Holder<DragonLevel> dragonLevel, double size, @Nullable final Player player) {
-        if (this.size == size && this.dragonLevel != null && this.dragonLevel.is(dragonLevel)) {
+        boolean isSameLevel = this.dragonLevel != null && this.dragonLevel.is(dragonLevel);
+
+        if (this.size == size && isSameLevel) {
             return;
         }
 
@@ -174,13 +186,18 @@ public class DragonStateHandler extends EntityStateHandler {
 
         this.dragonLevel = dragonLevel;
 
-        if (player != null && player.level().isClientSide()) {
-            // FIXME :: why does this happen here?
+        if (isSameLevel && player != null && player.level().isClientSide()) {
             ClientProxy.sendClientData();
         }
 
-        setSavedDragonSize(dragonType.getTypeName(), size);
-        DSModifiers.updateSizeModifiers(player, this);
+        if (player instanceof ServerPlayer serverPlayer) {
+            PacketDistributor.sendToPlayersTrackingEntityAndSelf(serverPlayer, new SyncSize(serverPlayer.getId(), getLevel(), getSize()));
+            DSAdvancementTriggers.BE_DRAGON.get().trigger(serverPlayer, getSize(), getTypeName());
+            serverPlayer.refreshDimensions();
+
+            setSavedDragonSize(dragonType.getTypeNameLowerCase(), size);
+            DSModifiers.updateSizeModifiers(player, this);
+        }
     }
 
     public double getSavedDragonSize(final String type) {

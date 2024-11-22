@@ -1,38 +1,41 @@
 package by.dragonsurvivalteam.dragonsurvival.network.player;
 
-import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
-import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
-import net.minecraft.network.FriendlyByteBuf;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
+import net.minecraft.core.Holder;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+import org.jetbrains.annotations.NotNull;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
+/** Synchronizes dragon level and size */
+public record SyncSize(int playerId, Holder<DragonLevel> dragonLevel, double size) implements CustomPacketPayload {
+    public static final Type<SyncSize> TYPE = new Type<>(DragonSurvival.res("sync_size"));
 
-/**
- * Synchronizes dragon level and size
- */
-public class SyncSize implements IMessage<SyncSize.Data> {
-    public static void handleClient(final SyncSize.Data message, final IPayloadContext context) {
-        context.enqueueWork(() -> ClientProxy.handleSyncSize(message));
+    public static final StreamCodec<RegistryFriendlyByteBuf, SyncSize> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.VAR_INT, SyncSize::playerId,
+            DragonLevel.STREAM_CODEC, SyncSize::dragonLevel,
+            ByteBufCodecs.DOUBLE, SyncSize::size,
+            SyncSize::new
+    );
+
+    public static void handleClient(final SyncSize packet, final IPayloadContext context) {
+        context.enqueueWork(() -> {
+            if (context.player().level().getEntity(packet.playerId()) instanceof Player player) {
+                DragonStateHandler data = DragonStateProvider.getData(player);
+                data.setSize(packet.dragonLevel(), packet.size(), player);
+                player.refreshDimensions();
+            }
+        });
     }
 
-    public record Data(int playerId, double size) implements CustomPacketPayload {
-        public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "size"));
-
-        public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
-                ByteBufCodecs.VAR_INT,
-                Data::playerId,
-                ByteBufCodecs.DOUBLE,
-                Data::size,
-                Data::new
-        );
-
-        @Override
-        public Type<? extends CustomPacketPayload> type() {
-            return TYPE;
-        }
+    @Override
+    public @NotNull Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 }
