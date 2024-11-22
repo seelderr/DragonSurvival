@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.skins;
 
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
 import net.minecraft.resources.ResourceKey;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -20,7 +20,7 @@ abstract public class NetSkinLoader {
 
     abstract public boolean ping();
 
-    protected String makeResourceName(String playerName, ResourceKey<DragonLevel> dragonLevel, String... extra) {
+    protected String makeResourceName(String playerName, ResourceKey<DragonStage> dragonLevel, String... extra) {
         String playerKey = playerName + "_" + dragonLevel.location().getPath();
         String[] text = ArrayUtils.addAll(new String[]{playerKey}, extra);
         return StringUtils.join(text, "_");

@@ -7,7 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.Dr
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.LayerSettings;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SavedSkinPresets;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
 import net.minecraft.resources.ResourceKey;
 import net.neoforged.neoforge.common.util.Lazy;
 
@@ -25,7 +25,7 @@ public class SkinPortingSystem {
     public static void upgrade0to3(SavedSkinPresets presets) {
         for (String type : presets.skinPresets.keySet()) {
             for (int saveSlot : presets.skinPresets.get(type).keySet()) {
-                for (ResourceKey<DragonLevel> dragonLevel : DragonLevel.keys(null)) {
+                for (ResourceKey<DragonStage> dragonLevel : DragonStage.keys(null)) {
                     Lazy<DragonLevelCustomization> lazy = presets.skinPresets.get(type).get(saveSlot).get(dragonLevel);
 
                     if (lazy == null) {

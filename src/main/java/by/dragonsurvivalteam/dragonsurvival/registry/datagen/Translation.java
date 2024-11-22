@@ -64,8 +64,8 @@ public @interface Translation {
         EMOTE(DragonSurvival.MODID + ".emote.", ""),
         BODY(DragonSurvival.MODID + ".body.", ""),
         BODY_DESCRIPTION(DragonSurvival.MODID + ".body.", ".desc"),
-        LEVEL(DragonSurvival.MODID + ".level.", ""),
-        LEVEL_DESCRIPTION(DragonSurvival.MODID + ".level.", ".desc"),
+        STAGE(DragonSurvival.MODID + ".stage.", ""),
+        STAGE_DESCRIPTION(DragonSurvival.MODID + ".stage.", ".desc"),
         /** When used on {@link String} and no specified key it's expected that the string contains the translation key */
         MISC("", "");
 

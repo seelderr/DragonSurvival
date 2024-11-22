@@ -5,7 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -57,7 +57,7 @@ public class TestUtils {
     }
 
     @SuppressWarnings("DataFlowIssue") // ignore
-    public static void setToDragon(final GameTestHelper helper, final Player player, final AbstractDragonType dragonType, final ResourceKey<DragonBody> dragonBody, final ResourceKey<DragonLevel> dragonLevel) {
+    public static void setToDragon(final GameTestHelper helper, final Player player, final AbstractDragonType dragonType, final ResourceKey<DragonBody> dragonBody, final ResourceKey<DragonStage> dragonLevel) {
         DragonStateHandler data = DragonStateProvider.getData(player);
 
         data.setType(dragonType, player);
@@ -67,8 +67,8 @@ public class TestUtils {
         data.setBody(body, player);
         helper.assertTrue(DragonUtils.isBody(data, body), String.format("Dragon type was [%s] - expected [%s]", data.getBody(), dragonBody));
 
-        Holder<DragonLevel> level = player.registryAccess().holderOrThrow(dragonLevel);
-        data.setSize(level, player);
+        Holder<DragonStage> level = player.registryAccess().holderOrThrow(dragonLevel);
+        data.setSize(player, level);
         helper.assertTrue(data.getLevel().is(level), String.format("Dragon level was [%s] - expected [%s]", data.getLevel().getKey().location(), level.getKey().location()));
 
         helper.assertTrue(data.isDragon(), "Player is not a dragon - expected player to be a dragon");
@@ -90,7 +90,7 @@ public class TestUtils {
         Holder<DragonBody> dragonBody = data.getBody();
         helper.assertTrue(dragonBody == null, String.format("Dragon body was [%s] - expected [null]", dragonBody));
 
-        Holder<DragonLevel> dragonLevel = data.getLevel();
+        Holder<DragonStage> dragonLevel = data.getLevel();
         helper.assertTrue(dragonLevel == null, String.format("Dragon level was [%s] - expected [null]", dragonLevel));
 
         double size = data.getSize();

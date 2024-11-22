@@ -5,7 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEnchantments;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
 import by.dragonsurvivalteam.dragonsurvival.util.EnchantmentUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.core.component.DataComponents;
@@ -73,12 +73,12 @@ public class EnchantmentEffectHandler {
                 return;
             }
 
-            victimData.setSize(victimData.getSize() - getStolenTime(victimData) * enchantmentLevel, victim);
+            victimData.setSize(victim, victimData.getLevel(), victimData.getSize() - getStolenTime(victimData) * enchantmentLevel);
             DragonStateHandler attackerData = DragonStateProvider.getData(attacker);
 
             if (attackerData.isDragon()) {
                 // TODO :: why doesn't this scale with the enchantment level
-                attackerData.setSize(attackerData.getSize() + getStolenTime(attackerData), attacker);
+                attackerData.setSize(attacker, attackerData.getLevel(), attackerData.getSize() + getStolenTime(attackerData));
             }
 
             attacker.level().playLocalSound(attacker.blockPosition(), SoundEvents.AMBIENT_UNDERWATER_LOOP_ADDITIONS_ULTRA_RARE, SoundSource.PLAYERS, 2, 1, false);
@@ -86,8 +86,8 @@ public class EnchantmentEffectHandler {
     }
 
     private static double getStolenTime(DragonStateHandler handler) {
-        int ticksToSteal = Functions.minutesToTicks(30);
-        DragonLevel level = handler.getLevel().value();
+        int ticksToSteal = Functions.minutesToTicks(30); // TODO :: make this configurable in the enchantment
+        DragonStage level = handler.getLevel().value();
         return level.ticksToSize(ticksToSteal);
     }
 }

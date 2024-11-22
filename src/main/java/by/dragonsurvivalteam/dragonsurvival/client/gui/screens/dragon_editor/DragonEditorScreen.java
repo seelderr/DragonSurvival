@@ -36,8 +36,8 @@ import by.dragonsurvivalteam.dragonsurvival.network.syncing.SyncComplete;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevels;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStages;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -146,7 +146,7 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
     public Holder<DragonBody> dragonBody;
 
     /** Dragon level of {@link DragonEditorScreen#HANDLER} */
-    public Holder<DragonLevel> dragonLevel;
+    public Holder<DragonStage> dragonLevel;
 
     public SkinPreset preset;
     public int selectedSaveSlot;
@@ -157,7 +157,7 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
     private int guiLeft;
 
     private final String[] animations = {"sit_dentist", "sit_head_locked", "idle_head_locked", "fly_head_locked", "swim_fast_head_locked", "run_head_locked", "spinning_on_back"};
-    private final HashMap<Holder<DragonLevel>, Integer> presetSelections = new HashMap<>();
+    private final HashMap<Holder<DragonStage>, Integer> presetSelections = new HashMap<>();
     private final Map<EnumSkinLayer, DropDownButton> dropdownButtons = new HashMap<>();
     private final Map<EnumSkinLayer, ColorSelectorButton> colorSelectorButtons = new HashMap<>();
 
@@ -208,12 +208,12 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
         }
     }
 
-    public static float setZoom(final Holder<DragonLevel> dragonLevel) {
+    public static float setZoom(final Holder<DragonStage> dragonLevel) {
         return (float) (0.4 * dragonLevel.value().sizeRange().min() + 20);
     }
 
-    public final Function<Holder<DragonLevel>, Holder<DragonLevel>> selectLevelAction = (newLevel) -> {
-        Holder<DragonLevel> previousLevel = dragonLevel;
+    public final Function<Holder<DragonStage>, Holder<DragonStage>> selectLevelAction = (newLevel) -> {
+        Holder<DragonStage> previousLevel = dragonLevel;
         dragonLevel = newLevel;
         dragonRender.zoom = setZoom(dragonLevel);
         HANDLER.getSkinData().compileSkin(dragonLevel);
@@ -406,7 +406,7 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
         savedCustomizations.skinPresets.computeIfAbsent(type, key -> new HashMap<>());
         savedCustomizations.skinPresets.get(type).put(selectedSaveSlot, newPreset);
 
-        for (Holder<DragonLevel> dragonLevel : presetSelections.keySet()) {
+        for (Holder<DragonStage> dragonLevel : presetSelections.keySet()) {
             savedCustomizations.current.get(type).put(Objects.requireNonNull(dragonLevel.getKey()).location().toString(), presetSelections.get(dragonLevel));
         }
 
@@ -426,7 +426,7 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
             dragonBody = localHandler.getBody();
         } else if (dragonType != null) {
             if (dragonLevel == null) {
-                dragonLevel = DragonLevel.get(null, DragonLevels.newborn).orElseThrow();
+                dragonLevel = DragonStage.get(null, DragonStages.newborn).orElseThrow();
             }
 
             if (dragonBody == null) {
@@ -497,10 +497,10 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
             hasInit = true;
         }
 
-        if (!data.isDragon() || DragonLevel.isBuiltinLevel(Objects.requireNonNull(data.getLevel()).getKey())) {
-            addRenderableWidget(new DragonLevelButton(this, DragonLevels.newborn, -180));
-            addRenderableWidget(new DragonLevelButton(this, DragonLevels.young, -60));
-            addRenderableWidget(new DragonLevelButton(this, DragonLevels.adult, 60));
+        if (!data.isDragon() || DragonStage.isBuiltinLevel(Objects.requireNonNull(data.getLevel()).getKey())) {
+            addRenderableWidget(new DragonLevelButton(this, DragonStages.newborn, -180));
+            addRenderableWidget(new DragonLevelButton(this, DragonStages.young, -60));
+            addRenderableWidget(new DragonLevelButton(this, DragonStages.adult, 60));
         } else {
             addRenderableWidget(new DragonLevelButton(this, data.getLevel().getKey(), -60));
         }
@@ -836,7 +836,7 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
 
         HANDLER.setBody(dragonBody);
         HANDLER.getSkinData().skinPreset = preset;
-        HANDLER.setSize(dragonLevel, null);
+        HANDLER.setClientSize(dragonLevel);
         HANDLER.setHasFlight(true);
 
         if (selectedSaveSlot != lastSelected) {
@@ -901,16 +901,15 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
             data.setType(dragonType, minecraft.player);
             data.setBody(dragonBody, minecraft.player);
 
-            double size = data.getSavedDragonSize(data.getTypeName());
+            double size = data.getSavedDragonSize(data.getTypeName()); // TODO level :: add level to saved data (and dragon soul?)
 
             if (!ServerConfig.saveGrowthStage || size == DragonStateHandler.NO_SIZE) {
-                data.setSize(minecraft.player.registryAccess().holderOrThrow(DragonLevels.newborn), minecraft.player);
+                data.setClientSize(minecraft.player.registryAccess().holderOrThrow(DragonStages.newborn));
             } else {
-                data.setSize(size, minecraft.player);
+                data.setClientSize(size);
             }
 
             data.setHasFlight(ServerFlightHandler.startWithFlight || ServerConfig.saveGrowthStage && data.hasFlight());
-            data.setIsHiding(false);
             data.getMovementData().spinLearned = ServerConfig.saveGrowthStage && data.getMovementData().spinLearned;
 
             HANDLER.getSkinData().skinPreset = save();

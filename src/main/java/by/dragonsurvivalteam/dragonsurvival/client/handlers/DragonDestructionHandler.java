@@ -7,7 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
 import by.dragonsurvivalteam.dragonsurvival.mixins.client.LevelRendererAccess;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDestructionEnabled;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.SheetedDecalTextureGenerator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -63,7 +63,7 @@ public class DragonDestructionHandler {
 
             DragonStateHandler data = DragonStateProvider.getData(player);
 
-            if (!data.isDragon() || data.getSize() < DragonLevel.MAX_HANDLED_SIZE) {
+            if (!data.isDragon() || data.getSize() < DragonStage.MAX_HANDLED_SIZE) {
                 return;
             }
 
@@ -77,7 +77,7 @@ public class DragonDestructionHandler {
             int progress = set != null ? set.last().getProgress() : -1;
 
             if (progress != -1) {
-                int radius = (int) Math.floor((data.getSize() - DragonLevel.MAX_HANDLED_SIZE / 60 * ServerConfig.largeBlockBreakRadiusScalar));
+                int radius = (int) Math.floor((data.getSize() - DragonStage.MAX_HANDLED_SIZE / 60 * ServerConfig.largeBlockBreakRadiusScalar));
 
                 BlockPos.betweenClosedStream(AABB.ofSize(centerOfDestruction.getCenter(), radius, radius, radius)).forEach(offsetPosition -> {
                     double xDistance = (double) offsetPosition.getX() - x;

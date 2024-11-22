@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client.skins;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
 import by.dragonsurvivalteam.dragonsurvival.util.json.GsonFactory;
 import com.google.gson.Gson;
 import net.minecraft.resources.ResourceKey;
@@ -84,7 +84,7 @@ public class GithubSkinLoader extends NetSkinLoader {
 
     private static final String GLOW = "_glow";
 
-    public InputStream querySkinImage(final String skinName, final ResourceKey<DragonLevel> dragonLevel) {
+    public InputStream querySkinImage(final String skinName, final ResourceKey<DragonStage> dragonLevel) {
         try {
             String fetchName;
 

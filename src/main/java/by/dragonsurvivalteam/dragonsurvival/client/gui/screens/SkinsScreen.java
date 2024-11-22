@@ -19,8 +19,8 @@ import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncDragonSkinSettings;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevels;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStages;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.ibm.icu.impl.Pair;
 import com.mojang.math.Axis;
@@ -110,7 +110,7 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
     private static final String WIKI_URL = "https://github.com/DragonSurvivalTeam/DragonSurvival/wiki/3.-Customization";
     private static final ArrayList<String> SEEN_SKINS = new ArrayList<>();
 
-    private static Holder<DragonLevel> dragonLevel;
+    private static Holder<DragonStage> dragonLevel;
     private static ResourceLocation skinTexture;
     private static ResourceLocation glowTexture;
     private static String playerName;
@@ -146,7 +146,7 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
         SkinCap skinData = DragonStateProvider.getData(localPlayer).getSkinData();
 
         if (dragonLevel == null) {
-            dragonLevel = DragonLevel.get(localPlayer.registryAccess(), Double.MAX_VALUE);
+            dragonLevel = DragonStage.get(localPlayer.registryAccess(), Double.MAX_VALUE);
         }
     }
 
@@ -188,7 +188,7 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
             }
 
             handler.setHasFlight(true);
-            handler.setSize(dragonLevel, null);
+            handler.setClientSize(dragonLevel);
 
             if (handler.getBody() == null) {
                 handler.setBody(playerData.getBody());
@@ -215,7 +215,7 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
         guiGraphics.blit(BACKGROUND_TEXTURE, startX + 128, startY, 0, 0, 164, 256);
         drawNonShadowString(guiGraphics, minecraft.font, Component.translatable(SETTINGS).withStyle(ChatFormatting.BLACK), startX + 128 + imageWidth / 2, startY + 7, -1);
         guiGraphics.drawCenteredString(minecraft.font, Component.translatable(TOGGLE), startX + 128 + imageWidth / 2, startY + 30, -1);
-        drawNonShadowString(guiGraphics, minecraft.font, Component.empty().append(playerName + " - ").append(DragonLevel.translatableName(Objects.requireNonNull(dragonLevel.getKey()))).withStyle(ChatFormatting.GRAY), startX + 15, startY - 15, -1);
+        drawNonShadowString(guiGraphics, minecraft.font, Component.empty().append(playerName + " - ").append(DragonStage.translatableName(Objects.requireNonNull(dragonLevel.getKey()))).withStyle(ChatFormatting.GRAY), startX + 15, startY - 15, -1);
 
         if (!loading && noSkin) {
             if (playerName.equals(minecraft.player.getGameProfile().getName())) {
@@ -340,11 +340,11 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
         }).bounds(startX - 60, startY + 128, 90, 20).tooltip(Tooltip.create(Component.translatable(SELF_INFO))).build());
 
         addRenderableWidget(Button.builder(Component.translatable(RANDOM), button -> {
-            ArrayList<Pair<ResourceKey<DragonLevel>, String>> skins = new ArrayList<>();
+            ArrayList<Pair<ResourceKey<DragonStage>, String>> skins = new ArrayList<>();
             HashSet<String> users = new HashSet<>();
             Random random = new Random();
 
-            for (Map.Entry<ResourceKey<DragonLevel>, HashMap<String, SkinObject>> ent : DragonSkins.SKIN_USERS.entrySet()) {
+            for (Map.Entry<ResourceKey<DragonStage>, HashMap<String, SkinObject>> ent : DragonSkins.SKIN_USERS.entrySet()) {
                 for (Map.Entry<String, SkinObject> user : ent.getValue().entrySet()) {
                     if (!user.getValue().glow) {
                         skins.add(Pair.of(ent.getKey(), user.getKey()));
@@ -356,7 +356,7 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
             skins.removeIf(pair -> SEEN_SKINS.contains(pair.second));
 
             if (!skins.isEmpty()) {
-                Pair<ResourceKey<DragonLevel>, String> skin = skins.get(random.nextInt(skins.size()));
+                Pair<ResourceKey<DragonStage>, String> skin = skins.get(random.nextInt(skins.size()));
 
                 if (skin != null) {
                     dragonLevel = Objects.requireNonNull(player).registryAccess().holderOrThrow(skin.first);
@@ -374,14 +374,14 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
         }).bounds(startX + 35, startY + 128, 60, 20).tooltip(Tooltip.create(Component.translatable(RANDOM_INFO))).build());
 
         addRenderableWidget(new Button(startX + 90, startY - 20, 11, 17, Component.empty(), button -> {
-            ResourceKey<DragonLevel> nextLevel = dragonLevel.getKey();
+            ResourceKey<DragonStage> nextLevel = dragonLevel.getKey();
 
-            if (dragonLevel.is(DragonLevels.newborn)) {
-                nextLevel = DragonLevels.young;
-            } else if (dragonLevel.is(DragonLevels.young)) {
-                nextLevel = DragonLevels.adult;
-            } else if (dragonLevel.is(DragonLevels.adult)) {
-                nextLevel = DragonLevels.newborn;
+            if (dragonLevel.is(DragonStages.newborn)) {
+                nextLevel = DragonStages.young;
+            } else if (dragonLevel.is(DragonStages.young)) {
+                nextLevel = DragonStages.adult;
+            } else if (dragonLevel.is(DragonStages.adult)) {
+                nextLevel = DragonStages.newborn;
             }
 
             dragonLevel = Objects.requireNonNull(player).registryAccess().holderOrThrow(Objects.requireNonNull(nextLevel));
@@ -399,14 +399,14 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
         });
 
         addRenderableWidget(new Button(startX - 70, startY - 20, 11, 17, Component.empty(), button -> {
-            ResourceKey<DragonLevel> nextLevel = dragonLevel.getKey();
+            ResourceKey<DragonStage> nextLevel = dragonLevel.getKey();
 
-            if (dragonLevel.is(DragonLevels.adult)) {
-                nextLevel = DragonLevels.young;
-            } else if (dragonLevel.is(DragonLevels.young)) {
-                nextLevel = DragonLevels.newborn;
-            } else if (dragonLevel.is(DragonLevels.newborn)) {
-                nextLevel = DragonLevels.adult;
+            if (dragonLevel.is(DragonStages.adult)) {
+                nextLevel = DragonStages.young;
+            } else if (dragonLevel.is(DragonStages.young)) {
+                nextLevel = DragonStages.newborn;
+            } else if (dragonLevel.is(DragonStages.newborn)) {
+                nextLevel = DragonStages.adult;
             }
 
             dragonLevel = Objects.requireNonNull(player).registryAccess().holderOrThrow(Objects.requireNonNull(nextLevel));

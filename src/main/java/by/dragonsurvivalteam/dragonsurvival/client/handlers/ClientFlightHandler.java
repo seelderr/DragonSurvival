@@ -15,7 +15,7 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.ActionWithTimedCooldown;
 import by.dragonsurvivalteam.dragonsurvival.util.EnchantmentUtils;
@@ -117,7 +117,7 @@ public class ClientFlightHandler {
             if (handler.isDragon()) {
                 // I'm not entirely sure why 20 works here, but it seems to be the magic number that
                 // keeps the dragon's size from the camera's perspective constant.
-                float offset = (float) ((handler.getSize() - DragonLevel.MAX_HANDLED_SIZE) / 20);
+                float offset = (float) ((handler.getSize() - DragonStage.MAX_HANDLED_SIZE) / 20);
                 event.setDistance(event.getDistance() + offset + 1.5f);
             }
         });

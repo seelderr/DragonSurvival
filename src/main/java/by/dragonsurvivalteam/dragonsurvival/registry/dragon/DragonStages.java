@@ -20,23 +20,21 @@ import java.util.Optional;
 
 import static by.dragonsurvivalteam.dragonsurvival.common.codecs.ModifierType.DRAGON_LEVEL;
 
-public class DragonLevels {
-    @Translation(type = Translation.Type.LEVEL, comments = "Newborn")
-    public static ResourceKey<DragonLevel> newborn = key("newborn");
+public class DragonStages {
+    @Translation(type = Translation.Type.STAGE, comments = "Newborn")
+    public static ResourceKey<DragonStage> newborn = key("newborn");
 
-    @Translation(type = Translation.Type.LEVEL, comments = "Young")
-    public static ResourceKey<DragonLevel> young = key("young");
+    @Translation(type = Translation.Type.STAGE, comments = "Young")
+    public static ResourceKey<DragonStage> young = key("young");
 
-    @Translation(type = Translation.Type.LEVEL, comments = "Adult")
-    public static ResourceKey<DragonLevel> adult = key("adult");
+    @Translation(type = Translation.Type.STAGE, comments = "Adult")
+    public static ResourceKey<DragonStage> adult = key("adult");
 
-    @Translation(type = Translation.Type.LEVEL, comments = "Ancient")
-    public static ResourceKey<DragonLevel> ancient = key("ancient");
-
-    public static void registerLevels(final BootstrapContext<DragonLevel> context) {
-        context.register(newborn, new DragonLevel(
+    public static void registerLevels(final BootstrapContext<DragonStage> context) {
+        context.register(newborn, new DragonStage(
                 new MiscCodecs.Bounds(10, 25),
                 Functions.hoursToTicks(10),
+                Optional.of(young),
                 List.of(
                         /* Constant */
                         Modifier.constant(DRAGON_LEVEL, Attributes.SUBMERGED_MINING_SPEED, 1, AttributeModifier.Operation.ADD_VALUE, DragonTypes.SEA.getTypeNameLowerCase()),
@@ -62,9 +60,10 @@ public class DragonLevels {
                 Optional.empty()
         ));
 
-        context.register(young, new DragonLevel(
+        context.register(young, new DragonStage(
                 new MiscCodecs.Bounds(25, 40),
                 Functions.daysToTicks(3),
+                Optional.of(adult),
                 List.of(
                         /* Constant */
                         Modifier.constant(DRAGON_LEVEL, Attributes.SUBMERGED_MINING_SPEED, 2, AttributeModifier.Operation.ADD_VALUE, DragonTypes.SEA.getTypeNameLowerCase()),
@@ -91,9 +90,10 @@ public class DragonLevels {
                 Optional.empty()
         ));
 
-        context.register(adult, new DragonLevel(
+        context.register(adult, new DragonStage(
                 new MiscCodecs.Bounds(40, 60),
                 Functions.daysToTicks(20),
+                Optional.empty(),
                 List.of(
                         /* Constant */
                         Modifier.constant(DRAGON_LEVEL, Attributes.SUBMERGED_MINING_SPEED, 3, AttributeModifier.Operation.ADD_VALUE, DragonTypes.SEA.getTypeNameLowerCase()),
@@ -120,11 +120,11 @@ public class DragonLevels {
         ));
     }
 
-    public static ResourceKey<DragonLevel> key(final ResourceLocation location) {
-        return ResourceKey.create(DragonLevel.REGISTRY, location);
+    public static ResourceKey<DragonStage> key(final ResourceLocation location) {
+        return ResourceKey.create(DragonStage.REGISTRY, location);
     }
 
-    private static ResourceKey<DragonLevel> key(final String path) {
+    private static ResourceKey<DragonStage> key(final String path) {
         return key(DragonSurvival.res(path));
     }
 }

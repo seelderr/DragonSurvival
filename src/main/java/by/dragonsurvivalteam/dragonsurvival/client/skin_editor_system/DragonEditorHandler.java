@@ -12,7 +12,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.pipeline.TextureTarget;
@@ -152,7 +152,7 @@ public class DragonEditorHandler {
         normalTarget.clear(true);
         glowTarget.clear(true);
 
-        ResourceKey<DragonLevel> levelKey = Objects.requireNonNull(handler.getLevel().getKey());
+        ResourceKey<DragonStage> levelKey = Objects.requireNonNull(handler.getLevel().getKey());
         DragonLevelCustomization customization = handler.getSkinData().get(levelKey).get();
         String uuid = player.getStringUUID();
 

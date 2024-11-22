@@ -8,8 +8,8 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.E
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonLevelCustomization;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevels;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStages;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -74,7 +74,7 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
                 RegistryAccess access = Objects.requireNonNull(Minecraft.getInstance().player).registryAccess();
 
                 if (newborn.active && newborn.selected()) {
-                    Holder<DragonLevel> newborn = access.holderOrThrow(DragonLevels.newborn);
+                    Holder<DragonStage> newborn = access.holderOrThrow(DragonStages.newborn);
 
                     screen.preset.put(Objects.requireNonNull(newborn.getKey()), Lazy.of(() -> {
                         DragonLevelCustomization customization = new DragonLevelCustomization();
@@ -84,7 +84,7 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
                 }
 
                 if (young.active && young.selected()) {
-                    Holder<DragonLevel> young = access.holderOrThrow(DragonLevels.young);
+                    Holder<DragonStage> young = access.holderOrThrow(DragonStages.young);
 
                     screen.preset.put(Objects.requireNonNull(young.getKey()), Lazy.of(() -> {
                         DragonLevelCustomization customization = new DragonLevelCustomization();
@@ -94,7 +94,7 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
                 }
 
                 if (adult.active && adult.selected()) {
-                    Holder<DragonLevel> adult = access.holderOrThrow(DragonLevels.adult);
+                    Holder<DragonStage> adult = access.holderOrThrow(DragonStages.adult);
 
                     screen.preset.put(Objects.requireNonNull(adult.getKey()), Lazy.of(() -> {
                         DragonLevelCustomization customization = new DragonLevelCustomization();
@@ -133,7 +133,7 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
             @Override
             public void renderWidget(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks) {
                 super.renderWidget(guiGraphics, pMouseX, pMouseY, pPartialTicks);
-                if (screen.dragonLevel.getKey() == DragonLevels.newborn) {
+                if (screen.dragonLevel.getKey() == DragonStages.newborn) {
                     selected = true;
                     active = false;
                 } else {
@@ -146,7 +146,7 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
             @Override
             public void renderWidget(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks) {
                 super.renderWidget(guiGraphics, pMouseX, pMouseY, pPartialTicks);
-                if (screen.dragonLevel.getKey() == DragonLevels.young) {
+                if (screen.dragonLevel.getKey() == DragonStages.young) {
                     selected = true;
                     active = false;
                 } else {
@@ -159,7 +159,7 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
             @Override
             public void renderWidget(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks) {
                 super.renderWidget(guiGraphics, pMouseX, pMouseY, pPartialTicks);
-                if (screen.dragonLevel.getKey() == DragonLevels.adult) {
+                if (screen.dragonLevel.getKey() == DragonStages.adult) {
                     selected = true;
                     active = false;
                 } else {

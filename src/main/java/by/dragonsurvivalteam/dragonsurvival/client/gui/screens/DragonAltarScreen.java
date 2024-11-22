@@ -11,8 +11,8 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevels;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStages;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
@@ -165,7 +165,7 @@ public class DragonAltarScreen extends Screen {
 
         handler.setHasFlight(true);
         //noinspection DataFlowIssue -> registry is expected to be present
-        handler.setSize(CommonHooks.resolveLookup(DragonLevel.REGISTRY).getOrThrow(DragonLevels.adult), null);
+        handler.setClientSize(CommonHooks.resolveLookup(DragonStage.REGISTRY).getOrThrow(DragonStages.adult));
         handler.getSkinData().get(handler.getLevel().getKey()).get().defaultSkin = true;
     }
 

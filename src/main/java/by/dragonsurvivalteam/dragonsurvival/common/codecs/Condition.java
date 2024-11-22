@@ -3,7 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.codecs;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.items.growth.StarHeartItem;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
 import net.minecraft.advancements.critereon.ContextAwarePredicate;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.core.Holder;
@@ -29,7 +29,7 @@ public class Condition {
         return EntityPredicate.Builder.entity().subPredicate(DragonPredicate.Builder.dragon().type(type).build());
     }
 
-    public static EntityPredicate.Builder dragonLevel(final Holder<DragonLevel> dragonLevel) {
+    public static EntityPredicate.Builder dragonLevel(final Holder<DragonStage> dragonLevel) {
         return EntityPredicate.Builder.entity().subPredicate(DragonPredicate.Builder.dragon().level(dragonLevel).build());
     }
 

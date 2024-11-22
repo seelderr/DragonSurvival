@@ -36,7 +36,7 @@ public class NetworkHandler {
         registrar.playBidirectional(SyncMagicSourceStatus.Data.TYPE, SyncMagicSourceStatus.Data.STREAM_CODEC, new DirectionalPayloadHandler<>(SyncMagicSourceStatus::handleClient, SyncMagicSourceStatus::handleServer));
 
         // Generic packets
-        registrar.playBidirectional(SyncDragonHandler.Data.TYPE, SyncDragonHandler.Data.STREAM_CODEC, new DirectionalPayloadHandler<>(SyncDragonHandler::handleClient, SyncDragonHandler::handleServer));
+        registrar.playBidirectional(SyncWingStatus.TYPE, SyncWingStatus.STREAM_CODEC, new DirectionalPayloadHandler<>(SyncWingStatus::handleClient, SyncWingStatus::handleServer));
         registrar.playBidirectional(SyncDragonMovement.Data.TYPE, SyncDragonMovement.Data.STREAM_CODEC, new DirectionalPayloadHandler<>(SyncDragonMovement::handleClient, SyncDragonMovement::handleServer));
         registrar.playToClient(SyncDragonType.Data.TYPE, SyncDragonType.Data.STREAM_CODEC, SyncDragonType::handleClient);
         registrar.playToClient(SyncPlayerJump.Data.TYPE, SyncPlayerJump.Data.STREAM_CODEC, SyncPlayerJump::handleClient);

@@ -10,7 +10,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.objects.DragonMove
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.config.ClientConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
 import by.dragonsurvivalteam.dragonsurvival.util.AnimationUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.platform.NativeImage;
@@ -183,7 +183,7 @@ public class DragonModel extends GeoModel<DragonEntity> {
             return ResourceLocation.fromNamespaceAndPath(MODID, "textures/dragon/blank_skin_" + handler.getTypeNameLowerCase() + ".png");
         }
 
-        ResourceKey<DragonLevel> levelKey = handler.getLevel().getKey();
+        ResourceKey<DragonStage> levelKey = handler.getLevel().getKey();
 
         if (handler.getSkinData().recompileSkin.getOrDefault(levelKey, true)) {
             if (ClientConfig.forceCPUSkinGeneration) {

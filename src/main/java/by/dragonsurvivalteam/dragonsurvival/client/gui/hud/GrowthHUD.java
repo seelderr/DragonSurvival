@@ -8,7 +8,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -59,13 +59,13 @@ public class GrowthHUD {
         }
 
         double growth = DragonGrowthHandler.getGrowth(handler.getLevel(), stack.getItem());
-        double newSize = DragonLevel.getBoundedSize(handler.getSize() + growth);
+        double newSize = DragonStage.getBoundedSize(handler.getSize() + growth);
 
         if (handler.getSize() == newSize) {
             return;
         }
 
-        Holder<DragonLevel> dragonLevel = handler.getLevel();
+        Holder<DragonStage> dragonLevel = handler.getLevel();
         float progress = (float) dragonLevel.value().getProgress(handler.getSize());
         float nextProgress = (float) dragonLevel.value().getProgress(handler.getSize() + growth);
 

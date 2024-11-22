@@ -8,8 +8,8 @@ import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.DSLanguageProv
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.*;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBodies;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevels;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStages;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.registries.Registries;
@@ -57,7 +57,7 @@ public class DataGeneration {
         builder.add(Registries.DAMAGE_TYPE, DSDamageTypes::registerDamageTypes);
         builder.add(Registries.ENCHANTMENT, DSEnchantments::registerEnchantments);
         builder.add(DragonBody.REGISTRY, DragonBodies::registerBodies);
-        builder.add(DragonLevel.REGISTRY, DragonLevels::registerLevels);
+        builder.add(DragonStage.REGISTRY, DragonStages::registerLevels);
         DatapackBuiltinEntriesProvider datapackProvider = new DatapackBuiltinEntriesProvider(output, lookup, builder, Set.of(DragonSurvival.MODID));
         generator.addProvider(event.includeServer(), datapackProvider);
 

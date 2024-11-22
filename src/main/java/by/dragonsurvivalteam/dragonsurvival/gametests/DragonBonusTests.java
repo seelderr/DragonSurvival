@@ -9,7 +9,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ClawToolHandle
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBodies;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevels;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStages;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.BeforeBatch;
 import net.minecraft.gametest.framework.GameTest;
@@ -36,7 +36,7 @@ public class DragonBonusTests {
     @GameTest(template = TestUtils.AIR_CUBE_3X, batch = "dragon_bonus_tests")
     public static void test_harvest_level_bonus(final GameTestHelper helper) {
         Player player = TestUtils.createPlayer(helper, GameType.DEFAULT_MODE);
-        TestUtils.setToDragon(helper, player, DragonTypes.CAVE, DragonBodies.center, DragonLevels.newborn);
+        TestUtils.setToDragon(helper, player, DragonTypes.CAVE, DragonBodies.center, DragonStages.newborn);
 
         BlockState state = TestUtils.setBlock(helper, Blocks.IRON_ORE);
         BlockPos position = helper.absolutePos(BlockPos.ZERO);
@@ -47,7 +47,7 @@ public class DragonBonusTests {
         helper.assertTrue(!canHarvest, String.format("[%s] can be harvested - expected block to not be harvestable", state));
 
         // Set a level that has a harvest level bonus
-        TestUtils.setToDragon(helper, player, DragonTypes.CAVE, DragonBodies.center, DragonLevels.young);
+        TestUtils.setToDragon(helper, player, DragonTypes.CAVE, DragonBodies.center, DragonStages.young);
         canHarvest = player.hasCorrectToolForDrops(state, helper.getLevel(), position);
         helper.assertTrue(canHarvest, String.format("[%s] cannot be harvested - expected block to be harvestable", state));
 
@@ -79,7 +79,7 @@ public class DragonBonusTests {
         helper.assertTrue(speed == defaultSpeed, String.format("Dig speed for [%s] was [%f] - expected [%f]", state, speed, defaultSpeed));
 
         // Test bonus from dragon level
-        TestUtils.setToDragon(helper, player, DragonTypes.CAVE, DragonBodies.center, DragonLevels.young);
+        TestUtils.setToDragon(helper, player, DragonTypes.CAVE, DragonBodies.center, DragonStages.young);
         data.getClawToolData().set(ClawInventory.Slot.PICKAXE, ItemStack.EMPTY);
 
         speed = player.getDigSpeed(state, position);
@@ -100,7 +100,7 @@ public class DragonBonusTests {
         helper.assertTrue(speed == expectedSpeed, String.format("Dig speed for [%s] was [%f] - expected [%f]", state, speed, expectedSpeed));
 
         // Test that no bonus applies if the player is holding a tool
-        TestUtils.setToDragon(helper, player, DragonTypes.FOREST, DragonBodies.center, DragonLevels.young);
+        TestUtils.setToDragon(helper, player, DragonTypes.FOREST, DragonBodies.center, DragonStages.young);
         player.setItemInHand(InteractionHand.MAIN_HAND, Items.WOODEN_SWORD.getDefaultInstance());
         speed = player.getDigSpeed(state, position);
         helper.assertTrue(speed == defaultSpeed, String.format("Dig speed for [%s] was [%f] - expected [%f]", state, speed, defaultSpeed));

@@ -6,7 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.MiscCodecs;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncGrowthState;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.critereon.EntityPredicate;
@@ -46,21 +46,21 @@ public class DragonGrowthHandler {
             return;
         }
 
-        double newSize = DragonLevel.getBoundedSize(data.getSize() + growth);
+        double newSize = DragonStage.getBoundedSize(data.getSize() + growth);
 
         if (data.getSize() == newSize) {
             player.sendSystemMessage(Component.translatable(growth > 0 ? REACHED_LARGEST : REACHED_SMALLEST).withStyle(ChatFormatting.RED));
             return;
         }
 
-        data.setSize(newSize, player);
+        data.setSize(player, data.getLevel(), newSize);
 
         if (!player.isCreative()) {
             event.getItemStack().shrink(1);
         }
     }
 
-    public static double getGrowth(final Holder<DragonLevel> dragonLevel, final Item item) {
+    public static double getGrowth(final Holder<DragonStage> dragonLevel, final Item item) {
         int growth = 0;
 
         for (MiscCodecs.GrowthItem growthItem : dragonLevel.value().growthItems()) {
@@ -85,9 +85,9 @@ public class DragonGrowthHandler {
             return;
         }
 
-        DragonLevel dragonLevel = data.getLevel().value();
-        double newSize = DragonLevel.getBoundedSize(data.getSize() + dragonLevel.ticksToSize(getInterval()));
-        Optional<EntityPredicate> isNaturalGrowthStopped = dragonLevel.isNaturalGrowthStopped();
+        DragonStage dragonStage = data.getLevel().value();
+        double newSize = DragonStage.getBoundedSize(data.getSize() + dragonStage.ticksToSize(getInterval()));
+        Optional<EntityPredicate> isNaturalGrowthStopped = dragonStage.isNaturalGrowthStopped();
 
         if (newSize == data.getSize() || isNaturalGrowthStopped.isPresent() && isNaturalGrowthStopped.get().matches(serverPlayer.serverLevel(), serverPlayer.position(), serverPlayer)) {
             if (data.isGrowing) {
@@ -102,7 +102,7 @@ public class DragonGrowthHandler {
         }
 
         if (serverPlayer.tickCount % getInterval() == 0) {
-            data.setSize(newSize, serverPlayer);
+            data.setSize(serverPlayer, data.getLevel(), newSize);
         }
     }
 

@@ -23,7 +23,7 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
@@ -207,7 +207,7 @@ public class ClientDragonRenderer {
             float partialRenderTick = renderPlayerEvent.getPartialTick();
             float yaw = player.getViewYRot(partialRenderTick);
 
-            Holder<DragonLevel> dragonLevel = handler.getLevel();
+            Holder<DragonStage> dragonLevel = handler.getLevel();
             ResourceLocation texture = DragonSkins.getPlayerSkin(player, Objects.requireNonNull(Objects.requireNonNull(dragonLevel).getKey()));
             PoseStack poseStack = renderPlayerEvent.getPoseStack();
 
@@ -250,7 +250,7 @@ public class ClientDragonRenderer {
                     poseStack.translate(0, translate, 0);
                 } else if (player.isSwimming() || player.isAutoSpinAttack() || handler.isWingsSpread() && !player.onGround() && !player.isInWater() && !player.isInLava()) {
                     // FIXME level
-                    if (size > DragonLevel.MAX_HANDLED_SIZE) {
+                    if (size > DragonStage.MAX_HANDLED_SIZE) {
                         poseStack.translate(0, -0.55, 0);
                     } else {
                         poseStack.translate(0, -0.15 - size / /* DragonLevel.ADULT.size */ 40 * 0.2, 0);

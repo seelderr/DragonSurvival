@@ -11,7 +11,7 @@
               "type_specific": {
                 "type": "dragonsurvival:dragon_predicate",
                 "dragon_type": "cave",
-                "size_range": {
+                "size": {
                   "min": 60.0
                 }
               }

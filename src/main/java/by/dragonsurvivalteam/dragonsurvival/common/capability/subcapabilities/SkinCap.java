@@ -3,7 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonLevelCustomization;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -18,8 +18,8 @@ public class SkinCap extends SubCap {
     public static final String RENDER_CUSTOM_SKIN = "render_custom_skin";
     public static final String SKIN_PRESET = "skin_preset";
 
-    public Map<ResourceKey<DragonLevel>, Boolean> recompileSkin = new HashMap<>();
-    public Map<ResourceKey<DragonLevel>, Boolean> isCompiled = new HashMap<>();
+    public Map<ResourceKey<DragonStage>, Boolean> recompileSkin = new HashMap<>();
+    public Map<ResourceKey<DragonStage>, Boolean> isCompiled = new HashMap<>();
 
     public SkinPreset skinPreset = new SkinPreset();
 
@@ -30,11 +30,11 @@ public class SkinCap extends SubCap {
         super(handler);
     }
 
-    public void compileSkin(final Holder<DragonLevel> dragonLevel) {
+    public void compileSkin(final Holder<DragonStage> dragonLevel) {
         recompileSkin.put(dragonLevel.getKey(), true);
     }
 
-    public Lazy<DragonLevelCustomization> get(final ResourceKey<DragonLevel> dragonLevel) {
+    public Lazy<DragonLevelCustomization> get(final ResourceKey<DragonStage> dragonLevel) {
         return skinPreset.get(dragonLevel);
     }
 

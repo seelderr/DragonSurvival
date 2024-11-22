@@ -11,7 +11,6 @@ import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.Sk
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawRender;
@@ -339,31 +338,6 @@ public class ClientProxy {
                 DragonStateProvider.getOptional(player).ifPresent(handler -> {
                     handler.setDestructionEnabled(message.destructionEnabled());
                 });
-            }
-        }
-    }
-
-    public static void handleSynchronizeDragonCap(final SyncDragonHandler.Data message) {
-        Player localPlayer = Minecraft.getInstance().player;
-
-        if (localPlayer != null) {
-            Entity entity = localPlayer.level().getEntity(message.playerId());
-
-            if (entity instanceof Player player) {
-                DragonStateHandler data = DragonStateProvider.getData(player);
-                data.setType(DragonTypes.getStaticSubtype(message.dragonType()), player);
-                data.setBody(message.dragonBody());
-                data.setSize(message.size(), player);
-                data.setPassengerId(message.passengerId());
-                data.setHasFlight(message.hasWings());
-                data.setIsHiding(message.hiding());
-
-                // Refresh instances
-                if (player != localPlayer) {
-                    DragonEntity dragon = DSEntities.DRAGON.get().create(localPlayer.level());
-                    dragon.playerId = player.getId();
-                    ClientDragonRenderer.playerDragonHashMap.computeIfAbsent(player.getId(), integer -> new AtomicReference<>(dragon)).getAndSet(dragon);
-                }
             }
         }
     }

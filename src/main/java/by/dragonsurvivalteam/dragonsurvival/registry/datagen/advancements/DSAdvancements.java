@@ -22,8 +22,8 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.*;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSItemTags;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevels;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStages;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.advancements.*;
 import net.minecraft.advancements.critereon.*;
@@ -338,7 +338,7 @@ public class DSAdvancements implements AdvancementProvider.AdvancementGenerator 
     private void buildCollectDustChildren(final AdvancementHolder parent) {
         // --- Parent: collect_dust --- //
 
-        AdvancementHolder beYoungDragon = createWithToast(parent, BE_YOUNG_DRAGON, DSItems.DRAGON_HEART_SHARD.value(), beDragon(DragonLevels.young), 12);
+        AdvancementHolder beYoungDragon = createWithToast(parent, BE_YOUNG_DRAGON, DSItems.DRAGON_HEART_SHARD.value(), beDragon(DragonStages.young), 12);
         buildBeYoungDragonChildren(beYoungDragon);
 
         AdvancementHolder sleepOnTreasure = createWithAnnouncement(parent, SLEEP_ON_TREASURE, Items.GOLD_NUGGET, sleepOnTreasure(10), 10);
@@ -378,7 +378,7 @@ public class DSAdvancements implements AdvancementProvider.AdvancementGenerator 
     private void buildBeYoungDragonChildren(final AdvancementHolder parent) {
         // --- Parent: be_young_dragon --- //
 
-        AdvancementHolder beAdultDragon = createWithToast(parent, BE_ADULT_DRAGON, DSItems.WEAK_DRAGON_HEART.value(), beDragon(DragonLevels.adult), 0);
+        AdvancementHolder beAdultDragon = createWithToast(parent, BE_ADULT_DRAGON, DSItems.WEAK_DRAGON_HEART.value(), beDragon(DragonStages.adult), 0);
 
         // --- Parent: be_adult_dragon --- //
 
@@ -657,7 +657,7 @@ public class DSAdvancements implements AdvancementProvider.AdvancementGenerator 
         return beDragon(Condition.dragonSizeAtLeast(size));
     }
 
-    public Criterion<BeDragonTrigger.Instance> beDragon(final ResourceKey<DragonLevel> dragonLevel) {
+    public Criterion<BeDragonTrigger.Instance> beDragon(final ResourceKey<DragonStage> dragonLevel) {
         return beDragon(Condition.dragonLevel(registries.holderOrThrow(dragonLevel)));
     }
 

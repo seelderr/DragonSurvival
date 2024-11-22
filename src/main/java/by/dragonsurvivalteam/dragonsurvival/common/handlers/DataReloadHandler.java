@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.TagsUpdatedEvent;
@@ -9,6 +9,6 @@ import net.neoforged.neoforge.event.TagsUpdatedEvent;
 public class DataReloadHandler {
     @SubscribeEvent
     public static void handleDatapackReload(final TagsUpdatedEvent event) {
-        DragonLevel.update(event.getRegistryAccess());
+        DragonStage.update(event.getRegistryAccess());
     }
 }

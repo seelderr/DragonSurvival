@@ -13,7 +13,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawRender;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawsMenuToggle;
 import by.dragonsurvivalteam.dragonsurvival.network.container.RequestOpenInventory;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.DragonContainer;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.platform.InputConstants;
@@ -215,7 +215,7 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
         int scissorY0 = topPos + 8;
 
         // In order to scale up the smaller dragon sizes, since they are too small otherwise
-        int scale = (int) (20 + ((DragonLevel.MAX_HANDLED_SIZE - handler.getSize()) * 0.25));
+        int scale = (int) (20 + ((DragonStage.MAX_HANDLED_SIZE - handler.getSize()) * 0.25));
         scale = Math.clamp(scale, 10, 40); // Very large dragon sizes (above the default max. size) will have a < 20 scale value
 
         InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics, scissorX0, scissorY0, scissorX1, scissorY1, scale, 0, mouseX, mouseY, player);
@@ -226,7 +226,7 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
 
         guiGraphics.blit(CLAWS_TEXTURE, leftPos - 80, topPos, 0, 0, 77, 170);
 
-        Holder<DragonLevel> level = handler.getLevel();
+        Holder<DragonStage> level = handler.getLevel();
         float progress = (float) level.value().getProgress(handler.getSize());
 
         int size = 34;
@@ -300,14 +300,14 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
             }
 
             DragonStateHandler handler = DragonStateProvider.getData(player);
-            DragonLevel dragonLevel = handler.getLevel().value();
+            DragonStage dragonStage = handler.getLevel().value();
 
-            double percentage = Math.clamp(dragonLevel.getProgress(handler.getSize()), 0, 1);
+            double percentage = Math.clamp(dragonStage.getProgress(handler.getSize()), 0, 1);
             String ageInformation = NumberFormat.getPercentInstance().format(percentage);
 
             if (handler.isGrowing) {
-                double sizeToTicks = (dragonLevel.sizeRange().max() - dragonLevel.sizeRange().min()) / dragonLevel.ticksUntilGrown();
-                double missingSize = dragonLevel.sizeRange().max() - handler.getSize();
+                double sizeToTicks = (dragonStage.sizeRange().max() - dragonStage.sizeRange().min()) / dragonStage.ticksUntilGrown();
+                double missingSize = dragonStage.sizeRange().max() - handler.getSize();
                 Functions.Time time = Functions.Time.fromTicks((int) (missingSize / sizeToTicks));
 
                 if (time.hasTime()) {
@@ -333,7 +333,7 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
             int max = Math.min(growthItems.size(), scroll + MAX_SHOWN);
 
             List<Either<FormattedText, TooltipComponent>> components = new ArrayList<>();
-            components.add(Either.left(Component.translatable(GROWTH_STAGE).append(DragonLevel.translatableName(Objects.requireNonNull(handler.getLevel().getKey())))));
+            components.add(Either.left(Component.translatable(GROWTH_STAGE).append(DragonStage.translatableName(Objects.requireNonNull(handler.getLevel().getKey())))));
             components.add(Either.left(Component.translatable(GROWTH_AGE, ageInformation)));
             components.add(Either.left(Component.translatable(GROWTH_INFO).append(Component.literal(" [" + Math.min(growthItems.size(), scroll + MAX_SHOWN) + " / " + growthItems.size() + "]").withStyle(ChatFormatting.DARK_GRAY))));
 

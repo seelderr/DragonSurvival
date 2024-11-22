@@ -11,7 +11,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.config.types.FoodConfigCollector;
 import by.dragonsurvivalteam.dragonsurvival.config.types.ItemHurtConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBodies;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevels;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStages;
 import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.gametest.framework.BeforeBatch;
@@ -114,7 +114,7 @@ public class ConfigTests {
     @GameTest(template = TestUtils.AIR_CUBE_1X, batch = "config_tests")
     public static void test_hurt_config(final GameTestHelper helper) {
         Player player = TestUtils.createPlayer(helper, GameType.DEFAULT_MODE);
-        TestUtils.setToDragon(helper, player, DragonTypes.CAVE, DragonBodies.center, DragonLevels.young);
+        TestUtils.setToDragon(helper, player, DragonTypes.CAVE, DragonBodies.center, DragonStages.young);
 
         int damage = 2;
         List<ItemHurtConfig> configs = List.of(ItemHurtConfig.of(ConfigUtils.location(Items.POTION), damage));

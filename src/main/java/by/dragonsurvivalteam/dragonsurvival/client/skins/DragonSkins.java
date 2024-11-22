@@ -3,7 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.skins;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
 import com.mojang.blaze3d.Blaze3D;
 import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.ResourceLocationException;
@@ -30,13 +30,13 @@ public class DragonSkins {
     protected static boolean initialized = false;
     public static NetSkinLoader skinLoader = new GithubSkinLoaderAPI();
     private static final ArrayList<String> hasFailedFetch = new ArrayList<>();
-    public static HashMap<ResourceKey<DragonLevel>, HashMap<String, SkinObject>> SKIN_USERS = new HashMap<>();
+    public static HashMap<ResourceKey<DragonStage>, HashMap<String, SkinObject>> SKIN_USERS = new HashMap<>();
     public static HashMap<String, ResourceLocation> playerSkinCache = new HashMap<>();
     public static HashMap<String, ResourceLocation> playerGlowCache = new HashMap<>();
     private static double lastSkinFetchAttemptTime = 0;
     private static int numSkinFetchAttempts = 0;
 
-    public static ResourceLocation getPlayerSkin(String playerName, ResourceKey<DragonLevel> dragonLevel) {
+    public static ResourceLocation getPlayerSkin(String playerName, ResourceKey<DragonStage> dragonLevel) {
         String skinKey = playerName + "_" + dragonLevel.location().getPath();
 
         if (playerSkinCache.containsKey(skinKey) && playerSkinCache.get(skinKey) != null) {
@@ -55,7 +55,7 @@ public class DragonSkins {
         return null;
     }
 
-    public static ResourceLocation getPlayerGlow(String playerName, ResourceKey<DragonLevel> dragonLevel) {
+    public static ResourceLocation getPlayerGlow(String playerName, ResourceKey<DragonStage> dragonLevel) {
         String skinKey = playerName + "_" + dragonLevel.location().getPath();
 
         if (playerGlowCache.containsKey(skinKey)) {
@@ -68,7 +68,7 @@ public class DragonSkins {
     }
 
 
-    public static ResourceLocation getPlayerSkin(Player player, ResourceKey<DragonLevel> dragonLevel) {
+    public static ResourceLocation getPlayerSkin(Player player, ResourceKey<DragonStage> dragonLevel) {
         ResourceLocation texture = null;
         String playerKey = player.getGameProfile().getName() + "_" + dragonLevel.location().getPath();
         boolean renderCustomSkin = DragonStateProvider.getData(player).getSkinData().renderCustomSkin;
@@ -90,7 +90,7 @@ public class DragonSkins {
         return texture;
     }
 
-    public static ResourceLocation fetchSkinFile(final String playerName, final ResourceKey<DragonLevel> level, final String... extra) {
+    public static ResourceLocation fetchSkinFile(final String playerName, final ResourceKey<DragonStage> level, final String... extra) {
         String playerKey = playerName + "_" + level.location().getPath();
         String[] text = ArrayUtils.addAll(new String[]{playerKey}, extra);
 
@@ -171,11 +171,11 @@ public class DragonSkins {
         }
     }
 
-    public static ResourceLocation fetchSkinFile(Player playerEntity, ResourceKey<DragonLevel> dragonLevel, String... extra) {
+    public static ResourceLocation fetchSkinFile(Player playerEntity, ResourceKey<DragonStage> dragonLevel, String... extra) {
         return fetchSkinFile(playerEntity.getGameProfile().getName(), dragonLevel, extra);
     }
 
-    public static ResourceLocation getGlowTexture(Player player, ResourceKey<DragonLevel> dragonLevel) {
+    public static ResourceLocation getGlowTexture(Player player, ResourceKey<DragonStage> dragonLevel) {
         ResourceLocation texture = null;
         String playerKey = player.getGameProfile().getName() + "_" + dragonLevel.location().getPath();
         boolean renderCustomSkin = DragonStateProvider.getData(player).getSkinData().renderCustomSkin;
@@ -258,7 +258,7 @@ public class DragonSkins {
                 String level = skinName.substring(skinName.lastIndexOf("_") + 1);
 
                 try {
-                    ResourceKey<DragonLevel> dragonLevel = ResourceKey.create(DragonLevel.REGISTRY, DragonSurvival.res(level));
+                    ResourceKey<DragonStage> dragonLevel = ResourceKey.create(DragonStage.REGISTRY, DragonSurvival.res(level));
 
                     if (!SKIN_USERS.containsKey(dragonLevel)) {
                         SKIN_USERS.put(dragonLevel, new HashMap<>());

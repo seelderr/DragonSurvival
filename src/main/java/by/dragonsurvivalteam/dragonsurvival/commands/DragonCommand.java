@@ -6,8 +6,8 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonTy
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.SyncComplete;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevels;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStages;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -66,10 +66,10 @@ public class DragonCommand {
             return runCommand(type, body, null, false, serverPlayer);
         }).build();
 
-        ArgumentCommandNode<CommandSourceStack, Holder<DragonLevel>> dragonLevel = argument("dragon_level", new DragonLevelArgument(event.getBuildContext())).executes(context -> {
+        ArgumentCommandNode<CommandSourceStack, Holder<DragonStage>> dragonLevel = argument("dragon_level", new DragonLevelArgument(event.getBuildContext())).executes(context -> {
             String type = context.getArgument("dragon_type", String.class);
             Holder<DragonBody> body = DragonBodyArgument.get(context);
-            Holder<DragonLevel> level = DragonLevelArgument.get(context);
+            Holder<DragonStage> level = DragonLevelArgument.get(context);
             ServerPlayer serverPlayer = context.getSource().getPlayerOrException();
             return runCommand(type, body, level, false, serverPlayer);
         }).build();
@@ -77,7 +77,7 @@ public class DragonCommand {
         ArgumentCommandNode<CommandSourceStack, Boolean> giveFlight = argument("flight", BoolArgumentType.bool()).executes(context -> {
             String type = context.getArgument("dragon_type", String.class);
             Holder<DragonBody> body = DragonBodyArgument.get(context);
-            Holder<DragonLevel> level = DragonLevelArgument.get(context);
+            Holder<DragonStage> level = DragonLevelArgument.get(context);
             boolean flight = context.getArgument("flight", Boolean.TYPE);
             ServerPlayer serverPlayer = context.getSource().getPlayerOrException();
             return runCommand(type, body, level, flight, serverPlayer);
@@ -86,7 +86,7 @@ public class DragonCommand {
         ArgumentCommandNode<CommandSourceStack, EntitySelector> target = argument("target", EntityArgument.players()).executes(context -> {
             String type = context.getArgument("dragon_type", String.class);
             Holder<DragonBody> body = DragonBodyArgument.get(context);
-            Holder<DragonLevel> level = DragonLevelArgument.get(context);
+            Holder<DragonStage> level = DragonLevelArgument.get(context);
             boolean flight = context.getArgument("flight", Boolean.TYPE);
             EntitySelector selector = context.getArgument("target", EntitySelector.class);
             List<ServerPlayer> serverPlayers = selector.findPlayers(context.getSource());
@@ -102,7 +102,7 @@ public class DragonCommand {
         giveFlight.addChild(target);
     }
 
-    private static int runCommand(String type, @Nullable Holder<DragonBody> dragonBody, @Nullable Holder<DragonLevel> dragonLevel, boolean flight, ServerPlayer player) {
+    private static int runCommand(String type, @Nullable Holder<DragonBody> dragonBody, @Nullable Holder<DragonStage> dragonLevel, boolean flight, ServerPlayer player) {
         DragonStateHandler cap = DragonStateProvider.getData(player);
         AbstractDragonType dragonType = DragonTypes.getStaticSubtype(type);
 
@@ -111,7 +111,7 @@ public class DragonCommand {
         }
 
         if (dragonType != null && dragonLevel == null) {
-            dragonLevel = player.registryAccess().holderOrThrow(DragonLevels.newborn);
+            dragonLevel = player.registryAccess().holderOrThrow(DragonStages.newborn);
         }
 
         if (dragonType == null && cap.getType() != null) {
@@ -120,7 +120,7 @@ public class DragonCommand {
 
         cap.setType(dragonType, player);
         cap.setBody(dragonBody, player);
-        cap.setSize(dragonLevel, player);
+        cap.setSize(player, dragonLevel);
 
         cap.setHasFlight(flight);
         cap.getMovementData().spinLearned = flight;

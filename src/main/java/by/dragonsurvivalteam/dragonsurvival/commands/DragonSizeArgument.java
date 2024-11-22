@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.commands;
 
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.MiscCodecs;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.context.CommandContext;
@@ -18,17 +18,17 @@ import java.util.concurrent.CompletableFuture;
 import javax.annotation.Nullable;
 
 public class DragonSizeArgument implements ArgumentType<Double> {
-    private final HolderLookup.RegistryLookup<DragonLevel> lookup;
+    private final HolderLookup.RegistryLookup<DragonStage> lookup;
 
     public DragonSizeArgument(final CommandBuildContext context) {
-        lookup = context.lookupOrThrow(DragonLevel.REGISTRY);
+        lookup = context.lookupOrThrow(DragonStage.REGISTRY);
     }
 
     @Override
     public @Nullable Double parse(final StringReader reader) throws CommandSyntaxException {
         int start = reader.getCursor();
         double size = reader.readDouble();
-        MiscCodecs.Bounds bounds = DragonLevel.getBounds();
+        MiscCodecs.Bounds bounds = DragonStage.getBounds();
 
         if (size < bounds.min()) {
             reader.setCursor(start);

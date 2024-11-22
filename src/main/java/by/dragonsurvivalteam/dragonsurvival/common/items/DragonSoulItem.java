@@ -10,7 +10,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonT
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAdvancementTriggers;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSSounds;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.PlayerLoginHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.core.Holder;
@@ -193,8 +193,8 @@ public class DragonSoulItem extends Item {
             }
 
             double size = tag.getDouble("size");
-            Holder<DragonLevel> level = DragonLevel.get(context.registries(), size);
-            tooltips.add(Component.translatable(INFO, dragonName, DragonLevel.translatableName(Objects.requireNonNull(level.getKey())), String.format("%.0f", size)));
+            Holder<DragonStage> level = DragonStage.get(context.registries(), size);
+            tooltips.add(Component.translatable(INFO, dragonName, DragonStage.translatableName(Objects.requireNonNull(level.getKey())), String.format("%.0f", size)));
 
             if (tag.getBoolean("spinLearned")) {
                 tooltips.add(Component.translatable(HAS_SPIN));

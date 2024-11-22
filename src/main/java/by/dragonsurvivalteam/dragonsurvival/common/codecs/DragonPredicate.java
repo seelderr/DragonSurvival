@@ -5,7 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.items.growth.StarHeartItem;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -25,16 +25,16 @@ import java.util.Optional;
 
 public record DragonPredicate(
         Optional<String> dragonType,
-        Optional<HolderSet<DragonLevel>> dragonLevel,
+        Optional<HolderSet<DragonStage>> dragonLevel,
         Optional<HolderSet<DragonBody>> dragonBody,
         Optional<MinMaxBounds.Doubles> size,
         Optional<StarHeartItem.State> starHeartState
 ) implements EntitySubPredicate {
     public static final MapCodec<DragonPredicate> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             Codec.STRING.optionalFieldOf("dragon_type").forGetter(DragonPredicate::dragonType),
-            RegistryCodecs.homogeneousList(DragonLevel.REGISTRY).optionalFieldOf("dragon_level").forGetter(DragonPredicate::dragonLevel),
+            RegistryCodecs.homogeneousList(DragonStage.REGISTRY).optionalFieldOf("dragon_level").forGetter(DragonPredicate::dragonLevel),
             RegistryCodecs.homogeneousList(DragonBody.REGISTRY).optionalFieldOf("dragon_body").forGetter(DragonPredicate::dragonBody),
-            MinMaxBounds.Doubles.CODEC.optionalFieldOf("size_range").forGetter(DragonPredicate::size),
+            MinMaxBounds.Doubles.CODEC.optionalFieldOf("size").forGetter(DragonPredicate::size),
             StarHeartItem.State.CODEC.optionalFieldOf("star_heart_state").forGetter(DragonPredicate::starHeartState)
     ).apply(instance, DragonPredicate::new));
 
@@ -82,7 +82,7 @@ public record DragonPredicate(
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType") // ignore
     public static class Builder {
         private Optional<String> dragonType = Optional.empty();
-        private Optional<HolderSet<DragonLevel>> dragonLevel = Optional.empty();
+        private Optional<HolderSet<DragonStage>> dragonLevel = Optional.empty();
         private Optional<HolderSet<DragonBody>> dragonBody = Optional.empty();
         private Optional<MinMaxBounds.Doubles> size = Optional.empty();
         private Optional<StarHeartItem.State> starHeartState = Optional.empty();
@@ -96,7 +96,7 @@ public record DragonPredicate(
             return this;
         }
 
-        public DragonPredicate.Builder level(final Holder<DragonLevel> dragonLevel) {
+        public DragonPredicate.Builder level(final Holder<DragonStage> dragonLevel) {
             this.dragonLevel = Optional.of(HolderSet.direct(dragonLevel));
             return this;
         }

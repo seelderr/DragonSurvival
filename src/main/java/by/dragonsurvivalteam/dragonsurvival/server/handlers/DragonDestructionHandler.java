@@ -5,7 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSBlockTags;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
@@ -117,14 +117,14 @@ public class DragonDestructionHandler {
 
         DragonStateHandler data = DragonStateProvider.getData(player);
 
-        if (!data.isDragon() || data.getSize() < DragonLevel.MAX_HANDLED_SIZE) {
+        if (!data.isDragon() || data.getSize() < DragonStage.MAX_HANDLED_SIZE) {
             return;
         }
 
         event.setCanceled(true);
 
         isBreakingMultipleBlocks = true;
-        int radius = (int) Math.floor((data.getSize() - DragonLevel.MAX_HANDLED_SIZE) / 60 * ServerConfig.largeBlockBreakRadiusScalar);
+        int radius = (int) Math.floor((data.getSize() - DragonStage.MAX_HANDLED_SIZE) / 60 * ServerConfig.largeBlockBreakRadiusScalar);
         BlockPos.betweenClosedStream(AABB.ofSize(event.getPos().getCenter(), radius, radius, radius)).forEach(player.gameMode::destroyBlock);
         isBreakingMultipleBlocks = false;
     }
@@ -152,7 +152,7 @@ public class DragonDestructionHandler {
         }
 
         AABB boundingBox = player.getBoundingBox();
-        AABB blockCollisionBoundingBox = boundingBox.inflate(1.25 + (data.getSize() - DragonLevel.MAX_HANDLED_SIZE) / DragonLevel.MAX_HANDLED_SIZE * 0.15f);
+        AABB blockCollisionBoundingBox = boundingBox.inflate(1.25 + (data.getSize() - DragonStage.MAX_HANDLED_SIZE) / DragonStage.MAX_HANDLED_SIZE * 0.15f);
 
         checkAndDestroyCollidingBlocks(data, event, blockCollisionBoundingBox);
         checkAndDamageCrushedEntities(data, player, blockCollisionBoundingBox);
