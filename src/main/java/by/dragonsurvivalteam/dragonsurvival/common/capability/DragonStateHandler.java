@@ -35,12 +35,12 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
-import javax.annotation.Nullable;
 
 public class DragonStateHandler extends EntityStateHandler {
     public static final int NO_SIZE = -1;
@@ -69,8 +69,6 @@ public class DragonStateHandler extends EntityStateHandler {
     /** Only needs to be updated on effect removal (server -> client) */
     private int hunterStacks;
 
-    /** Tick count from the server - client increments it */
-    public int tickCount;
     public boolean isGrowing = true;
     public StarHeartItem.State starHeartState = StarHeartItem.State.INACTIVE;
 
