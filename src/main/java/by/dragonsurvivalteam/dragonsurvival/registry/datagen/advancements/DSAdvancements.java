@@ -1,6 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.datagen.advancements;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.Condition;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.DragonPredicate;
 import by.dragonsurvivalteam.dragonsurvival.common.criteria.*;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
@@ -20,6 +22,8 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.*;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSItemTags;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevels;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.advancements.*;
 import net.minecraft.advancements.critereon.*;
@@ -58,7 +62,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import static by.dragonsurvivalteam.dragonsurvival.common.codecs.Condition.*;
+import static by.dragonsurvivalteam.dragonsurvival.common.codecs.Condition.dragonType;
 import static by.dragonsurvivalteam.dragonsurvival.registry.datagen.advancements.LangKey.*;
 
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType") // ignore
@@ -334,7 +338,7 @@ public class DSAdvancements implements AdvancementProvider.AdvancementGenerator 
     private void buildCollectDustChildren(final AdvancementHolder parent) {
         // --- Parent: collect_dust --- //
 
-        AdvancementHolder beYoungDragon = createWithToast(parent, BE_YOUNG_DRAGON, DSItems.DRAGON_HEART_SHARD.value(), beDragon(19.9), 12);
+        AdvancementHolder beYoungDragon = createWithToast(parent, BE_YOUNG_DRAGON, DSItems.DRAGON_HEART_SHARD.value(), beDragon(DragonLevels.young), 12);
         buildBeYoungDragonChildren(beYoungDragon);
 
         AdvancementHolder sleepOnTreasure = createWithAnnouncement(parent, SLEEP_ON_TREASURE, Items.GOLD_NUGGET, sleepOnTreasure(10), 10);
@@ -374,7 +378,7 @@ public class DSAdvancements implements AdvancementProvider.AdvancementGenerator 
     private void buildBeYoungDragonChildren(final AdvancementHolder parent) {
         // --- Parent: be_young_dragon --- //
 
-        AdvancementHolder beAdultDragon = createWithToast(parent, BE_ADULT_DRAGON, DSItems.WEAK_DRAGON_HEART.value(), beDragon(29.9), 0);
+        AdvancementHolder beAdultDragon = createWithToast(parent, BE_ADULT_DRAGON, DSItems.WEAK_DRAGON_HEART.value(), beDragon(DragonLevels.adult), 0);
 
         // --- Parent: be_adult_dragon --- //
 
@@ -382,7 +386,8 @@ public class DSAdvancements implements AdvancementProvider.AdvancementGenerator 
 
         // --- Parent: collect_heart_from_monster --- //
 
-        AdvancementHolder beOldCaveDragon = createWithToast(collectHeartFromMonster, CAVE_BE_OLD_DRAGON, DSBlocks.CAVE_DRAGON_BEACON.value(), beDragon(59.9, DragonTypes.CAVE), 120);
+        // TODO :: specify dragon level?
+        AdvancementHolder beOldCaveDragon = createWithToast(collectHeartFromMonster, CAVE_BE_OLD_DRAGON, DSBlocks.CAVE_DRAGON_BEACON.value(), beDragon(DragonTypes.CAVE, 60), 120);
 
         // --- Parent: cave/be_old_dragon --- //
 
@@ -393,7 +398,8 @@ public class DSAdvancements implements AdvancementProvider.AdvancementGenerator 
                 upgradeAbilityMax(CaveMagicAbility.class)
         ), 150);
 
-        AdvancementHolder beOldSeaDragon = createWithToast(collectHeartFromMonster, SEA_BE_OLD_DRAGON, DSBlocks.SEA_DRAGON_BEACON.value(), beDragon(59.9, DragonTypes.SEA), 120);
+        // TODO :: specify dragon level?
+        AdvancementHolder beOldSeaDragon = createWithToast(collectHeartFromMonster, SEA_BE_OLD_DRAGON, DSBlocks.SEA_DRAGON_BEACON.value(), beDragon(DragonTypes.SEA, 60), 120);
 
         // --- Parent: sea/be_old_dragon --- //
 
@@ -404,7 +410,8 @@ public class DSAdvancements implements AdvancementProvider.AdvancementGenerator 
                 upgradeAbilityMax(SeaMagicAbility.class)
         ), 150);
 
-        AdvancementHolder beOldForestDragon = createWithToast(collectHeartFromMonster, FOREST_BE_OLD_DRAGON, DSBlocks.FOREST_DRAGON_BEACON.value(), beDragon(59.9, DragonTypes.FOREST), 120);
+        // TODO :: specify dragon level?
+        AdvancementHolder beOldForestDragon = createWithToast(collectHeartFromMonster, FOREST_BE_OLD_DRAGON, DSBlocks.FOREST_DRAGON_BEACON.value(), beDragon(DragonTypes.FOREST, 60), 120);
 
         // --- Parent: forest/be_old_dragon --- //
 
@@ -638,23 +645,27 @@ public class DSAdvancements implements AdvancementProvider.AdvancementGenerator 
 
     // --- Be Dragon --- //
 
-    public Criterion<BeDragonTrigger.BeDragonInstance> beDragon() {
-        return beDragon(Optional.empty(), Optional.empty());
+    public Criterion<BeDragonTrigger.Instance> beDragon() {
+        return DSAdvancementTriggers.BE_DRAGON.get().createCriterion(new BeDragonTrigger.Instance(Optional.empty()));
     }
 
-    public Criterion<BeDragonTrigger.BeDragonInstance> beDragon(final AbstractDragonType type) {
-        return beDragon(Optional.empty(), Optional.of(type.getTypeName()));
+    public Criterion<BeDragonTrigger.Instance> beDragon(final AbstractDragonType type) {
+        return beDragon(Condition.dragonType(type));
     }
 
-    public Criterion<BeDragonTrigger.BeDragonInstance> beDragon(double size) {
-        return beDragon(Optional.of(size), Optional.empty());
+    public Criterion<BeDragonTrigger.Instance> beDragon(double size) {
+        return beDragon(Condition.dragonSizeAtLeast(size));
     }
 
-    public Criterion<BeDragonTrigger.BeDragonInstance> beDragon(double size, final AbstractDragonType type) {
-        return beDragon(Optional.of(size), Optional.of(type.getTypeName()));
+    public Criterion<BeDragonTrigger.Instance> beDragon(final ResourceKey<DragonLevel> dragonLevel) {
+        return beDragon(Condition.dragonLevel(registries.holderOrThrow(dragonLevel)));
     }
 
-    public Criterion<BeDragonTrigger.BeDragonInstance> beDragon(final Optional<Double> size, final Optional<String> type) {
-        return DSAdvancementTriggers.BE_DRAGON.get().createCriterion(new BeDragonTrigger.BeDragonInstance(Optional.empty(), size, type));
+    public Criterion<BeDragonTrigger.Instance> beDragon(final AbstractDragonType type, double size) {
+        return beDragon(EntityPredicate.Builder.entity().subPredicate(DragonPredicate.Builder.dragon().type(type).sizeAtLeast(size).build()));
+    }
+
+    public Criterion<BeDragonTrigger.Instance> beDragon(final EntityPredicate.Builder builder) {
+        return DSAdvancementTriggers.BE_DRAGON.get().createCriterion(new BeDragonTrigger.Instance(Optional.of(EntityPredicate.wrap(builder.build()))));
     }
 }

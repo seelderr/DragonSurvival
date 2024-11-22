@@ -10,6 +10,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.advancements.critereon.EntitySubPredicate;
+import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;
@@ -26,14 +27,14 @@ public record DragonPredicate(
         Optional<String> dragonType,
         Optional<HolderSet<DragonLevel>> dragonLevel,
         Optional<HolderSet<DragonBody>> dragonBody,
-        Optional<MiscCodecs.Bounds> sizeRange,
+        Optional<MinMaxBounds.Doubles> size,
         Optional<StarHeartItem.State> starHeartState
 ) implements EntitySubPredicate {
     public static final MapCodec<DragonPredicate> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             Codec.STRING.optionalFieldOf("dragon_type").forGetter(DragonPredicate::dragonType),
             RegistryCodecs.homogeneousList(DragonLevel.REGISTRY).optionalFieldOf("dragon_level").forGetter(DragonPredicate::dragonLevel),
             RegistryCodecs.homogeneousList(DragonBody.REGISTRY).optionalFieldOf("dragon_body").forGetter(DragonPredicate::dragonBody),
-            MiscCodecs.bounds().optionalFieldOf("size_range").forGetter(DragonPredicate::sizeRange),
+            MinMaxBounds.Doubles.CODEC.optionalFieldOf("size_range").forGetter(DragonPredicate::size),
             StarHeartItem.State.CODEC.optionalFieldOf("star_heart_state").forGetter(DragonPredicate::starHeartState)
     ).apply(instance, DragonPredicate::new));
 
@@ -62,7 +63,7 @@ public record DragonPredicate(
             return false;
         }
 
-        if (sizeRange().isPresent() && !sizeRange().get().matches(data.getSize())) {
+        if (size().isPresent() && !size().get().matches(data.getSize())) {
             return false;
         }
 
@@ -83,7 +84,7 @@ public record DragonPredicate(
         private Optional<String> dragonType = Optional.empty();
         private Optional<HolderSet<DragonLevel>> dragonLevel = Optional.empty();
         private Optional<HolderSet<DragonBody>> dragonBody = Optional.empty();
-        private Optional<MiscCodecs.Bounds> sizeRange = Optional.empty();
+        private Optional<MinMaxBounds.Doubles> size = Optional.empty();
         private Optional<StarHeartItem.State> starHeartState = Optional.empty();
 
         public static DragonPredicate.Builder dragon() {
@@ -105,8 +106,18 @@ public record DragonPredicate(
             return this;
         }
 
-        public DragonPredicate.Builder sizeRange(double min, double max) {
-            this.sizeRange = Optional.of(new MiscCodecs.Bounds(min, max));
+        public DragonPredicate.Builder sizeBetween(double min, double max) {
+            this.size = Optional.of(MinMaxBounds.Doubles.between(min, max));
+            return this;
+        }
+
+        public DragonPredicate.Builder sizeAtLeast(double min) {
+            this.size = Optional.of(MinMaxBounds.Doubles.atLeast(min));
+            return this;
+        }
+
+        public DragonPredicate.Builder sizeAtMost(double max) {
+            this.size = Optional.of(MinMaxBounds.Doubles.atLeast(max));
             return this;
         }
 
@@ -116,7 +127,7 @@ public record DragonPredicate(
         }
 
         public DragonPredicate build() {
-            return new DragonPredicate(dragonType, dragonLevel, dragonBody, sizeRange, starHeartState);
+            return new DragonPredicate(dragonType, dragonLevel, dragonBody, size, starHeartState);
         }
     }
 }

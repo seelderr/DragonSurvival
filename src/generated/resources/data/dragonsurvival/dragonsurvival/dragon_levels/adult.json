@@ -1,15 +1,5 @@
 {
   "break_speed_multiplier": 3.0,
-  "can_naturally_grow": {
-    "type_specific": {
-      "type": "dragonsurvival:dragon_predicate",
-      "size_range": {
-        "max": 50.0,
-        "min": 40.0
-      },
-      "star_heart_state": "inactive"
-    }
-  },
   "growth_items": [
     {
       "growth_in_ticks": 72000,

@@ -3,7 +3,18 @@
   "criteria": {
     "criterion_0": {
       "conditions": {
-        "size": 29.9
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type_specific": {
+                "type": "dragonsurvival:dragon_predicate",
+                "dragon_level": "dragonsurvival:adult"
+              }
+            }
+          }
+        ]
       },
       "trigger": "dragonsurvival:be_dragon"
     }

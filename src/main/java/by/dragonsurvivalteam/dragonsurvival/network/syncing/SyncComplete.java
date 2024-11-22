@@ -65,7 +65,7 @@ public class SyncComplete implements IMessage<SyncComplete.Data> {
             }
 
             if (player instanceof ServerPlayer serverPlayer) {
-                DSAdvancementTriggers.BE_DRAGON.get().trigger(serverPlayer, handler.getSize(), handler.getTypeName());
+                DSAdvancementTriggers.BE_DRAGON.get().trigger(serverPlayer);
             }
         }
     }

@@ -26,7 +26,7 @@ public class SourceOfMagicScreen extends AbstractContainerScreen<SourceOfMagicCo
             "■ §6+100 sec§r - Dragon Heart Shard",
             "■ §6+300 sec§r - Weak Dragon Heart",
             "■ §6+1000 sec§r - Elder Dragon Heart"
-    }) // FIXME :: add parameters for these values (they're configurable)
+    }) // TODO :: add config for item:time pairs
     private static final String HELP = Translation.Type.GUI.wrap("source_of_magic.help");
 
     private static final ResourceLocation BACKGROUND = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/source_of_magic/source_of_magic_ui.png");

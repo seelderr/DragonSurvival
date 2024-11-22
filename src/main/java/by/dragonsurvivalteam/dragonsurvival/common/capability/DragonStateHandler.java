@@ -190,7 +190,7 @@ public class DragonStateHandler extends EntityStateHandler {
 
         if (player instanceof ServerPlayer serverPlayer) {
             PacketDistributor.sendToPlayersTrackingEntityAndSelf(serverPlayer, new SyncSize(serverPlayer.getId(), getLevel(), getSize()));
-            DSAdvancementTriggers.BE_DRAGON.get().trigger(serverPlayer, getSize(), getTypeName());
+            DSAdvancementTriggers.BE_DRAGON.get().trigger(serverPlayer);
             serverPlayer.refreshDimensions();
 
             setSavedDragonSize(dragonType.getTypeNameLowerCase(), size);

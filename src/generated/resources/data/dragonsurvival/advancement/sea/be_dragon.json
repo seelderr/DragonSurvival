@@ -3,7 +3,18 @@
   "criteria": {
     "criterion_0": {
       "conditions": {
-        "type": "sea"
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type_specific": {
+                "type": "dragonsurvival:dragon_predicate",
+                "dragon_type": "sea"
+              }
+            }
+          }
+        ]
       },
       "trigger": "dragonsurvival:be_dragon"
     }

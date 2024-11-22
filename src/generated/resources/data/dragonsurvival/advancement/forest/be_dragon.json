@@ -3,7 +3,18 @@
   "criteria": {
     "criterion_0": {
       "conditions": {
-        "type": "forest"
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type_specific": {
+                "type": "dragonsurvival:dragon_predicate",
+                "dragon_type": "forest"
+              }
+            }
+          }
+        ]
       },
       "trigger": "dragonsurvival:be_dragon"
     }

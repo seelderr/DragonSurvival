@@ -2,11 +2,9 @@ package by.dragonsurvivalteam.dragonsurvival.registry.dragon;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.Condition;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.DragonPredicate;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.MiscCodecs;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.Modifier;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.common.items.growth.StarHeartItem;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
@@ -117,7 +115,7 @@ public class DragonLevels {
                         MiscCodecs.GrowthItem.create(Functions.hoursToTicks(1), DSItems.ELDER_DRAGON_HEART.value()),
                         MiscCodecs.GrowthItem.create(Functions.hoursToTicks(-1), DSItems.STAR_BONE.value())
                 ),
-                Condition.build(DragonPredicate.Builder.dragon().starHeart(StarHeartItem.State.INACTIVE).sizeRange(40, 50)), // FIXME :: (test) remove
+                Condition.naturalGrowth(),
                 Optional.empty()
         ));
     }
