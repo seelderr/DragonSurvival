@@ -6,6 +6,7 @@ import net.minecraft.nbt.DoubleTag;
 import net.minecraft.nbt.FloatTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
@@ -68,6 +69,16 @@ public class Functions {
         public String format(int number) {
             return FORMAT.format(Math.abs(number));
         }
+    }
+
+    /** See {@link Functions#chance(RandomSource, int)} */
+    public static boolean chance(final Player player, int chance) {
+        return chance(player.getRandom(), chance);
+    }
+
+    /** rolls between 1 and 100 (incl.) (chance of 0 will always return false) */
+    public static boolean chance(final RandomSource random, int chance) {
+        return 1 + random.nextInt(100) < chance;
     }
 
     /**

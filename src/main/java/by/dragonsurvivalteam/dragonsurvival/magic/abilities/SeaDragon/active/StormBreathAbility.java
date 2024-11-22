@@ -43,7 +43,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.ClipContext.Fluid;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
@@ -351,52 +350,41 @@ public class StormBreathAbility extends BreathAbility {
             return;
         }
 
-        if (blockState.isSolid()) {
-            if (/* 30% */ player.getRandom().nextInt(100) < 30) {
-                AreaEffectCloud entity = new AreaEffectCloud(EntityType.AREA_EFFECT_CLOUD, player.level());
-                entity.setWaitTime(0);
-                entity.setPos(pos.above().getX(), pos.above().getY(), pos.above().getZ());
-                entity.setPotionContents(new PotionContents(STORM_BREATH));
-                entity.setDuration(Functions.secondsToTicks(2));
-                entity.setRadius(1);
-                entity.setParticle(new SmallLightningParticleOption(37, false));
-                entity.setOwner(player);
-                serverLevel.addFreshEntity(entity);
-            }
+        if (blockState.isSolid() && Functions.chance(player, 30)) {
+            AreaEffectCloud cloud = new AreaEffectCloud(EntityType.AREA_EFFECT_CLOUD, player.level());
+            cloud.setWaitTime(0);
+            cloud.setPos(pos.above().getX(), pos.above().getY(), pos.above().getZ());
+            cloud.setPotionContents(new PotionContents(STORM_BREATH));
+            cloud.setDuration(Functions.secondsToTicks(2));
+            cloud.setRadius(1);
+            cloud.setParticle(new SmallLightningParticleOption(37, false));
+            cloud.setOwner(player);
+
+            serverLevel.addFreshEntity(cloud);
         }
 
-        if (blockState.getFluidState().is(FluidTags.WATER)) {
-            if (/* 30% */ player.getRandom().nextInt(100) < 30) {
-                AreaEffectCloud entity = new AreaEffectCloud(EntityType.AREA_EFFECT_CLOUD, player.level());
-                entity.setWaitTime(0);
-                entity.setPos(pos.getX(), pos.getY(), pos.getZ());
-                entity.setPotionContents(new PotionContents(STORM_BREATH));
-                entity.setDuration(Functions.secondsToTicks(2));
-                entity.setRadius(0.45f);
-                entity.setParticle(new SmallLightningParticleOption(37, true));
-                entity.setOwner(player);
-                serverLevel.addFreshEntity(entity);
-            }
+        if (blockState.getFluidState().is(FluidTags.WATER) && Functions.chance(player, 30)) {
+            AreaEffectCloud cloud = new AreaEffectCloud(EntityType.AREA_EFFECT_CLOUD, player.level());
+            cloud.setWaitTime(0);
+            cloud.setPos(pos.getX(), pos.getY(), pos.getZ());
+            cloud.setPotionContents(new PotionContents(STORM_BREATH));
+            cloud.setDuration(Functions.secondsToTicks(2));
+            cloud.setRadius(0.45f);
+            cloud.setParticle(new SmallLightningParticleOption(37, true));
+            cloud.setOwner(player);
+
+            serverLevel.addFreshEntity(cloud);
         }
 
-        Level level = player.level();
-        if (level.isClientSide) {
-            if (player.tickCount % 40 == 0) {
-                if (level.isThundering()) {
-                    if (player.getRandom().nextInt(100) < 30) {
-                        if (level.canSeeSky(pos)) {
-                            LightningBolt lightningboltentity = EntityType.LIGHTNING_BOLT.create(player.level());
-                            lightningboltentity.moveTo(new Vec3(pos.getX(), pos.getY(), pos.getZ()));
-                            lightningboltentity.setCause((ServerPlayer) player);
-                            level.addFreshEntity(lightningboltentity);
-                            level.playSound(player, pos, SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.WEATHER, 5F, 1.0F);
-                        }
-                    }
-                }
-            }
+        if (player.tickCount % 40 == 0 && serverLevel.isThundering() && Functions.chance(player, 30) && serverLevel.canSeeSky(pos)) {
+            LightningBolt bolt = EntityType.LIGHTNING_BOLT.create(player.level());
+            bolt.moveTo(new Vec3(pos.getX(), pos.getY(), pos.getZ()));
+            bolt.setCause((ServerPlayer) player);
+
+            serverLevel.addFreshEntity(bolt);
+            serverLevel.playSound(player, pos, SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.WEATHER, 5, 1);
         }
     }
-
 
     @OnlyIn(Dist.CLIENT)
     public void stopSound() {
