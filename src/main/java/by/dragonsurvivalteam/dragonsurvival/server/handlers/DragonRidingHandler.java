@@ -70,7 +70,7 @@ public class DragonRidingHandler {
 
     /** Mounting a dragon */
     @SubscribeEvent
-    public static void onRideAttempt(PlayerInteractEvent.EntityInteractSpecific event) {
+    public static void onRideAttempt(PlayerInteractEvent.EntityInteractSpecific event) { // TODO :: check
         Entity entity = event.getTarget();
 
         if (event.getHand() != InteractionHand.MAIN_HAND) {

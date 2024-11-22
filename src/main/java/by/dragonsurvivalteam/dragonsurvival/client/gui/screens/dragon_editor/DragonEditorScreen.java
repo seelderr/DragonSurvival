@@ -48,7 +48,6 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.Tooltip;
-import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
@@ -366,43 +365,27 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
 
         if (showUi) {
             int i = 0;
+
             for (EnumSkinLayer layers : EnumSkinLayer.values()) {
                 String name = layers.name;
                 SkinsScreen.drawNonShadowLineBreak(graphics, font, Component.translatable(Translation.Type.SKIN_PART.wrap(name.toLowerCase(Locale.ENGLISH))), (i < 5 ? width / 2 - 100 - 100 : width / 2 + 83) + 45, guiTop + 10 + (i >= 5 ? (i - 5) * 30 : i * 30) - 12, DyeColor.WHITE.getTextColor());
                 i++;
             }
-        }
 
-        if (showUi) {
             SkinsScreen.drawNonShadowLineBreak(graphics, font, Component.empty().append(WordUtils.capitalize(animations[curAnimation].replace("_", " "))), width / 2, height / 2 + 75 - 22, DyeColor.GRAY.getTextColor());
         }
 
-        for (Renderable widget : new CopyOnWriteArrayList<>(renderables)) {
-            widget.render(graphics, mouseX, mouseY, partialTick);
+        for (Renderable renderable : new CopyOnWriteArrayList<>(renderables)) {
+            if (renderable instanceof AbstractWidget widget && widget != showUiCheckbox) {
+                widget.visible = showUi;
+            }
+
+            renderable.render(graphics, mouseX, mouseY, partialTick);
         }
 
-        for (GuiEventListener child : children()) {
-            if (!(child instanceof DragonUIRenderComponent)) {
-                ((Renderable) child).render(graphics, mouseX, mouseY, partialTick);
-            }
-        }
-
-        if (!showUi) {
-            for (Renderable renderable : renderables) {
-                if (renderable instanceof AbstractWidget widget) {
-                    widget.visible = false;
-                }
-            }
-        } else {
-            for (Renderable renderable : renderables) {
-                if (renderable instanceof AbstractWidget widget) {
-                    widget.visible = true;
-                }
-            }
-
+        if (showUi) {
             for (ColorSelectorButton colorSelectorButton : colorSelectorButtons.values()) {
-                DragonPart text = DragonEditorHandler.getDragonPart(colorSelectorButton.layer, this.preset.get(this.dragonLevel.getKey()).get().layerSettings.get(colorSelectorButton.layer).get().selectedSkin, HANDLER.getType());
-
+                DragonPart text = DragonEditorHandler.getDragonPart(colorSelectorButton.layer, preset.get(Objects.requireNonNull(dragonLevel.getKey())).get().layerSettings.get(colorSelectorButton.layer).get().selectedSkin, HANDLER.getType());
                 colorSelectorButton.visible = (text != null && text.isColorable()) && !defaultSkinCheckbox.selected;
             }
         }
@@ -668,7 +651,6 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
 
                 if (handler.isDragon() && dragonWouldChange(handler) && !dragonDataIsPreserved) {
                     confirmation = true;
-                    showUi = false;
                     confirmComponent.isBodyTypeChange = dragonBodyWouldChange(handler) && !dragonTypeWouldChange(handler);
                 } else {
                     confirm();
