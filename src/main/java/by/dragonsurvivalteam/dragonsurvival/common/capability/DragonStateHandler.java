@@ -39,6 +39,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 import javax.annotation.Nullable;
@@ -195,7 +196,18 @@ public class DragonStateHandler extends EntityStateHandler {
             this.size = NO_SIZE;
         } else if (!dragonStage.value().sizeRange().matches(size)) {
             if (size > dragonStage.value().sizeRange().max()) {
-                DragonStage.getNextStage(provider, dragonStage.value()).ifPresent(nextStage -> this.dragonStage = nextStage);
+                Optional<Holder.Reference<DragonStage>> nextStage = DragonStage.getNextStage(provider, dragonStage.value());
+
+                // Find the next dragon stage in the chain that matches with the given size
+                while (nextStage.isPresent()) {
+                    this.dragonStage = nextStage.get();
+
+                    if (!this.dragonStage.value().sizeRange().matches(size)) {
+                        nextStage = DragonStage.getNextStage(provider, dragonStage.value());
+                    } else {
+                        nextStage = Optional.empty();
+                    }
+                }
             } else {
                 this.dragonStage = Objects.requireNonNullElseGet(previousStage, () -> DragonStage.get(provider, size));
             }

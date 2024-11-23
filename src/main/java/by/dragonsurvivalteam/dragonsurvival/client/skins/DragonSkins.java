@@ -268,7 +268,7 @@ public class DragonSkins {
                     skin.glow = isGlow;
                     SKIN_USERS.get(dragonStage).putIfAbsent(name, skin);
                 } catch (ResourceLocationException exception) {
-                    DragonSurvival.LOGGER.warn("Could not parse dragon level from the skin [{}]", skin.name, exception);
+                    DragonSurvival.LOGGER.warn("Could not parse dragon stage from the skin [{}] due to [{}]", skin.name, exception.getMessage());
                 }
             }
         }

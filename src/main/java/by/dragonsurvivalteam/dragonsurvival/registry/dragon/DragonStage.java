@@ -147,15 +147,6 @@ public record DragonStage(
         return Component.translatable(Translation.Type.STAGE.wrap(dragonStage.location().getNamespace(), dragonStage.location().getPath()));
     }
 
-    public static Component translatableDescription(final ResourceKey<DragonStage> dragonStage) {
-        return Component.translatable(Translation.Type.STAGE_DESCRIPTION.wrap(dragonStage.location().getNamespace(), dragonStage.location().getPath()));
-    }
-
-    /** Used for the skin texture name */
-    public static String name(final Holder<DragonStage> level) {
-        return level.getRegisteredName().replace(":", ".");
-    }
-
     public static List<ResourceKey<DragonStage>> keys(final HolderLookup.Provider provider) {
         HolderLookup.RegistryLookup<DragonStage> registry;
 
@@ -173,23 +164,25 @@ public record DragonStage(
         return Math.clamp(size, sizeRange().min(), sizeRange().max());
     }
 
-    /** Returns {@link DragonStage#getBoundedSize(double)} of the next stage (if present) or of the current stage */
-    public double getNextSize(@Nullable final HolderLookup.Provider provider, double size) {
-        if (!getBounds().matches(size)) {
-            Optional<Holder.Reference<DragonStage>> nextStage = getNextStage(provider, this);
+    /** Returns the next size (either part of the next stage chain, of the previous stage or the current size - depending on whether the size matches the bounds) */
+    public double getNextSize(@Nullable final HolderLookup.Provider provider, double size, @Nullable final DragonStage previousStage) {
+        double newSize = getValidSize(size);
 
-            if (nextStage.isEmpty()) {
-                return size;
+        if (newSize > sizeRange().max()) {
+            return getNextStage(provider, this).map(nextStage -> nextStage.value().getNextSize(provider, newSize, this)).orElseGet(() -> getBoundedSize(newSize));
+        } else if (newSize < sizeRange().min()) {
+            if (previousStage != null && previousStage.sizeRange().matches(newSize)) {
+                return newSize;
             }
 
-            if (!nextStage.get().value().sizeRange().matches(size)) {
-                return size;
-            }
-
-            return nextStage.get().value().getBoundedSize(size);
+            return DragonStage.get(provider, newSize).value().getBoundedSize(newSize);
         }
 
-        return size;
+        return newSize;
+    }
+
+    public static double getValidSize(double size) {
+        return Math.clamp(size, smallest.sizeRange.min(), largest.sizeRange().max());
     }
 
     /** Returns the bounds between the smallest and largest dragon sizes */
