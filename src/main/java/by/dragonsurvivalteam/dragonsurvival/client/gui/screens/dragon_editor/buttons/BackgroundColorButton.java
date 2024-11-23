@@ -4,11 +4,9 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.Dra
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.components.BackgroundColorSelectorComponent;
 import by.dragonsurvivalteam.dragonsurvival.mixins.client.ScreenAccessor;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.Tooltip;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
@@ -50,8 +48,6 @@ public class BackgroundColorButton extends ExtendedButton {
                 }
             };
 
-            Screen screen = Minecraft.getInstance().screen;
-
             colorComponent = new BackgroundColorSelectorComponent(this.screen, getX() - 50, getY() + height + 3, 120, 61);
             screen.renderables.add(renderButton);
             colorComponent.children().forEach(listener -> ((ScreenAccessor) screen).dragonSurvival$children().add(listener));
@@ -66,11 +62,10 @@ public class BackgroundColorButton extends ExtendedButton {
 
     @Override
     public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
-        active = !screen.preset.skinAges.get(screen.level).get().defaultSkin;
+        active = !screen.preset.get(screen.dragonStage.getKey()).get().defaultSkin;
 
         if (toggled && (!visible || !isMouseOver(mouseX, mouseY) && (colorComponent == null || !colorComponent.isMouseOver(mouseX, mouseY)))) {
             toggled = false;
-            Screen screen = Minecraft.getInstance().screen;
             colorComponent.children().forEach(component -> screen.children().removeIf(other -> component == other));
             screen.children().removeIf(s -> s == colorComponent);
             screen.renderables.removeIf(s -> s == renderButton);

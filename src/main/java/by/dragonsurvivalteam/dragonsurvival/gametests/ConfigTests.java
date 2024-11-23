@@ -10,8 +10,8 @@ import by.dragonsurvivalteam.dragonsurvival.config.ConfigUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.config.types.FoodConfigCollector;
 import by.dragonsurvivalteam.dragonsurvival.config.types.ItemHurtConfig;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBodies;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStages;
 import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.gametest.framework.BeforeBatch;
@@ -114,7 +114,7 @@ public class ConfigTests {
     @GameTest(template = TestUtils.AIR_CUBE_1X, batch = "config_tests")
     public static void test_hurt_config(final GameTestHelper helper) {
         Player player = TestUtils.createPlayer(helper, GameType.DEFAULT_MODE);
-        TestUtils.setToDragon(helper, player, DragonTypes.CAVE, DragonBody.center, DragonLevel.YOUNG.size);
+        TestUtils.setToDragon(helper, player, DragonTypes.CAVE, DragonBodies.center, DragonStages.young);
 
         int damage = 2;
         List<ItemHurtConfig> configs = List.of(ItemHurtConfig.of(ConfigUtils.location(Items.POTION), damage));
@@ -179,9 +179,9 @@ public class ConfigTests {
 
     @GameTest(template = TestUtils.AIR_CUBE_1X, batch = "config_tests")
     public static void test_invalid_config(final GameTestHelper helper) {
-        String configKey = "break_speed_multiplier";
+        String configKey = "normal_mana_regeneration";
         float valueNotInRange = 0f;
-        float defaultValue = 2f;
+        float defaultValue = 1f;
 
         TestUtils.setAndCheckConfig(helper, configKey, defaultValue);
         ConfigHandler.updateConfigValue(configKey, valueNotInRange);
@@ -189,7 +189,7 @@ public class ConfigTests {
 
         try {
             Object fieldValue = field.get(null);
-            helper.assertTrue(fieldValue.equals(defaultValue), "The field value [" + fieldValue + "] did not match the expected value [" + defaultValue + "] (config should not have been updated)");
+            helper.assertTrue(TestUtils.compare(defaultValue, fieldValue), "The field value [" + fieldValue + "] did not match the expected value [" + defaultValue + "] (config should not have been updated)");
         } catch (IllegalAccessException exception) {
             helper.fail("Failed trying to access a field for the config [" + configKey + "] to validate the config: [" + exception.getMessage() + "]");
         }

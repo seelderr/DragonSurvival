@@ -1,67 +1,57 @@
 package by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities;
 
+import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonStageCustomization;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceKey;
+import net.neoforged.neoforge.common.util.Lazy;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class SkinCap extends SubCap {
-    public static final String defaultSkinValue = "None";
-    public boolean renderNewborn;
-    public boolean renderYoung;
-    public boolean renderAdult;
+    public static final String RENDER_CUSTOM_SKIN = "render_custom_skin";
+    public static final String SKIN_PRESET = "skin_preset";
+
+    public Map<ResourceKey<DragonStage>, Boolean> recompileSkin = new HashMap<>();
+    public Map<ResourceKey<DragonStage>, Boolean> isCompiled = new HashMap<>();
+
     public SkinPreset skinPreset = new SkinPreset();
-    public boolean blankSkin = false;
 
-    public Map<DragonLevel, Boolean> recompileSkin = new HashMap<>();
-    public Map<DragonLevel, Boolean> isCompiled = new HashMap<>();
-
-    public void compileSkin() {
-        for (DragonLevel level : DragonLevel.values()) {
-            recompileSkin.put(level, true);
-        }
-    }
+    public boolean renderCustomSkin;
+    public boolean blankSkin;
 
     public SkinCap(DragonStateHandler handler) {
         super(handler);
+    }
 
-        for (String value : DragonTypes.getTypes()) {
-            skinPreset.initDefaults(DragonTypes.getStatic(value));
-        }
+    public void compileSkin(final Holder<DragonStage> dragonStage) {
+        recompileSkin.put(dragonStage.getKey(), true);
+    }
 
-        for (DragonLevel level : DragonLevel.values()) {
-            recompileSkin.put(level, true);
-            isCompiled.put(level, false);
-        }
+    public Lazy<DragonStageCustomization> get(final ResourceKey<DragonStage> dragonStage) {
+        return skinPreset.get(dragonStage);
     }
 
     @Override
     public CompoundTag serializeNBT(@NotNull HolderLookup.Provider provider) {
         CompoundTag tag = new CompoundTag();
-
-        tag.putBoolean("renderNewborn", renderNewborn);
-        tag.putBoolean("renderYoung", renderYoung);
-        tag.putBoolean("renderAdult", renderAdult);
-
-        tag.put("skinPreset", skinPreset.serializeNBT(provider));
-
+        tag.putBoolean(RENDER_CUSTOM_SKIN, renderCustomSkin);
+        tag.put(SKIN_PRESET, skinPreset.serializeNBT(provider));
         return tag;
     }
 
     @Override
     public void deserializeNBT(@NotNull HolderLookup.Provider provider, CompoundTag tag) {
-        renderNewborn = tag.getBoolean("renderNewborn");
-        renderYoung = tag.getBoolean("renderYoung");
-        renderAdult = tag.getBoolean("renderAdult");
+        renderCustomSkin = tag.getBoolean(RENDER_CUSTOM_SKIN);
 
-        CompoundTag skinNbt = tag.getCompound("skinPreset");
+        CompoundTag skin = tag.getCompound(SKIN_PRESET);
         skinPreset = new SkinPreset();
-        skinPreset.deserializeNBT(provider, skinNbt);
+        skinPreset.deserializeNBT(provider, skin);
     }
 }

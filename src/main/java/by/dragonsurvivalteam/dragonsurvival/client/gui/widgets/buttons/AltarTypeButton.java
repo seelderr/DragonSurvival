@@ -78,6 +78,8 @@ public class AltarTypeButton extends Button {
     public AbstractDragonType type;
 
     private final DragonAltarScreen parent;
+
+    private static final int MAX_SHOWN = 5;
     private int scroll;
     private boolean resetScroll;
 
@@ -117,15 +119,13 @@ public class AltarTypeButton extends Button {
             if (type != null) {
                 List<Item> foods = DragonFoodHandler.getEdibleFoods(type);
 
-                int maxItems = 5;
-
-                if (foods.size() < 1 + maxItems) {
+                if (foods.size() <= MAX_SHOWN) {
                     scroll = 0;
                 } else {
-                    scroll = Math.clamp(scroll, 0, foods.size() - 1 - maxItems);
+                    scroll = Math.clamp(scroll, 0, foods.size() - MAX_SHOWN);
                 }
 
-                int max = Math.min(foods.size() - 1, scroll + maxItems);
+                int max = Math.min(foods.size(), scroll + MAX_SHOWN);
 
                 String translationKey = switch (type) {
                     case ForestDragonType ignored -> FOREST_DRAGON;
@@ -136,7 +136,7 @@ public class AltarTypeButton extends Button {
 
                 // TODO : could append a scroll-icon here?
                 // Using the color codes in the translation doesn't seem to apply the color to the entire text - therefor we create the [shown / max_items] tooltip part here
-                MutableComponent shownFoods = Component.literal(" [" + (scroll + maxItems) + " / " + (foods.size() - 1) + "]").withStyle(ChatFormatting.DARK_GRAY);
+                MutableComponent shownFoods = Component.literal(" [" + Math.min(foods.size(), scroll + MAX_SHOWN) + " / " + foods.size() + "]").withStyle(ChatFormatting.DARK_GRAY);
                 components.addFirst(Either.left(Component.translatable(translationKey).append(shownFoods)));
 
                 for (int i = scroll; i < max; i++) {
@@ -175,8 +175,9 @@ public class AltarTypeButton extends Button {
     private void initiateDragonForm(AbstractDragonType type) {
         LocalPlayer player = Minecraft.getInstance().player;
 
-        if (player == null)
+        if (player == null) {
             return;
+        }
 
         if (type == null) {
             Minecraft.getInstance().player.sendSystemMessage(Component.translatable(CHOICE_HUMAN));
@@ -186,6 +187,7 @@ public class AltarTypeButton extends Button {
                 cap.revertToHumanForm(player, false);
                 PacketDistributor.sendToServer(new SyncComplete.Data(player.getId(), cap.serializeNBT(player.registryAccess())));
             });
+
             player.closeContainer();
         } else {
             Minecraft.getInstance().setScreen(new DragonEditorScreen(parent, type));

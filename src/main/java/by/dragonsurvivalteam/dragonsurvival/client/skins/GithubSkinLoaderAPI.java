@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client.skins;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
-import by.dragonsurvivalteam.dragonsurvival.util.GsonFactory;
+import by.dragonsurvivalteam.dragonsurvival.util.json.GsonFactory;
 import com.google.gson.Gson;
 import org.apache.logging.log4j.Level;
 
@@ -33,6 +33,7 @@ public class GithubSkinLoaderAPI extends NetSkinLoader {
     @Override
     public Collection<SkinObject> querySkinList() {
         ArrayList<SkinObject> result = new ArrayList<>();
+
         try {
             Gson gson = GsonFactory.getDefault();
             URL url = new URL(SKINS_LIST_LINK);
@@ -50,9 +51,10 @@ public class GithubSkinLoaderAPI extends NetSkinLoader {
             } catch (IOException exception) {
                 DragonSurvival.LOGGER.warn("Reader could not be closed", exception);
             }
-        } catch (IOException e) {
-            DragonSurvival.LOGGER.log(Level.WARN, "Failed to get skin information in Github.");
+        } catch (IOException exception) {
+            DragonSurvival.LOGGER.log(Level.WARN, "Failed to get skin information in Github: [{}]", exception.getMessage());
         }
+
         return null;
     }
 

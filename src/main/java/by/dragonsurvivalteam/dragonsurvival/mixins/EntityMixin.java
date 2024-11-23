@@ -9,7 +9,6 @@ import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.CaveDragonConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.DragonBonusConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSEntityTypeTags;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -42,7 +41,7 @@ public abstract class EntityMixin {
             DragonMovementData movementData = handler.getMovementData();
             Vec3 originalPassPos = player.getPassengerRidingPosition(player);
             double size = DragonStateProvider.getData(passenger).getSize();
-            double heightOffset = size > ServerConfig.DEFAULT_MAX_GROWTH_SIZE ? -0.55 : -0.15 - size / DragonLevel.ADULT.size * 0.2;
+            double heightOffset = -0.15 - size * 0.08; // Arbitrarily chosen number
 
             Vec3 offsetFromBb = new Vec3(0, heightOffset, -1.4 * player.getBbWidth());
             Vec3 offsetFromCenter = originalPassPos.subtract(player.position());

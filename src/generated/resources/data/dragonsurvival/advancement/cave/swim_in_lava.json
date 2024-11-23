@@ -13,7 +13,10 @@
                   "fluids": "#minecraft:lava"
                 }
               },
-              "nbt": "{\"neoforge:attachments\":{\"dragonsurvival:dragon_handler\":{type:\"cave\"}}}"
+              "type_specific": {
+                "type": "dragonsurvival:dragon_predicate",
+                "dragon_type": "cave"
+              }
             }
           }
         ]

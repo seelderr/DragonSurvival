@@ -11,7 +11,8 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStages;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
@@ -28,10 +29,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.DyeColor;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
+import net.neoforged.neoforge.common.CommonHooks;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
+
+import java.util.Objects;
 
 public class DragonAltarScreen extends Screen {
     @Translation(type = Translation.Type.MISC, comments = "Choose a Dragon Species")
@@ -113,24 +117,12 @@ public class DragonAltarScreen extends Screen {
             if (btn instanceof AltarTypeButton button) {
                 if (button.isHoveredOrFocused()) {
                     handler1.setType(button.type);
-
-                    if (handler1.getBody() == null) {
-                        handler1.setBody(DragonBody.random(null));
-                    }
-
-                    handler1.setHasFlight(true);
-                    handler1.setSize(DragonLevel.NEWBORN.size);
-                    handler1.getSkinData().skinPreset.skinAges.get(DragonLevel.NEWBORN).get().defaultSkin = true;
-
                     handler2.setType(button.type);
 
-                    if (handler2.getBody() == null) {
-                        handler2.setBody(DragonBody.random(null));
+                    if (button.type != null) {
+                        initializeHandler(handler1);
+                        initializeHandler(handler2);
                     }
-
-                    handler2.setHasFlight(true);
-                    handler2.setSize(button.type == null ? DragonLevel.NEWBORN.size : DragonLevel.ADULT.size);
-                    handler2.getSkinData().skinPreset.skinAges.get(button.type == null ? DragonLevel.NEWBORN : DragonLevel.ADULT).get().defaultSkin = true;
 
                     FakeClientPlayerUtils.getFakePlayer(0, handler1).animationSupplier = () -> animations[animation1];
                     FakeClientPlayerUtils.getFakePlayer(1, handler2).animationSupplier = () -> animations[animation2];
@@ -163,8 +155,18 @@ public class DragonAltarScreen extends Screen {
         }
 
         TextRenderUtil.drawCenteredScaledText(guiGraphics, width / 2, 10, 2f, title.getString(), DyeColor.WHITE.getTextColor());
-
         super.render(guiGraphics, mouseX, mouseY, partialTick);
+    }
+
+    private void initializeHandler(final DragonStateHandler handler) {
+        if (handler.getBody() == null) {
+            handler.setBody(DragonBody.random(null));
+        }
+
+        handler.setHasFlight(true);
+        //noinspection DataFlowIssue -> registry is expected to be present
+        handler.setClientSize(CommonHooks.resolveLookup(DragonStage.REGISTRY).getOrThrow(DragonStages.adult));
+        handler.getSkinData().get(handler.getStage().getKey()).get().defaultSkin = true;
     }
 
     @Override
@@ -228,7 +230,7 @@ public class DragonAltarScreen extends Screen {
         addRenderableWidget(new ExtendedButton(width / 2 - 75, height - 25, 150, 20, Component.translatable(LangKey.GUI_DRAGON_EDITOR), action -> Minecraft.getInstance().setScreen(new DragonEditorScreen(Minecraft.getInstance().screen))) {
             @Override
             public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-                visible = DragonStateProvider.isDragon(minecraft.player);
+                visible = DragonStateProvider.isDragon(Objects.requireNonNull(minecraft).player);
                 super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
             }
         });

@@ -2,7 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.models;
 
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEditorHandler;
-import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset.SkinAgeGroup;
+import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonStageCustomization;
 import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
@@ -10,6 +10,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.objects.DragonMove
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.config.ClientConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
 import by.dragonsurvivalteam.dragonsurvival.util.AnimationUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.platform.NativeImage;
@@ -17,6 +18,7 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -26,6 +28,7 @@ import software.bernie.geckolib.loading.math.MathParser;
 import software.bernie.geckolib.model.GeoModel;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
@@ -174,19 +177,21 @@ public class DragonModel extends GeoModel<DragonEntity> {
         }
 
         DragonStateHandler handler = DragonStateProvider.getData(player);
-        SkinAgeGroup ageGroup = handler.getSkinData().skinPreset.skinAges.get(handler.getLevel()).get();
+        DragonStageCustomization customization = handler.getSkinData().get(handler.getStage().getKey()).get();
 
         if (handler.getSkinData().blankSkin) {
             return ResourceLocation.fromNamespaceAndPath(MODID, "textures/dragon/blank_skin_" + handler.getTypeNameLowerCase() + ".png");
         }
 
-        if (handler.getSkinData().recompileSkin.get(handler.getLevel())) {
+        ResourceKey<DragonStage> stageKey = handler.getStage().getKey();
+
+        if (handler.getSkinData().recompileSkin.getOrDefault(stageKey, true)) {
             if (ClientConfig.forceCPUSkinGeneration) {
                 if (textureRegisterFuture.isDone()) {
                     CompletableFuture<List<Pair<NativeImage, ResourceLocation>>> imageGenerationFuture = DragonEditorHandler.generateSkinTextures(dragon);
                     textureRegisterFuture = imageGenerationFuture.thenRunAsync(() -> {
-                        handler.getSkinData().isCompiled.put(handler.getLevel(), true);
-                        handler.getSkinData().recompileSkin.put(handler.getLevel(), false);
+                        handler.getSkinData().isCompiled.put(stageKey, true);
+                        handler.getSkinData().recompileSkin.put(stageKey, false);
                         for (Pair<NativeImage, ResourceLocation> pair : imageGenerationFuture.join()) {
                             RenderingUtils.uploadTexture(pair.getFirst(), pair.getSecond());
                         }
@@ -194,18 +199,18 @@ public class DragonModel extends GeoModel<DragonEntity> {
                 }
             } else {
                 DragonEditorHandler.generateSkinTexturesGPU(dragon);
-                handler.getSkinData().isCompiled.put(handler.getLevel(), true);
-                handler.getSkinData().recompileSkin.put(handler.getLevel(), false);
+                handler.getSkinData().isCompiled.put(handler.getStage().getKey(), true);
+                handler.getSkinData().recompileSkin.put(handler.getStage().getKey(), false);
             }
         }
 
         // Show the default skin while we are compiling if we haven't already compiled the skin
-        if (ageGroup.defaultSkin || !handler.getSkinData().isCompiled.get(handler.getLevel())) {
-            return ResourceLocation.fromNamespaceAndPath(MODID, "textures/dragon/" + handler.getTypeNameLowerCase() + "_" + handler.getLevel().getRawName() + ".png");
+        if (customization.defaultSkin || !handler.getSkinData().isCompiled.getOrDefault(stageKey, false)) {
+            return ResourceLocation.fromNamespaceAndPath(MODID, "textures/dragon/" + handler.getTypeNameLowerCase() + "_" + Objects.requireNonNull(stageKey).location().getPath() + ".png");
         }
 
         String uuid = player.getStringUUID();
-        return ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_normal_" + uuid + "_" + handler.getLevel().name);
+        return ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_normal_" + uuid + "_" + Objects.requireNonNull(stageKey).location().getPath());
     }
 
     @Override
@@ -240,8 +245,7 @@ public class DragonModel extends GeoModel<DragonEntity> {
             Holder<DragonBody> body = handler.getBody();
 
             if (body != null) {
-                //noinspection DataFlowIssue -> key is present
-                ResourceLocation location = body.getKey().location();
+                ResourceLocation location = Objects.requireNonNull(body.getKey()).location();
                 return ResourceLocation.fromNamespaceAndPath(location.getNamespace(), String.format("animations/dragon_%s.json", location.getPath()));
             }
         }

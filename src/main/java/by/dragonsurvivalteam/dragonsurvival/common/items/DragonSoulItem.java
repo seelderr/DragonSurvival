@@ -10,9 +10,10 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonT
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAdvancementTriggers;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSSounds;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.PlayerLoginHandler;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -34,6 +35,7 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Objects;
 
 public class DragonSoulItem extends Item {
     @Translation(type = Translation.Type.MISC, comments = "Empty Dragon Soul")
@@ -191,8 +193,8 @@ public class DragonSoulItem extends Item {
             }
 
             double size = tag.getDouble("size");
-            DragonLevel level = DragonStateHandler.getLevel(size);
-            tooltips.add(Component.translatable(INFO, dragonName, level.translatableName(), String.format("%.0f", size)));
+            Holder<DragonStage> level = DragonStage.get(context.registries(), size);
+            tooltips.add(Component.translatable(INFO, dragonName, DragonStage.translatableName(Objects.requireNonNull(level.getKey())), String.format("%.0f", size)));
 
             if (tag.getBoolean("spinLearned")) {
                 tooltips.add(Component.translatable(HAS_SPIN));

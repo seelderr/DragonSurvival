@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.SkinsScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.mixins.client.TextureManagerAccess;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBodies;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.client.Minecraft;
@@ -17,6 +18,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 public class DragonBodyButton extends Button {
     public static final String LOCATION_PREFIX = "textures/gui/body/";
@@ -31,8 +34,7 @@ public class DragonBodyButton extends Button {
     private final boolean locked;
 
     public DragonBodyButton(Screen screen, int x, int y, int xSize, int ySize, Holder<DragonBody> dragonBody, boolean locked, OnPress action) {
-        //noinspection DataFlowIssue -> key is present
-        this(screen, x, y, xSize, ySize, dragonBody, dragonBody.getKey().location(), locked, action);
+        this(screen, x, y, xSize, ySize, dragonBody, Objects.requireNonNull(dragonBody.getKey()).location(), locked, action);
     }
 
     private DragonBodyButton(Screen screen, int x, int y, int xSize, int ySize, Holder<DragonBody> dragonBody, ResourceLocation location, boolean locked, OnPress action) {
@@ -51,8 +53,8 @@ public class DragonBodyButton extends Button {
         ResourceManager manager = ((TextureManagerAccess) Minecraft.getInstance().getTextureManager()).dragonSurvival$getResourceManager();
 
         if (manager.getResource(iconLocation).isEmpty()) {
-            DragonSurvival.LOGGER.warn("Icon [{}] does not exist - using icon from body type [{}] as fallback", iconLocation, DragonBody.center);
-            iconLocation = ResourceLocation.fromNamespaceAndPath(DragonBody.center.location().getNamespace(), LOCATION_PREFIX + DragonBody.center.location().getPath() + iconLocationSuffix);
+            DragonSurvival.LOGGER.warn("Icon [{}] does not exist - using icon from body type [{}] as fallback", iconLocation, DragonBodies.center);
+            iconLocation = ResourceLocation.fromNamespaceAndPath(DragonBodies.center.location().getNamespace(), LOCATION_PREFIX + DragonBodies.center.location().getPath() + iconLocationSuffix);
         }
 
         this.iconLocation = iconLocation;

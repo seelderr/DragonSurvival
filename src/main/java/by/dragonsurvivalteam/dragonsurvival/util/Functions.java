@@ -6,32 +6,79 @@ import net.minecraft.nbt.DoubleTag;
 import net.minecraft.nbt.FloatTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import org.joml.Vector3f;
 import software.bernie.geckolib.util.RenderUtil;
 
+import java.text.NumberFormat;
+
 public class Functions {
-    public static int minutesToTicks(int minutes) {
+    public static int daysToTicks(double days) {
+        return hoursToTicks(days) * 24;
+    }
+
+    public static int hoursToTicks(double hours) {
+        return minutesToTicks(hours) * 60;
+    }
+
+    public static int minutesToTicks(double minutes) {
         return secondsToTicks(minutes) * 60;
     }
 
     public static int secondsToTicks(double seconds) {
-        return (int) (seconds * 20);
+        return (int) seconds * 20;
     }
 
-    public static int secondsToTicks(int seconds) {
-        return seconds * 20;
+    public static double ticksToHours(int ticks) {
+        return ticksToMinutes(ticks) / 60d;
     }
 
     public static double ticksToMinutes(int ticks) {
-        return ticksToSeconds(ticks) / 60;
+        return ticksToSeconds(ticks) / 60d;
     }
 
     public static double ticksToSeconds(int ticks) {
         return ticks / 20d;
+    }
+
+    public record Time(int hours, int minutes, int seconds) {
+        private static final NumberFormat FORMAT = NumberFormat.getInstance();
+
+        static {
+            FORMAT.setMinimumIntegerDigits(2);
+        }
+
+        public static Time fromTicks(int ticks) {
+            int hours = (int) (Functions.ticksToHours(ticks));
+            int minutes = (int) (Functions.ticksToMinutes(ticks - Functions.hoursToTicks(hours)));
+            int seconds = (int) (Functions.ticksToSeconds(ticks - Functions.hoursToTicks(hours) - Functions.minutesToTicks(minutes)));
+            return new Time(hours, minutes, seconds);
+        }
+
+        public boolean hasTime() {
+            return hours() != 0 || minutes() != 0 || seconds() != 0;
+        }
+
+        public String format() {
+            return format(hours()) + ":" + format(minutes()) + ":" + format(seconds());
+        }
+
+        public String format(int number) {
+            return FORMAT.format(Math.abs(number));
+        }
+    }
+
+    /** See {@link Functions#chance(RandomSource, int)} */
+    public static boolean chance(final Player player, int chance) {
+        return chance(player.getRandom(), chance);
+    }
+
+    /** rolls between 1 and 100 (incl.) (chance of 0 will always return false) */
+    public static boolean chance(final RandomSource random, int chance) {
+        return 1 + random.nextInt(100) < chance;
     }
 
     /**
@@ -211,17 +258,21 @@ public class Functions {
 
         if (entity instanceof Player player) {
             DragonStateHandler handler = DragonStateProvider.getData(player);
-            if (handler.isDragon()) {
-                float f1 = -(float) handler.getMovementData().bodyYaw * ((float) Math.PI / 180F);
 
-                float f4 = Mth.sin(f1);
-                float f5 = Mth.cos(f1);
-                AttributeInstance attributeInstance = player.getAttribute(Attributes.SCALE);
-                double scale = attributeInstance != null ? attributeInstance.getValue() : 1.0d;
-                lookVector.set((float) (f4 * (handler.getSize() * scale / 40)), 0, (float) (f5 * (handler.getSize() * scale / 40)));
+            if (handler.isDragon()) {
+                float angle = -(float) handler.getMovementData().bodyYaw * ((float) Math.PI / 180F);
+                float x = Mth.sin(angle);
+                float z = Mth.cos(angle);
+                float scale = getScale(player, handler.getSize());
+                lookVector.set(x * scale, 0, z * scale);
             }
         }
 
         return lookVector;
+    }
+
+    public static float getScale(final Player player, double size) {
+        // The formula is generated based on input / output pairs of various sizes which looked correct
+        return (float) ((0.017 * Math.pow(size, 1.06) + 0.135) * player.getAttributeValue(Attributes.SCALE));
     }
 }

@@ -7,6 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
 import by.dragonsurvivalteam.dragonsurvival.mixins.client.LevelRendererAccess;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDestructionEnabled;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.SheetedDecalTextureGenerator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -56,13 +57,13 @@ public class DragonDestructionHandler {
         if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES) {
             LocalPlayer player = Minecraft.getInstance().player;
 
-            if (!ServerConfig.allowLargeScaling || ServerConfig.largeBlockBreakRadiusScalar <= 0 || player == null || player.isCrouching()) {
+            if (ServerConfig.largeBlockBreakRadiusScalar <= 0 || player == null || player.isCrouching()) {
                 return;
             }
 
             DragonStateHandler data = DragonStateProvider.getData(player);
 
-            if (!data.isDragon() || data.getSize() < ServerConfig.DEFAULT_MAX_GROWTH_SIZE) {
+            if (!data.isDragon() || data.getSize() < DragonStage.MAX_HANDLED_SIZE) {
                 return;
             }
 
@@ -76,7 +77,7 @@ public class DragonDestructionHandler {
             int progress = set != null ? set.last().getProgress() : -1;
 
             if (progress != -1) {
-                int radius = (int) Math.floor((data.getSize() - ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / 60 * ServerConfig.largeBlockBreakRadiusScalar);
+                int radius = (int) Math.floor((data.getSize() - DragonStage.MAX_HANDLED_SIZE / 60 * ServerConfig.largeBlockBreakRadiusScalar));
 
                 BlockPos.betweenClosedStream(AABB.ofSize(centerOfDestruction.getCenter(), radius, radius, radius)).forEach(offsetPosition -> {
                     double xDistance = (double) offsetPosition.getX() - x;

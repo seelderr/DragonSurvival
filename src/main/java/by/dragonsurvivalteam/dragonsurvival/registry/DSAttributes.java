@@ -37,12 +37,17 @@ public class DSAttributes {
     @Translation(type = Translation.Type.ATTRIBUTE_DESCRIPTION, comments = "A multiplier to the dropped experience")
     public static final Holder<Attribute> EXPERIENCE = DS_ATTRIBUTES.register("experience", () -> new RangedAttribute(Translation.Type.ATTRIBUTE.wrap("experience"), 1, 0, 1024).setSyncable(true));
 
+    @Translation(type = Translation.Type.ATTRIBUTE, comments = "Dragon Breath Range")
+    @Translation(type = Translation.Type.ATTRIBUTE_DESCRIPTION, comments = "Determines the range of the dragon breath ability (the range acts in terms of blocks)")
+    public static final Holder<Attribute> DRAGON_BREATH_RANGE = DS_ATTRIBUTES.register("dragon_breath_range", () -> new RangedAttribute(Translation.Type.ATTRIBUTE.wrap("dragon_breath_range"), 3, 0, 1024).setSyncable(true));
+
     @SubscribeEvent
     public static void attachAttributes(final EntityAttributeModificationEvent event) {
         event.add(EntityType.PLAYER, FLIGHT_STAMINA_COST);
         event.add(EntityType.PLAYER, FLIGHT_SPEED);
         event.add(EntityType.PLAYER, MANA);
         event.add(EntityType.PLAYER, EXPERIENCE);
+        event.add(EntityType.PLAYER, DRAGON_BREATH_RANGE);
         event.getTypes().forEach(type -> event.add(type, LAVA_SWIM_SPEED));
     }
 }

@@ -18,6 +18,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.Objects;
+
 @Mixin(SmithingScreen.class)
 public class SmithingScreenMixin {
     @Unique private @Nullable DragonEntity dragonSurvival$dragon;
@@ -42,8 +44,7 @@ public class SmithingScreenMixin {
     private void dragonSurvival$updateFakeDragon(ItemStack pStack, CallbackInfo ci) {
         if (dragonSurvival$dragon != null) {
             for (EquipmentSlot equipmentslot : EquipmentSlot.values()) {
-                //noinspection DataFlowIssue -> player is present
-                dragonSurvival$dragon.setItemSlot(equipmentslot, Minecraft.getInstance().player.getItemBySlot(equipmentslot));
+                dragonSurvival$dragon.setItemSlot(equipmentslot, Objects.requireNonNull(Minecraft.getInstance().player).getItemBySlot(equipmentslot));
             }
 
             if (!pStack.isEmpty()) {

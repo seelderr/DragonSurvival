@@ -234,10 +234,8 @@ public class MagicHandler {
 
                 if (DragonUtils.isType(handler, DragonTypes.SEA)) {
                     int chance = DragonAbilities.getAbility(player, SpectralImpactAbility.class).map(SpectralImpactAbility::getChance).orElse(0);
-                    // rolls between 1 and 100 (incl.) (chance of 0 means the ability should not trigger)
-                    boolean hit = 1 + player.getRandom().nextInt(101) < chance;
 
-                    if (hit) {
+                    if (Functions.chance(player, chance)) {
                         event.getEntity().hurt(new DamageSource(DSDamageTypes.get(player.level(), DSDamageTypes.SPECTRAL_IMPACT), player), (float) (event.getAmount() * 0.15));
                         double d0 = -Mth.sin(player.getYRot() * ((float) Math.PI / 180F));
                         double d1 = Mth.cos(player.getYRot() * ((float) Math.PI / 180F));
@@ -248,10 +246,8 @@ public class MagicHandler {
                     }
                 } else if (DragonUtils.isType(handler, DragonTypes.CAVE)) {
                     int chance = DragonAbilities.getAbility(player, BurnAbility.class).map(BurnAbility::getChance).orElse(0);
-                    // rolls between 1 and 100 (incl.) (chance of 0 means the ability should not trigger)
-                    boolean hit = 1 + player.getRandom().nextInt(101) < chance;
 
-                    if (hit) {
+                    if (Functions.chance(player, chance)) {
                         event.getEntity().getData(DragonSurvival.ENTITY_HANDLER).lastAfflicted = player.getId();
 
                         if (!player.level().isClientSide()) {

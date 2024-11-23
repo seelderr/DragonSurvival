@@ -78,10 +78,6 @@ public class DragonUtils {
         return Objects.equal(playerType.getTypeName(), typeToCheck.getTypeName());
     }
 
-    public static DragonLevel getLevel(Player entity) {
-        return DragonStateProvider.getData(entity).getLevel();
-    }
-
     public static boolean isNearbyDragonPlayerToEntity(double detectionRadius, Level level, Entity entity) {
         List<Player> players = level.getEntitiesOfClass(Player.class, entity.getBoundingBox().inflate(detectionRadius));
 

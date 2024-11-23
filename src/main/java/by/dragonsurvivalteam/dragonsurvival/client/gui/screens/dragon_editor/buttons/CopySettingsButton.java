@@ -3,11 +3,9 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.bu
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.components.CopyEditorSettingsComponent;
 import by.dragonsurvivalteam.dragonsurvival.mixins.client.ScreenAccessor;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.Tooltip;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
@@ -38,9 +36,8 @@ public class CopySettingsButton extends ExtendedButton {
 
         if (toggled && (!visible || !isMouseOver(pMouseX, pMouseY) && (component == null || !component.isMouseOver(pMouseX, pMouseY)))) {
             toggled = false;
-            Screen screen = Minecraft.getInstance().screen;
-            screen.children().removeIf(s -> s == component);
-            screen.renderables.removeIf(s -> s == renderButton);
+            screen.children().removeIf(element -> element == component);
+            screen.renderables.removeIf(element -> element == renderButton);
         }
     }
 
@@ -64,9 +61,9 @@ public class CopySettingsButton extends ExtendedButton {
 
             int offset = screen.height - (getY() + 80);
             component = new CopyEditorSettingsComponent(screen, this, getX() + width - 80, getY() + Math.min(offset, 0), 80, 70);
-            ((ScreenAccessor) screen).dragonSurvival$children().add(0, component);
+            ((ScreenAccessor) screen).dragonSurvival$children().addFirst(component);
             ((ScreenAccessor) screen).dragonSurvival$children().add(component);
-            screen.renderables.add(0, renderButton);
+            screen.renderables.addFirst(renderButton);
             screen.renderables.add(renderButton);
         } else {
             screen.children().removeIf(s -> s == component);

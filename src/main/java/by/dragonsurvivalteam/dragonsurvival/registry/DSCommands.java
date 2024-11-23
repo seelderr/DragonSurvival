@@ -2,6 +2,9 @@ package by.dragonsurvivalteam.dragonsurvival.registry;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.commands.*;
+import by.dragonsurvivalteam.dragonsurvival.commands.arguments.DragonBodyArgument;
+import by.dragonsurvivalteam.dragonsurvival.commands.arguments.DragonSizeArgument;
+import by.dragonsurvivalteam.dragonsurvival.commands.arguments.DragonStageArgument;
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
@@ -21,6 +24,8 @@ public class DSCommands {
 
     static {
         ARGUMENT_TYPES.register("dragon_body", () -> ArgumentTypeInfos.registerByClass(DragonBodyArgument.class, SingletonArgumentInfo.contextAware(DragonBodyArgument::new)));
+        ARGUMENT_TYPES.register(DragonStageArgument.ID, () -> ArgumentTypeInfos.registerByClass(DragonStageArgument.class, SingletonArgumentInfo.contextAware(DragonStageArgument::new)));
+        ARGUMENT_TYPES.register("dragon_size", () -> ArgumentTypeInfos.registerByClass(DragonSizeArgument.class, SingletonArgumentInfo.contextAware(DragonSizeArgument::new)));
     }
 
     @SubscribeEvent
@@ -29,7 +34,7 @@ public class DSCommands {
         DragonCommand.register(event);
         DragonEditorCommand.register(commandDispatcher);
         DragonAltarCommand.register(commandDispatcher);
-        DragonSizeCommand.register(commandDispatcher);
+        DragonSizeCommand.register(event);
         LOGGER.info("Registered commands");
     }
 }

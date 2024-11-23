@@ -1,15 +1,17 @@
 package by.dragonsurvivalteam.dragonsurvival.commands;
 
+import by.dragonsurvivalteam.dragonsurvival.commands.arguments.DragonBodyArgument;
+import by.dragonsurvivalteam.dragonsurvival.commands.arguments.DragonStageArgument;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.SyncComplete;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStages;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
-import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.mojang.brigadier.tree.ArgumentCommandNode;
@@ -20,7 +22,6 @@ import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.selector.EntitySelector;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -41,7 +42,7 @@ public class DragonCommand {
         RootCommandNode<CommandSourceStack> rootCommandNode = commandDispatcher.getRoot();
         LiteralCommandNode<CommandSourceStack> dragon = literal("dragon").requires(commandSource -> commandSource.hasPermission(2)).executes(context -> {
             String type = context.getArgument("dragon_type", String.class);
-            return runCommand(type, DragonBody.random(event.getBuildContext()), 1, false, context.getSource().getPlayerOrException());
+            return runCommand(type, null, null, false, context.getSource().getPlayerOrException());
         }).build();
 
         ArgumentCommandNode<CommandSourceStack, String> dragonType = argument("dragon_type", StringArgumentType.string()).suggests((context, builder) -> {
@@ -57,41 +58,41 @@ public class DragonCommand {
         }).executes(context -> {
             String type = context.getArgument("dragon_type", String.class);
             ServerPlayer serverPlayer = context.getSource().getPlayerOrException();
-            return runCommand(type, DragonBody.random(event.getBuildContext()), 1, false, serverPlayer);
+            return runCommand(type, null, null, false, serverPlayer);
         }).build();
 
-        ArgumentCommandNode<CommandSourceStack, Holder<DragonBody>> dragonBody = argument("dragon_body", new DragonBodyArgument(event.getBuildContext())).executes(context -> {
+        ArgumentCommandNode<CommandSourceStack, Holder<DragonBody>> dragonBody = argument(DragonBodyArgument.ID, new DragonBodyArgument(event.getBuildContext())).executes(context -> {
             String type = context.getArgument("dragon_type", String.class);
             Holder<DragonBody> body = DragonBodyArgument.get(context);
             ServerPlayer serverPlayer = context.getSource().getPlayerOrException();
-            return runCommand(type, body, 1, false, serverPlayer);
+            return runCommand(type, body, null, false, serverPlayer);
         }).build();
 
-        ArgumentCommandNode<CommandSourceStack, Integer> dragonStage = argument("dragon_stage", IntegerArgumentType.integer(1, 4)).suggests((context, builder) -> builder.suggest(1).suggest(2).suggest(3).suggest(4).buildFuture()).executes(context -> {
+        ArgumentCommandNode<CommandSourceStack, Holder<DragonStage>> dragonStage = argument(DragonStageArgument.ID, new DragonStageArgument(event.getBuildContext())).executes(context -> {
             String type = context.getArgument("dragon_type", String.class);
             Holder<DragonBody> body = DragonBodyArgument.get(context);
-            int stage = context.getArgument("dragon_stage", Integer.TYPE);
+            Holder<DragonStage> level = DragonStageArgument.get(context);
             ServerPlayer serverPlayer = context.getSource().getPlayerOrException();
-            return runCommand(type, body, stage, false, serverPlayer);
+            return runCommand(type, body, level, false, serverPlayer);
         }).build();
 
         ArgumentCommandNode<CommandSourceStack, Boolean> giveFlight = argument("flight", BoolArgumentType.bool()).executes(context -> {
             String type = context.getArgument("dragon_type", String.class);
             Holder<DragonBody> body = DragonBodyArgument.get(context);
-            int stage = context.getArgument("dragon_stage", Integer.TYPE);
+            Holder<DragonStage> level = DragonStageArgument.get(context);
             boolean flight = context.getArgument("flight", Boolean.TYPE);
             ServerPlayer serverPlayer = context.getSource().getPlayerOrException();
-            return runCommand(type, body, stage, flight, serverPlayer);
+            return runCommand(type, body, level, flight, serverPlayer);
         }).build();
 
         ArgumentCommandNode<CommandSourceStack, EntitySelector> target = argument("target", EntityArgument.players()).executes(context -> {
             String type = context.getArgument("dragon_type", String.class);
             Holder<DragonBody> body = DragonBodyArgument.get(context);
-            int stage = context.getArgument("dragon_stage", Integer.TYPE);
+            Holder<DragonStage> level = DragonStageArgument.get(context);
             boolean flight = context.getArgument("flight", Boolean.TYPE);
             EntitySelector selector = context.getArgument("target", EntitySelector.class);
             List<ServerPlayer> serverPlayers = selector.findPlayers(context.getSource());
-            serverPlayers.forEach(player -> runCommand(type, body, stage, flight, player));
+            serverPlayers.forEach(player -> runCommand(type, body, level, flight, player));
             return 1;
         }).build();
 
@@ -103,28 +104,30 @@ public class DragonCommand {
         giveFlight.addChild(target);
     }
 
-    private static int runCommand(String type, @Nullable Holder<DragonBody> dragonBody, int stage, boolean flight, ServerPlayer player){
+    private static int runCommand(String type, @Nullable Holder<DragonBody> dragonBody, @Nullable Holder<DragonStage> dragonStage, boolean flight, ServerPlayer player) {
         DragonStateHandler cap = DragonStateProvider.getData(player);
         AbstractDragonType dragonType = DragonTypes.getStaticSubtype(type);
 
         if (dragonType != null && dragonBody == null) {
-            // TODO :: setting a null dragon body causes issue (when building modifiers e.g.), not sure why it's an option here
-            return 0;
+            dragonBody = DragonBody.random(player.registryAccess());
         }
 
-        if(dragonType == null && cap.getType() != null){
+        if (dragonType != null && dragonStage == null) {
+            dragonStage = player.registryAccess().holderOrThrow(DragonStages.newborn);
+        }
+
+        if (dragonType == null && cap.getType() != null) {
             reInsertClawTools(player, cap);
         }
 
         cap.setType(dragonType, player);
         cap.setBody(dragonBody, player);
+        cap.setSize(player, dragonStage);
+
         cap.setHasFlight(flight);
         cap.getMovementData().spinLearned = flight;
-        DragonLevel dragonLevel = DragonLevel.values()[Mth.clamp(stage - 1, 0, DragonLevel.values().length-1)];
-        float size = stage == 4 ? 40f : dragonLevel.size;
-        cap.setSize(size, player);
         cap.setPassengerId(-1);
-        cap.growing = true;
+        cap.isGrowing = true;
 
         PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncComplete.Data(player.getId(), cap.serializeNBT(player.registryAccess())));
         player.refreshDimensions();

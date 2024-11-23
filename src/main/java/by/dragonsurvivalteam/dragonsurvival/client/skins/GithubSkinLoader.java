@@ -1,9 +1,10 @@
 package by.dragonsurvivalteam.dragonsurvival.client.skins;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
-import by.dragonsurvivalteam.dragonsurvival.util.GsonFactory;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
+import by.dragonsurvivalteam.dragonsurvival.util.json.GsonFactory;
 import com.google.gson.Gson;
+import net.minecraft.resources.ResourceKey;
 import org.apache.logging.log4j.Level;
 
 import java.io.*;
@@ -35,6 +36,7 @@ public class GithubSkinLoader extends NetSkinLoader {
     @Override
     public Collection<SkinObject> querySkinList() {
         ArrayList<SkinObject> result = new ArrayList<>();
+
         try {
             Gson gson = GsonFactory.getDefault();
             URL url = new URL(SKIN_LIST_API);
@@ -54,7 +56,7 @@ public class GithubSkinLoader extends NetSkinLoader {
                 DragonSurvival.LOGGER.warn("Reader could not be closed", exception);
             }
         } catch (IOException exception) {
-            DragonSurvival.LOGGER.log(Level.WARN, "Failed to get skin information in GitHub");
+            DragonSurvival.LOGGER.log(Level.WARN, "Failed to get skin information in GitHub: [{}]", exception.getMessage());
         }
 
         return null;
@@ -82,21 +84,21 @@ public class GithubSkinLoader extends NetSkinLoader {
 
     private static final String GLOW = "_glow";
 
-    public InputStream querySkinImage(final String skinName, final DragonLevel level) {
+    public InputStream querySkinImage(final String skinName, final ResourceKey<DragonStage> dragonStage) {
         try {
             String fetchName;
 
             if (skinName.endsWith(GLOW)) {
                 fetchName = skinName.replace(GLOW, "");
-                fetchName = SKIN + fetchName + "_" + level.name + GLOW + ".png";
+                fetchName = SKIN + fetchName + "_" + dragonStage.location().getPath() + GLOW + ".png";
             } else {
-                fetchName = SKIN + skinName + "_" + level.name + ".png";
+                fetchName = SKIN + skinName + "_" + dragonStage.location().getPath() + ".png";
             }
 
             URL url = new URL(fetchName);
             return internetGetStream(url, 15 * 1000);
         } catch (IOException exception) {
-            DragonSurvival.LOGGER.error("Failed to get skin information in GitHub");
+            DragonSurvival.LOGGER.error("Failed to get skin information in GitHub: [{}]", exception.getMessage());
         }
 
         return null;

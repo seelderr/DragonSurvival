@@ -3,17 +3,17 @@ package by.dragonsurvivalteam.dragonsurvival.magic.common.innate;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.DragonBonusConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.innate.CaveClawAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.innate.ForestClawAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.innate.SeaClawAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Objects;
 
 public abstract class DragonClawsAbility extends InnateDragonAbility {
     @Translation(type = Translation.Type.MISC, comments = "Pickaxe")
@@ -46,8 +46,7 @@ public abstract class DragonClawsAbility extends InnateDragonAbility {
 
     @Override
     public ArrayList<Component> getInfo() {
-        //noinspection DataFlowIssue -> player is present
-        DragonStateHandler handler = DragonStateProvider.getData(DragonSurvival.PROXY.getLocalPlayer());
+        DragonStateHandler handler = DragonStateProvider.getData(Objects.requireNonNull(DragonSurvival.PROXY.getLocalPlayer()));
         ArrayList<Component> components = super.getInfo();
 
         Component tool = switch (this) {
@@ -64,7 +63,8 @@ public abstract class DragonClawsAbility extends InnateDragonAbility {
             components.add(Component.translatable(HARVEST_LEVEL, tier.translation()));
         }
 
-        double damageBonus = handler.isDragon() && DragonBonusConfig.isDamageBonusEnabled ? handler.getLevel() == DragonLevel.ADULT ? DragonBonusConfig.adultBonusDamage : handler.getLevel() == DragonLevel.YOUNG ? DragonBonusConfig.youngBonusDamage : DragonBonusConfig.newbornBonusDamage : 0;
+        double damageBonus = Objects.requireNonNull(handler.getStage()).value().getAttributeValue(handler.getTypeNameLowerCase(), handler.getSize(), Attributes.ATTACK_DAMAGE);
+        damageBonus -= Objects.requireNonNull(DragonSurvival.PROXY.getLocalPlayer().getAttribute(Attributes.ATTACK_DAMAGE)).getBaseValue();
 
         if (damageBonus > 0) {
             components.add(Component.translatable(DAMAGE, "+" + damageBonus));
@@ -79,8 +79,7 @@ public abstract class DragonClawsAbility extends InnateDragonAbility {
     }
 
     public int getTier() {
-        //noinspection DataFlowIssue -> player is present
-        DragonStateHandler handler = DragonStateProvider.getData(DragonSurvival.PROXY.getLocalPlayer());
+        DragonStateHandler handler = DragonStateProvider.getData(Objects.requireNonNull(DragonSurvival.PROXY.getLocalPlayer()));
 
         if (handler.getType() == null) {
             return 0;

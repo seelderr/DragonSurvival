@@ -2,12 +2,12 @@ package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEnchantments;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
 import by.dragonsurvivalteam.dragonsurvival.util.EnchantmentUtils;
+import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -49,36 +49,45 @@ public class EnchantmentEffectHandler {
     }
 
     @SubscribeEvent
-    public static void dragonDies(LivingDeathEvent event) {
-        if (DragonStateProvider.isDragon(event.getEntity()) && event.getEntity().hasEffect(DSEffects.HUNTER_OMEN)) {
-            // If they are currently considered evil...
-            if (event.getSource().getEntity() instanceof Player killer && event.getSource().getWeaponItem() != null) {
-                int dragonsbaneLevel = EnchantmentUtils.getLevel(killer.level(), DSEnchantments.DRAGONSBANE, event.getSource().getWeaponItem());
-                if (dragonsbaneLevel > 0 && event.getEntity() instanceof Player dyingPlayer) {
-                    DragonStateHandler handler = DragonStateProvider.getData(dyingPlayer);
-                    handler.setSize(handler.getSize() - getStolenTime(handler) * dragonsbaneLevel, dyingPlayer);
-                    if (DragonStateProvider.isDragon(killer)) {
-                        DragonStateHandler killerHandler = DragonStateProvider.getData(killer);
-                        killerHandler.setSize(killerHandler.getSize() + getStolenTime(killerHandler));
-                    }
-                    killer.level().playLocalSound(killer.blockPosition(), SoundEvents.AMBIENT_UNDERWATER_LOOP_ADDITIONS_ULTRA_RARE, SoundSource.PLAYERS, 2.0f, 1.0f, false);
-                }
+    public static void handleDragonsbaneEnchantment(LivingDeathEvent event) {
+        if (!(event.getEntity() instanceof Player victim) || !(event.getSource().getEntity() instanceof Player attacker)) {
+            return;
+        }
+
+        if (!victim.hasEffect(DSEffects.HUNTER_OMEN)) {
+            return;
+        }
+
+        ItemStack weapon = event.getSource().getWeaponItem();
+
+        if (weapon == null) {
+            return;
+        }
+
+        int enchantmentLevel = EnchantmentUtils.getLevel(attacker.level(), DSEnchantments.DRAGONSBANE, weapon);
+
+        if (enchantmentLevel > 0) {
+            DragonStateHandler victimData = DragonStateProvider.getData(victim);
+
+            if (!victimData.isDragon()) {
+                return;
             }
+
+            victimData.setSize(victim, victimData.getStage(), victimData.getSize() - getStolenTime(victimData) * enchantmentLevel);
+            DragonStateHandler attackerData = DragonStateProvider.getData(attacker);
+
+            if (attackerData.isDragon()) {
+                // TODO :: why doesn't this scale with the enchantment level
+                attackerData.setSize(attacker, attackerData.getStage(), attackerData.getSize() + getStolenTime(attackerData));
+            }
+
+            attacker.level().playLocalSound(attacker.blockPosition(), SoundEvents.AMBIENT_UNDERWATER_LOOP_ADDITIONS_ULTRA_RARE, SoundSource.PLAYERS, 2, 1, false);
         }
     }
 
     private static double getStolenTime(DragonStateHandler handler) {
-        double ticksToSteal = 36000; // Steal 30 minutes per enchantment level
-        return switch (handler.getLevel()) {
-            case NEWBORN ->
-                    (DragonLevel.YOUNG.size - DragonLevel.NEWBORN.size) / (DragonGrowthHandler.NEWBORN_TO_YOUNG * 20.0) * ticksToSteal * ServerConfig.newbornGrowthModifier;
-            case YOUNG ->
-                    (DragonLevel.ADULT.size - DragonLevel.YOUNG.size) / (DragonGrowthHandler.YOUNG_TO_ADULT * 20.0) * ticksToSteal * ServerConfig.youngGrowthModifier;
-            case ADULT -> {
-                if (handler.getSize() > DragonLevel.ADULT.maxSize)
-                    yield (60 - 40) / (DragonGrowthHandler.ANCIENT * 20.0) * ticksToSteal * ServerConfig.maxGrowthModifier;
-                yield (40 - DragonLevel.ADULT.size) / (DragonGrowthHandler.ADULT_TO_ANCIENT * 20.0) * ticksToSteal * ServerConfig.adultGrowthModifier;
-            }
-        };
+        int ticksToSteal = Functions.minutesToTicks(30); // TODO :: make this configurable in the enchantment
+        DragonStage level = handler.getStage().value();
+        return level.ticksToSize(ticksToSteal);
     }
 }

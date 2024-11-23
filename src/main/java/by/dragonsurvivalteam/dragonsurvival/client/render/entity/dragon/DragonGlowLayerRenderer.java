@@ -1,8 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
+import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonStageCustomization;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset;
-import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset.SkinAgeGroup;
 import by.dragonsurvivalteam.dragonsurvival.client.skins.DragonSkins;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
@@ -18,6 +18,8 @@ import net.minecraft.world.entity.player.Player;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
+
+import java.util.Objects;
 
 // TODO :: geckolib has an 'AutoGlowingGeoLayer' class, could that help here?
 // FIXME :: glow layer doesn't like translucency much (it goes dark once the alpha changes)
@@ -46,11 +48,10 @@ public class DragonGlowLayerRenderer extends GeoRenderLayer<DragonEntity> {
         }
 
         DragonStateHandler handler = DragonStateProvider.getData(player);
-
         SkinPreset preset = handler.getSkinData().skinPreset;
-        SkinAgeGroup ageGroup = preset.skinAges.get(handler.getLevel()).get();
 
-        ResourceLocation glowTexture = DragonSkins.getGlowTexture(player, handler.getType(), handler.getLevel());
+        DragonStageCustomization customization = preset.get(Objects.requireNonNull(handler.getStage().getKey())).get();
+        ResourceLocation glowTexture = DragonSkins.getGlowTexture(player, handler.getStage().getKey());
 
         if (glowTexture == null || glowTexture.getPath().contains("/" + handler.getTypeNameLowerCase() + "_")) {
             if (dragonRenderer.glowTexture != null) {
@@ -58,8 +59,8 @@ public class DragonGlowLayerRenderer extends GeoRenderLayer<DragonEntity> {
             }
         }
 
-        if (glowTexture == null && handler.getSkinData().skinPreset.skinAges.get(handler.getLevel()).get().defaultSkin) {
-            ResourceLocation location = ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/dragon/" + handler.getTypeNameLowerCase() + "_" + handler.getLevel().getRawName() + "_glow.png");
+        if (glowTexture == null && handler.getSkinData().get(handler.getStage().getKey()).get().defaultSkin) {
+            ResourceLocation location = ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/dragon/" + handler.getTypeNameLowerCase() + "_" + handler.getStage().getKey().location().getPath() + "_glow.png");
 
             if (Minecraft.getInstance().getResourceManager().getResource(location).isPresent()) {
                 glowTexture = location;
@@ -73,9 +74,9 @@ public class DragonGlowLayerRenderer extends GeoRenderLayer<DragonEntity> {
             VertexConsumer vertexConsumer = bufferSource.getBuffer(type);
             dragonRenderer.actuallyRender(poseStack, animatable, bakedModel, type, bufferSource, vertexConsumer, true, partialTick, packedLight, OverlayTexture.NO_OVERLAY, renderer.getRenderColor(animatable, partialTick, packedLight).getColor());
         } else {
-            ResourceLocation dynamicGlowKey = ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "dynamic_glow_" + animatable.getPlayer().getStringUUID() + "_" + handler.getLevel().name);
+            ResourceLocation dynamicGlowKey = ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "dynamic_glow_" + animatable.getPlayer().getStringUUID() + "_" + handler.getStage().getKey().location().getPath());
 
-            if (ageGroup.layerSettings.values().stream().anyMatch(layerSettings -> layerSettings.get().glowing)) {
+            if (customization.layerSettings.values().stream().anyMatch(layerSettings -> layerSettings.get().glowing)) {
                 RenderType type = RenderType.EYES.apply(dynamicGlowKey, RenderType.LIGHTNING_TRANSPARENCY);
                 VertexConsumer vertexConsumer = bufferSource.getBuffer(type);
                 dragonRenderer.actuallyRender(poseStack, animatable, bakedModel, type, bufferSource, vertexConsumer, true, partialTick, packedLight, OverlayTexture.NO_OVERLAY, renderer.getRenderColor(animatable, partialTick, packedLight).getColor());

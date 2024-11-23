@@ -1,11 +1,11 @@
 package by.dragonsurvivalteam.dragonsurvival.gametests;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -27,11 +27,21 @@ public class TestUtils {
         return setBlock(helper, block, BlockPos.ZERO);
     }
 
+    /** The position needs to be the non-absolute position (meaning without using {@link GameTestHelper#absolutePos(BlockPos)}) */
     public static BlockState setBlock(final GameTestHelper helper, final Block block, final BlockPos position) {
         helper.setBlock(position, block);
-        // TODO :: should log the block which is currently set
-        helper.assertBlock(position, blockToCheck -> blockToCheck == block, "Block at position [" + position + "] is wrong - expected [" + block + "]");
+        BlockState state = helper.getBlockState(position);
+        helper.assertTrue(state.is(block), "Block at position [" + position + "] was [" + state.getBlock() + "] - expected [" + block + "]");
         return helper.getBlockState(position);
+    }
+
+    public static boolean compare(final Object value, final Object fieldValue) {
+        if (value instanceof Number number && fieldValue instanceof Number fieldNumber) {
+            // 1 and 1.0 are otherwise not seen as equal
+            return Float.compare(number.floatValue(), fieldNumber.floatValue()) == 0;
+        } else {
+            return value.equals(fieldValue);
+        }
     }
 
     public static void setAndCheckConfig(final GameTestHelper helper, final String configKey, final Object value) {
@@ -40,34 +50,26 @@ public class TestUtils {
 
         try {
             Object fieldValue = field.get(null);
-            boolean condition;
-
-            if (value instanceof Number number && fieldValue instanceof Number fieldNumber) {
-                // 1 and 1.0 are otherwise not seen as equal
-                condition = Float.compare(number.floatValue(), fieldNumber.floatValue()) == 0;
-            } else {
-                condition = value.equals(fieldValue);
-            }
-
-            helper.assertTrue(condition, "The field value [" + fieldValue + "] did not match the new value [" + value + "] after updating the config");
+            helper.assertTrue(compare(value, fieldValue), "The field value [" + fieldValue + "] did not match the new value [" + value + "] after updating the config");
         } catch (IllegalAccessException exception) {
             helper.fail("Failed trying to access a field for the config [" + configKey + "] to validate the config: [" + exception.getMessage() + "]");
         }
     }
 
-    public static void setToDragon(final GameTestHelper helper, final Player player, final AbstractDragonType dragonType, final ResourceKey<DragonBody> dragonBody, double size) {
+    @SuppressWarnings("DataFlowIssue") // ignore
+    public static void setToDragon(final GameTestHelper helper, final Player player, final AbstractDragonType dragonType, final ResourceKey<DragonBody> dragonBody, final ResourceKey<DragonStage> dragonStage) {
         DragonStateHandler data = DragonStateProvider.getData(player);
 
         data.setType(dragonType, player);
         helper.assertTrue(DragonUtils.isType(data, dragonType), String.format("Dragon type was [%s] - expected [%s]", data.getType(), dragonType));
 
-        Holder.Reference<DragonBody> body = player.registryAccess().lookupOrThrow(DragonBody.REGISTRY).getOrThrow(dragonBody);
-
+        Holder<DragonBody> body = player.registryAccess().holderOrThrow(dragonBody);
         data.setBody(body, player);
         helper.assertTrue(DragonUtils.isBody(data, body), String.format("Dragon type was [%s] - expected [%s]", data.getBody(), dragonBody));
 
-        data.setSize(size, player);
-        helper.assertTrue(data.getSize() == size, String.format("Size was [%f] - expected [%f]", data.getSize(), size));
+        Holder<DragonStage> level = player.registryAccess().holderOrThrow(dragonStage);
+        data.setSize(player, level);
+        helper.assertTrue(data.getStage().is(level), String.format("Dragon level was [%s] - expected [%s]", data.getStage().getKey().location(), level.getKey().location()));
 
         helper.assertTrue(data.isDragon(), "Player is not a dragon - expected player to be a dragon");
     }
@@ -79,8 +81,8 @@ public class TestUtils {
     }
 
     public static void resetPlayer(final GameTestHelper helper, final Player player) {
-        player.setData(DragonSurvival.DRAGON_HANDLER, new DragonStateHandler());
         DragonStateHandler data = DragonStateProvider.getData(player);
+        data.revertToHumanForm(player, false);
 
         AbstractDragonType dragonType = data.getType();
         helper.assertTrue(dragonType == null, String.format("Dragon type was [%s] - expected [null]", dragonType));
@@ -88,7 +90,10 @@ public class TestUtils {
         Holder<DragonBody> dragonBody = data.getBody();
         helper.assertTrue(dragonBody == null, String.format("Dragon body was [%s] - expected [null]", dragonBody));
 
+        Holder<DragonStage> dragonStage = data.getStage();
+        helper.assertTrue(dragonStage == null, String.format("Dragon level was [%s] - expected [null]", dragonStage));
+
         double size = data.getSize();
-        helper.assertTrue(size == 0, String.format("Size was [%f] - expected [0]", size));
+        helper.assertTrue(size == DragonStateHandler.NO_SIZE, String.format("Size was [%f] - expected [0]", size));
     }
 }

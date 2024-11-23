@@ -4,7 +4,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonPassengerID;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetPassengersPacket;
 import net.minecraft.server.level.ServerPlayer;
@@ -30,6 +29,9 @@ public class DragonRidingHandler {
 
     @Translation(type = Translation.Type.MISC, comments = "The dragon you are trying to ride must be crouching for you to mount them.")
     private static final String NOT_CROUCHING = Translation.Type.GUI.wrap("message.not_crouching");
+
+    /** This is just the default adult dragon minimum size */
+    private static final int PLAYER_RIDING_SIZE = 30;
 
     private enum DragonRideAttemptResult {
         SELF_TOO_BIG,
@@ -57,7 +59,7 @@ public class DragonRidingHandler {
 
         if (dragonIsTooSmallToRide) {
             return DragonRideAttemptResult.SELF_TOO_BIG;
-        } else if (!riderData.isDragon() && mountData.getLevel() == DragonLevel.ADULT) {
+        } else if (!riderData.isDragon() && mountData.getSize() < PLAYER_RIDING_SIZE) {
             return DragonRideAttemptResult.MOUNT_TOO_SMALL_HUMAN;
         } else if (mount.getPose() != Pose.CROUCHING) {
             return DragonRideAttemptResult.NOT_CROUCHING;
@@ -68,7 +70,7 @@ public class DragonRidingHandler {
 
     /** Mounting a dragon */
     @SubscribeEvent
-    public static void onRideAttempt(PlayerInteractEvent.EntityInteractSpecific event) {
+    public static void onRideAttempt(PlayerInteractEvent.EntityInteractSpecific event) { // TODO :: check
         Entity entity = event.getTarget();
 
         if (event.getHand() != InteractionHand.MAIN_HAND) {

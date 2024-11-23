@@ -1,13 +1,15 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.components;
 
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.buttons.CopySettingsButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownList;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ExtendedCheckbox;
-import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset.SkinAgeGroup;
+import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonStageCustomization;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStages;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -15,6 +17,8 @@ import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.events.AbstractContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.core.Holder;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
@@ -22,15 +26,15 @@ import net.neoforged.neoforge.common.util.Lazy;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Objects;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
-
+// TODO :: Currently this only supports the built-in types
 public class CopyEditorSettingsComponent extends AbstractContainerEventHandler implements Renderable {
     @Translation(type = Translation.Type.MISC, comments = "Copy to...")
     private static final String COPY_TO = Translation.Type.GUI.wrap("copy_to");
 
-    private static final ResourceLocation CONFIRM_BUTTON = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/confirm_button.png");
-    private static final ResourceLocation CANCEL_BUTTON = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/cancel_button.png");
+    private static final ResourceLocation CONFIRM_BUTTON = DragonSurvival.res("textures/gui/confirm_button.png");
+    private static final ResourceLocation CANCEL_BUTTON = DragonSurvival.res("textures/gui/cancel_button.png");
 
     public boolean visible;
 
@@ -60,35 +64,49 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 
             @Override
             public void onPress() {
-                SkinAgeGroup preset = screen.preset.skinAges.getOrDefault(screen.level, Lazy.of(() -> new SkinAgeGroup(screen.level))).get();
+                Lazy<DragonStageCustomization> lazy = screen.preset.get(Objects.requireNonNull(screen.dragonStage.getKey()));
+
+                if (lazy == null) {
+                    lazy = Lazy.of(DragonStageCustomization::new);
+                }
+
+                DragonStageCustomization preset = lazy.get();
+                RegistryAccess access = Objects.requireNonNull(Minecraft.getInstance().player).registryAccess();
 
                 if (newborn.active && newborn.selected()) {
-                    screen.preset.skinAges.put(DragonLevel.NEWBORN, Lazy.of(() -> {
-                        SkinAgeGroup ageGroup = new SkinAgeGroup(DragonLevel.NEWBORN);
-                        ageGroup.readNBT(preset.writeNBT());
-                        return ageGroup;
+                    Holder<DragonStage> newborn = access.holderOrThrow(DragonStages.newborn);
+
+                    screen.preset.put(Objects.requireNonNull(newborn.getKey()), Lazy.of(() -> {
+                        DragonStageCustomization customization = new DragonStageCustomization();
+                        customization.deserializeNBT(access, preset.serializeNBT(access));
+                        return customization;
                     }));
                 }
 
                 if (young.active && young.selected()) {
-                    screen.preset.skinAges.put(DragonLevel.YOUNG, Lazy.of(() -> {
-                        SkinAgeGroup ageGroup = new SkinAgeGroup(DragonLevel.YOUNG);
-                        ageGroup.readNBT(preset.writeNBT());
-                        return ageGroup;
+                    Holder<DragonStage> young = access.holderOrThrow(DragonStages.young);
+
+                    screen.preset.put(Objects.requireNonNull(young.getKey()), Lazy.of(() -> {
+                        DragonStageCustomization customization = new DragonStageCustomization();
+                        customization.deserializeNBT(access, preset.serializeNBT(access));
+                        return customization;
                     }));
                 }
 
                 if (adult.active && adult.selected()) {
-                    screen.preset.skinAges.put(DragonLevel.ADULT, Lazy.of(() -> {
-                        SkinAgeGroup ageGroup = new SkinAgeGroup(DragonLevel.ADULT);
-                        ageGroup.readNBT(preset.writeNBT());
-                        return ageGroup;
+                    Holder<DragonStage> adult = access.holderOrThrow(DragonStages.adult);
+
+                    screen.preset.put(Objects.requireNonNull(adult.getKey()), Lazy.of(() -> {
+                        DragonStageCustomization customization = new DragonStageCustomization();
+                        customization.deserializeNBT(access, preset.serializeNBT(access));
+                        return customization;
                     }));
                 }
 
                 screen.update();
                 btn.onPress();
-                // TODO: We don't support undoing this action at this time, so to prevent weird behavior it clears the undo/redo stack
+
+                // Undoing this action is not supported at the moment
                 screen.actionHistory.clear();
             }
         };
@@ -111,11 +129,11 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 
         cancel.setTooltip(Tooltip.create(Component.translatable(LangKey.GUI_CANCEL)));
 
-        newborn = new ExtendedCheckbox(x + 5, y + 12, xSize - 10, 10, 10, DragonLevel.NEWBORN.translatableName(), false, action -> { /* Nothing to do */ }) {
+        newborn = new ExtendedCheckbox(x + 5, y + 12, xSize - 10, 10, 10, Component.literal("newborn"), false, action -> { /* Nothing to do */ }) {
             @Override
             public void renderWidget(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks) {
                 super.renderWidget(guiGraphics, pMouseX, pMouseY, pPartialTicks);
-                if (screen.level == DragonLevel.NEWBORN) {
+                if (screen.dragonStage.getKey() == DragonStages.newborn) {
                     selected = true;
                     active = false;
                 } else {
@@ -124,11 +142,11 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
             }
         };
 
-        young = new ExtendedCheckbox(x + 5, y + 27, xSize - 10, 10, 10, DragonLevel.YOUNG.translatableName(), false, action -> { /* Nothing to do */ }) {
+        young = new ExtendedCheckbox(x + 5, y + 27, xSize - 10, 10, 10, Component.literal("young"), false, action -> { /* Nothing to do */ }) {
             @Override
             public void renderWidget(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks) {
                 super.renderWidget(guiGraphics, pMouseX, pMouseY, pPartialTicks);
-                if (screen.level == DragonLevel.YOUNG) {
+                if (screen.dragonStage.getKey() == DragonStages.young) {
                     selected = true;
                     active = false;
                 } else {
@@ -137,11 +155,11 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
             }
         };
 
-        adult = new ExtendedCheckbox(x + 5, y + 27 + 15, xSize - 10, 10, 10, DragonLevel.ADULT.translatableName(), false, action -> { /* Nothing to do */ }) {
+        adult = new ExtendedCheckbox(x + 5, y + 27 + 15, xSize - 10, 10, 10, Component.literal("adult"), false, action -> { /* Nothing to do */ }) {
             @Override
             public void renderWidget(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks) {
                 super.renderWidget(guiGraphics, pMouseX, pMouseY, pPartialTicks);
-                if (screen.level == DragonLevel.ADULT) {
+                if (screen.dragonStage.getKey() == DragonStages.adult) {
                     selected = true;
                     active = false;
                 } else {

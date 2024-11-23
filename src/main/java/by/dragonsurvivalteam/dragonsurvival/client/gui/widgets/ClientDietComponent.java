@@ -10,6 +10,8 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 
 public class ClientDietComponent implements ClientTooltipComponent {
+    private static final int ICON_SIZE = 20;
+
     private final DietComponent component;
     private final Component tooltip;
 
@@ -20,23 +22,22 @@ public class ClientDietComponent implements ClientTooltipComponent {
 
     @Override
     public int getHeight() {
-        return 18;
+        return ICON_SIZE - 2;
     }
 
     @Override
     public int getWidth(@NotNull final Font font) {
-        return /* Icon */ 20 + font.width(tooltip);
+        return ICON_SIZE + font.width(tooltip);
     }
 
     @Override
     public void renderImage(@NotNull final Font font, int x, int y, @NotNull final GuiGraphics graphics) {
-        graphics.renderFakeItem(component.item().getDefaultInstance(), x, y); // TODO :: unsure if we should the item stack or re-create it
+        graphics.renderFakeItem(component.item().getDefaultInstance(), x, y);
     }
 
     @Override
     public void renderText(@NotNull final Font font, int mouseX, int mouseY, @NotNull final Matrix4f matrix, @NotNull final MultiBufferSource.BufferSource bufferSource) {
-        // X offset to render the text to the right of the item
         // Y offset to align the height of the text with the center of the item
-        font.drawInBatch(tooltip, mouseX + 20, mouseY + 4, -1, true, matrix, bufferSource, Font.DisplayMode.NORMAL, 0, LightTexture.FULL_BRIGHT);
+        font.drawInBatch(tooltip, mouseX + ICON_SIZE, mouseY + 4, -1, true, matrix, bufferSource, Font.DisplayMode.NORMAL, 0, LightTexture.FULL_BRIGHT);
     }
 }

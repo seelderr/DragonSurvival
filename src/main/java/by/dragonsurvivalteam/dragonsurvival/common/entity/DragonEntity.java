@@ -10,10 +10,10 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.Em
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ClientConfig;
-import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.AbilityAnimation;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.ISecondAnimation;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.AnimationUtils;
 import net.minecraft.world.entity.*;
@@ -319,7 +319,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
         double baseSpeed = DEFAULT_WALK_SPEED;
         double smallSizeFactor = ClientConfig.smallSizeAnimationSpeedFactor;
         double bigSizeFactor = ClientConfig.largeSizeAnimationSpeedFactor;
-        double baseSize = ServerConfig.DEFAULT_MAX_GROWTH_SIZE;
+        double baseSize = DragonStage.MAX_HANDLED_SIZE;
         double distanceFromGround = ServerFlightHandler.distanceFromGround(player);
 
         if (Stream.of(handler.getEmoteData().currentEmotes).anyMatch(emote -> emote != null && !emote.blend && emote.animation != null && !emote.animation.isBlank())) {

@@ -3,7 +3,9 @@ package by.dragonsurvivalteam.dragonsurvival.client;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.client.extensions.ShakeWhenUsedExtension;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.ClientDietComponent;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.ClientGrowthComponent;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.DietComponent;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.GrowthComponent;
 import by.dragonsurvivalteam.dragonsurvival.client.models.aligned_armor.DragonBoots;
 import by.dragonsurvivalteam.dragonsurvival.client.models.aligned_armor.DragonChestplate;
 import by.dragonsurvivalteam.dragonsurvival.client.models.aligned_armor.DragonHelmet;
@@ -20,6 +22,8 @@ import by.dragonsurvivalteam.dragonsurvival.client.render.entity.projectiles.Bal
 import by.dragonsurvivalteam.dragonsurvival.client.render.entity.projectiles.BolasEntityRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.entity.projectiles.DragonSpikeRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.entity.projectiles.FireBallRenderer;
+import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.loader.DefaultPartLoader;
+import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.loader.DragonPartLoader;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSTileEntities;
@@ -36,6 +40,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
 import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
@@ -56,6 +61,7 @@ public class DragonSurvivalClient {
         bus.addListener(this::setup);
         bus.addListener(this::registerItemExtensions);
         bus.addListener(this::registerTooltips);
+        bus.addListener(this::addReloadListeners);
     }
 
     private void setup(final FMLClientSetupEvent event) {
@@ -80,8 +86,14 @@ public class DragonSurvivalClient {
         });
     }
 
+    private void addReloadListeners(final RegisterClientReloadListenersEvent event) {
+        event.registerReloadListener(new DragonPartLoader());
+        event.registerReloadListener(new DefaultPartLoader());
+    }
+
     private void registerTooltips(final RegisterClientTooltipComponentFactoriesEvent event) {
         event.register(DietComponent.class, ClientDietComponent::new);
+        event.register(GrowthComponent.class, ClientGrowthComponent::new);
     }
 
     private void registerItemExtensions(RegisterClientExtensionsEvent event) {

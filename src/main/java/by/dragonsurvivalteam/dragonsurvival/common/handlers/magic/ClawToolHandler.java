@@ -6,7 +6,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.Cl
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.DragonBonusConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncBrokenTool;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.ToolUtils;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.Holder;
@@ -259,33 +258,18 @@ public class ClawToolHandler {
             return;
         }
 
+        double bonus = handler.getStage().value().breakSpeedMultiplier();
         BlockState state = event.getState();
 
-        float bonus = 0;
-        float unlockedBonus = 0;
-
-        if (handler.getLevel() == DragonLevel.NEWBORN && DragonBonusConfig.bonusUnlockedAt == DragonLevel.NEWBORN) {
-            unlockedBonus = DragonBonusConfig.bonusBreakSpeed;
-        } else if (handler.getLevel() == DragonLevel.YOUNG && DragonBonusConfig.bonusUnlockedAt != DragonLevel.ADULT) {
-            unlockedBonus = DragonBonusConfig.bonusBreakSpeed;
-        } else if (handler.getLevel() == DragonLevel.ADULT) {
-            unlockedBonus = DragonBonusConfig.bonusBreakSpeedAdult;
-            bonus = DragonBonusConfig.baseBreakSpeedAdult;
+        if (!state.is(handler.getType().harvestableBlocks()) || handler.hasValidClawTool(state)) {
+            bonus = getReducedBonus(bonus);
         }
 
-        if (unlockedBonus > bonus && state.is(handler.getType().harvestableBlocks())) {
-            bonus = unlockedBonus;
-        }
+        event.setNewSpeed((float) (event.getNewSpeed() * bonus));
+    }
 
-        for (int i = 0; i < ClawInventory.Slot.size(); i++) {
-            ItemStack clawTool = handler.getClawToolData().getClawsInventory().getItem(i);
-
-            if (state.requiresCorrectToolForDrops() && clawTool.isCorrectToolForDrops(state) || clawTool.getDestroySpeed(state) > 1) {
-                bonus /= DragonBonusConfig.bonusBreakSpeedReduction;
-                break;
-            }
-        }
-
-        event.setNewSpeed(event.getNewSpeed() * Math.max(1, bonus));
+    public static double getReducedBonus(double bonus) {
+        // 1 is the default / minimum multiplier - only reduce the added bonus (e.g. 1.5 -> 1.25)
+        return 1 + (bonus - 1) / DragonBonusConfig.breakSpeedReduction;
     }
 }

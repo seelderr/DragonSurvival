@@ -69,9 +69,8 @@ public class DragonAltarBlock extends Block {
 
         if (!pLevel.isClientSide()) {
             if (ServerConfig.altarUsageCooldown > 0 && handler.altarCooldown > 0) {
-                int minutes = (int) (Functions.ticksToMinutes(handler.altarCooldown));
-                int seconds = (int) (Functions.ticksToSeconds(handler.altarCooldown - Functions.minutesToTicks(minutes)));
-                player.sendSystemMessage(Component.translatable(ALTAR_COOLDOWN, (minutes > 0 ? minutes + "m " : "") + seconds + "s"));
+                Functions.Time time = Functions.Time.fromTicks(handler.altarCooldown);
+                player.sendSystemMessage(Component.translatable(ALTAR_COOLDOWN, time.format()));
                 return InteractionResult.FAIL;
             } else {
                 PacketDistributor.sendToPlayer((ServerPlayer) player, OpenDragonAltar.INSTANCE);

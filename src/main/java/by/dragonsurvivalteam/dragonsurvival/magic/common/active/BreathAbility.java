@@ -2,9 +2,6 @@ package by.dragonsurvivalteam.dragonsurvival.magic.common.active;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
-import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
-import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.active.NetherBreathAbility;
@@ -12,12 +9,12 @@ import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.active.
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.StormBreathAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.AbilityAnimation;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.ISecondAnimation;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSBlockTags;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.TargetingFunctions;
 import com.mojang.datafixers.util.Pair;
@@ -44,11 +41,6 @@ import java.util.Locale;
 public abstract class BreathAbility extends ChannelingCastAbility implements ISecondAnimation {
     @Translation(type = Translation.Type.MISC, comments = "§6■ Cast costs:§r %s per %ss")
     private static final String CHANNEL_COST = Translation.Type.ABILITY_DESCRIPTION.wrap("breath.channel_cost");
-
-    @ConfigRange(min = 0, max = 10)
-    @Translation(key = "base_breath_range", type = Translation.Type.CONFIGURATION, comments = "The base range of the dragon breath attack (increases with dragon size)")
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities"}, key = "base_breath_range")
-    public static Integer baseBreathRange = 3;
 
     public int currentBreathRange;
 
@@ -94,12 +86,12 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
     public void onChanneling(final Player player, int castDuration) {
         DragonStateHandler handler = DragonStateProvider.getData(player);
 
-        currentBreathRange = calculateCurrentBreathRange(handler.getSize());
+        currentBreathRange = (int) player.getAttributeValue(DSAttributes.DRAGON_BREATH_RANGE);
 
         yaw = (float) Math.toRadians(-player.getYRot());
         pitch = (float) Math.toRadians(-player.getXRot());
-        speed = calculateCurrentBreathSpeed(handler.getSize());
-        spread = calculateSpread(handler.getSize());
+        speed = (float) (handler.getSize() * 0.02);
+        spread = 0.25f;
 
         xComp = (float) (Math.sin(yaw) * Math.cos(pitch));
         yComp = (float) Math.sin(pitch);
@@ -242,9 +234,7 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
     @Override
     public ArrayList<Component> getInfo() {
         ArrayList<Component> components = new ArrayList<>();
-
-        DragonStateHandler handler = DragonStateProvider.getData(player);
-        int range = calculateCurrentBreathRange(handler.getSize());
+        int range = (int) player.getAttributeValue(DSAttributes.DRAGON_BREATH_RANGE);
 
         components.add(Component.translatable(LangKey.ABILITY_MANA_COST, getInitManaCost()));
         components.add(Component.translatable(CHANNEL_COST, getManaCost(), 2));
@@ -268,22 +258,7 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
         return components;
     }
 
-    private static float calculateSpread(double size) {
-        return (float) Math.sqrt(size / DragonLevel.ADULT.size) / 5.f + 0.05f;
-    }
-
     public static int calculateNumberOfParticles(double size) {
         return (int) Math.max(Math.min(100, size * 0.6), 12);
-    }
-
-    public static int calculateCurrentBreathRange(double size) {
-        float sizeFactor = Math.min((float) size / DragonLevel.ADULT.size, 1.0f);
-        float additionalBreathRange = sizeFactor * 4.0f + (float) size * 0.05f;
-        return baseBreathRange + (int) additionalBreathRange;
-    }
-
-    public static float calculateCurrentBreathSpeed(double size) {
-        float sizeFactor = Math.min((float) size / DragonLevel.ADULT.size, 1.0f);
-        return sizeFactor * 0.3f + (float) size * 0.004f;
     }
 }

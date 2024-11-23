@@ -1,18 +1,19 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.hud;
 
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonGrowthHandler;
-import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -20,10 +21,16 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.util.HashMap;
+import java.util.Objects;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
-
+/** HUD that is shown when the dragon is holding an item that can change its growth */
 public class GrowthHUD {
+    public static final Function<Integer, String> CIRCLE_BASE = number -> "textures/gui/growth/circle_" + number + ".png";
+    public static final Function<String, String> CIRCLE_TEXTURE = dragonType -> "textures/gui/growth/circle_" + dragonType + ".png";
+    public static final BiFunction<String, ResourceLocation, String> ICON = (dragonType, dragonStage) -> "textures/gui/growth/" + dragonType + "/" + dragonStage.getPath() + ".png";
+
     private static final HashMap<String, ResourceLocation> CACHE = new HashMap<>();
     private static final Color COLOR = new Color(99, 99, 99);
     private static final Color BRIGHTER_COLOR = COLOR.brighter();
@@ -51,82 +58,73 @@ public class GrowthHUD {
             return;
         }
 
-        int increment = DragonGrowthHandler.getIncrement(stack.getItem(), handler.getLevel());
+        Holder<DragonStage> dragonStage = handler.getStage();
+        double growth = DragonGrowthHandler.getGrowth(handler.getStage(), stack.getItem());
+        double nextSize = dragonStage.value().getNextSize(localPlayer.registryAccess(), handler.getSize() + growth);
 
-        if (increment != 0 && (handler.getSize() < ServerConfig.maxGrowthSize && increment > 0 || increment < 0 && handler.getSize() >= DragonLevel.NEWBORN.size + 1)) {
-            float curSize = (float) handler.getSize();
-            float nextSize = (float) (handler.getSize() + increment);
-            float progress = 0;
-            float nextProgess = 0;
-
-            if (handler.getLevel() == DragonLevel.NEWBORN) {
-                progress = (curSize - DragonLevel.NEWBORN.size) / (DragonLevel.YOUNG.size - DragonLevel.NEWBORN.size);
-                nextProgess = (nextSize - DragonLevel.NEWBORN.size) / (DragonLevel.YOUNG.size - DragonLevel.NEWBORN.size);
-            } else if (handler.getLevel() == DragonLevel.YOUNG) {
-                progress = (curSize - DragonLevel.YOUNG.size) / (DragonLevel.ADULT.size - DragonLevel.YOUNG.size);
-                nextProgess = (nextSize - DragonLevel.YOUNG.size) / (DragonLevel.ADULT.size - DragonLevel.YOUNG.size);
-            } else if (handler.getLevel() == DragonLevel.ADULT && handler.getSize() < 40) {
-                progress = (curSize - DragonLevel.ADULT.size) / (40 - DragonLevel.ADULT.size);
-                nextProgess = (nextSize - DragonLevel.ADULT.size) / (40 - DragonLevel.ADULT.size);
-            } else if (handler.getLevel() == DragonLevel.ADULT) {
-                progress = (float) ((curSize - 40) / (ServerConfig.maxGrowthSize - 40));
-                nextProgess = (float) ((nextSize - 40) / (ServerConfig.maxGrowthSize - 40));
-            }
-
-            progress = Math.min(1.0f, progress);
-            nextProgess = Math.min(1.0f, nextProgess);
-
-            int radius = 17;
-            int thickness = 5;
-            int circleX = width / 2 - radius;
-            int circleY = height - 90;
-
-            circleX += growthXOffset;
-            circleY += growthYOffset;
-
-            RenderSystem.setShaderColor(0f, 0f, 0f, 1f);
-
-            RenderSystem.setShaderColor(BRIGHTER_COLOR.getRed() / 255.0f, BRIGHTER_COLOR.getBlue() / 255.0f, BRIGHTER_COLOR.getGreen() / 255.0f, 1.0f);
-            RenderingUtils.drawSmoothCircle(guiGraphics, circleX + radius, circleY + radius, radius, 6, 1, 0);
-
-            RenderSystem.setShader(GameRenderer::getPositionTexShader);
-            RenderSystem.setShaderColor(1F, 1F, 1F, 1.0f);
-
-            if (nextProgess > progress) {
-                int num = 1;
-                double perSide = 1.0 / 6.0;
-
-                if (nextProgess < progress + perSide) {
-                    nextProgess = (float) (progress + perSide);
-                    num = 2;
-                }
-
-                RenderSystem.setShaderTexture(0, getOrCreate("textures/gui/growth/circle_" + num + ".png"));
-                RenderingUtils.drawTexturedCircle(guiGraphics, circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, 6, nextProgess, -0.5);
-
-                RenderSystem.setShaderTexture(0, getOrCreate("textures/gui/growth/circle_" + handler.getTypeNameLowerCase() + ".png"));
-                RenderingUtils.drawTexturedCircle(guiGraphics, circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, 6, progress, -0.5);
-            } else if (increment < 0) {
-                RenderSystem.setShaderTexture(0, getOrCreate("textures/gui/growth/circle_3.png"));
-                RenderingUtils.drawTexturedCircle(guiGraphics, circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, 6, progress, -0.5);
-
-                RenderSystem.setShaderTexture(0, getOrCreate("textures/gui/growth/circle_" + handler.getTypeNameLowerCase() + ".png"));
-                RenderingUtils.drawTexturedCircle(guiGraphics, circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, 6, nextProgess, -0.5);
-            }
-
-            RenderSystem.setShaderColor(COLOR.getRed() / 255.0f, COLOR.getBlue() / 255.0f, COLOR.getGreen() / 255.0f, 1.0f);
-            RenderingUtils.drawSmoothCircle(guiGraphics, circleX + radius, circleY + radius, radius - thickness, 6, 1, 0);
-            RenderSystem.setShader(GameRenderer::getPositionTexShader);
-            RenderSystem.setShaderColor(1F, 1F, 1F, 1.0f);
-
-            guiGraphics.pose().pushPose();
-            guiGraphics.pose().translate(0, 0, 300);
-            guiGraphics.blit(getOrCreate("textures/gui/growth/growth_" + handler.getTypeNameLowerCase() + "_" + (handler.getLevel().ordinal() + 1) + ".png"), circleX + 6, circleY + 6, 0, 0, 20, 20, 20, 20);
-            guiGraphics.pose().popPose();
+        if (handler.getSize() == nextSize) {
+            return;
         }
+
+        float progress = (float) dragonStage.value().getProgress(handler.getSize());
+        float nextProgress = (float) dragonStage.value().getProgress(nextSize);
+
+        progress = Math.min(1, progress);
+        nextProgress = Math.min(1, nextProgress);
+
+        int radius = 17;
+        int thickness = 5;
+        int circleX = width / 2 - radius;
+        int circleY = height - 90;
+
+        circleX += growthXOffset;
+        circleY += growthYOffset;
+
+        RenderSystem.setShaderColor(BRIGHTER_COLOR.getRed() / 255f, BRIGHTER_COLOR.getBlue() / 255f, BRIGHTER_COLOR.getGreen() / 255f, 1);
+        RenderingUtils.drawSmoothCircle(guiGraphics, circleX + radius, circleY + radius, radius, 6, 1, 0);
+
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderColor(1F, 1F, 1F, 1.0f);
+
+        if (nextProgress >= progress) {
+            double perSide = 1.0 / 6.0;
+            int number = 1;
+
+            if (nextProgress < progress + perSide) {
+                nextProgress = (float) (progress + perSide);
+                number = 2;
+            }
+
+            RenderSystem.setShaderTexture(0, getOrCreate(CIRCLE_BASE.apply(number)));
+            drawCircle(handler, guiGraphics, progress, nextProgress, radius, circleX, circleY);
+        } else if (growth < 0) {
+            RenderSystem.setShaderTexture(0, getOrCreate(CIRCLE_BASE.apply(3)));
+            drawCircle(handler, guiGraphics, nextProgress, progress, radius, circleX, circleY);
+        }
+
+        RenderSystem.setShaderColor(COLOR.getRed() / 255f, COLOR.getBlue() / 255f, COLOR.getGreen() / 255f, 1);
+        RenderingUtils.drawSmoothCircle(guiGraphics, circleX + radius, circleY + radius, radius - thickness, 6, 1, 0);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderColor(1, 1, 1, 1);
+
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(0, 0, 300);
+        ResourceLocation levelLocation = Objects.requireNonNull(dragonStage.getKey()).location();
+        guiGraphics.blit(getOrCreate(levelLocation.getNamespace(), ICON.apply(handler.getTypeNameLowerCase(), levelLocation)), circleX + 6, circleY + 6, 0, 0, 20, 20, 20, 20);
+        guiGraphics.pose().popPose();
     }
 
-    private static ResourceLocation getOrCreate(final String path) {
-        return CACHE.computeIfAbsent(path, key -> ResourceLocation.fromNamespaceAndPath(MODID, path));
+    private static void drawCircle(DragonStateHandler handler, @NotNull GuiGraphics graphics, float progress, float nextProgress, int radius, int circleX, int circleY) {
+        RenderingUtils.drawTexturedCircle(graphics, circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, 6, nextProgress, -0.5);
+        RenderSystem.setShaderTexture(0, getOrCreate(CIRCLE_TEXTURE.apply(handler.getTypeNameLowerCase())));
+        RenderingUtils.drawTexturedCircle(graphics, circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, 6, progress, -0.5);
+    }
+
+    public static ResourceLocation getOrCreate(final String path) {
+        return getOrCreate(DragonSurvival.MODID, path);
+    }
+
+    public static ResourceLocation getOrCreate(final String namespace, final String path) {
+        return CACHE.computeIfAbsent(path, key -> ResourceLocation.fromNamespaceAndPath(namespace, path));
     }
 }

@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSBlockTags;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
@@ -106,7 +107,7 @@ public class DragonDestructionHandler {
 
     @SubscribeEvent
     public static void destroyBlocksInRadius(BlockEvent.BreakEvent event) {
-        if (isBreakingMultipleBlocks || !ServerConfig.allowLargeScaling || ServerConfig.largeBlockBreakRadiusScalar <= 0) {
+        if (isBreakingMultipleBlocks || ServerConfig.largeBlockBreakRadiusScalar <= 0) {
             return;
         }
 
@@ -116,14 +117,14 @@ public class DragonDestructionHandler {
 
         DragonStateHandler data = DragonStateProvider.getData(player);
 
-        if (!data.isDragon() || data.getSize() < ServerConfig.DEFAULT_MAX_GROWTH_SIZE) {
+        if (!data.isDragon() || data.getSize() < DragonStage.MAX_HANDLED_SIZE) {
             return;
         }
 
         event.setCanceled(true);
 
         isBreakingMultipleBlocks = true;
-        int radius = (int) Math.floor((data.getSize() - ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / 60 * ServerConfig.largeBlockBreakRadiusScalar);
+        int radius = (int) Math.floor((data.getSize() - DragonStage.MAX_HANDLED_SIZE) / 60 * ServerConfig.largeBlockBreakRadiusScalar);
         BlockPos.betweenClosedStream(AABB.ofSize(event.getPos().getCenter(), radius, radius, radius)).forEach(player.gameMode::destroyBlock);
         isBreakingMultipleBlocks = false;
     }
@@ -151,7 +152,7 @@ public class DragonDestructionHandler {
         }
 
         AABB boundingBox = player.getBoundingBox();
-        AABB blockCollisionBoundingBox = boundingBox.inflate(1.25 + (data.getSize() - ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / ServerConfig.DEFAULT_MAX_GROWTH_SIZE * 0.15f);
+        AABB blockCollisionBoundingBox = boundingBox.inflate(1.25 + (data.getSize() - DragonStage.MAX_HANDLED_SIZE) / DragonStage.MAX_HANDLED_SIZE * 0.15f);
 
         checkAndDestroyCollidingBlocks(data, event, blockCollisionBoundingBox);
         checkAndDamageCrushedEntities(data, player, blockCollisionBoundingBox);

@@ -12,8 +12,6 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 import java.util.List;
 
 public class ServerConfig {
-    public static final Double DEFAULT_MAX_GROWTH_SIZE = 60.0;
-
     ServerConfig(ModConfigSpec.Builder builder) {
         ConfigHandler.createConfigEntries(builder, ConfigSide.SERVER);
     }
@@ -85,6 +83,14 @@ public class ServerConfig {
     @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "block_destruction_size")
     public static Double largeBlockDestructionSize = 120.0;
 
+    @ConfigRange(min = 0.0, max = 10.0)
+    @Translation(key = "large_block_break_radius_scaling", type = Translation.Type.CONFIGURATION, comments = {
+            "Determines the block break radius bonus at max. growth - the intention is to grant the specified value per 60 size - disabled if set to 0",
+            "This bonus is not active while crouching"
+    })
+    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "large_block_break_radius_scaling")
+    public static Double largeBlockBreakRadiusScalar = 0.0;
+
     @Translation(key = "allow_crushing", type = Translation.Type.CONFIGURATION, comments = "If enabled entities beneath dragons above a certain size will be crushed - not active while crouching")
     @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "allow_crushing")
     public static Boolean allowCrushing = false;
@@ -104,69 +110,6 @@ public class ServerConfig {
     @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "crushing_interval")
     public static Integer crushingTickDelay = 20;
 
-    @Translation(key = "allow_large_scaling", type = Translation.Type.CONFIGURATION, comments = "Dragon bonuses can scale beyond the normal dragon size limit if enabled")
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "allow_large_scaling")
-    public static Boolean allowLargeScaling = false;
-
-    @ConfigRange(min = 1, max = 1000) // FIXME :: change comment if formula is changed
-    @Translation(key = "large_max_health_scaling", type = Translation.Type.CONFIGURATION, comments = {
-            "Determines max. health scaling for large dragons",
-            "With default values this would grant ~72 additional max. health at size 120 (on top of the normal max. health bonus of 40 for dragons)",
-            "The intention is to grant the specified health per 60 size"
-    })
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "large_max_health_scaling")
-    public static Integer largeMaxHealthScalar = 40;
-
-    @ConfigRange(min = 0.0, max = 100.0)
-    @Translation(key = "large_movement_speed_multiplier_scaling", type = Translation.Type.CONFIGURATION, comments = "Determines the movement speed multiplier at max. growth - the intention is to grant the specified value per 60 size")
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "large_movement_speed_multiplier_scaling")
-    public static Double largeMovementSpeedScalar = 0.0;
-
-    @ConfigRange(min = 0.0, max = 100.0)
-    @Translation(key = "large_damage_bonus_scaling", type = Translation.Type.CONFIGURATION, comments = "Determines the damage at max. growth - the intention is to grant the specified value per 60 size")
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "large_damage_bonus_scaling")
-    public static Double largeDamageBonus = 3.0;
-
-    @ConfigRange(min = 0.0, max = 100.0)
-    @Translation(key = "large_reach_scaling", type = Translation.Type.CONFIGURATION, comments = "Determines the reach bonus at max. growth - the intention is to grant the specified value per 60 size")
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "large_reach_scaling")
-    public static Double largeReachScalar = 0.5;
-
-    @ConfigRange(min = 0.0, max = 100.0)
-    @Translation(key = "large_step_height_scaling", type = Translation.Type.CONFIGURATION, comments = "Determines the step height bonus at max. growth - the intention is to grant the specified value per 60 size")
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "large_step_height_scaling")
-    public static Double largeStepHeightScalar = 1.0;
-
-    @ConfigRange(min = 0.0, max = 100.0)
-    @Translation(key = "large_jump_height_scaling", type = Translation.Type.CONFIGURATION, comments = "Determines the jump height bonus at max. growth - the intention is to grant the specified value per 60 size")
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "large_jump_height_scaling")
-    public static Double largeJumpHeightScalar = 0.05;
-
-    @ConfigRange(min = 0.0, max = 10.0)
-    @Translation(key = "large_block_break_radius_scaling", type = Translation.Type.CONFIGURATION, comments = {
-            "Determines the block break radius bonus at max. growth - the intention is to grant the specified value per 60 size - disabled if set to 0",
-            "This bonus is not active while crouching"
-    })
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "large_block_break_radius_scaling")
-    public static Double largeBlockBreakRadiusScalar = 0.0;
-
-    // --- Growth items --- //
-
-    @ConfigType(Item.class) // TODO :: tag or custom with id:growth_value
-    @Translation(key = "newborn_growth_items", type = Translation.Type.CONFIGURATION, comments = "Items which can be used to grow the a newborn dragon - Format: namespace:path")
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth"}, key = "newborn_growth_items", validation = Validation.RESOURCE_LOCATION)
-    public static List<String> growNewborn = List.of("dragonsurvival:heart_element", "dragonsurvival:weak_dragon_heart", "dragonsurvival:elder_dragon_heart");
-
-    @ConfigType(Item.class) // TODO :: tag or custom with id:growth_value
-    @Translation(key = "young_growth_items", type = Translation.Type.CONFIGURATION, comments = "Items which can be used to grow the a young dragon - Format: namespace:path")
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth"}, key = "young_growth_items", validation = Validation.RESOURCE_LOCATION)
-    public static List<String> growYoung = List.of("dragonsurvival:weak_dragon_heart", "dragonsurvival:elder_dragon_heart");
-
-    @ConfigType(Item.class) // TODO :: tag or custom with id:growth_value
-    @Translation(key = "adult_growth_items", type = Translation.Type.CONFIGURATION, comments = "Items which can be used to grow the an adult dragon - Format: namespace:path")
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth"}, key = "adult_growth_items", validation = Validation.RESOURCE_LOCATION)
-    public static List<String> growAdult = List.of("dragonsurvival:elder_dragon_heart");
-
     // --- Standard dragon scaling --- //
 
     @Translation(key = "natural_growth", type = Translation.Type.CONFIGURATION, comments = "If enabled dragons will also naturally grow over time")
@@ -176,66 +119,6 @@ public class ServerConfig {
     @Translation(key = "save_growth_stage", type = Translation.Type.CONFIGURATION, comments = "If enabled the current growth will be saved for the current dragon type when changing types or reverting back to being a human")
     @ConfigOption(side = ConfigSide.SERVER, category = {"growth"}, key = "save_growth_stage")
     public static Boolean saveGrowthStage = false;
-
-    @ConfigRange(min = 14.0, max = 300)
-    @Translation(key = "max_growth_size", type = Translation.Type.CONFIGURATION, comments = "Determines the maximum size dragons can grow to")
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth"}, key = "max_growth_size")
-    public static Double maxGrowthSize = DEFAULT_MAX_GROWTH_SIZE;
-
-    @ConfigRange(min = 0, max = 100)
-    @Translation(key = "newborn_movement_speed", type = Translation.Type.CONFIGURATION, comments = "Movement speed multiplier for newborn dragons")
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "standard_dragon"}, key = "newborn_movement_speed")
-    public static Double moveSpeedNewborn = 1.0;
-
-    @ConfigRange(min = 0, max = 100)
-    @Translation(key = "young_movement_speed", type = Translation.Type.CONFIGURATION, comments = "Movement speed multiplier for young dragons")
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "standard_dragon"}, key = "young_movement_speed")
-    public static Double moveSpeedYoung = 1.0;
-
-    @ConfigRange(min = 0, max = 100)
-    @Translation(key = "adult_movement_speed", type = Translation.Type.CONFIGURATION, comments = "Movement speed multiplier for adult dragons")
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "standard_dragon"}, key = "adult_movement_speed")
-    public static Double moveSpeedAdult = 1.0;
-
-    @ConfigRange(min = 0, max = 100)
-    @Translation(key = "reach_bonus", type = Translation.Type.CONFIGURATION, comments = "The reach bonus for dragons - the bonus is scaled depending on the dragon size, this value being reached at size 60")
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "standard_dragon"}, key = "reachBonus")
-    public static Double reachBonus = 0.5;
-
-    @ConfigRange(min = 1, max = 100)
-    @Translation(key = "starting_health", type = Translation.Type.CONFIGURATION, comments = "Amount of health dragons start at (A normal human player has 20 health by default)")
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "standard_dragon"}, key = "starting_health")
-    public static Integer minHealth = 14;
-
-    @ConfigRange(min = 1, max = 100)
-    @Translation(key = "maximum_health", type = Translation.Type.CONFIGURATION, comments = "Maximum amount of dragons can have when fully grown")
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "standard_dragon"}, key = "maximum_health")
-    public static Integer maxHealth = 40;
-
-    @ConfigRange(min = 1, max = 100)
-    @Translation(key = "maximum_health_reached", type = Translation.Type.CONFIGURATION, comments = "Determines the size at which the maximum amount of health is reached")
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "standard_dragon"}, key = "maximum_health_reached")
-    public static Integer maxHealthSize = 40;
-
-    @ConfigRange(min = 0.0, max = 1000)
-    @Translation(key = "newborn_growth_multiplier", type = Translation.Type.CONFIGURATION, comments = "Growth multiplier for newborn dragons - with a value of 1 it takes 3 real-time hours to turn into a young dragon")
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "standard_dragon"}, key = "newborn_growth_multiplier")
-    public static Double newbornGrowthModifier = 0.3;
-
-    @ConfigRange(min = 0.0, max = 1000)
-    @Translation(key = "young_growth_multiplier", type = Translation.Type.CONFIGURATION, comments = "Growth multiplier for young dragons - with a value of 1 it takes 24 real-time hours to turn into an adult dragon")
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "standard_dragon"}, key = "young_growth_multiplier")
-    public static Double youngGrowthModifier = 0.5;
-
-    @ConfigRange(min = 0.0, max = 1000)
-    @Translation(key = "adult_growth_multiplier", type = Translation.Type.CONFIGURATION, comments = "Growth multiplier for adult dragons - with a value of 1 it takes 3 real-time days to reach the maximum adult size")
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "standard_dragon"}, key = "adult_growth_multiplier")
-    public static Double adultGrowthModifier = 0.9;
-
-    @ConfigRange(min = 0.0, max = 1000)
-    @Translation(key = "max_growth_multiplier", type = Translation.Type.CONFIGURATION, comments = "Growth multiplier to reach the maximum size - with a value of 1 it takes 30 real-time days to reach the maximum adult size")
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "standard_dragon"}, key = "max_growth_multiplier")
-    public static Double maxGrowthModifier = 1.0;
 
     // --- Item drops --- //
 

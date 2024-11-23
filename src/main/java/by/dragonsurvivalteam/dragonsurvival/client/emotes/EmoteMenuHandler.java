@@ -389,33 +389,39 @@ public class EmoteMenuHandler {
         HashMap<Integer, ArrayList<Emote>> list = new HashMap<>();
         ArrayList<Emote> emotes = new ArrayList<>(DSEmotes.EMOTES);
 
-        emotes.removeIf(em -> {
-            if (em.requirements != null) {
-                if (em.requirements.type != null) {
-                    boolean hasType = false;
-                    for (String t : em.requirements.type) {
-                        if (t.equalsIgnoreCase(handler.getTypeName())) {
-                            hasType = true;
-                            break;
-                        }
-                    }
+        emotes.removeIf(emote -> {
+            if (emote.requirements == null) {
+                return false;
+            }
 
-                    if (!hasType) {
-                        return true;
+            if (emote.requirements.type != null) {
+                String dragonType = handler.getTypeNameLowerCase();
+                boolean hasType = false;
+
+                for (String type : emote.requirements.type) {
+                    if (type.equals(dragonType)) {
+                        hasType = true;
+                        break;
                     }
                 }
 
-                if (em.requirements.age != null) {
-                    boolean hasAge = false;
-                    for (String t : em.requirements.age) {
-                        if (t.equalsIgnoreCase(handler.getLevel().name)) {
-                            hasAge = true;
-                            break;
-                        }
-                    }
-
-                    return !hasAge;
+                if (!hasType) {
+                    return true;
                 }
+            }
+
+            if (emote.requirements.age != null) {
+                String dragonStage = Objects.requireNonNull(handler.getStage().getKey()).location().toString();
+                boolean hasAge = false;
+
+                for (String level : emote.requirements.age) {
+                    if (level.equals(dragonStage)) {
+                        hasAge = true;
+                        break;
+                    }
+                }
+
+                return !hasAge;
             }
 
             return false;

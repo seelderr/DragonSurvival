@@ -8,11 +8,14 @@
             "condition": "minecraft:entity_properties",
             "entity": "this",
             "predicate": {
-              "nbt": "{\"neoforge:attachments\":{\"dragonsurvival:dragon_handler\":{type:\"forest\"}}}",
               "stepping_on": {
                 "block": {
                   "blocks": "minecraft:sweet_berry_bush"
                 }
+              },
+              "type_specific": {
+                "type": "dragonsurvival:dragon_predicate",
+                "dragon_type": "forest"
               }
             }
           }

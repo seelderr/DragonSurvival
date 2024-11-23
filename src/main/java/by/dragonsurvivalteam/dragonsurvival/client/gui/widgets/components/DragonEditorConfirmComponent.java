@@ -97,8 +97,11 @@ public class DragonEditorConfirmComponent extends AbstractContainerEventHandler 
     }
 
     @Override
-    public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks) {
-        guiGraphics.fillGradient(0, 0, Minecraft.getInstance().getWindow().getWidth(), Minecraft.getInstance().getWindow().getHeight(), -1072689136, -804253680);
+    public void render(@NotNull final GuiGraphics graphics, int pMouseX, int pMouseY, float pPartialTicks) {
+        graphics.pose().pushPose();
+        // Render above the rendered dragon
+        graphics.pose().translate(0, 0, 100);
+        graphics.fillGradient(0, 0, Minecraft.getInstance().getWindow().getWidth(), Minecraft.getInstance().getWindow().getHeight(), -1072689136, -804253680);
 
         String key = "";
 
@@ -111,10 +114,11 @@ public class DragonEditorConfirmComponent extends AbstractContainerEventHandler 
         }
 
         String text = Component.translatable(key).getString();
-        guiGraphics.blit(BACKGROUND_TEXTURE, x, y, 0, 0, xSize, ySize);
-        TextRenderUtil.drawCenteredScaledTextSplit(guiGraphics, x + xSize / 2, y + 42, 1f, text, DyeColor.WHITE.getTextColor(), xSize - 10, 150);
+        graphics.blit(BACKGROUND_TEXTURE, x, y, 0, 0, xSize, ySize);
+        TextRenderUtil.drawCenteredScaledTextSplit(graphics, x + xSize / 2, y + 42, 1f, text, DyeColor.WHITE.getTextColor(), xSize - 10, 150);
 
-        confirmButton.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
-        cancelButton.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
+        confirmButton.render(graphics, pMouseX, pMouseY, pPartialTicks);
+        cancelButton.render(graphics, pMouseX, pMouseY, pPartialTicks);
+        graphics.pose().popPose();
     }
 }

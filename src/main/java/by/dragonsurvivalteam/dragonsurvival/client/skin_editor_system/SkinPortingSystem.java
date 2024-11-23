@@ -1,15 +1,19 @@
 package by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system;
 
-import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonEditorObject;
+import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.loader.DefaultPartLoader;
+import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.loader.DragonPartLoader;
+import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonPart;
+import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonStageCustomization;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.LayerSettings;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SavedSkinPresets;
-import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
+import net.minecraft.resources.ResourceKey;
 import net.neoforged.neoforge.common.util.Lazy;
 
-import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class SkinPortingSystem {
     public static void upgrade(SavedSkinPresets presets) {
@@ -20,28 +24,38 @@ public class SkinPortingSystem {
 
     public static void upgrade0to3(SavedSkinPresets presets) {
         for (String type : presets.skinPresets.keySet()) {
-            for (int age : presets.skinPresets.get(type).keySet()) {
-                for (DragonLevel level : DragonLevel.values()) {
-                    SkinPreset.SkinAgeGroup sag = presets.skinPresets.get(type).get(age).skinAges.getOrDefault(level, Lazy.of(() -> new SkinPreset.SkinAgeGroup(level))).get();
-                    for (EnumSkinLayer layer : sag.layerSettings.keySet()) {
-                        LayerSettings settings = sag.layerSettings.get(layer).get();
+            for (int saveSlot : presets.skinPresets.get(type).keySet()) {
+                for (ResourceKey<DragonStage> dragonStage : DragonStage.keys(null)) {
+                    Lazy<DragonStageCustomization> lazy = presets.skinPresets.get(type).get(saveSlot).get(dragonStage);
 
-                        String part = DragonEditorRegistry.getDefaultPart(DragonTypes.getStatic(type), level, layer);
-                        EnumSkinLayer trueLayer = EnumSkinLayer.valueOf(layer.getNameUpperCase());
-                        HashMap<EnumSkinLayer, DragonEditorObject.DragonTextureMetadata[]> hm = DragonEditorRegistry.CUSTOMIZATIONS.get(type.toUpperCase(Locale.ENGLISH));
-                        if (hm != null) {
-                            DragonEditorObject.DragonTextureMetadata[] texts = hm.get(trueLayer);
-                            if (texts != null) {
-                                for (DragonEditorObject.DragonTextureMetadata text : texts) {
-                                    if (text.key.equals(part)) {
-                                        settings.hue = settings.modifiedColor ? text.average_hue - settings.hue - 0.5f : text.average_hue;
-                                        if (settings.hue > 1) {
-                                            settings.hue -= 1;
-                                        } else if (settings.hue < 0) {
-                                            settings.hue += 1;
-                                        }
-                                        break;
+                    if (lazy == null) {
+                        lazy = Lazy.of(DragonStageCustomization::new);
+                    }
+
+                    DragonStageCustomization customization = lazy.get();
+
+                    for (EnumSkinLayer layer : customization.layerSettings.keySet()) {
+                        Map<EnumSkinLayer, List<DragonPart>> partMap = DragonPartLoader.DRAGON_PARTS.get(type.toLowerCase(Locale.ENGLISH));
+
+                        // Convert the numbered 'EXTRA' layer to the generic 'EXTRA' layer
+                        EnumSkinLayer actualLayer = EnumSkinLayer.valueOf(layer.getNameUpperCase());
+                        List<DragonPart> parts = partMap.get(actualLayer);
+
+                        if (parts != null) {
+                            String partKey = DefaultPartLoader.getDefaultPartKey(DragonTypes.getStatic(type), dragonStage.location(), layer);
+                            LayerSettings settings = customization.layerSettings.get(layer).get();
+
+                            for (DragonPart part : parts) {
+                                if (part.key().equals(partKey)) {
+                                    settings.hue = settings.modifiedColor ? part.averageHue() - settings.hue - 0.5f : part.averageHue();
+
+                                    if (settings.hue > 1) {
+                                        settings.hue -= 1;
+                                    } else if (settings.hue < 0) {
+                                        settings.hue += 1;
                                     }
+
+                                    break;
                                 }
                             }
                         }
@@ -49,6 +63,7 @@ public class SkinPortingSystem {
                 }
             }
         }
+
         presets.version = 3;
     }
 }
