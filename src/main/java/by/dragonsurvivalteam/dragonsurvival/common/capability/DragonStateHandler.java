@@ -509,15 +509,19 @@ public class DragonStateHandler extends EntityStateHandler {
                             () -> DragonSurvival.LOGGER.warn("Cannot set dragon body [{}] while deserializing NBT of [{}] due to the dragon body not existing", storedDragonBody, tag));
         }
 
+        double size = tag.getDouble(SIZE);
+        Holder<DragonStage> dragonStage = null;
+
         String storedDragonStage = tag.getString(DRAGON_STAGE);
 
         if (!storedDragonStage.isEmpty()) {
-            Holder<DragonStage> dragonStage = loadStage(provider, storedDragonStage);
+            Holder<DragonStage> loadedDragonStage = loadStage(provider, storedDragonStage);
 
-            if (dragonStage != null) {
-                this.dragonStage = dragonStage;
-            } else {
-                DragonSurvival.LOGGER.warn("Cannot set dragon stage [{}] while deserializing NBT of [{}] due to the dragon stage not existing", storedDragonStage, tag);
+            if (loadedDragonStage != null) {
+                dragonStage = loadedDragonStage;
+            } else if (size != NO_SIZE) {
+                dragonStage = DragonStage.get(provider, size);
+                DragonSurvival.LOGGER.warn("Cannot set dragon stage [{}] while deserializing NBT of [{}] due to the dragon stage not existing - setting [{}] as fallback", storedDragonStage, tag, dragonStage);
             }
         }
 
@@ -525,7 +529,7 @@ public class DragonStateHandler extends EntityStateHandler {
 
         if (!storedPreviousDragonStage.isEmpty()) {
             // This is not interesting enough to the user to log a warning
-            provider.holder(DragonStages.key(ResourceLocation.parse(storedPreviousDragonStage))).ifPresent(dragonStage -> this.previousStage = dragonStage);
+            provider.holder(DragonStages.key(ResourceLocation.parse(storedPreviousDragonStage))).ifPresent(previousStage -> this.previousStage = previousStage);
         }
 
         if (dragonType != null) {
@@ -545,11 +549,7 @@ public class DragonStateHandler extends EntityStateHandler {
             getMovementData().spinCooldown = tag.getInt("spinCooldown");
             getMovementData().spinAttack = tag.getInt("spinAttack");
 
-            if (dragonStage == null) {
-                setClientSize(tag.getDouble(SIZE));
-            } else {
-                setClientSize(dragonStage, tag.getDouble(SIZE));
-            }
+            setClientSize(dragonStage, size);
 
             setDestructionEnabled(tag.getBoolean("destructionEnabled"));
             isGrowing = !tag.contains(IS_GROWING) || tag.getBoolean(IS_GROWING);
