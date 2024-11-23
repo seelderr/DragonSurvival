@@ -88,7 +88,7 @@ public record DragonStage(
         }
 
         StringBuilder nextStageCheck = new StringBuilder("The following stages are incorrectly defined:");
-        AtomicBoolean areStagesValid = new AtomicBoolean();
+        AtomicBoolean areStagesValid = new AtomicBoolean(true);
 
         keys(provider).forEach(key -> {
             //noinspection OptionalGetWithoutIsPresent -> ignore
@@ -175,7 +175,21 @@ public record DragonStage(
 
     /** Returns {@link DragonStage#getBoundedSize(double)} of the next stage (if present) or of the current stage */
     public double getNextSize(@Nullable final HolderLookup.Provider provider, double size) {
-        return getNextStage(provider, this).map(nextStage -> nextStage.value().getBoundedSize(size)).orElse(getBoundedSize(size));
+        if (!getBounds().matches(size)) {
+            Optional<Holder.Reference<DragonStage>> nextStage = getNextStage(provider, this);
+
+            if (nextStage.isEmpty()) {
+                return size;
+            }
+
+            if (!nextStage.get().value().sizeRange().matches(size)) {
+                return size;
+            }
+
+            return nextStage.get().value().getBoundedSize(size);
+        }
+
+        return size;
     }
 
     /** Returns the bounds between the smallest and largest dragon sizes */

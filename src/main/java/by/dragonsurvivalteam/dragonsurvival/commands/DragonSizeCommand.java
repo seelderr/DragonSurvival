@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.commands;
 import by.dragonsurvivalteam.dragonsurvival.commands.arguments.DragonSizeArgument;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
 import com.mojang.brigadier.tree.ArgumentCommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.mojang.brigadier.tree.RootCommandNode;
@@ -24,7 +25,13 @@ public class DragonSizeCommand {
             DragonStateHandler handler = DragonStateProvider.getData(serverPlayer);
 
             if (handler.isDragon()) {
-                handler.setSize(serverPlayer, handler.getStage(), size);
+                if (handler.getStage().value().sizeRange().matches(size)) {
+                    // If the min. size of the next stage is set it can look like a bug
+                    // (Because after 1 second of running the command the stage changes due to the natural growth)
+                    handler.setSize(serverPlayer, handler.getStage(), size);
+                } else {
+                    handler.setSize(serverPlayer, DragonStage.get(serverPlayer.registryAccess(), size), size);
+                }
             }
 
             return 1;

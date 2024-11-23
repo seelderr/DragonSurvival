@@ -20,7 +20,7 @@ public class DragonStageButton extends Button {
     public DragonStageButton(final DragonEditorScreen screen, final ResourceKey<DragonStage> dragonStage, int xOffset) {
         super(screen.width / 2 + xOffset, screen.guiTop - 30, 120, 20, DragonStage.translatableName(dragonStage), button -> {
             //noinspection DataFlowIssue -> registry is expected to be present
-            screen.actionHistory.add(new DragonEditorScreen.EditorAction<>(screen.selectLevelAction, CommonHooks.resolveLookup(DragonStage.REGISTRY).getOrThrow(dragonStage)));
+            screen.actionHistory.add(new DragonEditorScreen.EditorAction<>(screen.selectStageAction, CommonHooks.resolveLookup(DragonStage.REGISTRY).getOrThrow(dragonStage)));
         }, DEFAULT_NARRATION);
 
         this.screen = screen;
@@ -31,6 +31,6 @@ public class DragonStageButton extends Button {
     public void renderWidget(@NotNull final GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         active = visible = screen.showUi;
         int color = isHovered || screen.dragonStage.is(dragonStage) ? WHITE : LIGHT_GRAY;
-        TextRenderUtil.drawCenteredScaledText(graphics, getX() + width / 2, getY() + 4, 1.5f, getMessage().getString(), color); // TODO :: previously used alpha - but does that ever change for this widget?
+        TextRenderUtil.drawCenteredScaledText(graphics, getX() + width / 2, getY() + 4, 1.5f, getMessage().getString(), color);
     }
 }
