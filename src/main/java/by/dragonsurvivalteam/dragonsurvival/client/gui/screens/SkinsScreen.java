@@ -194,6 +194,11 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
                 handler.setBody(playerData.getBody());
             }
 
+            if (handler.getStage() == null) {
+                Holder<DragonStage> dragonStage = minecraft.player.registryAccess().holderOrThrow(DragonStages.newborn);
+                handler.setClientSize(dragonStage, dragonStage.value().sizeRange().min());
+            }
+
             handler.getSkinData().skinPreset.initDefaults(handler);
 
             if (noSkin && Objects.equals(playerName, minecraft.player.getGameProfile().getName())) {
