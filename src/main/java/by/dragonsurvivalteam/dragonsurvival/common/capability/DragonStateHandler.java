@@ -152,7 +152,11 @@ public class DragonStateHandler extends EntityStateHandler {
         Holder<DragonStage> oldStage = this.dragonStage;
         updateSizeAndStage(null, dragonStage, size);
 
-        if (oldStage == null || this.dragonStage != null && !this.dragonStage.is(oldStage)) {
+        if (this.dragonStage == null) {
+            return;
+        }
+
+        if (oldStage == null || !this.dragonStage.is(oldStage)) {
             if (FMLEnvironment.dist.isClient()) { // When deserializing nbt there is no player context
                 // Only need to update when the level changes (for the skin)
                 ClientProxy.sendClientData();
@@ -180,7 +184,12 @@ public class DragonStateHandler extends EntityStateHandler {
         Holder<DragonStage> oldStage = this.dragonStage;
         updateSizeAndStage(serverPlayer.registryAccess(), dragonStage, size);
 
-        if (oldSize != this.size || oldStage == null || this.dragonStage != null && !this.dragonStage.is(oldStage)) {
+        if (this.dragonStage == null) {
+            DSModifiers.updateSizeModifiers(player, this);
+            return;
+        }
+
+        if (oldSize != this.size || oldStage == null || !this.dragonStage.is(oldStage)) {
             PacketDistributor.sendToPlayersTrackingEntityAndSelf(serverPlayer, new SyncSize(serverPlayer.getId(), getStage(), getSize()));
             DSAdvancementTriggers.BE_DRAGON.get().trigger(serverPlayer);
             serverPlayer.refreshDimensions();
