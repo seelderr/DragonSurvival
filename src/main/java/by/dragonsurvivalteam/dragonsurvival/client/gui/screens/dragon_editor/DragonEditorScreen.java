@@ -420,7 +420,7 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
     }
 
     private void initDummyDragon(final DragonStateHandler localHandler) {
-        if (localHandler.isDragon()) {
+        if (dragonType == null && localHandler.isDragon()) {
             dragonType = localHandler.getType();
             dragonStage = localHandler.getStage();
             dragonBody = localHandler.getBody();
