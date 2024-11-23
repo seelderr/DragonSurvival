@@ -122,7 +122,7 @@ public class DragonCommand {
 
         cap.setType(dragonType, player);
         cap.setBody(dragonBody, player);
-        cap.setSize(player, dragonStage);
+        cap.setSize(player, dragonStage, dragonStage != null ? dragonStage.value().sizeRange().min() : DragonStateHandler.NO_SIZE);
 
         cap.setHasFlight(flight);
         cap.getMovementData().spinLearned = flight;

@@ -24,6 +24,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
@@ -165,7 +166,8 @@ public class DragonAltarScreen extends Screen {
 
         handler.setHasFlight(true);
         //noinspection DataFlowIssue -> registry is expected to be present
-        handler.setClientSize(CommonHooks.resolveLookup(DragonStage.REGISTRY).getOrThrow(DragonStages.adult));
+        Holder.Reference<DragonStage> dragonStage = CommonHooks.resolveLookup(DragonStage.REGISTRY).getOrThrow(DragonStages.adult);
+        handler.setClientSize(dragonStage, dragonStage.value().sizeRange().min());
         handler.getSkinData().get(handler.getStage().getKey()).get().defaultSkin = true;
     }
 

@@ -148,10 +148,10 @@ public class DragonStateHandler extends EntityStateHandler {
     }
 
     public void setClientSize(@Nullable final Holder<DragonStage> dragonStage, double size) {
-        Holder<DragonStage> oldLevel = this.dragonStage;
+        Holder<DragonStage> oldStage = this.dragonStage;
         updateSizeAndStage(null, dragonStage, size);
 
-        if (oldLevel == null || this.dragonStage != null && !this.dragonStage.is(oldLevel)) {
+        if (oldStage == null || this.dragonStage != null && !this.dragonStage.is(oldStage)) {
             if (FMLEnvironment.dist.isClient()) { // When deserializing nbt there is no player context
                 // Only need to update when the level changes (for the skin)
                 ClientProxy.sendClientData();
@@ -549,7 +549,9 @@ public class DragonStateHandler extends EntityStateHandler {
             getMovementData().spinCooldown = tag.getInt("spinCooldown");
             getMovementData().spinAttack = tag.getInt("spinAttack");
 
-            setClientSize(dragonStage, size);
+            // Make sure a stage is set if the player was deserialized as a dragon
+            // It could be missing here if the NBT is loaded from an old save
+            setClientSize(dragonStage != null ? dragonStage : DragonStage.get(provider, size), size);
 
             setDestructionEnabled(tag.getBoolean("destructionEnabled"));
             isGrowing = !tag.contains(IS_GROWING) || tag.getBoolean(IS_GROWING);
