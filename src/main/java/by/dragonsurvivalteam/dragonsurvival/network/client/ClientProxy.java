@@ -78,10 +78,16 @@ public class ClientProxy {
             return;
         }
 
+        DragonStateHandler data = DragonStateProvider.getData(localPlayer);
+
+        if (!data.isDragon()) {
+            // TODO :: this method is also called when the fake players update their size
+            //  The setSize method just probably always have an entity (and the nbt deserialization just sets the field and then uses join level event or sth. to actually update)
+            return;
+        }
+
         PacketDistributor.sendToServer(new SyncDragonClawRender.Data(localPlayer.getId(), ClientDragonRenderer.renderDragonClaws));
         PacketDistributor.sendToServer(new SyncDragonSkinSettings(localPlayer.getId(), ClientDragonRenderer.renderCustomSkin));
-
-        DragonStateHandler data = DragonStateProvider.getData(localPlayer);
         SavedSkinPresets savedCustomizations = DragonEditorRegistry.getSavedCustomizations(localPlayer.registryAccess());
 
         if (savedCustomizations != null) {
