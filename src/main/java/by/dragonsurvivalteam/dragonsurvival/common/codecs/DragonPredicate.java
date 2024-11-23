@@ -25,14 +25,14 @@ import java.util.Optional;
 
 public record DragonPredicate(
         Optional<String> dragonType,
-        Optional<HolderSet<DragonStage>> dragonStage,
+        Optional<DragonStagePredicate> dragonStage,
         Optional<HolderSet<DragonBody>> dragonBody,
         Optional<MinMaxBounds.Doubles> size,
         Optional<StarHeartItem.State> starHeartState
 ) implements EntitySubPredicate {
     public static final MapCodec<DragonPredicate> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             Codec.STRING.optionalFieldOf("dragon_type").forGetter(DragonPredicate::dragonType),
-            RegistryCodecs.homogeneousList(DragonStage.REGISTRY).optionalFieldOf("dragon_stage").forGetter(DragonPredicate::dragonStage),
+            DragonStagePredicate.CODEC.optionalFieldOf("dragon_stage").forGetter(DragonPredicate::dragonStage),
             RegistryCodecs.homogeneousList(DragonBody.REGISTRY).optionalFieldOf("dragon_body").forGetter(DragonPredicate::dragonBody),
             MinMaxBounds.Doubles.CODEC.optionalFieldOf("size").forGetter(DragonPredicate::size),
             StarHeartItem.State.CODEC.optionalFieldOf("star_heart_state").forGetter(DragonPredicate::starHeartState)
@@ -55,7 +55,7 @@ public record DragonPredicate(
             return false;
         }
 
-        if (dragonStage().isPresent() && !dragonStage().get().contains(data.getStage())) {
+        if (dragonStage().isPresent() && !dragonStage().get().matches(data)) {
             return false;
         }
 
@@ -82,7 +82,7 @@ public record DragonPredicate(
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType") // ignore
     public static class Builder {
         private Optional<String> dragonType = Optional.empty();
-        private Optional<HolderSet<DragonStage>> dragonStage = Optional.empty();
+        private Optional<DragonStagePredicate> dragonStage = Optional.empty();
         private Optional<HolderSet<DragonBody>> dragonBody = Optional.empty();
         private Optional<MinMaxBounds.Doubles> size = Optional.empty();
         private Optional<StarHeartItem.State> starHeartState = Optional.empty();
@@ -96,8 +96,13 @@ public record DragonPredicate(
             return this;
         }
 
-        public DragonPredicate.Builder level(final Holder<DragonStage> dragonStage) {
-            this.dragonStage = Optional.of(HolderSet.direct(dragonStage));
+        public DragonPredicate.Builder stage(final Holder<DragonStage> dragonStage) {
+            this.dragonStage = Optional.of(new DragonStagePredicate(Optional.of(dragonStage), Optional.empty()));
+            return this;
+        }
+
+        public DragonPredicate.Builder stage(final Holder<DragonStage> dragonStage, final MinMaxBounds.Doubles growthPercentage) {
+            this.dragonStage = Optional.of(new DragonStagePredicate(Optional.of(dragonStage), Optional.of(growthPercentage)));
             return this;
         }
 

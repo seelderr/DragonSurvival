@@ -30,7 +30,7 @@ public class Condition {
     }
 
     public static EntityPredicate.Builder dragonStage(final Holder<DragonStage> dragonStage) {
-        return EntityPredicate.Builder.entity().subPredicate(DragonPredicate.Builder.dragon().level(dragonStage).build());
+        return EntityPredicate.Builder.entity().subPredicate(DragonPredicate.Builder.dragon().stage(dragonStage).build());
     }
 
     public static EntityPredicate.Builder dragonBody(final Holder<DragonBody> dragonBody) {

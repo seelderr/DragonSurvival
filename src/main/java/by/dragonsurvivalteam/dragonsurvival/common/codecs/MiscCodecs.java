@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.codecs;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -13,6 +14,30 @@ import net.minecraft.world.item.Item;
 import java.util.Arrays;
 
 public class MiscCodecs {
+    public static Codec<MinMaxBounds.Doubles> percentageBounds() {
+        return MinMaxBounds.Doubles.CODEC.validate(value -> {
+            boolean isValid = true;
+
+            if (value.min().isPresent()) {
+                double min = value.min().get();
+
+                if (min < 0 || min > 1) {
+                    isValid = false;
+                }
+            }
+
+            if (value.max().isPresent()) {
+                double max = value.max().get();
+
+                if (max < 0 || max > 1) {
+                    isValid = false;
+                }
+            }
+
+           return isValid ? DataResult.success(value) : DataResult.error(() -> "Percentage check must be between 0 and 1: [" + value + "]");
+        });
+    }
+
     public static Codec<Double> doubleRange(double min, double max) {
         return Codec.DOUBLE.validate(value -> value >= min && value <= max
                 ? DataResult.success(value)
