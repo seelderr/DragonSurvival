@@ -88,7 +88,7 @@ public record DragonStage(
         }
 
         StringBuilder nextStageCheck = new StringBuilder("The following stages are incorrectly defined:");
-        AtomicBoolean areStagesValid = new AtomicBoolean();
+        AtomicBoolean areStagesValid = new AtomicBoolean(true);
 
         keys(provider).forEach(key -> {
             //noinspection OptionalGetWithoutIsPresent -> ignore
@@ -147,15 +147,6 @@ public record DragonStage(
         return Component.translatable(Translation.Type.STAGE.wrap(dragonStage.location().getNamespace(), dragonStage.location().getPath()));
     }
 
-    public static Component translatableDescription(final ResourceKey<DragonStage> dragonStage) {
-        return Component.translatable(Translation.Type.STAGE_DESCRIPTION.wrap(dragonStage.location().getNamespace(), dragonStage.location().getPath()));
-    }
-
-    /** Used for the skin texture name */
-    public static String name(final Holder<DragonStage> level) {
-        return level.getRegisteredName().replace(":", ".");
-    }
-
     public static List<ResourceKey<DragonStage>> keys(final HolderLookup.Provider provider) {
         HolderLookup.RegistryLookup<DragonStage> registry;
 
@@ -173,9 +164,34 @@ public record DragonStage(
         return Math.clamp(size, sizeRange().min(), sizeRange().max());
     }
 
-    /** Returns {@link DragonStage#getBoundedSize(double)} of the next stage (if present) or of the current stage */
-    public double getNextSize(@Nullable final HolderLookup.Provider provider, double size) {
-        return getNextStage(provider, this).map(nextStage -> nextStage.value().getBoundedSize(size)).orElse(getBoundedSize(size));
+    /**
+     * Returns a valid size (see {@link DragonStage#getValidSize(double)}) <br>
+     * <br> If the size is larger than the max. size of the current dragon stage: <br>
+     *   - The {@link DragonStage#getBoundedSize(double)} of the matching dragon stage of the next dragon stage chain <br>
+     * <br> If the size is smaller than the min. size of the current dragon stage: <br>
+     *   - The current (valid) size if a previous stage is present, and its size bounds matches the current size <br>
+     *   - The {@link DragonStage#getBoundedSize(double)} of a matching dragon stage <br>
+     * <br> Otherwise (if the size is within the bounds of the current stage) the current (valid) size will be returned
+     */
+    public double getNextSize(@Nullable final HolderLookup.Provider provider, double size, @Nullable final DragonStage previousStage) {
+        double newSize = getValidSize(size);
+
+        if (newSize > sizeRange().max()) {
+            return getNextStage(provider, this).map(nextStage -> nextStage.value().getNextSize(provider, newSize, this)).orElseGet(() -> getBoundedSize(newSize));
+        } else if (newSize < sizeRange().min()) {
+            if (previousStage != null && previousStage.sizeRange().matches(newSize)) {
+                return newSize;
+            }
+
+            return DragonStage.get(provider, newSize).value().getBoundedSize(newSize);
+        }
+
+        return newSize;
+    }
+
+    /** Returns a valid size (meaning a size within the bounds of the smallest and largest dragon) */
+    public static double getValidSize(double size) {
+        return Math.clamp(size, smallest.sizeRange.min(), largest.sizeRange().max());
     }
 
     /** Returns the bounds between the smallest and largest dragon sizes */

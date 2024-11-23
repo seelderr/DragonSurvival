@@ -52,7 +52,7 @@ public class DragonUIRenderComponent extends AbstractContainerEventHandler imple
 
         // We need to translate this backwards with the poseStack as renderEntityInInventory pushes the poseStack forward
         guiGraphics.pose().pushPose();
-        guiGraphics.pose().translate(0, 0, -200); // We chose -200 here as the background is translated -300 and we don't want to clip with it
+        guiGraphics.pose().translate(0, 0, -200); // We chose -200 here as the background is translated -300, and we don't want to clip with it
 
         Quaternionf quaternion = Axis.ZP.rotationDegrees(180);
         quaternion.mul(Axis.XP.rotationDegrees(yRot * 10));

@@ -212,9 +212,9 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
         return (float) (0.4 * dragonStage.value().sizeRange().min() + 20);
     }
 
-    public final Function<Holder<DragonStage>, Holder<DragonStage>> selectLevelAction = (newLevel) -> {
+    public final Function<Holder<DragonStage>, Holder<DragonStage>> selectStageAction = newStage -> {
         Holder<DragonStage> previousLevel = dragonStage;
-        dragonStage = newLevel;
+        dragonStage = newStage;
         dragonRender.zoom = setZoom(dragonStage);
         HANDLER.getSkinData().compileSkin(dragonStage);
         update();
@@ -438,12 +438,12 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
 
         String type = dragonType.getTypeNameLowerCase();
         SavedSkinPresets savedCustomizations = DragonEditorRegistry.getSavedCustomizations(null);
-        String levelLocation = Objects.requireNonNull(dragonStage.getKey()).location().toString();
+        String stageLocation = Objects.requireNonNull(dragonStage.getKey()).location().toString();
 
         savedCustomizations.current.computeIfAbsent(type, key -> new HashMap<>());
-        savedCustomizations.current.get(type).putIfAbsent(levelLocation, 0);
+        savedCustomizations.current.get(type).putIfAbsent(stageLocation, 0);
 
-        selectedSaveSlot = savedCustomizations.current.get(type).get(levelLocation);
+        selectedSaveSlot = savedCustomizations.current.get(type).get(stageLocation);
 
         savedCustomizations.skinPresets.computeIfAbsent(type, key -> new HashMap<>());
         savedCustomizations.skinPresets.get(type).computeIfAbsent(selectedSaveSlot, key -> {
@@ -458,11 +458,13 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
         preset = new SkinPreset();
         preset.deserializeNBT(Objects.requireNonNull(Minecraft.getInstance().player).registryAccess(), currentPreset.serializeNBT(Minecraft.getInstance().player.registryAccess()));
 
-        HANDLER.getSkinData().skinPreset = preset;
-        HANDLER.getSkinData().compileSkin(dragonStage);
         HANDLER.setHasFlight(true);
         HANDLER.setType(dragonType);
+        HANDLER.setClientSize(dragonStage, dragonStage.value().sizeRange().min());
         HANDLER.setBody(dragonBody);
+
+        HANDLER.getSkinData().skinPreset = preset;
+        HANDLER.getSkinData().compileSkin(dragonStage);
 
         dragonRender.zoom = setZoom(dragonStage);
     }
@@ -836,7 +838,7 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
 
         HANDLER.setBody(dragonBody);
         HANDLER.getSkinData().skinPreset = preset;
-        HANDLER.setClientSize(dragonStage);
+        HANDLER.setClientSize(dragonStage, dragonStage.value().sizeRange().min());
         HANDLER.setHasFlight(true);
 
         if (selectedSaveSlot != lastSelected) {
@@ -901,12 +903,14 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
             data.setType(dragonType, minecraft.player);
             data.setBody(dragonBody, minecraft.player);
 
-            double size = data.getSavedDragonSize(data.getTypeName()); // TODO level :: add level to saved data (and dragon soul?)
+            DragonStateHandler.SavedDragonStage savedDragonStage = data.getSavedDragonStage(data.getTypeName());
 
-            if (!ServerConfig.saveGrowthStage || size == DragonStateHandler.NO_SIZE) {
-                data.setClientSize(minecraft.player.registryAccess().holderOrThrow(DragonStages.newborn));
+            if (!ServerConfig.saveGrowthStage || savedDragonStage == null) {
+                Holder<DragonStage> dragonStage = minecraft.player.registryAccess().holderOrThrow(DragonStages.newborn);
+                data.setClientSize(dragonStage, dragonStage.value().sizeRange().min());
             } else {
-                data.setClientSize(size);
+                data.previousStage = savedDragonStage.previousStage();
+                data.setClientSize(savedDragonStage.dragonStage(), savedDragonStage.size());
             }
 
             data.setHasFlight(ServerFlightHandler.startWithFlight || ServerConfig.saveGrowthStage && data.hasFlight());

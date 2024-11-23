@@ -74,6 +74,7 @@ public class ClientProxy {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer == null) {
+            // This check is needed since in single player the server thread will go in here (from 'deserializeNBT')
             return;
         }
 

@@ -46,7 +46,7 @@ public class DragonGrowthHandler {
             return;
         }
 
-        double newSize = data.getStage().value().getNextSize(player.registryAccess(), data.getSize() + growth);
+        double newSize = data.getStage().value().getNextSize(player.registryAccess(), data.getSize() + growth, data.previousStage != null ? data.previousStage.value() : null);
 
         if (data.getSize() == newSize) {
             player.sendSystemMessage(Component.translatable(growth > 0 ? REACHED_LARGEST : REACHED_SMALLEST).withStyle(ChatFormatting.RED));
@@ -86,7 +86,7 @@ public class DragonGrowthHandler {
         }
 
         DragonStage dragonStage = data.getStage().value();
-        double nextSize = dragonStage.getNextSize(serverPlayer.registryAccess(), data.getSize() + dragonStage.ticksToSize(getInterval()));
+        double nextSize = dragonStage.getNextSize(serverPlayer.registryAccess(), data.getSize() + dragonStage.ticksToSize(getInterval()), data.previousStage != null ? data.previousStage.value() : null);
         Optional<EntityPredicate> isNaturalGrowthStopped = dragonStage.isNaturalGrowthStopped();
 
         if (nextSize == data.getSize() || isNaturalGrowthStopped.isPresent() && isNaturalGrowthStopped.get().matches(serverPlayer.serverLevel(), serverPlayer.position(), serverPlayer)) {
