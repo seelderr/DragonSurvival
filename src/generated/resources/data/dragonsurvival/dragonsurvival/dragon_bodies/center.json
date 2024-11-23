@@ -3,9 +3,9 @@
   "modifiers": [
     {
       "type": "dragonsurvival/body/",
+      "amount": 0.2,
       "attribute": "dragonsurvival:flight_speed",
-      "operation": "add_value",
-      "per_size": 0.2
+      "operation": "add_value"
     }
   ]
 }
