@@ -10,7 +10,6 @@ import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.Pose;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -43,27 +42,22 @@ public class DragonSizeHandler {
     }
 
     public static double calculateDragonHeight(DragonStateHandler handler, Player player) {
-        AttributeInstance attributeInstance = player.getAttribute(Attributes.SCALE);
-        double scale = attributeInstance != null ? attributeInstance.getValue() : 1.0d;
+        double scale = player.getAttributeValue(Attributes.SCALE);
         double height = calculateRawDragonHeight(handler.getSize()) * handler.getBody().value().heightMultiplier();
-
         return applyPose(height * scale, overridePose(player), handler.getBody().value().hasExtendedCrouch());
     }
 
     public static double calculateDragonEyeHeight(DragonStateHandler handler, Player player) {
-        AttributeInstance attributeInstance = player.getAttribute(Attributes.SCALE);
-        double scale = attributeInstance != null ? attributeInstance.getValue() : 1.0d;
-        double eyeHeight = calculateRawDragonEyeHeight(handler.getSize());
-
+        double scale = player.getAttributeValue(Attributes.SCALE);
+        double eyeHeight = calculateRawDragonEyeHeight(handler.getSize()) * handler.getBody().value().heightMultiplier();
         return applyPose(eyeHeight * scale, overridePose(player), handler.getBody().value().hasExtendedCrouch());
     }
 
     public static EntityDimensions calculateDimensions(DragonStateHandler handler, Player player, Pose overridePose) {
         double scale = player.getAttributeValue(Attributes.SCALE);
-        double size = handler.getSize();
-        double height = calculateRawDragonHeight(size) * handler.getBody().value().heightMultiplier();
-        double width = calculateRawDragonWidth(size);
-        double eyeHeight = calculateRawDragonEyeHeight(size);
+        double height = calculateRawDragonHeight(handler.getSize()) * handler.getBody().value().heightMultiplier();
+        double eyeHeight = calculateRawDragonEyeHeight(handler.getSize()) * handler.getBody().value().heightMultiplier();
+        double width = calculateRawDragonWidth(handler.getSize());
 
         height = applyPose(height, overridePose, handler.getBody().value().hasExtendedCrouch());
         eyeHeight = applyPose(eyeHeight, overridePose, handler.getBody().value().hasExtendedCrouch());
