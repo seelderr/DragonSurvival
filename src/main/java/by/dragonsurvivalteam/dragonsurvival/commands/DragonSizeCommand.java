@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.commands;
 
+import by.dragonsurvivalteam.dragonsurvival.commands.arguments.DragonSizeArgument;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import com.mojang.brigadier.tree.ArgumentCommandNode;
@@ -17,7 +18,7 @@ public class DragonSizeCommand {
         RootCommandNode<CommandSourceStack> root = event.getDispatcher().getRoot();
         LiteralCommandNode<CommandSourceStack> command = literal("dragon-set-size").requires(source -> source.hasPermission(2)).build();
 
-        ArgumentCommandNode<CommandSourceStack, Double> sizeArgument = argument("dragon_size", new DragonSizeArgument(event.getBuildContext())).requires(source -> source.hasPermission(2)).executes(context -> {
+        ArgumentCommandNode<CommandSourceStack, Double> sizeArgument = argument(DragonSizeArgument.ID, new DragonSizeArgument(event.getBuildContext())).requires(source -> source.hasPermission(2)).executes(context -> {
             double size = DragonSizeArgument.get(context);
             ServerPlayer serverPlayer = context.getSource().getPlayerOrException();
             DragonStateHandler handler = DragonStateProvider.getData(serverPlayer);

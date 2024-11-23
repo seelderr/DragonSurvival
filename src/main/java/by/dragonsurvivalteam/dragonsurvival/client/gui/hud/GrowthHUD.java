@@ -58,16 +58,16 @@ public class GrowthHUD {
             return;
         }
 
+        Holder<DragonStage> dragonStage = handler.getStage();
         double growth = DragonGrowthHandler.getGrowth(handler.getStage(), stack.getItem());
-        double newSize = DragonStage.getBoundedSize(handler.getSize() + growth);
+        double nextSize = dragonStage.value().getNextSize(localPlayer.registryAccess(), handler.getSize() + growth);
 
-        if (handler.getSize() == newSize) {
+        if (handler.getSize() == nextSize) {
             return;
         }
 
-        Holder<DragonStage> dragonStage = handler.getStage();
         float progress = (float) dragonStage.value().getProgress(handler.getSize());
-        float nextProgress = (float) dragonStage.value().getProgress(handler.getSize() + growth);
+        float nextProgress = (float) dragonStage.value().getProgress(nextSize);
 
         progress = Math.min(1, progress);
         nextProgress = Math.min(1, nextProgress);

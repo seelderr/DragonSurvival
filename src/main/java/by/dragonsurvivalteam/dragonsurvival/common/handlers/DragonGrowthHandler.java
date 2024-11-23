@@ -46,7 +46,7 @@ public class DragonGrowthHandler {
             return;
         }
 
-        double newSize = DragonStage.getBoundedSize(data.getSize() + growth);
+        double newSize = data.getStage().value().getNextSize(player.registryAccess(), data.getSize() + growth);
 
         if (data.getSize() == newSize) {
             player.sendSystemMessage(Component.translatable(growth > 0 ? REACHED_LARGEST : REACHED_SMALLEST).withStyle(ChatFormatting.RED));
@@ -86,10 +86,10 @@ public class DragonGrowthHandler {
         }
 
         DragonStage dragonStage = data.getStage().value();
-        double newSize = DragonStage.getBoundedSize(data.getSize() + dragonStage.ticksToSize(getInterval()));
+        double nextSize = dragonStage.getNextSize(serverPlayer.registryAccess(), data.getSize() + dragonStage.ticksToSize(getInterval()));
         Optional<EntityPredicate> isNaturalGrowthStopped = dragonStage.isNaturalGrowthStopped();
 
-        if (newSize == data.getSize() || isNaturalGrowthStopped.isPresent() && isNaturalGrowthStopped.get().matches(serverPlayer.serverLevel(), serverPlayer.position(), serverPlayer)) {
+        if (nextSize == data.getSize() || isNaturalGrowthStopped.isPresent() && isNaturalGrowthStopped.get().matches(serverPlayer.serverLevel(), serverPlayer.position(), serverPlayer)) {
             if (data.isGrowing) {
                 data.isGrowing = false;
                 PacketDistributor.sendToPlayer(serverPlayer, new SyncGrowthState.Data(false));
@@ -102,7 +102,7 @@ public class DragonGrowthHandler {
         }
 
         if (serverPlayer.tickCount % getInterval() == 0) {
-            data.setSize(serverPlayer, data.getStage(), newSize);
+            data.setSize(serverPlayer, data.getStage(), nextSize);
         }
     }
 

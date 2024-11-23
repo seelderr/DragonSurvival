@@ -1,4 +1,4 @@
-package by.dragonsurvivalteam.dragonsurvival.commands;
+package by.dragonsurvivalteam.dragonsurvival.commands.arguments;
 
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.MiscCodecs;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
@@ -18,6 +18,8 @@ import java.util.concurrent.CompletableFuture;
 import javax.annotation.Nullable;
 
 public class DragonSizeArgument implements ArgumentType<Double> {
+    public static final String ID = "dragon_size";
+
     private final HolderLookup.RegistryLookup<DragonStage> lookup;
 
     public DragonSizeArgument(final CommandBuildContext context) {
@@ -44,7 +46,7 @@ public class DragonSizeArgument implements ArgumentType<Double> {
     }
 
     public static Double get(final CommandContext<?> context) {
-        return context.getArgument("dragon_size", Double.class);
+        return context.getArgument(ID, Double.class);
     }
 
     @Override

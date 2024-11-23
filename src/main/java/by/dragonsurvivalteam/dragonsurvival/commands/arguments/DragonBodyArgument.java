@@ -1,6 +1,6 @@
-package by.dragonsurvivalteam.dragonsurvival.commands;
+package by.dragonsurvivalteam.dragonsurvival.commands.arguments;
 
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.context.CommandContext;
@@ -20,24 +20,24 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import javax.annotation.Nullable;
 
-public class DragonStageArgument implements ArgumentType<Holder<DragonStage>> {
-    public static final String ID = "dragon_stage";
+public class DragonBodyArgument implements ArgumentType<Holder<DragonBody>> {
+    public static final String ID = "dragon_body";
 
-    private final HolderLookup.RegistryLookup<DragonStage> lookup;
+    private final HolderLookup.RegistryLookup<DragonBody> lookup;
 
-    public DragonStageArgument(final CommandBuildContext context) {
-        lookup = context.lookupOrThrow(DragonStage.REGISTRY);
+    public DragonBodyArgument(final CommandBuildContext context) {
+        lookup = context.lookupOrThrow(DragonBody.REGISTRY);
     }
 
     @Override
-    public @Nullable Holder<DragonStage> parse(final StringReader reader) throws CommandSyntaxException {
-        Optional<Holder.Reference<DragonStage>> optional = lookup.get(ResourceKey.create(DragonStage.REGISTRY, ResourceLocation.read(reader)));
+    public @Nullable Holder<DragonBody> parse(final StringReader reader) throws CommandSyntaxException {
+        Optional<Holder.Reference<DragonBody>> optional = lookup.get(ResourceKey.create(DragonBody.REGISTRY, ResourceLocation.read(reader)));
         return optional.orElse(null);
     }
 
-    public static Holder<DragonStage> get(final CommandContext<?> context) {
+    public static Holder<DragonBody> get(final CommandContext<?> context) {
         //noinspection unchecked -> type is valid
-        return (Holder<DragonStage>) context.getArgument(ID, Holder.class);
+        return (Holder<DragonBody>) context.getArgument(ID, Holder.class);
     }
 
     @Override

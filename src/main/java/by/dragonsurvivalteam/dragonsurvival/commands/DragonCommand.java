@@ -1,5 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.commands;
 
+import by.dragonsurvivalteam.dragonsurvival.commands.arguments.DragonBodyArgument;
+import by.dragonsurvivalteam.dragonsurvival.commands.arguments.DragonStageArgument;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
@@ -59,7 +61,7 @@ public class DragonCommand {
             return runCommand(type, null, null, false, serverPlayer);
         }).build();
 
-        ArgumentCommandNode<CommandSourceStack, Holder<DragonBody>> dragonBody = argument("dragon_body", new DragonBodyArgument(event.getBuildContext())).executes(context -> {
+        ArgumentCommandNode<CommandSourceStack, Holder<DragonBody>> dragonBody = argument(DragonBodyArgument.ID, new DragonBodyArgument(event.getBuildContext())).executes(context -> {
             String type = context.getArgument("dragon_type", String.class);
             Holder<DragonBody> body = DragonBodyArgument.get(context);
             ServerPlayer serverPlayer = context.getSource().getPlayerOrException();

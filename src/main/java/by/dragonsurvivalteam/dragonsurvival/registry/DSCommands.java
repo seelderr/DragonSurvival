@@ -2,6 +2,9 @@ package by.dragonsurvivalteam.dragonsurvival.registry;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.commands.*;
+import by.dragonsurvivalteam.dragonsurvival.commands.arguments.DragonBodyArgument;
+import by.dragonsurvivalteam.dragonsurvival.commands.arguments.DragonSizeArgument;
+import by.dragonsurvivalteam.dragonsurvival.commands.arguments.DragonStageArgument;
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;

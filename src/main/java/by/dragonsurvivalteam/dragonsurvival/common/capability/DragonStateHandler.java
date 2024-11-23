@@ -134,17 +134,19 @@ public class DragonStateHandler extends EntityStateHandler {
         movementData.deltaMovement = deltaMovement;
     }
 
+    /** Sets the size and retains the current stage */
     public void setClientSize(double size) {
-        setClientSize(null, size);
+        setClientSize(dragonStage, size);
     }
 
+    /** Sets the stage and retains the current size */
     public void setClientSize(@Nullable final Holder<DragonStage> dragonStage) {
-        setClientSize(dragonStage, NO_SIZE);
+        setClientSize(dragonStage, size);
     }
 
     public void setClientSize(@Nullable final Holder<DragonStage> dragonStage, double size) {
         Holder<DragonStage> oldLevel = this.dragonStage;
-        updateSizeAndStage(dragonStage, size);
+        updateSizeAndStage(null, dragonStage, size);
 
         if (oldLevel == null || this.dragonStage != null && !this.dragonStage.is(oldLevel)) {
             if (FMLEnvironment.dist.isClient()) { // When deserializing nbt there is no player context
@@ -154,12 +156,14 @@ public class DragonStateHandler extends EntityStateHandler {
         }
     }
 
-    public void setSize(final Player player, @Nullable final Holder<DragonStage> dragonStage) {
-        setSize(player, dragonStage, NO_SIZE);
+    /** Sets the size and retains the current stage */
+    public void setSize(final Player player, double size) {
+        setSize(player, dragonStage, size);
     }
 
-    public void setSize(final Player player, double size) {
-        setSize(player, null, size);
+    /** Sets the stage and retains the current size */
+    public void setSize(final Player player, @Nullable final Holder<DragonStage> dragonStage) {
+        setSize(player, dragonStage, size);
     }
 
     public void setSize(final Player player, @Nullable final Holder<DragonStage> dragonStage, double size) {
@@ -169,10 +173,10 @@ public class DragonStateHandler extends EntityStateHandler {
         }
 
         double oldSize = this.size;
-        Holder<DragonStage> oldLevel = this.dragonStage;
-        updateSizeAndStage(dragonStage, size);
+        Holder<DragonStage> oldStage = this.dragonStage;
+        updateSizeAndStage(serverPlayer.registryAccess(), dragonStage, size);
 
-        if (oldSize != this.size || oldLevel == null || this.dragonStage != null && !this.dragonStage.is(oldLevel)) {
+        if (oldSize != this.size || oldStage == null || this.dragonStage != null && !this.dragonStage.is(oldStage)) {
             PacketDistributor.sendToPlayersTrackingEntityAndSelf(serverPlayer, new SyncSize(serverPlayer.getId(), getStage(), getSize()));
             DSAdvancementTriggers.BE_DRAGON.get().trigger(serverPlayer);
             serverPlayer.refreshDimensions();
@@ -182,13 +186,16 @@ public class DragonStateHandler extends EntityStateHandler {
         }
     }
 
-    private void updateSizeAndStage(@Nullable final Holder<DragonStage> dragonStage, double size) {
-        if (dragonStage != null && !dragonStage.value().sizeRange().matches(size)) {
-            this.size = DragonStage.getBoundedSize(size);
-            this.dragonStage = DragonStage.get(null, this.size);
+    private void updateSizeAndStage(@Nullable final HolderLookup.Provider provider, @Nullable final Holder<DragonStage> dragonStage, double size) {
+        if (dragonStage == null || size == NO_SIZE) {
+            this.dragonStage = null;
+            this.size = NO_SIZE;
+        } else if (!dragonStage.value().sizeRange().matches(size)) {
+            DragonStage.getNextStage(provider, dragonStage.value()).ifPresent(nextStage -> this.dragonStage = nextStage);
+            this.size = this.dragonStage.value().getBoundedSize(size);
         } else {
             this.dragonStage = dragonStage;
-            this.size = size;
+            this.size = this.dragonStage.value().getBoundedSize(size);
         }
     }
 

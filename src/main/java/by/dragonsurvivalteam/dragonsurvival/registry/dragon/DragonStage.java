@@ -169,18 +169,22 @@ public record DragonStage(
         return registry.listElementIds().toList();
     }
 
-    public double getSizeWithinRange(double size) {
+    public double getBoundedSize(double size) {
         return Math.clamp(size, sizeRange().min(), sizeRange().max());
     }
 
-    /** Returns the size that is clamped to the smallest and largest dragon sizes */
-    public static double getBoundedSize(double size) {
-        return Math.clamp(size, smallest.sizeRange().min(), largest.sizeRange().max());
+    /** Returns {@link DragonStage#getBoundedSize(double)} of the next stage (if present) or of the current stage */
+    public double getNextSize(@Nullable final HolderLookup.Provider provider, double size) {
+        return getNextStage(provider, this).map(nextStage -> nextStage.value().getBoundedSize(size)).orElse(getBoundedSize(size));
     }
 
     /** Returns the bounds between the smallest and largest dragon sizes */
     public static MiscCodecs.Bounds getBounds() {
         return new MiscCodecs.Bounds(smallest.sizeRange().min(), largest.sizeRange().max());
+    }
+
+    public static Optional<Holder.Reference<DragonStage>> getNextStage(@Nullable final HolderLookup.Provider provider, final DragonStage stage) {
+        return stage.nextStage().flatMap(nextStage -> get(provider, nextStage));
     }
 
     public static Optional<Holder.Reference<DragonStage>> get(@Nullable final HolderLookup.Provider provider, final ResourceKey<DragonStage> key) {
