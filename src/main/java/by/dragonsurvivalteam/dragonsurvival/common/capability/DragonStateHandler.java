@@ -194,29 +194,34 @@ public class DragonStateHandler extends EntityStateHandler {
         if (dragonStage == null || size == NO_SIZE) {
             this.dragonStage = null;
             this.size = NO_SIZE;
-        } else if (!dragonStage.value().sizeRange().matches(size)) {
-            if (size > dragonStage.value().sizeRange().max()) {
+            return;
+        }
+
+        double newSize = DragonStage.getValidSize(size);
+
+        if (!dragonStage.value().sizeRange().matches(newSize)) {
+            if (newSize > dragonStage.value().sizeRange().max()) {
                 Optional<Holder.Reference<DragonStage>> nextStage = DragonStage.getNextStage(provider, dragonStage.value());
 
                 // Find the next dragon stage in the chain that matches with the given size
                 while (nextStage.isPresent()) {
                     this.dragonStage = nextStage.get();
 
-                    if (!this.dragonStage.value().sizeRange().matches(size)) {
+                    if (!this.dragonStage.value().sizeRange().matches(newSize)) {
                         nextStage = DragonStage.getNextStage(provider, dragonStage.value());
                     } else {
                         nextStage = Optional.empty();
                     }
                 }
             } else {
-                this.dragonStage = Objects.requireNonNullElseGet(previousStage, () -> DragonStage.get(provider, size));
+                this.dragonStage = Objects.requireNonNullElseGet(previousStage, () -> DragonStage.get(provider, newSize));
             }
 
-            this.size = this.dragonStage.value().getBoundedSize(size);
         } else {
             this.dragonStage = dragonStage;
-            this.size = this.dragonStage.value().getBoundedSize(size);
         }
+
+        this.size = this.dragonStage.value().getBoundedSize(newSize);
     }
 
     public @Nullable SavedDragonStage getSavedDragonStage(final String dragonType) {

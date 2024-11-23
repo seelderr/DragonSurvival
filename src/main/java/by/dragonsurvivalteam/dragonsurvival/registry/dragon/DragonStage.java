@@ -164,7 +164,15 @@ public record DragonStage(
         return Math.clamp(size, sizeRange().min(), sizeRange().max());
     }
 
-    /** Returns the next size (either part of the next stage chain, of the previous stage or the current size - depending on whether the size matches the bounds) */
+    /**
+     * Returns a valid size (see {@link DragonStage#getValidSize(double)}) <br>
+     * <br> If the size is larger than the max. size of the current dragon stage: <br>
+     *   - The {@link DragonStage#getBoundedSize(double)} of the matching dragon stage of the next dragon stage chain <br>
+     * <br> If the size is smaller than the min. size of the current dragon stage: <br>
+     *   - The current (valid) size if a previous stage is present, and its size bounds matches the current size <br>
+     *   - The {@link DragonStage#getBoundedSize(double)} of a matching dragon stage <br>
+     * <br> Otherwise (if the size is within the bounds of the current stage) the current (valid) size will be returned
+     */
     public double getNextSize(@Nullable final HolderLookup.Provider provider, double size, @Nullable final DragonStage previousStage) {
         double newSize = getValidSize(size);
 
@@ -181,6 +189,7 @@ public record DragonStage(
         return newSize;
     }
 
+    /** Returns a valid size (meaning a size within the bounds of the smallest and largest dragon) */
     public static double getValidSize(double size) {
         return Math.clamp(size, smallest.sizeRange.min(), largest.sizeRange().max());
     }
