@@ -901,12 +901,14 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
             data.setType(dragonType, minecraft.player);
             data.setBody(dragonBody, minecraft.player);
 
-            double size = data.getSavedDragonSize(data.getTypeName()); // TODO level :: add level to saved data (and dragon soul?)
+            DragonStateHandler.SavedDragonStage savedDragonStage = data.getSavedDragonStage(data.getTypeName());
 
-            if (!ServerConfig.saveGrowthStage || size == DragonStateHandler.NO_SIZE) {
-                data.setClientSize(minecraft.player.registryAccess().holderOrThrow(DragonStages.newborn));
+            if (!ServerConfig.saveGrowthStage || savedDragonStage == null) {
+                Holder<DragonStage> dragonStage = minecraft.player.registryAccess().holderOrThrow(DragonStages.newborn);
+                data.setClientSize(dragonStage, dragonStage.value().sizeRange().min());
             } else {
-                data.setClientSize(size);
+                data.previousStage = savedDragonStage.previousStage();
+                data.setClientSize(savedDragonStage.dragonStage(), savedDragonStage.size());
             }
 
             data.setHasFlight(ServerFlightHandler.startWithFlight || ServerConfig.saveGrowthStage && data.hasFlight());
