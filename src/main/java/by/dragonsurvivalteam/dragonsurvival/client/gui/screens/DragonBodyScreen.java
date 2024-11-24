@@ -36,7 +36,9 @@ public interface DragonBodyScreen {
             AbstractWidget widget;
 
             if (cannotFit && /* leftmost element */ index == 0) {
-                widget = new ArrowButton(ArrowButton.Type.PREVIOUS, x + 5, y + 3, 15, 15, button -> {
+                // The y offset is to align the arrow properly with the body icon
+                // The x offset is for the dragon editor to match up with the arrow buttons for the animation (should probably not be done here)
+                widget = new ArrowButton(ArrowButton.Type.PREVIOUS, x + 4, y + 3, 15, 15, button -> {
                     if (getDragonBodySelectionOffset() > 0) {
                         setDragonBodyButtonOffset(getDragonBodySelectionOffset() - 1);
 
@@ -46,7 +48,9 @@ public interface DragonBodyScreen {
                     }
                 });
             } else if (cannotFit && /* rightmost element */ index == 4) {
-                widget = new ArrowButton(ArrowButton.Type.NEXT, x + 5, y + 3, 15, 15, button -> {
+                // The y offset is to align the arrow properly with the body icon
+                // The x offset is for the dragon editor to match up with the arrow buttons for the animation (should probably not be done here)
+                widget = new ArrowButton(ArrowButton.Type.NEXT, x + 2, y + 3, 15, 15, button -> {
                     // If there are 5 bodies we can navigate next two times, showing 0 - 2,  1 - 3 and 2 - 4
                     if (getDragonBodySelectionOffset() < bodies.size() - /* shown elements */ 3) {
                         setDragonBodyButtonOffset(getDragonBodySelectionOffset() + 1);
@@ -60,7 +64,8 @@ public interface DragonBodyScreen {
                 // Subtract 1 since index 0 is an arrow button (otherwise we would skip the first body)
                 int selectionIndex = index + getDragonBodySelectionOffset() - (cannotFit ? 1 : 0);
                 Holder<DragonBody> body = bodies.get(selectionIndex);
-                widget = createButton(body, x, y);
+                // The x offset is to move the icons closer to the center of the two arrow buttons
+                widget = createButton(body, cannotFit ? x - 5 : x, y);
             }
 
             widgets.add(widget);
