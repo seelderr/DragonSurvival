@@ -1,46 +1,36 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic;
 
+import by.dragonsurvivalteam.dragonsurvival.client.gui.hud.MagicHUD;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
+import java.util.function.Supplier;
 
 public class ArrowButton extends Button {
-    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/magic_gui.png");
+    private final Type type;
 
-    public boolean next;
-
-    public ArrowButton(int x, int y, int xSize, int ySize, boolean next, OnPress pressable) {
-        super(x, y, xSize, ySize, Component.empty(), pressable, DEFAULT_NARRATION);
-        this.next = next;
+    public ArrowButton(final Type type, int x, int y, int width, int height, final OnPress action) {
+        super(x, y, width, height, Component.empty(), action, Supplier::get);
+        this.type = type;
     }
 
+    public enum Type {PREVIOUS, NEXT}
+
     @Override
-    public void renderWidget(GuiGraphics graphics, int p_230431_2_, int p_230431_3_, float p_230431_4_) {
-        RenderSystem.setShaderTexture(0, TEXTURE);
+    public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        RenderSystem.setShaderTexture(0, MagicHUD.WIDGET_TEXTURES);
 
-        float xSize = (float) width / 34F;
-        float ySize = (float) height / 34F;
+        int uOffset;
 
-        graphics.pose().pushPose();
-        graphics.pose().translate(getX() - getX() * xSize, getY() - getY() * ySize, 0);
-        graphics.pose().scale(xSize, ySize, 0);
-
-        if (next) {
-            if (isHovered) {
-                graphics.blit(TEXTURE, getX(), getY(), 34, 34, 34, 34);
-            } else {
-                graphics.blit(TEXTURE, getX(), getY(), 0, 34, 34, 34);
-            }
-        } else if (isHovered) {
-            graphics.blit(TEXTURE, getX(), getY(), 34, 0, 34, 34);
+        if (type == Type.PREVIOUS) {
+            uOffset = isHoveredOrFocused() ? 22 : 0;
         } else {
-            graphics.blit(TEXTURE, getX(), getY(), 0, 0, 34, 34);
+            uOffset = isHoveredOrFocused() ? 66 : 44;
         }
 
-        graphics.pose().popPose();
+        guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, getX(), getY(), (float) uOffset / 2, (float) 222 / 2, 11, 17, 128, 128);
     }
 }

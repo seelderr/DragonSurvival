@@ -1,0 +1,9 @@
+{
+  "features": {
+    "enabled": []
+  },
+  "pack": {
+    "description": "Adds the Ancient dragon stage to Dragon Survival",
+    "pack_format": 48
+  }
+}

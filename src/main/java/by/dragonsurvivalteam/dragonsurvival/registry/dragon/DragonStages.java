@@ -30,11 +30,25 @@ public class DragonStages {
     @Translation(type = Translation.Type.STAGE, comments = "Adult")
     public static ResourceKey<DragonStage> adult = key("adult");
 
-    public static void registerLevels(final BootstrapContext<DragonStage> context) {
-        context.register(newborn, new DragonStage(
+    public static ResourceKey<DragonStage> key(final ResourceLocation location) {
+        return ResourceKey.create(DragonStage.REGISTRY, location);
+    }
+
+    public static ResourceKey<DragonStage> key(final String path) {
+        return key(DragonSurvival.res(path));
+    }
+
+    public static void registerStages(final BootstrapContext<DragonStage> context) {
+        context.register(newborn, newborn());
+        context.register(young, young());
+        context.register(adult, adult(null));
+    }
+
+    public static DragonStage newborn() {
+        return new DragonStage(
                 new MiscCodecs.Bounds(10, 25),
                 Functions.hoursToTicks(10),
-                Optional.of(young),
+                Optional.ofNullable(young),
                 List.of(
                         /* Constant */
                         Modifier.constant(DRAGON_STAGE, Attributes.SUBMERGED_MINING_SPEED, 1, AttributeModifier.Operation.ADD_VALUE, DragonTypes.SEA.getTypeNameLowerCase()),
@@ -44,7 +58,6 @@ public class DragonStages {
                         Modifier.constant(DRAGON_STAGE, Attributes.SAFE_FALL_DISTANCE, 0.25f, AttributeModifier.Operation.ADD_VALUE),
                         Modifier.constant(DRAGON_STAGE, DSAttributes.DRAGON_BREATH_RANGE, 1.5f, AttributeModifier.Operation.ADD_VALUE),
                         /* Per size */
-                        Modifier.perSize(DRAGON_STAGE, Attributes.MOVEMENT_SPEED, 0.0015f, AttributeModifier.Operation.ADD_VALUE),
                         Modifier.perSize(DRAGON_STAGE, Attributes.MAX_HEALTH, 0.5f, AttributeModifier.Operation.ADD_VALUE),
                         Modifier.perSize(DRAGON_STAGE, DSAttributes.DRAGON_BREATH_RANGE, 0.05f, AttributeModifier.Operation.ADD_VALUE)
                 ),
@@ -57,10 +70,13 @@ public class DragonStages {
                         MiscCodecs.GrowthItem.create(Functions.hoursToTicks(-1), DSItems.STAR_BONE.value())
                 ),
                 Optional.of(Condition.defaultNaturalGrowthBlocker()),
+                Optional.empty(),
                 Optional.empty()
-        ));
+        );
+    }
 
-        context.register(young, new DragonStage(
+    public static DragonStage young() {
+        return new DragonStage(
                 new MiscCodecs.Bounds(25, 40),
                 Functions.daysToTicks(3),
                 Optional.of(adult),
@@ -73,7 +89,6 @@ public class DragonStages {
                         Modifier.constant(DRAGON_STAGE, Attributes.SAFE_FALL_DISTANCE, 0.5f, AttributeModifier.Operation.ADD_VALUE),
                         Modifier.constant(DRAGON_STAGE, DSAttributes.DRAGON_BREATH_RANGE, 2.5f, AttributeModifier.Operation.ADD_VALUE),
                         /* Per size */
-                        Modifier.perSize(DRAGON_STAGE, Attributes.MOVEMENT_SPEED, 0.0015f, AttributeModifier.Operation.ADD_VALUE),
                         Modifier.perSize(DRAGON_STAGE, Attributes.ENTITY_INTERACTION_RANGE, 0.01f, AttributeModifier.Operation.ADD_VALUE),
                         Modifier.perSize(DRAGON_STAGE, Attributes.BLOCK_INTERACTION_RANGE, 0.01f, AttributeModifier.Operation.ADD_VALUE),
                         Modifier.perSize(DRAGON_STAGE, Attributes.MAX_HEALTH, 0.5f, AttributeModifier.Operation.ADD_VALUE),
@@ -87,13 +102,16 @@ public class DragonStages {
                         MiscCodecs.GrowthItem.create(Functions.hoursToTicks(-1), DSItems.STAR_BONE.value())
                 ),
                 Optional.of(Condition.defaultNaturalGrowthBlocker()),
+                Optional.empty(),
                 Optional.empty()
-        ));
+        );
+    }
 
-        context.register(adult, new DragonStage(
+    public static DragonStage adult(final ResourceKey<DragonStage> nextStage) {
+        return new DragonStage(
                 new MiscCodecs.Bounds(40, 60),
                 Functions.daysToTicks(20),
-                Optional.empty(),
+                Optional.ofNullable(nextStage),
                 List.of(
                         /* Constant */
                         Modifier.constant(DRAGON_STAGE, Attributes.SUBMERGED_MINING_SPEED, 3, AttributeModifier.Operation.ADD_VALUE, DragonTypes.SEA.getTypeNameLowerCase()),
@@ -103,7 +121,6 @@ public class DragonStages {
                         Modifier.constant(DRAGON_STAGE, Attributes.SAFE_FALL_DISTANCE, 1, AttributeModifier.Operation.ADD_VALUE),
                         Modifier.constant(DRAGON_STAGE, DSAttributes.DRAGON_BREATH_RANGE, 4, AttributeModifier.Operation.ADD_VALUE),
                         /* Per size */
-                        Modifier.perSize(DRAGON_STAGE, Attributes.MOVEMENT_SPEED, 0.0015f, AttributeModifier.Operation.ADD_VALUE),
                         Modifier.perSize(DRAGON_STAGE, Attributes.ENTITY_INTERACTION_RANGE, 0.01f, AttributeModifier.Operation.ADD_VALUE),
                         Modifier.perSize(DRAGON_STAGE, Attributes.BLOCK_INTERACTION_RANGE, 0.01f, AttributeModifier.Operation.ADD_VALUE),
                         Modifier.perSize(DRAGON_STAGE, Attributes.MAX_HEALTH, 0.5f, AttributeModifier.Operation.ADD_VALUE),
@@ -116,15 +133,8 @@ public class DragonStages {
                         MiscCodecs.GrowthItem.create(Functions.hoursToTicks(-1), DSItems.STAR_BONE.value())
                 ),
                 Optional.of(Condition.defaultNaturalGrowthBlocker()),
+                Optional.empty(),
                 Optional.empty()
-        ));
-    }
-
-    public static ResourceKey<DragonStage> key(final ResourceLocation location) {
-        return ResourceKey.create(DragonStage.REGISTRY, location);
-    }
-
-    private static ResourceKey<DragonStage> key(final String path) {
-        return key(DragonSurvival.res(path));
+        );
     }
 }

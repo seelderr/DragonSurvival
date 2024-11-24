@@ -1,17 +1,13 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.hud.MagicHUD;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.DragonAltarScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.DragonBodyScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.SkinsScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.buttons.*;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.ColorSelectorButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.UndoRedoButton;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ArrowButton;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.DropDownButton;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ExtendedCheckbox;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.*;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.components.DragonEditorConfirmComponent;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.components.DragonUIRenderComponent;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRenderer;
@@ -40,12 +36,10 @@ import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStages;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
@@ -71,7 +65,6 @@ import org.lwjgl.glfw.GLFW;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
@@ -177,6 +170,8 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
     private float tick;
     private int curAnimation;
     private int lastSelected;
+    private int selectedDragonStage;
+    private DragonStageButton savedStageButton;
     private boolean hasInit;
     private boolean isEditor;
 
@@ -217,6 +212,9 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
         dragonStage = newStage;
         dragonRender.zoom = setZoom(dragonStage);
         HANDLER.getSkinData().compileSkin(dragonStage);
+        if(savedStageButton != null) {
+            savedStageButton.setMessage(DragonStage.translatableName(dragonStage.getKey()));
+        }
         update();
 
         return previousLevel;
@@ -484,6 +482,7 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
     @Override
     public void init() {
         super.init();
+        assert minecraft != null && minecraft.player != null;
 
         guiLeft = (width - 256) / 2;
         guiTop = (height - 120) / 2;
@@ -491,7 +490,7 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
         confirmComponent = new DragonEditorConfirmComponent(this, width / 2 - 130 / 2, height / 2 - 181 / 2, 130, 154);
         initDragonRender();
 
-        DragonStateHandler data = DragonStateProvider.getData(Objects.requireNonNull(Objects.requireNonNull(minecraft).player));
+        DragonStateHandler data = DragonStateProvider.getData(minecraft.player);
 
         if (!hasInit) {
             initDummyDragon(data);
@@ -499,12 +498,26 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
             hasInit = true;
         }
 
-        if (!data.isDragon() || DragonStage.isBuiltinLevel(Objects.requireNonNull(data.getStage()).getKey())) {
+        if (DragonStage.onlyBuiltInLevelsAreLoaded(minecraft.player.registryAccess())) {
             addRenderableWidget(new DragonStageButton(this, DragonStages.newborn, -180));
             addRenderableWidget(new DragonStageButton(this, DragonStages.young, -60));
             addRenderableWidget(new DragonStageButton(this, DragonStages.adult, 60));
         } else {
-            addRenderableWidget(new DragonStageButton(this, data.getStage().getKey(), -60));
+            selectedDragonStage = DragonStage.allStages(minecraft.player.registryAccess()).indexOf(dragonStage);
+            addRenderableWidget(new ArrowButton(ArrowButton.Type.PREVIOUS, width / 2 - 45 - 20, height / 2 - 90, 15, 15, action -> {
+                List<Holder<DragonStage>> allStages = DragonStage.allStages(minecraft.player.registryAccess());
+                selectedDragonStage = Functions.wrap(selectedDragonStage - 1, 0, allStages.size() - 1);
+                actionHistory.add(new EditorAction<>(selectStageAction, allStages.get(selectedDragonStage)));
+            }));
+
+            savedStageButton = new DragonStageButton(this, dragonStage.getKey(), -60, false);
+            addRenderableWidget(savedStageButton);
+
+            addRenderableWidget(new ArrowButton(ArrowButton.Type.NEXT, width / 2 + 45, height / 2 - 90, 15, 15, action -> {
+                List<Holder<DragonStage>> allStages = DragonStage.allStages(minecraft.player.registryAccess());
+                selectedDragonStage = Functions.wrap(selectedDragonStage + 1, 0, allStages.size() - 1);
+                actionHistory.add(new EditorAction<>(selectStageAction, allStages.get(selectedDragonStage)));
+            }));
         }
 
         addDragonBodyWidgets();
@@ -530,7 +543,7 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
             DropDownButton btn = new DragonEditorDropdownButton(this, row < 8 ? width / 2 - 210 : width / 2 + 80, guiTop - 5 + (row >= 8 ? (row - 8) * 20 : row * 20), 100, 15, curValue, values, layers);
             dropdownButtons.put(layers, btn);
             addRenderableWidget(btn);
-            addRenderableWidget(new ArrowButton(btn.getX() - 15, btn.getY() + 1, 16, 16, false, action -> {
+            addRenderableWidget(new PlusMinusButton(btn.getX() - 15, btn.getY() + 1, 16, 16, false, action -> {
                 int index = 0;
 
                 for (int i1 = 0; i1 < btn.values.length; i1++) {
@@ -552,7 +565,7 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
                 }
             }));
 
-            addRenderableWidget(new ArrowButton(btn.getX() + btn.getWidth() - 1, btn.getY() + 1, 16, 16, true, action -> {
+            addRenderableWidget(new PlusMinusButton(btn.getX() + btn.getWidth() - 1, btn.getY() + 1, 16, 16, true, action -> {
                 int index = 0;
 
                 for (int i1 = 0; i1 < btn.values.length; i1++) {
@@ -580,41 +593,21 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
             row++;
         }
 
-        addRenderableWidget(new Button(width / 2 + 45, height / 2 + 75 - 27, 15, 15, Component.empty(), action -> {
-            curAnimation += 1;
-
-            if (curAnimation >= animations.length) {
-                curAnimation = 0;
-            }
-        }, Supplier::get) {
-            @Override
-            public void renderWidget(@NotNull final GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-                if (isHoveredOrFocused()) {
-                    graphics.blit(MagicHUD.WIDGET_TEXTURES, getX(), getY(), (float) 66 / 2, (float) 222 / 2, 11, 17, 128, 128);
-                } else {
-                    graphics.blit(MagicHUD.WIDGET_TEXTURES, getX(), getY(), (float) 44 / 2, (float) 222 / 2, 11, 17, 128, 128);
-                }
-            }
-        });
-
-        addRenderableWidget(new Button(width / 2 - 45 - 20, height / 2 + 75 - 27, 15, 15, Component.empty(), action -> {
+        addRenderableWidget(new ArrowButton(ArrowButton.Type.PREVIOUS, width / 2 - 45 - 20, height / 2 + 75 - 27, 15, 15, action -> {
             curAnimation -= 1;
 
             if (curAnimation < 0) {
                 curAnimation = animations.length - 1;
             }
-        }, Supplier::get) {
-            @Override
-            public void renderWidget(@NotNull final GuiGraphics guiGraphics, int p_230431_2_, int p_230431_3_, float p_230431_4_) {
-                RenderSystem.setShaderTexture(0, MagicHUD.WIDGET_TEXTURES);
+        }));
 
-                if (isHoveredOrFocused()) {
-                    guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, getX(), getY(), (float) 22 / 2, (float) 222 / 2, 11, 17, 128, 128);
-                } else {
-                    guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, getX(), getY(), 0, (float) 222 / 2, 11, 17, 128, 128);
-                }
+        addRenderableWidget(new ArrowButton(ArrowButton.Type.NEXT, width / 2 + 45, height / 2 + 75 - 27, 15, 15, action -> {
+            curAnimation += 1;
+
+            if (curAnimation >= animations.length) {
+                curAnimation = 0;
             }
-        });
+        }));
 
         for (int num = 1; num <= 9; num++) {
             addRenderableWidget(new DragonEditorSlotButton(width / 2 + 200 + 15, guiTop + (num - 1) * 12 + 5 + 30, num, this));
@@ -813,7 +806,7 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
 
     @Override
     public int getDragonBodyButtonXOffset() {
-        return 10;
+        return 3;
     }
 
     @Override

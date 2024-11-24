@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons;
 
-import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ArrowButton;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.PlusMinusButton;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAbility;
@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class IncreaseLevelButton extends ArrowButton {
+public class IncreaseLevelButton extends PlusMinusButton {
     @Translation(type = Translation.Type.MISC, comments = "§aUpgrade the skill for§r %s §alevels§r")
     private static final String LEVEL_UP = Translation.Type.GUI.wrap("level_up");
 
@@ -49,8 +49,8 @@ public class IncreaseLevelButton extends ArrowButton {
     }
 
     @Override
-    public void renderWidget(@NotNull final GuiGraphics graphics, int pMouseX, int pMouseY, float pPartialTick) {
-        super.renderWidget(graphics, pMouseX, pMouseY, pPartialTick);
+    public void renderWidget(@NotNull final GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        super.renderWidget(graphics, mouseX, mouseY, partialTick);
 
         if (isHovered()) {
             DragonStateProvider.getOptional(Minecraft.getInstance().player).ifPresent(cap -> {
@@ -66,7 +66,7 @@ public class IncreaseLevelButton extends ArrowButton {
 
                     if (ability.getLevel() < ability.getMaxLevel()) {
                         skillCost = ability.getLevelCost(1);
-                        graphics.renderComponentTooltip(Minecraft.getInstance().font, description, pMouseX, pMouseY);
+                        graphics.renderComponentTooltip(Minecraft.getInstance().font, description, mouseX, mouseY);
                     }
                 }
             });

@@ -2,12 +2,12 @@ package by.dragonsurvivalteam.dragonsurvival.client.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.MiscCodecs;
 import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
 import by.dragonsurvivalteam.dragonsurvival.mixins.client.LevelRendererAccess;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDestructionEnabled;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.SheetedDecalTextureGenerator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -56,14 +56,9 @@ public class DragonDestructionHandler {
     public static void renderAdditionalBreakProgress(final RenderLevelStageEvent event) {
         if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES) {
             LocalPlayer player = Minecraft.getInstance().player;
+            double radius = player.getAttributeValue(DSAttributes.BLOCK_BREAK_RADIUS);
 
-            if (ServerConfig.largeBlockBreakRadiusScalar <= 0 || player == null || player.isCrouching()) {
-                return;
-            }
-
-            DragonStateHandler data = DragonStateProvider.getData(player);
-
-            if (!data.isDragon() || data.getSize() < DragonStage.MAX_HANDLED_SIZE) {
+            if (radius <= 0 || player.isCrouching()) {
                 return;
             }
 
@@ -77,8 +72,6 @@ public class DragonDestructionHandler {
             int progress = set != null ? set.last().getProgress() : -1;
 
             if (progress != -1) {
-                int radius = (int) Math.floor((data.getSize() - DragonStage.MAX_HANDLED_SIZE / 60 * ServerConfig.largeBlockBreakRadiusScalar));
-
                 BlockPos.betweenClosedStream(AABB.ofSize(centerOfDestruction.getCenter(), radius, radius, radius)).forEach(offsetPosition -> {
                     double xDistance = (double) offsetPosition.getX() - x;
                     double yDistance = (double) offsetPosition.getY() - y;
@@ -101,10 +94,6 @@ public class DragonDestructionHandler {
 
     @SubscribeEvent
     public static void toggleDestructionMode(final InputEvent.Key event) {
-        if (!ServerConfig.allowBlockDestruction && !ServerConfig.allowCrushing) {
-            return;
-        }
-
         if (Minecraft.getInstance().screen != null || event.getAction() != Keybind.KEY_PRESSED || !Keybind.TOGGLE_DESTRUCTION.isKey(event.getKey())) {
             return;
         }
@@ -118,6 +107,12 @@ public class DragonDestructionHandler {
         DragonStateHandler data = DragonStateProvider.getData(player);
 
         if (!data.isDragon()) {
+            return;
+        }
+
+        MiscCodecs.DestructionData destructionData = data.getStage().value().destructionData().orElse(null);
+
+        if (destructionData == null || !destructionData.isDestructionAllowed(data.getSize())) {
             return;
         }
 

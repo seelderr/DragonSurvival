@@ -78,43 +78,12 @@ public class ServerConfig {
     @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "block_destruction_removal")
     public static Double blockDestructionRemoval = 0.96;
 
-    @ConfigRange(min = 14.0, max = 1_000_000.0)
-    @Translation(key = "block_destruction_size", type = Translation.Type.CONFIGURATION, comments = "Determines at which size a dragon destroys blocks")
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "block_destruction_size")
-    public static Double largeBlockDestructionSize = 120.0;
-
-    @ConfigRange(min = 0.0, max = 10.0)
-    @Translation(key = "large_block_break_radius_scaling", type = Translation.Type.CONFIGURATION, comments = {
-            "Determines the block break radius bonus at max. growth - the intention is to grant the specified value per 60 size - disabled if set to 0",
-            "This bonus is not active while crouching"
-    })
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "large_block_break_radius_scaling")
-    public static Double largeBlockBreakRadiusScalar = 0.0;
-
-    @Translation(key = "allow_crushing", type = Translation.Type.CONFIGURATION, comments = "If enabled entities beneath dragons above a certain size will be crushed - not active while crouching")
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "allow_crushing")
-    public static Boolean allowCrushing = false;
-
-    @ConfigRange(min = 14.0, max = 1_000_000.0)
-    @Translation(key = "crushing_size", type = Translation.Type.CONFIGURATION, comments = "Determines at which size a dragon crushes entities")
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "crushing_size")
-    public static Double crushingSize = 120.0;
-
-    @ConfigRange(min = 0.0, max = 20.0)
-    @Translation(key = "crushing_damage_scaling", type = Translation.Type.CONFIGURATION, comments = "Scales the dragon size to determine the damage dealt to crushed entities")
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "crushing_damage_scaling")
-    public static Double crushingDamageScalar = 0.05;
-
     @ConfigRange(min = 0, max = 20)
     @Translation(key = "crushing_interval", type = Translation.Type.CONFIGURATION, comments = "The amount of ticks (20 ticks = 1 second) before an entity can be crushed again")
     @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "crushing_interval")
     public static Integer crushingTickDelay = 20;
 
     // --- Standard dragon scaling --- //
-
-    @Translation(key = "natural_growth", type = Translation.Type.CONFIGURATION, comments = "If enabled dragons will also naturally grow over time")
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "standard_dragon"}, key = "natural_growth")
-    public static Boolean naturalGrowth = true;
 
     @Translation(key = "save_growth_stage", type = Translation.Type.CONFIGURATION, comments = "If enabled the current growth will be saved for the current dragon type when changing types or reverting back to being a human")
     @ConfigOption(side = ConfigSide.SERVER, category = {"growth"}, key = "save_growth_stage")

@@ -1,13 +1,13 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons;
 
-import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ArrowButton;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.PlusMinusButton;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
-public class UndoRedoButton extends ArrowButton {
+public class UndoRedoButton extends PlusMinusButton {
     private static final ResourceLocation UNDO = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/arrow_undo.png");
     private static final ResourceLocation REDO = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/arrow_redo.png");
 
@@ -16,7 +16,7 @@ public class UndoRedoButton extends ArrowButton {
     }
 
     @Override
-    public void renderWidget(@NonNull final GuiGraphics graphics, int p_230431_2_, int p_230431_3_, float p_230431_4_) {
+    public void renderWidget(@NonNull final GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         if (next) {
             graphics.blit(REDO, getX(), getY(), 0, 0, width, height, width, height);
         } else {
