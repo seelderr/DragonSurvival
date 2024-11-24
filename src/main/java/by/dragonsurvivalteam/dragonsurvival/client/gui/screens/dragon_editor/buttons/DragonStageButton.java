@@ -18,6 +18,7 @@ public class DragonStageButton extends Button {
     private final DragonEditorScreen screen;
     private final ResourceKey<DragonStage> dragonStage;
     private final boolean isInteractive;
+    private final int renderedWidth;
 
     public DragonStageButton(final DragonEditorScreen screen, final ResourceKey<DragonStage> dragonStage, int xOffset) {
         super(screen.width / 2 + xOffset, screen.guiTop - 30, 120, 20, dragonStage != null ? DragonStage.translatableName(dragonStage) : Component.empty(), button -> {
@@ -28,13 +29,15 @@ public class DragonStageButton extends Button {
         this.screen = screen;
         this.dragonStage = dragonStage;
         this.isInteractive = true;
+        this.renderedWidth = 120;
     }
 
     public DragonStageButton(final DragonEditorScreen screen, final ResourceKey<DragonStage> dragonStage, int xOffset, boolean isInteractive) {
-        super(screen.width / 2 + xOffset, screen.guiTop - 30, 120, 20, dragonStage != null ? DragonStage.translatableName(dragonStage) : Component.empty(), button -> {}, DEFAULT_NARRATION);
+        super(screen.width / 2 + xOffset, screen.guiTop - 30, 0, 0, dragonStage != null ? DragonStage.translatableName(dragonStage) : Component.empty(), button -> {}, DEFAULT_NARRATION);
         this.screen = screen;
         this.dragonStage = dragonStage;
         this.isInteractive = isInteractive;
+        this.renderedWidth = 120;
     }
 
     @Override
@@ -46,6 +49,6 @@ public class DragonStageButton extends Button {
             color = WHITE;
         }
 
-        TextRenderUtil.drawCenteredScaledText(graphics, getX() + width / 2, getY() + 4, 1.5f, getMessage().getString(), color);
+        TextRenderUtil.drawCenteredScaledText(graphics, getX() + renderedWidth / 2, getY() + 4, 1.5f, getMessage().getString(), color);
     }
 }
