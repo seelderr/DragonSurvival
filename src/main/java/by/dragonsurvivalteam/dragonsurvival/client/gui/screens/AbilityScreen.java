@@ -11,6 +11,8 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.util.ExperienceUtils;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -26,7 +28,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
@@ -50,6 +51,13 @@ public class AbilityScreen extends Screen {
     private static final String HELP_INNATE = Translation.Type.GUI.wrap("help.innate_abilities");
 
     private static final ResourceLocation BACKGROUND_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/magic_interface.png");
+
+    /**
+     * Currently used to determine how much % of the green experience bar is filled <br>
+     * This value is set as the current highest level requirement of the auto-leveling abilities <br>
+     * (Meaning of those whose level change depending on how much experience the player has
+     */
+    private static final float HIGHEST_LEVEL = 55f;
 
     public Screen sourceScreen;
     public ArrayList<ActiveDragonAbility> unlockableAbilities = new ArrayList<>();
@@ -81,59 +89,65 @@ public class AbilityScreen extends Screen {
         guiGraphics.blit(BACKGROUND_TEXTURE, startX, startY, 0, 0, 256, 256);
 
         if (type != null) {
-            int barYPos = Objects.equals(type, DragonTypes.SEA) ? 198 : Objects.equals(type, DragonTypes.FOREST) ? 186 : 192;
+            int barYPos = DragonUtils.isType(type, DragonTypes.SEA) ? 198 : DragonUtils.isType(type, DragonTypes.FOREST) ? 186 : 192;
 
             //noinspection DataFlowIssue -> player should not be null
-            float progress = Mth.clamp(minecraft.player.experienceLevel / 50F, 0, 1);
-            float progress1 = Math.min(1F, Math.min(0.5F, progress) * 2F);
-            float progress2 = Math.min(1F, Math.min(0.5F, progress - 0.5F) * 2F);
+            float progress = Mth.clamp((float) minecraft.player.experienceLevel / HIGHEST_LEVEL, 0, 1);
+            float leftExperienceBar = Math.min(1f, Math.min(0.5f, progress) * 2);
+            float rightExperienceBar = Math.min(1f, Math.min(0.5f, progress - 0.5f) * 2);
 
             guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, startX + 23 / 2, startY + 28, 0, (float) 180 / 2, 105, 3, 128, 128);
             guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, startX + 254 / 2, startY + 28, 0, (float) 180 / 2, 105, 3, 128, 128);
-            guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, startX + 23 / 2, startY + 28, 0, (float) barYPos / 2, (int) (105 * progress1), 3, 128, 128);
+            guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, startX + 23 / 2, startY + 28, 0, (float) barYPos / 2, (int) (105 * leftExperienceBar), 3, 128, 128);
 
             if (progress > 0.5) {
-                guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, startX + 254 / 2, startY + 28, 0, (float) barYPos / 2, (int) (105 * progress2), 3, 128, 128);
+                guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, startX + 254 / 2, startY + 28, 0, (float) barYPos / 2, (int) (105 * rightExperienceBar), 3, 128, 128);
             }
 
-            int expChange = -1;
+            int experienceLevels = 0;
 
-            for (GuiEventListener btn : children()) {
-                if (!(btn instanceof AbstractWidget) || !((AbstractWidget) btn).isHovered()) {
+            for (GuiEventListener button : children()) {
+                if (!(button instanceof AbstractWidget widget) || !widget.isHovered()) {
                     continue;
                 }
 
-                if (btn instanceof IncreaseLevelButton) {
-                    expChange = ((IncreaseLevelButton) btn).skillCost;
+                if (button instanceof IncreaseLevelButton increaseLevelButton) {
+                    experienceLevels = increaseLevelButton.upgradeCost;
+                    break;
+                } else if (button instanceof DecreaseLevelButton decreaseLevelButton) {
+                    experienceLevels = decreaseLevelButton.gainedLevels;
                     break;
                 }
             }
 
-            if (expChange != -1) {
-                float Changeprogress = Mth.clamp(expChange / 50F, 0, 1); //Total exp required to hit level 50
-                float Changeprogress1 = Math.min(1F, Math.min(0.5F, Changeprogress) * 2F);
-                float Changeprogress2 = Math.min(1F, Math.min(0.5F, Changeprogress - 0.5F) * 2F);
+            if (experienceLevels != 0) {
+                // Indicate how much % experience would be lost or gained (by comparing the experience points the levels are worth)
+                float change = Mth.clamp((float) ExperienceUtils.getTotalExperience(experienceLevels) / (float) ExperienceUtils.getTotalExperience(minecraft.player), 0, 1);
+                float leftOverlayBar = Math.min(1, Math.min(0.5f, change) * 2);
+                float rightOverlayBar = Math.min(1, Math.min(0.5f, change - 0.5f) * 2);
 
-                guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, startX + 23 / 2, startY + 28, 0, (float) 174 / 2, (int) (105 * Changeprogress1), 3, 128, 128);
+                // Render the purple bar which indicates the amount that will be taken from the current experience
+                guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, startX + 23 / 2, startY + 28, 0, (float) 174 / 2, (int) (105 * leftOverlayBar), 3, 128, 128);
 
-                if (Changeprogress2 > 0.5) {
-                    guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, startX + 254 / 2, startY + 28, 0, (float) 174 / 2, (int) (105 * Changeprogress2), 3, 128, 128);
+                if (rightOverlayBar > 0.5) {
+                    guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, startX + 254 / 2, startY + 28, 0, (float) 174 / 2, (int) (105 * rightOverlayBar), 3, 128, 128);
                 }
             }
 
-            Component textComponent = Component.empty().append(Integer.toString(minecraft.player.experienceLevel)).withStyle(ChatFormatting.DARK_GRAY);
+            Component currentLevel = Component.literal(Integer.toString(minecraft.player.experienceLevel)).withStyle(ChatFormatting.DARK_GRAY);
+
             int xPos = startX + 117 + 1;
-            int finalXPos = (xPos - minecraft.font.width(textComponent) / 2);
-            guiGraphics.drawString(minecraft.font, textComponent, finalXPos, startY + 26, 0, false);
+            int finalXPos = (xPos - minecraft.font.width(currentLevel) / 2);
+            guiGraphics.drawString(minecraft.font, currentLevel, finalXPos, startY + 26, 0, false);
         }
 
         super.render(guiGraphics, mouseX, mouseY, partialTick);
 
-        renderables.forEach(s -> {
-            if (s instanceof AbilityButton btn) {
-                if (btn.skillType == 0 && btn.dragging && btn.ability != null) {
-                    RenderSystem.setShaderTexture(0, btn.ability.getIcon());
-                    guiGraphics.blit(btn.ability.getIcon(), mouseX, mouseY, 0, 0, 32, 32, 32, 32);
+        renderables.forEach(renderable -> {
+            if (renderable instanceof AbilityButton babilityButtonn) {
+                if (babilityButtonn.skillType == 0 && babilityButtonn.dragging && babilityButtonn.ability != null) {
+                    RenderSystem.setShaderTexture(0, babilityButtonn.ability.getIcon());
+                    guiGraphics.blit(babilityButtonn.ability.getIcon(), mouseX, mouseY, 0, 0, 32, 32, 32, 32);
                 }
             }
         });
