@@ -36,7 +36,7 @@ public interface DragonBodyScreen {
             AbstractWidget widget;
 
             if (cannotFit && /* leftmost element */ index == 0) {
-                widget = new ArrowButton(x, y, 25, 25, false, button -> {
+                widget = new ArrowButton(ArrowButton.Type.PREVIOUS, x + 5, y + 3, 15, 15, button -> {
                     if (getDragonBodySelectionOffset() > 0) {
                         setDragonBodyButtonOffset(getDragonBodySelectionOffset() - 1);
 
@@ -46,7 +46,7 @@ public interface DragonBodyScreen {
                     }
                 });
             } else if (cannotFit && /* rightmost element */ index == 4) {
-                widget = new ArrowButton(x, y, 25, 25, true, button -> {
+                widget = new ArrowButton(ArrowButton.Type.NEXT, x + 5, y + 3, 15, 15, button -> {
                     // If there are 5 bodies we can navigate next two times, showing 0 - 2,  1 - 3 and 2 - 4
                     if (getDragonBodySelectionOffset() < bodies.size() - /* shown elements */ 3) {
                         setDragonBodyButtonOffset(getDragonBodySelectionOffset() + 1);

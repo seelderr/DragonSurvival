@@ -14,7 +14,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -109,19 +108,14 @@ public class DragonDestructionHandler {
             return;
         }
 
-        AttributeInstance blockBreakRadius = event.getPlayer().getAttribute(DSAttributes.BLOCK_BREAK_RADIUS);
-        if(blockBreakRadius == null) {
-            return;
-        }
+        double radius = event.getPlayer().getAttributeValue(DSAttributes.BLOCK_BREAK_RADIUS);
 
-        if (isBreakingMultipleBlocks || blockBreakRadius.getValue() <= 0) {
+        if (isBreakingMultipleBlocks || radius <= 0) {
             return;
         }
 
         event.setCanceled(true);
-
         isBreakingMultipleBlocks = true;
-        int radius = (int) blockBreakRadius.getValue();
         BlockPos.betweenClosedStream(AABB.ofSize(event.getPos().getCenter(), radius, radius, radius)).forEach(player.gameMode::destroyBlock);
         isBreakingMultipleBlocks = false;
     }

@@ -91,23 +91,23 @@ public record DragonStage(
 
         StringBuilder nextStageCheck = new StringBuilder("The following stages are incorrectly defined:");
         AtomicBoolean areStagesValid = new AtomicBoolean(true);
-        AtomicBoolean isDestructionDataValid = new AtomicBoolean(true);
 
         keys(provider).forEach(key -> {
             //noinspection OptionalGetWithoutIsPresent -> ignore
             Holder.Reference<DragonStage> stage = get(provider, key).get();
 
             // Validate that the block destruction size and the crushing size are within the bounds of the current dragon stage
-            if(stage.value().destructionData().isPresent()) {
+            if (stage.value().destructionData().isPresent()) {
                 MiscCodecs.DestructionData destructionData = stage.value().destructionData().get();
-                if(destructionData.blockDestructionSize() > stage.value().sizeRange().max() || destructionData.blockDestructionSize() < stage.value().sizeRange().min()) {
-                    isDestructionDataValid.set(false);
+
+                if (destructionData.blockDestructionSize() > stage.value().sizeRange().max() || destructionData.blockDestructionSize() < stage.value().sizeRange().min()) {
                     nextStageCheck.append("\n- Block destruction size of [").append(key.location()).append("] is not within the bounds of the dragon stage");
+                    areStagesValid.set(false);
                 }
 
-                if(destructionData.crushingSize() > stage.value().sizeRange().max() || destructionData.crushingSize() < stage.value().sizeRange().min()) {
-                    isDestructionDataValid.set(false);
+                if (destructionData.crushingSize() > stage.value().sizeRange().max() || destructionData.crushingSize() < stage.value().sizeRange().min()) {
                     nextStageCheck.append("\n- Crushing size of [").append(key.location()).append("] is not within the bounds of the dragon stage");
+                    areStagesValid.set(false);
                 }
             }
 
@@ -165,7 +165,7 @@ public record DragonStage(
         return keys(provider).stream().allMatch(DragonStage::isBuiltinLevel);
     }
 
-    public static List<Holder<DragonStage>> allStages(final HolderLookup.Provider provider) {
+    public static List<Holder<DragonStage>> allStages(@Nullable final HolderLookup.Provider provider) {
         return keys(provider).stream().map(key -> get(provider, key).get().getDelegate()).toList();
     }
 
@@ -173,7 +173,7 @@ public record DragonStage(
         return Component.translatable(Translation.Type.STAGE.wrap(dragonStage.location().getNamespace(), dragonStage.location().getPath()));
     }
 
-    public static List<ResourceKey<DragonStage>> keys(final HolderLookup.Provider provider) {
+    public static List<ResourceKey<DragonStage>> keys(@Nullable final HolderLookup.Provider provider) {
         HolderLookup.RegistryLookup<DragonStage> registry;
 
         if (provider == null) {
