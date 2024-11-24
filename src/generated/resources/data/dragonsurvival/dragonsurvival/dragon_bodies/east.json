@@ -57,7 +57,7 @@
     {
       "type": "dragonsurvival/body/",
       "amount": -0.2,
-      "attribute": "dragonsurvival:flight_stamina_cost",
+      "attribute": "dragonsurvival:flight_stamina",
       "operation": "add_multiplied_total"
     }
   ]

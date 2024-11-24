@@ -1,10 +1,10 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.screens;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.hud.MagicHUD;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.buttons.DragonBodyButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.TabButton;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ArrowButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon.DragonRenderer;
@@ -194,6 +194,11 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
                 handler.setBody(playerData.getBody());
             }
 
+            if (handler.getStage() == null) {
+                Holder<DragonStage> dragonStage = minecraft.player.registryAccess().holderOrThrow(DragonStages.newborn);
+                handler.setClientSize(dragonStage, dragonStage.value().sizeRange().min());
+            }
+
             handler.getSkinData().skinPreset.initDefaults(handler);
 
             if (noSkin && Objects.equals(playerName, minecraft.player.getGameProfile().getName())) {
@@ -373,32 +378,7 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
             }
         }).bounds(startX + 35, startY + 128, 60, 20).tooltip(Tooltip.create(Component.translatable(RANDOM_INFO))).build());
 
-        addRenderableWidget(new Button(startX + 90, startY - 20, 11, 17, Component.empty(), button -> {
-            ResourceKey<DragonStage> nextLevel = dragonStage.getKey();
-
-            if (dragonStage.is(DragonStages.newborn)) {
-                nextLevel = DragonStages.young;
-            } else if (dragonStage.is(DragonStages.young)) {
-                nextLevel = DragonStages.adult;
-            } else if (dragonStage.is(DragonStages.adult)) {
-                nextLevel = DragonStages.newborn;
-            }
-
-            dragonStage = Objects.requireNonNull(player).registryAccess().holderOrThrow(Objects.requireNonNull(nextLevel));
-
-            setTextures();
-        }, Supplier::get) {
-            @Override
-            protected void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-                if (isHovered()) {
-                    guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, getX(), getY(), (float) 66 / 2, (float) 222 / 2, 11, 17, 128, 128);
-                } else {
-                    guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, getX(), getY(), (float) 44 / 2, (float) 222 / 2, 11, 17, 128, 128);
-                }
-            }
-        });
-
-        addRenderableWidget(new Button(startX - 70, startY - 20, 11, 17, Component.empty(), button -> {
+        addRenderableWidget(new ArrowButton(ArrowButton.Type.PREVIOUS, startX - 70, startY - 20, 11, 17, button -> {
             ResourceKey<DragonStage> nextLevel = dragonStage.getKey();
 
             if (dragonStage.is(DragonStages.adult)) {
@@ -412,16 +392,23 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
             dragonStage = Objects.requireNonNull(player).registryAccess().holderOrThrow(Objects.requireNonNull(nextLevel));
 
             setTextures();
-        }, Supplier::get) {
-            @Override
-            protected void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-                if (isHovered()) {
-                    guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, getX(), getY(), (float) 22 / 2, (float) 222 / 2, 11, 17, 128, 128);
-                } else {
-                    guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, getX(), getY(), 0, (float) 222 / 2, 11, 17, 128, 128);
-                }
+        }));
+
+        addRenderableWidget(new ArrowButton(ArrowButton.Type.NEXT, startX + 90, startY - 20, 11, 17, button -> {
+            ResourceKey<DragonStage> nextLevel = dragonStage.getKey();
+
+            if (dragonStage.is(DragonStages.newborn)) {
+                nextLevel = DragonStages.young;
+            } else if (dragonStage.is(DragonStages.young)) {
+                nextLevel = DragonStages.adult;
+            } else if (dragonStage.is(DragonStages.adult)) {
+                nextLevel = DragonStages.newborn;
             }
-        });
+
+            dragonStage = Objects.requireNonNull(player).registryAccess().holderOrThrow(Objects.requireNonNull(nextLevel));
+
+            setTextures();
+        }));
     }
 
     @Override
@@ -436,7 +423,7 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
 
     @Override
     public int getDragonBodyButtonXOffset() {
-        return 225;
+        return 200;
     }
 
     @Override

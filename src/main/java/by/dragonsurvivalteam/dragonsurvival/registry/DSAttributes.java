@@ -18,7 +18,7 @@ public class DSAttributes {
 
     @Translation(type = Translation.Type.ATTRIBUTE, comments = "Dragon Flight Stamina")
     @Translation(type = Translation.Type.ATTRIBUTE_DESCRIPTION, comments = "Reduces the food exhaustion of flying")
-    public static final Holder<Attribute> FLIGHT_STAMINA_COST = DS_ATTRIBUTES.register("flight_stamina_cost", () -> new RangedAttribute(Translation.Type.ATTRIBUTE.wrap("flight_stamina"), 1, 0, 5).setSyncable(true));
+    public static final Holder<Attribute> FLIGHT_STAMINA_COST = DS_ATTRIBUTES.register("flight_stamina", () -> new RangedAttribute(Translation.Type.ATTRIBUTE.wrap("flight_stamina"), 1, 0, 5).setSyncable(true));
 
     @Translation(type = Translation.Type.ATTRIBUTE, comments = "Lava Swim Speed")
     @Translation(type = Translation.Type.ATTRIBUTE_DESCRIPTION, comments = "A multiplier to the lava swim speed") // TODO :: enable 'can swim in fluid' for lava when this value is above 0 (or some other threshold)?

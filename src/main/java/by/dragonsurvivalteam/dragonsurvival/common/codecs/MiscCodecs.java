@@ -88,10 +88,6 @@ public class MiscCodecs {
                 Codec.DOUBLE.fieldOf("crushing_damage_scalar").forGetter(DestructionData::crushingDamageScalar)
         ).apply(instance, instance.stable(DestructionData::new)));
 
-        public static DestructionData create(double crushingSize, double blockDestructionSize, double crushingDamageScalar) {
-            return new DestructionData(crushingSize, blockDestructionSize, crushingDamageScalar);
-        }
-
         public boolean isCrushingAllowed(double dragonSize) {
             return dragonSize >= crushingSize;
         }
@@ -100,6 +96,7 @@ public class MiscCodecs {
             return dragonSize >= blockDestructionSize;
         }
 
+        @SuppressWarnings("BooleanMethodIsAlwaysInverted") // ignore
         public boolean isDestructionAllowed(double dragonSize) {
             return isCrushingAllowed(dragonSize) || isBlockDestructionAllowed(dragonSize);
         }

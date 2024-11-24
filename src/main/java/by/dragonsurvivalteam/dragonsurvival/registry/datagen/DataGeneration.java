@@ -10,6 +10,7 @@ import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBodies;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStages;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.datapacks.AncientDatapack;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.registries.Registries;
@@ -60,7 +61,7 @@ public class DataGeneration {
         builder.add(Registries.DAMAGE_TYPE, DSDamageTypes::registerDamageTypes);
         builder.add(Registries.ENCHANTMENT, DSEnchantments::registerEnchantments);
         builder.add(DragonBody.REGISTRY, DragonBodies::registerBodies);
-        builder.add(DragonStage.REGISTRY, DragonStages::registerLevels);
+        builder.add(DragonStage.REGISTRY, DragonStages::registerStages);
         DatapackBuiltinEntriesProvider datapackProvider = new DatapackBuiltinEntriesProvider(output, lookup, builder, Set.of(DragonSurvival.MODID));
         generator.addProvider(event.includeServer(), datapackProvider);
 
@@ -68,11 +69,11 @@ public class DataGeneration {
         DataGenerator.PackGenerator ancientFeaturePack = generator.getBuiltinDatapack(true, DragonSurvival.MODID, "ancient_stage");
         ancientFeaturePack.addProvider(packOutput -> PackMetadataGenerator.forFeaturePack(
                 packOutput,
-                Component.literal("Add in the ancient dragon stage to dragon survival."),
+                Component.literal("Adds the Ancient dragon stage to Dragon Survival"),
                 FeatureFlagSet.of()
         ));
         RegistrySetBuilder ancientBuilder = new RegistrySetBuilder();
-        ancientBuilder.add(DragonStage.REGISTRY, DragonStages::registerAncientDatapack);
+        ancientBuilder.add(DragonStage.REGISTRY, AncientDatapack::register);
         CompletableFuture<HolderLookup.Provider> finalLookup = lookup;
         ancientFeaturePack.addProvider(packOutput -> new DatapackBuiltinEntriesProvider(packOutput, finalLookup, ancientBuilder, Set.of(DragonSurvival.MODID)));
 

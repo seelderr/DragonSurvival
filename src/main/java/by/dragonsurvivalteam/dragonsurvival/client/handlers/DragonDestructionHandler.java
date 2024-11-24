@@ -56,8 +56,9 @@ public class DragonDestructionHandler {
     public static void renderAdditionalBreakProgress(final RenderLevelStageEvent event) {
         if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES) {
             LocalPlayer player = Minecraft.getInstance().player;
+            double radius = player.getAttributeValue(DSAttributes.BLOCK_BREAK_RADIUS);
 
-            if (player.getAttribute(DSAttributes.BLOCK_BREAK_RADIUS).getValue() <= 0 || player.isCrouching()) {
+            if (radius <= 0 || player.isCrouching()) {
                 return;
             }
 
@@ -71,8 +72,6 @@ public class DragonDestructionHandler {
             int progress = set != null ? set.last().getProgress() : -1;
 
             if (progress != -1) {
-                int radius = (int) player.getAttribute(DSAttributes.BLOCK_BREAK_RADIUS).getValue();
-
                 BlockPos.betweenClosedStream(AABB.ofSize(centerOfDestruction.getCenter(), radius, radius, radius)).forEach(offsetPosition -> {
                     double xDistance = (double) offsetPosition.getX() - x;
                     double yDistance = (double) offsetPosition.getY() - y;
@@ -95,22 +94,25 @@ public class DragonDestructionHandler {
 
     @SubscribeEvent
     public static void toggleDestructionMode(final InputEvent.Key event) {
+        if (Minecraft.getInstance().screen != null || event.getAction() != Keybind.KEY_PRESSED || !Keybind.TOGGLE_DESTRUCTION.isKey(event.getKey())) {
+            return;
+        }
+
         Player player = Minecraft.getInstance().player;
+
         if (player == null) {
             return;
         }
 
         DragonStateHandler data = DragonStateProvider.getData(player);
+
         if (!data.isDragon()) {
             return;
         }
 
         MiscCodecs.DestructionData destructionData = data.getStage().value().destructionData().orElse(null);
-        if (destructionData == null || !destructionData.isDestructionAllowed(data.getSize())) {
-            return;
-        }
 
-        if (Minecraft.getInstance().screen != null || event.getAction() != Keybind.KEY_PRESSED || !Keybind.TOGGLE_DESTRUCTION.isKey(event.getKey())) {
+        if (destructionData == null || !destructionData.isDestructionAllowed(data.getSize())) {
             return;
         }
 
