@@ -131,7 +131,7 @@ public class ManaHandler {
     }
 
     public static int getMaxMana(final Player player) {
-        int mana = (int) player.getAttributeValue(DSAttributes.MANA) + getBonusManaFromExperience(player);
+        int mana = (int) player.getAttributeValue(DSAttributes.MANA);
         mana += getBonusManaFromExperience(player);
 
         DragonStateHandler data = DragonStateProvider.getData(player);
