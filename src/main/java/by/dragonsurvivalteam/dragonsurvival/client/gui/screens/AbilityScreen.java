@@ -211,6 +211,7 @@ public class AbilityScreen extends Screen {
             }
         }
 
+        // Show abilities with the lowest required experience level first
         unlockableAbilities.sort(Comparator.comparingInt(ActiveDragonAbility::getCurrentRequiredLevel));
     }
 

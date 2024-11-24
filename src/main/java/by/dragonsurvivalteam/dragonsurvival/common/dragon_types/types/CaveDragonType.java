@@ -165,7 +165,7 @@ public class CaveDragonType extends AbstractDragonType {
     }
 
     public static boolean isTakingRainDamage(final Player player) {
-        return CaveDragonConfig.caveRainDamage > 0 && (/* check rain */ player.isInWaterOrRain() && !player.isInWater() || /* check other water sources */ DragonTraitHandler.isInCauldron(player, Blocks.WATER_CAULDRON) || player.getBlockStateOn().is(DSBlockTags.HYDRATES_SEA_DRAGON));
+        return CaveDragonConfig.caveRainDamage > 0 && (/* check rain */ player.isInWaterOrRain() && !player.isInWater() || /* check other water sources */ DragonTraitHandler.isInCauldron(player, Blocks.WATER_CAULDRON) || player.getBlockStateOn().is(DSBlockTags.HYDRATES_SEA_DRAGON) || player.getInBlockState().is(DSBlockTags.HYDRATES_SEA_DRAGON));
     }
 
     public static boolean isTakingWaterDamage(final Player player) {

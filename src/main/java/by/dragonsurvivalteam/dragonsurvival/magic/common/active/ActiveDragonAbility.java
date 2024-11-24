@@ -61,9 +61,7 @@ public abstract class ActiveDragonAbility extends DragonAbility {
 
     @Override
     public int getLevel() {
-        Player player = getPlayer();
-
-        if (player == null || isDisabled()) {
+        if (isDisabled()) {
             return 0;
         }
 
@@ -73,8 +71,8 @@ public abstract class ActiveDragonAbility extends DragonAbility {
 
         Integer[] levels = getRequiredLevels();
 
-        if (levels == null) {
-            return 0;
+        if (levels == null || player == null) {
+            return this.level;
         }
 
         int level = 0;
@@ -89,10 +87,14 @@ public abstract class ActiveDragonAbility extends DragonAbility {
     }
 
     public int getCurrentRequiredLevel() {
-        if (getRequiredLevels().length >= getLevel() && getLevel() > 0)
-            return getRequiredLevels()[getLevel() - 1];
+        int currentLevel = getLevel();
 
-        return 0;
+        if (currentLevel <= 0 || currentLevel > getRequiredLevels().length) {
+            return 0;
+        }
+
+        // We do -1 because the first level with a level requirement is 1
+        return getRequiredLevels()[currentLevel - 1];
     }
 
     public int getLevelCost() { // TODO :: unused
