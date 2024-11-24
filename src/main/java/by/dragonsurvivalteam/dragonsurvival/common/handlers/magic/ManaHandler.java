@@ -43,30 +43,30 @@ public class ManaHandler {
      * Level 30: 1395 experience points <br>
      */
     private static final int EXPERIENCE_TO_MANA = 10;
+    private static final int LEVELS_TO_MANA = 4;
 
     @SubscribeEvent
     public static void playerTick(PlayerTickEvent.Post event) {
         Player player = event.getEntity();
+        DragonStateHandler data = DragonStateProvider.getData(player);
 
-        DragonStateProvider.getOptional(player).ifPresent(cap -> {
-            if (cap.getMagicData().getCurrentlyCasting() != null) {
-                return;
+        if (data.getMagicData().getCurrentlyCasting() != null) {
+            return;
+        }
+
+        boolean goodConditions = ManaHandler.isPlayerInGoodConditions(player);
+
+        int timeToRecover = goodConditions ? ServerConfig.favorableManaTicks : ServerConfig.normalManaTicks;
+
+        if (player.hasEffect(DSEffects.SOURCE_OF_MAGIC)) {
+            timeToRecover = 1;
+        }
+
+        if (player.tickCount % Functions.secondsToTicks(timeToRecover) == 0) {
+            if (data.getMagicData().getCurrentMana() < getMaxMana(player)) {
+                replenishMana(player, 1);
             }
-
-            boolean goodConditions = ManaHandler.isPlayerInGoodConditions(player);
-
-            int timeToRecover = goodConditions ? ServerConfig.favorableManaTicks : ServerConfig.normalManaTicks;
-
-            if (player.hasEffect(DSEffects.SOURCE_OF_MAGIC)) {
-                timeToRecover = 1;
-            }
-
-            if (player.tickCount % Functions.secondsToTicks(timeToRecover) == 0) {
-                if (cap.getMagicData().getCurrentMana() < getMaxMana(player)) {
-                    replenishMana(player, 1);
-                }
-            }
-        });
+        }
     }
 
     public static boolean isPlayerInGoodConditions(@NotNull Player player) {
@@ -114,15 +114,22 @@ public class ManaHandler {
     }
 
     public static boolean hasEnoughMana(final Player player, int manaCost) {
-        return player.hasEffect(DSEffects.SOURCE_OF_MAGIC) || getCurrentMana(player) - manaCost >= 0;
+        if (player.hasEffect(DSEffects.SOURCE_OF_MAGIC)) {
+            return true;
+        }
+
+        int currentMana = getCurrentMana(player);
+
+        if (ServerConfig.consumeExperienceAsMana) {
+            currentMana += getManaFromExperience(player);
+        }
+
+        return currentMana - manaCost >= 0;
     }
 
     public static int getMaxMana(final Player player) {
-        int mana = (int) player.getAttributeValue(DSAttributes.MANA);
-
-        if (ServerConfig.consumeExperienceAsMana) {
-            mana += getManaFromExperience(player);
-        }
+        int mana = (int) player.getAttributeValue(DSAttributes.MANA) + getBonusManaFromExperience(player);
+        mana += getBonusManaFromExperience(player);
 
         DragonStateHandler data = DragonStateProvider.getData(player);
         mana += DragonAbilities.getAbility(player, MagicAbility.class, data.getType()).map(MagicAbility::getMana).orElse(0);
@@ -151,16 +158,16 @@ public class ManaHandler {
         }
 
         DragonStateHandler data = DragonStateProvider.getData(player);
-        int pureMana = data.getMagicData().getCurrentMana();
+        int pureMana = getCurrentMana(player);
 
         if (ServerConfig.consumeExperienceAsMana && player.level().isClientSide()) {
             // Check if experience would be consumed as part of the mana cost
-            if (pureMana < manaCost && getCurrentMana(player) >= manaCost) {
+            if (pureMana < manaCost && getCurrentMana(player) + getManaFromExperience(player) >= manaCost) {
                 player.playSound(SoundEvents.EXPERIENCE_ORB_PICKUP, 0.01F, 0.01F);
             }
         }
 
-        if (player.level().isClientSide()) {
+        if (!(player instanceof ServerPlayer serverPlayer)) {
             return;
         }
 
@@ -176,22 +183,24 @@ public class ManaHandler {
             data.getMagicData().setCurrentMana(pureMana - manaCost);
         }
 
-        PacketDistributor.sendToPlayer((ServerPlayer) player, new SyncMagicStats.Data(player.getId(), data.getMagicData().getSelectedAbilitySlot(), data.getMagicData().getCurrentMana(), data.getMagicData().shouldRenderAbilities()));
+        PacketDistributor.sendToPlayer(serverPlayer, new SyncMagicStats.Data(player.getId(), data.getMagicData().getSelectedAbilitySlot(), data.getMagicData().getCurrentMana(), data.getMagicData().shouldRenderAbilities()));
     }
 
     public static int getCurrentMana(Player player) {
-        DragonStateHandler data = DragonStateProvider.getData(player);
-        int currentMana = data.getMagicData().getCurrentMana();
+        return Math.min(DragonStateProvider.getData(player).getMagicData().getCurrentMana(), getMaxMana(player));
+    }
 
-        if (ServerConfig.consumeExperienceAsMana) {
-            currentMana += getManaFromExperience(player);
-        }
-
-        return Math.min(currentMana, getMaxMana(player));
+    public static int getBonusManaFromExperience(final Player player) {
+        return Math.min(9, convertLevels(player.experienceLevel));
     }
 
     public static int getManaFromExperience(final Player player) {
         return convertExperience(ExperienceUtils.getTotalExperience(player));
+    }
+
+    /** Convert experience points to mana based on the {@link ManaHandler#LEVELS_TO_MANA} ratio */
+    private static int convertLevels(int levels) {
+        return levels / LEVELS_TO_MANA;
     }
 
     /** Convert experience points to mana based on the {@link ManaHandler#EXPERIENCE_TO_MANA} ratio */
