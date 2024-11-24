@@ -503,15 +503,14 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
             addRenderableWidget(new DragonStageButton(this, DragonStages.young, -60));
             addRenderableWidget(new DragonStageButton(this, DragonStages.adult, 60));
         } else {
-            selectedDragonStage = 0;
-
+            selectedDragonStage = DragonStage.allStages(minecraft.player.registryAccess()).indexOf(dragonStage);
             addRenderableWidget(new ArrowButton(ArrowButton.Type.PREVIOUS, width / 2 - 45 - 20, height / 2 - 90, 15, 15, action -> {
-                List<Holder<DragonStage>> allStages = DragonStage.allStages(null);
+                List<Holder<DragonStage>> allStages = DragonStage.allStages(minecraft.player.registryAccess());
                 selectedDragonStage = Functions.wrap(selectedDragonStage - 1, 0, allStages.size() - 1);
                 actionHistory.add(new EditorAction<>(selectStageAction, allStages.get(selectedDragonStage)));
             }));
 
-            savedStageButton = new DragonStageButton(this, data.getStage() != null ? data.getStage().getKey() : DragonStages.newborn, -60, false);
+            savedStageButton = new DragonStageButton(this, dragonStage.getKey(), -60, false);
             addRenderableWidget(savedStageButton);
 
             addRenderableWidget(new ArrowButton(ArrowButton.Type.NEXT, width / 2 + 45, height / 2 - 90, 15, 15, action -> {
