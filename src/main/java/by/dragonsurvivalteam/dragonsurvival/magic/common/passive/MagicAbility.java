@@ -26,7 +26,7 @@ public abstract class MagicAbility extends PassiveDragonAbility {
             manaFromExperience = "+" + experienceMana;
         }
 
-        int abilityLevel = Math.min(10, getLevel());
+        int abilityLevel = Math.min(ManaHandler.MAX_MANA_FROM_ABILITY, getLevel());
         String manaFromAbility = abilityLevel > 0 ? "+" + abilityLevel : "0";
 
         DragonStateHandler data = DragonStateProvider.getData(player);

@@ -45,6 +45,9 @@ public class ManaHandler {
     private static final int EXPERIENCE_TO_MANA = 10;
     private static final int LEVELS_TO_MANA = 4;
 
+    public static final int MAX_MANA_FROM_ABILITY = 10;
+    private static final int MAX_MANA_FROM_LEVELS = 9;
+
     @SubscribeEvent
     public static void playerTick(PlayerTickEvent.Post event) {
         Player player = event.getEntity();
@@ -132,7 +135,7 @@ public class ManaHandler {
         mana += getBonusManaFromExperience(player);
 
         DragonStateHandler data = DragonStateProvider.getData(player);
-        mana += DragonAbilities.getAbility(player, MagicAbility.class, data.getType()).map(MagicAbility::getMana).orElse(0);
+        mana += Math.min(MAX_MANA_FROM_ABILITY, DragonAbilities.getAbility(player, MagicAbility.class, data.getType()).map(MagicAbility::getMana).orElse(0));
 
         return Math.max(0, mana);
     }
@@ -191,7 +194,7 @@ public class ManaHandler {
     }
 
     public static int getBonusManaFromExperience(final Player player) {
-        return Math.min(9, convertLevels(player.experienceLevel));
+        return Math.min(MAX_MANA_FROM_LEVELS, convertLevels(player.experienceLevel));
     }
 
     public static int getManaFromExperience(final Player player) {
