@@ -165,6 +165,10 @@ public record DragonStage(
         return keys(provider).stream().allMatch(DragonStage::isBuiltinLevel);
     }
 
+    public static List<Holder<DragonStage>> allStages(final HolderLookup.Provider provider) {
+        return keys(provider).stream().map(key -> get(provider, key).get().getDelegate()).toList();
+    }
+
     public static Component translatableName(final ResourceKey<DragonStage> dragonStage) {
         return Component.translatable(Translation.Type.STAGE.wrap(dragonStage.location().getNamespace(), dragonStage.location().getPath()));
     }

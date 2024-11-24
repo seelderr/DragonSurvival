@@ -50,6 +50,7 @@ import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -62,6 +63,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
+import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.common.util.Lazy;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.apache.commons.lang3.text.WordUtils;
@@ -177,6 +179,8 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
     private float tick;
     private int curAnimation;
     private int lastSelected;
+    private int curSelectedStage;
+    private DragonStageButton savedStageButton;
     private boolean hasInit;
     private boolean isEditor;
 
@@ -217,6 +221,9 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
         dragonStage = newStage;
         dragonRender.zoom = setZoom(dragonStage);
         HANDLER.getSkinData().compileSkin(dragonStage);
+        if(savedStageButton != null) {
+            savedStageButton.setMessage(DragonStage.translatableName(dragonStage.getKey()));
+        }
         update();
 
         return previousLevel;
@@ -499,29 +506,47 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
             hasInit = true;
         }
 
-        if (!data.isDragon() || DragonStage.onlyBuiltInLevelsAreLoaded(Minecraft.getInstance().player.registryAccess())) {
+        if (DragonStage.onlyBuiltInLevelsAreLoaded(Minecraft.getInstance().player.registryAccess())) {
             addRenderableWidget(new DragonStageButton(this, DragonStages.newborn, -180));
             addRenderableWidget(new DragonStageButton(this, DragonStages.young, -60));
             addRenderableWidget(new DragonStageButton(this, DragonStages.adult, 60));
         } else {
-            addRenderableWidget(new DragonStageButton(this, data.getStage().getKey(), -60));
+            curSelectedStage = 0;
+            addRenderableWidget(new Button(width / 2 + 45, height / 2 - 90, 15, 15, Component.empty(), action -> {
+                List<Holder<DragonStage>> allStages = DragonStage.allStages(Minecraft.getInstance().level.registryAccess());
+                curSelectedStage = Functions.wrap(curSelectedStage + 1, 0, allStages.size() - 1);
+                actionHistory.add(new EditorAction<>(selectStageAction, allStages.get(curSelectedStage)));
+            }, Supplier::get){
+                @Override
+                public void renderWidget(@NotNull final GuiGraphics guiGraphics, int p_230431_2_, int p_230431_3_, float p_230431_4_) {
+                    RenderSystem.setShaderTexture(0, MagicHUD.WIDGET_TEXTURES);
+
+                    if (isHoveredOrFocused()) {
+                        guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, getX(), getY(), (float) 66 / 2, (float) 222 / 2, 11, 17, 128, 128);
+                    } else {
+                        guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, getX(), getY(), (float) 44 / 2, (float) 222 / 2, 11, 17, 128, 128);
+                    }
+                }
+            });
+            addRenderableWidget(new Button(width / 2 - 45 - 20, height / 2 - 90, 15, 15, Component.empty(), action -> {
+                List<Holder<DragonStage>> allStages = DragonStage.allStages(Minecraft.getInstance().level.registryAccess());
+                curSelectedStage = Functions.wrap(curSelectedStage - 1, 0, allStages.size() - 1);
+                actionHistory.add(new EditorAction<>(selectStageAction, allStages.get(curSelectedStage)));
+            }, Supplier::get){
+                @Override
+                public void renderWidget(@NotNull final GuiGraphics guiGraphics, int p_230431_2_, int p_230431_3_, float p_230431_4_) {
+                    RenderSystem.setShaderTexture(0, MagicHUD.WIDGET_TEXTURES);
+
+                    if (isHoveredOrFocused()) {
+                        guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, getX(), getY(), (float) 22 / 2, (float) 222 / 2, 11, 17, 128, 128);
+                    } else {
+                        guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, getX(), getY(), 0, (float) 222 / 2, 11, 17, 128, 128);
+                    }
+                }
+            });
+            savedStageButton = new DragonStageButton(this, data.getStage().getKey(), -60, true);
+            addRenderableWidget(savedStageButton);
         }
-        // TODO: We need to add the ability to figure out the previous stage for a DragonStage
-        /*else {
-            addRenderableWidget(new ArrowButton(width / 2 - 180, height / 2 - 75, 16, 16, false, action -> {
-                Optional<ResourceKey<DragonStage>> previousStage = dragonStage.value().previousStage();
-                if(previousStage.isPresent()) {
-                    actionHistory.add(new DragonEditorScreen.EditorAction<>(selectStageAction, CommonHooks.resolveLookup(DragonStage.REGISTRY).getOrThrow(dragonStage.getKey())));
-                }
-            }));
-            addRenderableWidget(new DragonStageButton(this, data.getStage().getKey(), -60, true));
-            addRenderableWidget(new ArrowButton(width / 2 + 164, height / 2 - 75, 16, 16, true, action -> {
-                Optional<ResourceKey<DragonStage>> nextStage = dragonStage.value().nextStage();
-                if(nextStage.isPresent()) {
-                    actionHistory.add(new DragonEditorScreen.EditorAction<>(selectStageAction, CommonHooks.resolveLookup(DragonStage.REGISTRY).getOrThrow(dragonStage.getKey())));
-                }
-            }));
-        }*/
 
         addDragonBodyWidgets();
 
