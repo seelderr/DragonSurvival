@@ -141,7 +141,7 @@ public class DragonModel extends GeoModel<DragonEntity> {
             dragon.currentTailMotionUp = 0;
             dragon.clearVerticalVelocity = false;
         } else {
-            dragon.currentTailMotionUp = Mth.lerp(lerpRate, dragon.currentTailMotionUp, verticalVelocityAvg);
+            dragon.currentTailMotionUp = Mth.lerp(lerpRate, dragon.currentTailMotionUp, -verticalVelocityAvg);
         }
         MathParser.setVariable("query.body_yaw_change", () -> dragon.currentBodyYawChange);
         MathParser.setVariable("query.head_yaw_change", () -> dragon.currentHeadYawChange);
