@@ -89,18 +89,14 @@ public class DragonSurvival {
     private void addPackFinders(AddPackFindersEvent event) {
         if (event.getPackType() == PackType.CLIENT_RESOURCES) {
             HashMap<MutableComponent, String> resourcePacks = new HashMap<>();
-            //resourcePacks.put(Component.literal("- Dragon East"), "resourcepacks/ds_east");
-            //resourcePacks.put(Component.literal("- Dragon North"), "resourcepacks/ds_north");
-            //resourcePacks.put(Component.literal("- Dragon South"), "resourcepacks/ds_south");
-            //resourcePacks.put(Component.literal("- Dragon West"), "resourcepacks/ds_west");
-            resourcePacks.put(Component.literal("Old Magic Icons for DS"), "resourcepacks/ds_old_magic");
-            resourcePacks.put(Component.literal("Dark GUI for DS"), "resourcepacks/ds_dark_gui");
+            resourcePacks.put(Component.literal("DS - Old Magic Icons"), "resourcepacks/ds_old_magic");
+            resourcePacks.put(Component.literal("DS - Dark GUI"), "resourcepacks/ds_dark_gui");
             for (Map.Entry<MutableComponent, String> entry : resourcePacks.entrySet()) {
                 registerBuiltinResourcePack(event, entry.getKey(), entry.getValue());
             }
         } else if (event.getPackType() == PackType.SERVER_DATA) {
             HashMap<MutableComponent, String> dataPacks = new HashMap<>();
-            dataPacks.put(Component.literal("Ancient Dragon Stage"), "data/"+MODID+"/datapacks/ancient_stage");
+            dataPacks.put(Component.literal("DS - Ancient Dragons"), "data/"+MODID+"/datapacks/ancient_stage");
             for (Map.Entry<MutableComponent, String> entry : dataPacks.entrySet()) {
                 registerBuiltInDataPack(event, entry.getKey(), entry.getValue());
             }
