@@ -21,7 +21,7 @@ public class DragonStageButton extends Button {
     private final int renderedWidth;
 
     public DragonStageButton(final DragonEditorScreen screen, final ResourceKey<DragonStage> dragonStage, int xOffset) {
-        super(screen.width / 2 + xOffset, screen.guiTop - 30, 120, 20, dragonStage != null ? DragonStage.translatableName(dragonStage) : Component.empty(), button -> {
+        super(screen.width / 2 + xOffset, screen.guiTop - 30, 120, 20, DragonStage.translatableName(dragonStage), button -> {
             //noinspection DataFlowIssue -> registry is expected to be present
             screen.actionHistory.add(new DragonEditorScreen.EditorAction<>(screen.selectStageAction, CommonHooks.resolveLookup(DragonStage.REGISTRY).getOrThrow(dragonStage)));
         }, DEFAULT_NARRATION);
@@ -33,7 +33,7 @@ public class DragonStageButton extends Button {
     }
 
     public DragonStageButton(final DragonEditorScreen screen, final ResourceKey<DragonStage> dragonStage, int xOffset, boolean isInteractive) {
-        super(screen.width / 2 + xOffset, screen.guiTop - 30, 0, 0, dragonStage != null ? DragonStage.translatableName(dragonStage) : Component.empty(), button -> {}, DEFAULT_NARRATION);
+        super(screen.width / 2 + xOffset, screen.guiTop - 30, 0, 0, DragonStage.translatableName(dragonStage), button -> {}, DEFAULT_NARRATION);
         this.screen = screen;
         this.dragonStage = dragonStage;
         this.isInteractive = isInteractive;
