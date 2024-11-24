@@ -499,13 +499,29 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
             hasInit = true;
         }
 
-        if (!data.isDragon() || DragonStage.isBuiltinLevel(Objects.requireNonNull(data.getStage()).getKey())) {
+        if (!data.isDragon() || DragonStage.onlyBuiltInLevelsAreLoaded(Minecraft.getInstance().player.registryAccess())) {
             addRenderableWidget(new DragonStageButton(this, DragonStages.newborn, -180));
             addRenderableWidget(new DragonStageButton(this, DragonStages.young, -60));
             addRenderableWidget(new DragonStageButton(this, DragonStages.adult, 60));
         } else {
             addRenderableWidget(new DragonStageButton(this, data.getStage().getKey(), -60));
         }
+        // TODO: We need to add the ability to figure out the previous stage for a DragonStage
+        /*else {
+            addRenderableWidget(new ArrowButton(width / 2 - 180, height / 2 - 75, 16, 16, false, action -> {
+                Optional<ResourceKey<DragonStage>> previousStage = dragonStage.value().previousStage();
+                if(previousStage.isPresent()) {
+                    actionHistory.add(new DragonEditorScreen.EditorAction<>(selectStageAction, CommonHooks.resolveLookup(DragonStage.REGISTRY).getOrThrow(dragonStage.getKey())));
+                }
+            }));
+            addRenderableWidget(new DragonStageButton(this, data.getStage().getKey(), -60, true));
+            addRenderableWidget(new ArrowButton(width / 2 + 164, height / 2 - 75, 16, 16, true, action -> {
+                Optional<ResourceKey<DragonStage>> nextStage = dragonStage.value().nextStage();
+                if(nextStage.isPresent()) {
+                    actionHistory.add(new DragonEditorScreen.EditorAction<>(selectStageAction, CommonHooks.resolveLookup(DragonStage.REGISTRY).getOrThrow(dragonStage.getKey())));
+                }
+            }));
+        }*/
 
         addDragonBodyWidgets();
 

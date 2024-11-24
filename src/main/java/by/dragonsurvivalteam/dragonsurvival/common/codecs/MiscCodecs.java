@@ -80,4 +80,28 @@ public class MiscCodecs {
             return new GrowthItem(HolderSet.direct(Arrays.stream(items).map(BuiltInRegistries.ITEM::wrapAsHolder).toList()), growthInTicks);
         }
     }
+
+    public record DestructionData(double crushingSize, double blockDestructionSize, double crushingDamageScalar) {
+        public static Codec<DestructionData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                Codec.DOUBLE.fieldOf("crushing_size").forGetter(DestructionData::crushingSize),
+                Codec.DOUBLE.fieldOf("block_destruction_size").forGetter(DestructionData::blockDestructionSize),
+                Codec.DOUBLE.fieldOf("crushing_damage_scalar").forGetter(DestructionData::crushingDamageScalar)
+        ).apply(instance, instance.stable(DestructionData::new)));
+
+        public static DestructionData create(double crushingSize, double blockDestructionSize, double crushingDamageScalar) {
+            return new DestructionData(crushingSize, blockDestructionSize, crushingDamageScalar);
+        }
+
+        public boolean isCrushingAllowed(double dragonSize) {
+            return dragonSize >= crushingSize;
+        }
+
+        public boolean isBlockDestructionAllowed(double dragonSize) {
+            return dragonSize >= blockDestructionSize;
+        }
+
+        public boolean isDestructionAllowed(double dragonSize) {
+            return isCrushingAllowed(dragonSize) || isBlockDestructionAllowed(dragonSize);
+        }
+    }
 }

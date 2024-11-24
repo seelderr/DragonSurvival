@@ -16,6 +16,7 @@ public class DragonStageButton extends Button {
 
     private final DragonEditorScreen screen;
     private final ResourceKey<DragonStage> dragonStage;
+    private boolean isNotButton = false;
 
     public DragonStageButton(final DragonEditorScreen screen, final ResourceKey<DragonStage> dragonStage, int xOffset) {
         super(screen.width / 2 + xOffset, screen.guiTop - 30, 120, 20, DragonStage.translatableName(dragonStage), button -> {
@@ -27,10 +28,20 @@ public class DragonStageButton extends Button {
         this.dragonStage = dragonStage;
     }
 
+    public DragonStageButton(final DragonEditorScreen screen, final ResourceKey<DragonStage> dragonStage, int xOffset, boolean isNotButton) {
+        super(screen.width / 2 + xOffset, screen.guiTop - 30, 120, 20, DragonStage.translatableName(dragonStage), button -> {}, DEFAULT_NARRATION);
+        this.isNotButton = isNotButton;
+        this.screen = screen;
+        this.dragonStage = dragonStage;
+    }
+
     @Override
     public void renderWidget(@NotNull final GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         active = visible = screen.showUi;
-        int color = isHovered || screen.dragonStage.is(dragonStage) ? WHITE : LIGHT_GRAY;
+        int color = LIGHT_GRAY;
+        if(!isNotButton && (isHovered || screen.dragonStage.is(dragonStage))) {
+            color = WHITE;
+        }
         TextRenderUtil.drawCenteredScaledText(graphics, getX() + width / 2, getY() + 4, 1.5f, getMessage().getString(), color);
     }
 }

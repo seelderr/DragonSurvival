@@ -17,6 +17,9 @@ import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.LootTableProvider;
+import net.minecraft.data.metadata.PackMetadataGenerator;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -60,6 +63,18 @@ public class DataGeneration {
         builder.add(DragonStage.REGISTRY, DragonStages::registerLevels);
         DatapackBuiltinEntriesProvider datapackProvider = new DatapackBuiltinEntriesProvider(output, lookup, builder, Set.of(DragonSurvival.MODID));
         generator.addProvider(event.includeServer(), datapackProvider);
+
+        // external datapack for ancient dragon stage
+        DataGenerator.PackGenerator ancientFeaturePack = generator.getBuiltinDatapack(true, DragonSurvival.MODID, "ancient_stage");
+        ancientFeaturePack.addProvider(packOutput -> PackMetadataGenerator.forFeaturePack(
+                packOutput,
+                Component.literal("Add in the ancient dragon stage to dragon survival."),
+                FeatureFlagSet.of()
+        ));
+        RegistrySetBuilder ancientBuilder = new RegistrySetBuilder();
+        ancientBuilder.add(DragonStage.REGISTRY, DragonStages::registerAncientDatapack);
+        CompletableFuture<HolderLookup.Provider> finalLookup = lookup;
+        ancientFeaturePack.addProvider(packOutput -> new DatapackBuiltinEntriesProvider(packOutput, finalLookup, ancientBuilder, Set.of(DragonSurvival.MODID)));
 
         // Update the lookup provider with our datapack entries
         lookup = datapackProvider.getRegistryProvider();

@@ -59,16 +59,6 @@
       "type": "dragonsurvival/stage/",
       "amount": {
         "type": "minecraft:linear",
-        "base": 0.0015,
-        "per_level_above_first": 0.0015
-      },
-      "attribute": "minecraft:generic.movement_speed",
-      "operation": "add_value"
-    },
-    {
-      "type": "dragonsurvival/stage/",
-      "amount": {
-        "type": "minecraft:linear",
         "base": 0.01,
         "per_level_above_first": 0.01
       },

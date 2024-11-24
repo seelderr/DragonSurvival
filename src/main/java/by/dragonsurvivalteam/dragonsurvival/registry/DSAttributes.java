@@ -41,6 +41,10 @@ public class DSAttributes {
     @Translation(type = Translation.Type.ATTRIBUTE_DESCRIPTION, comments = "Determines the range of the dragon breath ability (the range acts in terms of blocks)")
     public static final Holder<Attribute> DRAGON_BREATH_RANGE = DS_ATTRIBUTES.register("dragon_breath_range", () -> new RangedAttribute(Translation.Type.ATTRIBUTE.wrap("dragon_breath_range"), 3, 0, 1024).setSyncable(true));
 
+    @Translation(type = Translation.Type.ATTRIBUTE, comments = "Block Break Radius")
+    @Translation(type = Translation.Type.ATTRIBUTE_DESCRIPTION, comments = "Determines the radius that you can break blocks when mining")
+    public static final Holder<Attribute> BLOCK_BREAK_RADIUS = DS_ATTRIBUTES.register("block_break_radius", () -> new RangedAttribute(Translation.Type.ATTRIBUTE.wrap("block_break_radius"), 0, 0, 16).setSyncable(true));
+
     @SubscribeEvent
     public static void attachAttributes(final EntityAttributeModificationEvent event) {
         event.add(EntityType.PLAYER, FLIGHT_STAMINA_COST);
@@ -48,6 +52,7 @@ public class DSAttributes {
         event.add(EntityType.PLAYER, MANA);
         event.add(EntityType.PLAYER, EXPERIENCE);
         event.add(EntityType.PLAYER, DRAGON_BREATH_RANGE);
+        event.add(EntityType.PLAYER, BLOCK_BREAK_RADIUS);
         event.getTypes().forEach(type -> event.add(type, LAVA_SWIM_SPEED));
     }
 }

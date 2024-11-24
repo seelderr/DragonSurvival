@@ -1,23 +1,16 @@
 {
-  "break_speed_multiplier": 1.5,
+  "break_speed_multiplier": 3.0,
   "growth_items": [
     {
       "growth_in_ticks": 72000,
       "items": "dragonsurvival:elder_dragon_heart"
     },
     {
-      "growth_in_ticks": 36000,
-      "items": "dragonsurvival:weak_dragon_heart"
-    },
-    {
-      "growth_in_ticks": 12000,
-      "items": "dragonsurvival:heart_element"
-    },
-    {
       "growth_in_ticks": -72000,
       "items": "dragonsurvival:star_bone"
     }
   ],
+  "harvest_level_bonus": 1,
   "is_natural_growth_stopped": {
     "type_specific": {
       "type": "dragonsurvival:dragon_predicate",
@@ -27,39 +20,59 @@
   "modifiers": [
     {
       "type": "dragonsurvival/stage/",
-      "amount": 1.0,
+      "amount": 3.0,
       "attribute": "minecraft:player.submerged_mining_speed",
       "dragon_type": "sea",
       "operation": "add_value"
     },
     {
       "type": "dragonsurvival/stage/",
-      "amount": -7.0,
-      "attribute": "minecraft:generic.max_health",
+      "amount": 0.5,
+      "attribute": "minecraft:generic.step_height",
       "operation": "add_value"
     },
     {
       "type": "dragonsurvival/stage/",
-      "amount": 1.0,
+      "amount": 3.0,
       "attribute": "minecraft:generic.attack_damage",
       "operation": "add_value"
     },
     {
       "type": "dragonsurvival/stage/",
-      "amount": 0.025,
+      "amount": 0.1,
       "attribute": "minecraft:generic.jump_strength",
       "operation": "add_value"
     },
     {
       "type": "dragonsurvival/stage/",
-      "amount": 0.25,
+      "amount": 1.0,
       "attribute": "minecraft:generic.safe_fall_distance",
       "operation": "add_value"
     },
     {
       "type": "dragonsurvival/stage/",
-      "amount": 1.5,
+      "amount": 4.0,
       "attribute": "dragonsurvival:dragon_breath_range",
+      "operation": "add_value"
+    },
+    {
+      "type": "dragonsurvival/stage/",
+      "amount": {
+        "type": "minecraft:linear",
+        "base": 0.01,
+        "per_level_above_first": 0.01
+      },
+      "attribute": "minecraft:player.entity_interaction_range",
+      "operation": "add_value"
+    },
+    {
+      "type": "dragonsurvival/stage/",
+      "amount": {
+        "type": "minecraft:linear",
+        "base": 0.01,
+        "per_level_above_first": 0.01
+      },
+      "attribute": "minecraft:player.block_interaction_range",
       "operation": "add_value"
     },
     {
@@ -83,10 +96,10 @@
       "operation": "add_value"
     }
   ],
-  "next_stage": "dragonsurvival:young",
+  "next_stage": "dragonsurvival:ancient",
   "size_range": {
-    "max": 25.0,
-    "min": 10.0
+    "max": 60.0,
+    "min": 40.0
   },
-  "ticks_until_grown": 720000
+  "ticks_until_grown": 34560000
 }

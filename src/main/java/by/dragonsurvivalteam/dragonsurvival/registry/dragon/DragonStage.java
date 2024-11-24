@@ -40,7 +40,8 @@ public record DragonStage(
         double breakSpeedMultiplier,
         List<MiscCodecs.GrowthItem> growthItems,
         Optional<EntityPredicate> isNaturalGrowthStopped,
-        Optional<EntityPredicate> growIntoRequirements
+        Optional<EntityPredicate> growIntoRequirements,
+        Optional<MiscCodecs.DestructionData> destructionData
 ) implements AttributeModifierSupplier {
     public static final ResourceKey<Registry<DragonStage>> REGISTRY = ResourceKey.createRegistryKey(DragonSurvival.res("dragon_stages"));
 
@@ -53,7 +54,8 @@ public record DragonStage(
             MiscCodecs.doubleRange(1, 10).optionalFieldOf("break_speed_multiplier", 1d).forGetter(DragonStage::breakSpeedMultiplier),
             MiscCodecs.GrowthItem.CODEC.listOf().optionalFieldOf("growth_items", List.of()).forGetter(DragonStage::growthItems),
             EntityPredicate.CODEC.optionalFieldOf("is_natural_growth_stopped").forGetter(DragonStage::isNaturalGrowthStopped),
-            EntityPredicate.CODEC.optionalFieldOf("grow_into_requirements").forGetter(DragonStage::growIntoRequirements)
+            EntityPredicate.CODEC.optionalFieldOf("grow_into_requirements").forGetter(DragonStage::growIntoRequirements),
+            MiscCodecs.DestructionData.CODEC.optionalFieldOf("destruction_data").forGetter(DragonStage::destructionData)
     ).apply(instance, instance.stable(DragonStage::new)));
 
     public static final Codec<Holder<DragonStage>> CODEC = RegistryFixedCodec.create(REGISTRY);
@@ -89,10 +91,26 @@ public record DragonStage(
 
         StringBuilder nextStageCheck = new StringBuilder("The following stages are incorrectly defined:");
         AtomicBoolean areStagesValid = new AtomicBoolean(true);
+        AtomicBoolean isDestructionDataValid = new AtomicBoolean(true);
 
         keys(provider).forEach(key -> {
             //noinspection OptionalGetWithoutIsPresent -> ignore
             Holder.Reference<DragonStage> stage = get(provider, key).get();
+
+            // Validate that the block destruction size and the crushing size are within the bounds of the current dragon stage
+            if(stage.value().destructionData().isPresent()) {
+                MiscCodecs.DestructionData destructionData = stage.value().destructionData().get();
+                if(destructionData.blockDestructionSize() > stage.value().sizeRange().max() || destructionData.blockDestructionSize() < stage.value().sizeRange().min()) {
+                    isDestructionDataValid.set(false);
+                    nextStageCheck.append("\n- Block destruction size of [").append(key.location()).append("] is not within the bounds of the dragon stage");
+                }
+
+                if(destructionData.crushingSize() > stage.value().sizeRange().max() || destructionData.crushingSize() < stage.value().sizeRange().min()) {
+                    isDestructionDataValid.set(false);
+                    nextStageCheck.append("\n- Crushing size of [").append(key.location()).append("] is not within the bounds of the dragon stage");
+                }
+            }
+
             ResourceKey<DragonStage> nextStage = stage.value().nextStage().orElse(null);
 
             if (nextStage == null) {
@@ -141,6 +159,10 @@ public record DragonStage(
 
     public static boolean isBuiltinLevel(final ResourceKey<DragonStage> dragonStage) {
         return dragonStage == DragonStages.newborn || dragonStage == DragonStages.young || dragonStage == DragonStages.adult;
+    }
+
+    public static boolean onlyBuiltInLevelsAreLoaded(final HolderLookup.Provider provider) {
+        return keys(provider).stream().allMatch(DragonStage::isBuiltinLevel);
     }
 
     public static Component translatableName(final ResourceKey<DragonStage> dragonStage) {
