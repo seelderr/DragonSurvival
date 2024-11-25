@@ -4,6 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Activation;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Effect;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Penalty;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Upgrade;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.AttributeModifierSupplier;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import com.mojang.serialization.Codec;
@@ -16,7 +17,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.enchantment.LevelBasedValue;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.registries.DataPackRegistryEvent;
@@ -28,8 +28,9 @@ import javax.annotation.Nullable;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public record DragonAbility(
-        Activation activation,
-        Optional<LevelBasedValue> upgradeCost,
+        // On activation go through the list of effects and check the initial mana cost
+        Optional<Activation> activation,
+        Optional<Upgrade> upgrade,
         // TODO :: should this be usage_blocked? Might be easier to define a blacklist than a whitelist
         Optional<EntityPredicate> usageConditions,
         List<Effect> effects,
@@ -37,6 +38,20 @@ public record DragonAbility(
         ResourceLocation icon,
         Component description
 ) implements AttributeModifierSupplier {
+    public static final ResourceKey<Registry<DragonAbility>> REGISTRY = ResourceKey.createRegistryKey(DragonSurvival.res("dragon_abilities"));
+
+    public static final Codec<DragonAbility> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            Activation.CODEC.optionalFieldOf("activation").forGetter(DragonAbility::activation),
+            // TODO: We can remove the innate claw abilities from the DragonStages class and just add them here instead
+            Upgrade.CODEC.optionalFieldOf("upgrade").forGetter(DragonAbility::upgrade),
+            EntityPredicate.CODEC.optionalFieldOf("usage_conditions").forGetter(DragonAbility::usageConditions),
+            Effect.CODEC.listOf().optionalFieldOf("effects", List.of()).forGetter(DragonAbility::effects),
+            Penalty.CODEC.listOf().optionalFieldOf("penalties", List.of()).forGetter(DragonAbility::penalties),
+            ResourceLocation.CODEC.fieldOf("icon").forGetter(DragonAbility::icon),
+            // TODO: How do we handle descriptions that are fed various values from the ability itself?
+            ComponentSerialization.CODEC.fieldOf("description").forGetter(DragonAbility::description)
+    ).apply(instance, instance.stable(DragonAbility::new)));
+
     /*
         The slot will not be specified in the ability
         Players will be able to assign / customize the slot while playing
@@ -51,27 +66,16 @@ public record DragonAbility(
     //    Or we make Activation optional in here and if that is the case it is considered a PASSIVE ability, otherwise an ACTIVE one
     public enum Type {
         PASSIVE,
-        ACTIVE,
-        INNATE
+        ACTIVE
     }
-
-    public static final ResourceKey<Registry<DragonAbility>> REGISTRY = ResourceKey.createRegistryKey(DragonSurvival.res("dragon_abilities"));
-
-    public static final Codec<DragonAbility> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Activation.CODEC.fieldOf("mode").forGetter(DragonAbility::activation),
-            // TODO: We can remove the innate claw abilities from the DragonStages class and just add them here instead
-            LevelBasedValue.CODEC.optionalFieldOf("upgrade_cost").forGetter(DragonAbility::upgradeCost),
-            EntityPredicate.CODEC.optionalFieldOf("usage_conditions").forGetter(DragonAbility::usageConditions),
-            Effect.CODEC.listOf().optionalFieldOf("effects", List.of()).forGetter(DragonAbility::effects),
-            Penalty.CODEC.listOf().optionalFieldOf("penalties", List.of()).forGetter(DragonAbility::penalties),
-            ResourceLocation.CODEC.fieldOf("icon").forGetter(DragonAbility::icon),
-            // TODO: How do we handle descriptions that are fed various values from the ability itself?
-            ComponentSerialization.CODEC.fieldOf("description").forGetter(DragonAbility::description)
-    ).apply(instance, instance.stable(DragonAbility::new)));
 
     @SubscribeEvent
     public static void register(final DataPackRegistryEvent.NewRegistry event) {
         event.dataPackRegistry(REGISTRY, DIRECT_CODEC, DIRECT_CODEC);
+    }
+
+    public Type type() {
+        return activation().isPresent() ? Type.ACTIVE : Type.PASSIVE;
     }
 
     public static void update(@Nullable final HolderLookup.Provider provider) {

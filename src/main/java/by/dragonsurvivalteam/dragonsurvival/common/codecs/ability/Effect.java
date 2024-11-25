@@ -11,17 +11,11 @@ import java.util.List;
 import java.util.Optional;
 
 // TODO: How to handle block destruction/interactions for breath abilities? (e.g. cave dragon setting things on fire and igniting TNT)
-// TODO: How do we properly display the scaling of the abilities with player level as we do currently in the abilities UI?
 public record Effect(
         Optional<EntityPredicate> targetConditions,
-        // Like mob effect itself -> -1 is INFINITE / 0 is one time trigger / otherwise acts as ticks of duration
-        LevelBasedValue duration,
-        // For each time this effect triggers or is active
-        double manaCost,
-        // If this is present the mana cost is applied per tick specified here
-        int manaDepletionRate,
-        // In ticks (merge with mana_depletion_rate?)
-        int triggerRate,
+        LevelBasedValue duration, // -1 = INFINITE / 0 = one time trigger
+        double initialManaCost,
+        Application application,
         List<Modifier> modifiers,
         // TODO: For breath abilities, should we spawn particles through this entity effect or handle it ourselves?
         Optional<EnchantmentEntityEffect> effect
@@ -29,10 +23,16 @@ public record Effect(
     public static final Codec<Effect> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             EntityPredicate.CODEC.optionalFieldOf("target_conditions").forGetter(Effect::targetConditions),
             LevelBasedValue.CODEC.fieldOf("duration").forGetter(Effect::duration),
-            Codec.DOUBLE.fieldOf("mana_cost").forGetter(Effect::manaCost),
-            Codec.INT.fieldOf("mana_depletion_rate").forGetter(Effect::manaDepletionRate),
-            Codec.INT.fieldOf("cooldown").forGetter(Effect::triggerRate),
+            Codec.DOUBLE.fieldOf("initial_mana_cost").forGetter(Effect::initialManaCost),
+            Application.CODEC.fieldOf("application").forGetter(Effect::application),
             Modifier.CODEC.listOf().optionalFieldOf("modifiers", List.of()).forGetter(Effect::modifiers),
             EnchantmentEntityEffect.CODEC.optionalFieldOf("effect").forGetter(Effect::effect)
-    ).apply(instance, instance.stable(Effect::new)));
+    ).apply(instance, Effect::new));
+
+    public record Application(int manaCost, int triggerRate) {
+        public static final Codec<Application> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                Codec.INT.fieldOf("mana_cost").forGetter(Application::manaCost),
+                Codec.INT.fieldOf("trigger_rate").forGetter(Application::triggerRate)
+        ).apply(instance, Application::new));
+    }
 }
