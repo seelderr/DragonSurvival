@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.Sa
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
+import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import by.dragonsurvivalteam.dragonsurvival.util.json.GsonFactory;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
@@ -104,7 +105,7 @@ public class DragonEditorRegistry {
                     });
                 }
 
-                for (ResourceKey<DragonStage> level : DragonStage.keys(provider)) {
+                for (ResourceKey<DragonStage> level : ResourceHelper.keys(provider, DragonStage.REGISTRY)) {
                     DragonEditorRegistry.savedCustomizations.current.get(typeKey).put(level.location().toString(), 0);
                 }
             }

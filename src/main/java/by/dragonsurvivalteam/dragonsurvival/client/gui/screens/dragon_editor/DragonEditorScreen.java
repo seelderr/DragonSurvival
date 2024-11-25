@@ -36,6 +36,7 @@ import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStages;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -424,7 +425,7 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
             dragonBody = localHandler.getBody();
         } else if (dragonType != null) {
             if (dragonStage == null) {
-                dragonStage = DragonStage.get(null, DragonStages.newborn).orElseThrow();
+                dragonStage = ResourceHelper.get(null, DragonStages.newborn, DragonStage.REGISTRY).orElseThrow();
             }
 
             if (dragonBody == null) {
