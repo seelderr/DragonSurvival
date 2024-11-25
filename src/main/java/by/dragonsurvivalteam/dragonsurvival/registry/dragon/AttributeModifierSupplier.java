@@ -36,6 +36,14 @@ public interface AttributeModifierSupplier {
         instance.addPermanentModifier(modifier.getModifier(size));
     }
 
+    private void applyModifier(final Modifier modifier, @Nullable final AttributeInstance instance, final String dragonType, int level) {
+        if (instance == null || modifier.dragonType().isPresent() && !modifier.dragonType().get().equals(dragonType)) {
+            return;
+        }
+
+        instance.addPermanentModifier(modifier.getModifier(level));
+    }
+
     private void applyModifiers(@Nullable final AttributeInstance instance, final String dragonType, double size) {
         if (instance == null) {
             return;
