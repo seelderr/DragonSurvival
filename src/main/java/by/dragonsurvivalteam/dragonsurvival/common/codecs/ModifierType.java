@@ -12,10 +12,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public enum ModifierType implements StringRepresentable {
+public enum ModifierType implements StringRepresentable { // TODO :: can this be removed?
     DRAGON_TYPE("type"),
     DRAGON_BODY("body"),
-    DRAGON_STAGE("stage");
+    DRAGON_STAGE("stage"),
+    CUSTOM("custom");
 
     public static final Codec<ModifierType> CODEC = StringRepresentable.fromEnum(ModifierType::values);
 

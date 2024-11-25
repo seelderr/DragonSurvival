@@ -3,15 +3,30 @@ package by.dragonsurvivalteam.dragonsurvival.registry.dragon;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.Modifier;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.ModifierType;
+import by.dragonsurvivalteam.dragonsurvival.mixins.AttributeMapAccessor;
 import net.minecraft.core.Holder;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.List;
+import java.util.Map;
 import javax.annotation.Nullable;
 
 public interface AttributeModifierSupplier {
+    static void removeModifiers(final ModifierType type, final Player player) {
+        removeModifiers(type, ((AttributeMapAccessor) player.getAttributes()).dragonSurvival$getAttributes());
+    }
+
+    static void removeModifiers(final ModifierType type, final Map<Holder<Attribute>, AttributeInstance> playerAttributes) {
+        playerAttributes.values().forEach(instance -> instance.getModifiers().forEach(modifier -> {
+            if (modifier.id().getPath().startsWith(type.path())) {
+                instance.removeModifier(modifier);
+            }
+        }));
+    }
+
     default void applyModifiers(final Player player) {
         DragonStateHandler data = DragonStateProvider.getData(player);
 
@@ -33,7 +48,7 @@ public interface AttributeModifierSupplier {
             return;
         }
 
-        instance.addPermanentModifier(modifier.getModifier(size));
+        instance.addPermanentModifier(modifier.getModifier(getModifierType(), size));
     }
 
     private void applyModifier(final Modifier modifier, @Nullable final AttributeInstance instance, final String dragonType, int level) {
@@ -41,7 +56,7 @@ public interface AttributeModifierSupplier {
             return;
         }
 
-        instance.addPermanentModifier(modifier.getModifier(level));
+        instance.addPermanentModifier(modifier.getModifier(getModifierType(), level));
     }
 
     private void applyModifiers(@Nullable final AttributeInstance instance, final String dragonType, double size) {
@@ -59,4 +74,6 @@ public interface AttributeModifierSupplier {
     default List<Modifier> modifiers() {
         return List.of();
     }
+
+    ModifierType getModifierType();
 }

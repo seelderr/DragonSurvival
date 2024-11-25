@@ -7,7 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.SeaDragonConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.passive.CliffhangerAbility;
-import by.dragonsurvivalteam.dragonsurvival.mixins.AttributeMapAccessor;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.AttributeModifierSupplier;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
@@ -116,11 +116,7 @@ public class DSModifiers {
             return;
         }
 
-        ((AttributeMapAccessor) player.getAttributes()).dragonSurvival$getAttributes().values().forEach(instance -> instance.getModifiers().forEach(modifier -> {
-            if (modifier.id().getPath().startsWith(ModifierType.DRAGON_STAGE.path())) {
-                instance.removeModifier(modifier);
-            }
-        }));
+        AttributeModifierSupplier.removeModifiers(ModifierType.DRAGON_STAGE, player);
 
         if (handler.isDragon()) {
             handler.getStage().value().applyModifiers(player);
@@ -132,11 +128,7 @@ public class DSModifiers {
             return;
         }
 
-        ((AttributeMapAccessor) player.getAttributes()).dragonSurvival$getAttributes().values().forEach(instance -> instance.getModifiers().forEach(modifier -> {
-            if (modifier.id().getPath().startsWith(ModifierType.DRAGON_BODY.path())) {
-                instance.removeModifier(modifier);
-            }
-        }));
+        AttributeModifierSupplier.removeModifiers(ModifierType.DRAGON_BODY, player);
 
         if (handler.isDragon()) {
             handler.getBody().value().applyModifiers(player);

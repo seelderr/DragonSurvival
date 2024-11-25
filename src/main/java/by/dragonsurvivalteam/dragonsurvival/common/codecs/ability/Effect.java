@@ -16,9 +16,9 @@ public record Effect(
         LevelBasedValue duration, // -1 = INFINITE / 0 = one time trigger
         double initialManaCost,
         Application application,
-        List<Modifier> modifiers,
+        List<Modifier> modifiers, // TODO :: specify with a duration (level based?)
         // TODO: For breath abilities, should we spawn particles through this entity effect or handle it ourselves?
-        Optional<EnchantmentEntityEffect> effect
+        List<EnchantmentEntityEffect> effects
 ) {
     public static final Codec<Effect> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             EntityPredicate.CODEC.optionalFieldOf("target_conditions").forGetter(Effect::targetConditions),
@@ -26,7 +26,7 @@ public record Effect(
             Codec.DOUBLE.fieldOf("initial_mana_cost").forGetter(Effect::initialManaCost),
             Application.CODEC.fieldOf("application").forGetter(Effect::application),
             Modifier.CODEC.listOf().optionalFieldOf("modifiers", List.of()).forGetter(Effect::modifiers),
-            EnchantmentEntityEffect.CODEC.optionalFieldOf("effect").forGetter(Effect::effect)
+            EnchantmentEntityEffect.CODEC.listOf().optionalFieldOf("effects", List.of()).forGetter(Effect::effects)
     ).apply(instance, Effect::new));
 
     public record Application(int manaCost, int triggerRate) {

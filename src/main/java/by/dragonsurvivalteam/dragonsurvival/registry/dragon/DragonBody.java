@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.registry.dragon;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.Modifier;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.ModifierType;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
@@ -60,5 +61,10 @@ public record DragonBody(List<Modifier> modifiers, double heightMultiplier, bool
 
         //noinspection unchecked -> cast is okay
         return (Holder<DragonBody>) bodies[RANDOM.nextInt(bodies.length)];
+    }
+
+    @Override
+    public ModifierType getModifierType() {
+        return ModifierType.DRAGON_BODY;
     }
 }

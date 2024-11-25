@@ -18,7 +18,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import java.util.List;
 import java.util.Optional;
 
-import static by.dragonsurvivalteam.dragonsurvival.common.codecs.ModifierType.DRAGON_STAGE;
 
 public class AncientDatapack {
     @Translation(type = Translation.Type.STAGE, comments = "Ancient")
@@ -36,22 +35,22 @@ public class AncientDatapack {
                 Optional.empty(),
                 List.of(
                         /* Constant */
-                        Modifier.constant(DRAGON_STAGE, Attributes.SUBMERGED_MINING_SPEED, 3, AttributeModifier.Operation.ADD_VALUE, DragonTypes.SEA.getTypeNameLowerCase()),
-                        Modifier.constant(DRAGON_STAGE, Attributes.STEP_HEIGHT, 0.5f, AttributeModifier.Operation.ADD_VALUE),
-                        Modifier.constant(DRAGON_STAGE, Attributes.ATTACK_DAMAGE, 3, AttributeModifier.Operation.ADD_VALUE),
-                        Modifier.constant(DRAGON_STAGE, Attributes.JUMP_STRENGTH, 0.1f, AttributeModifier.Operation.ADD_VALUE),
-                        Modifier.constant(DRAGON_STAGE, Attributes.SAFE_FALL_DISTANCE, 1, AttributeModifier.Operation.ADD_VALUE),
-                        Modifier.constant(DRAGON_STAGE, DSAttributes.DRAGON_BREATH_RANGE, 4, AttributeModifier.Operation.ADD_VALUE),
+                        Modifier.constant(Attributes.SUBMERGED_MINING_SPEED, 3, AttributeModifier.Operation.ADD_VALUE, DragonTypes.SEA.getTypeNameLowerCase()),
+                        Modifier.constant(Attributes.STEP_HEIGHT, 0.5f, AttributeModifier.Operation.ADD_VALUE),
+                        Modifier.constant(Attributes.ATTACK_DAMAGE, 3, AttributeModifier.Operation.ADD_VALUE),
+                        Modifier.constant(Attributes.JUMP_STRENGTH, 0.1f, AttributeModifier.Operation.ADD_VALUE),
+                        Modifier.constant(Attributes.SAFE_FALL_DISTANCE, 1, AttributeModifier.Operation.ADD_VALUE),
+                        Modifier.constant(DSAttributes.DRAGON_BREATH_RANGE, 4, AttributeModifier.Operation.ADD_VALUE),
                         /* Per size */
-                        Modifier.perSize(DRAGON_STAGE, Attributes.ENTITY_INTERACTION_RANGE, 0.01f, AttributeModifier.Operation.ADD_VALUE),
-                        Modifier.perSize(DRAGON_STAGE, Attributes.BLOCK_INTERACTION_RANGE, 0.01f, AttributeModifier.Operation.ADD_VALUE),
-                        Modifier.perSize(DRAGON_STAGE, Attributes.MAX_HEALTH, 0.5f, AttributeModifier.Operation.ADD_VALUE),
-                        Modifier.perSize(DRAGON_STAGE, DSAttributes.DRAGON_BREATH_RANGE, 0.05f, AttributeModifier.Operation.ADD_VALUE),
-                        Modifier.perSize(DRAGON_STAGE, Attributes.STEP_HEIGHT, 0.015f, AttributeModifier.Operation.ADD_VALUE),
-                        Modifier.perSize(DRAGON_STAGE, Attributes.ATTACK_DAMAGE, 0.05f, AttributeModifier.Operation.ADD_VALUE),
-                        Modifier.perSize(DRAGON_STAGE, Attributes.JUMP_STRENGTH, 0.0015f, AttributeModifier.Operation.ADD_VALUE),
-                        Modifier.perSize(DRAGON_STAGE, Attributes.SAFE_FALL_DISTANCE, 0.015f, AttributeModifier.Operation.ADD_VALUE),
-                        Modifier.perSize(DRAGON_STAGE, DSAttributes.BLOCK_BREAK_RADIUS, 0.01f, AttributeModifier.Operation.ADD_VALUE)
+                        Modifier.per(Attributes.ENTITY_INTERACTION_RANGE, 0.01f, AttributeModifier.Operation.ADD_VALUE),
+                        Modifier.per(Attributes.BLOCK_INTERACTION_RANGE, 0.01f, AttributeModifier.Operation.ADD_VALUE),
+                        Modifier.per(Attributes.MAX_HEALTH, 0.5f, AttributeModifier.Operation.ADD_VALUE),
+                        Modifier.per(DSAttributes.DRAGON_BREATH_RANGE, 0.05f, AttributeModifier.Operation.ADD_VALUE),
+                        Modifier.per(Attributes.STEP_HEIGHT, 0.015f, AttributeModifier.Operation.ADD_VALUE),
+                        Modifier.per(Attributes.ATTACK_DAMAGE, 0.05f, AttributeModifier.Operation.ADD_VALUE),
+                        Modifier.per(Attributes.JUMP_STRENGTH, 0.0015f, AttributeModifier.Operation.ADD_VALUE),
+                        Modifier.per(Attributes.SAFE_FALL_DISTANCE, 0.015f, AttributeModifier.Operation.ADD_VALUE),
+                        Modifier.per(DSAttributes.BLOCK_BREAK_RADIUS, 0.01f, AttributeModifier.Operation.ADD_VALUE)
                         ),
                 1,
                 3,

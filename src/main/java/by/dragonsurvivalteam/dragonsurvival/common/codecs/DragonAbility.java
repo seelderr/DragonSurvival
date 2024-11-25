@@ -5,7 +5,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Activation;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Effect;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Penalty;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Upgrade;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.AttributeModifierSupplier;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -37,7 +36,7 @@ public record DragonAbility(
         List<Penalty> penalties, // TODO :: what is the purpose of this? sounds more like a thing for the dragon type?
         ResourceLocation icon,
         Component description
-) implements AttributeModifierSupplier {
+) {
     public static final ResourceKey<Registry<DragonAbility>> REGISTRY = ResourceKey.createRegistryKey(DragonSurvival.res("dragon_abilities"));
 
     public static final Codec<DragonAbility> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
