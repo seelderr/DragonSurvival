@@ -93,6 +93,8 @@ public record DragonAbility(
             EnchantmentEntityEffect effectPenalties,
             // TODO: Also need to store on the player
             int durationToTrigger,
+            // Ticks per each penalty effect activation
+            int triggerRate,
             // TODO: Will need to break up the sprite sheet for each penalty ability to show the correct icons
             // No resource sprites = this penalty triggers instantly (cave dragon in water)
             Optional<ResourceLocation> resourceSprites) {
@@ -101,6 +103,7 @@ public record DragonAbility(
                 Modifier.CODEC.fieldOf("modifier_penalties").forGetter(PenaltyEffect::modifierPenalties),
                 EnchantmentEntityEffect.CODEC.fieldOf("effect_penalties").forGetter(PenaltyEffect::effectPenalties),
                 Codec.INT.fieldOf("duration_to_trigger").forGetter(PenaltyEffect::durationToTrigger),
+                Codec.INT.fieldOf("trigger_rate").forGetter(PenaltyEffect::triggerRate),
                 ResourceLocation.CODEC.optionalFieldOf("resource_sprites").forGetter(PenaltyEffect::resourceSprites)
         ).apply(instance, instance.stable(PenaltyEffect::new)));
     }
