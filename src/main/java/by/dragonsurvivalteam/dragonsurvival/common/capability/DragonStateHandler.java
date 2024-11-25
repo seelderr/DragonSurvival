@@ -4,6 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.commands.DragonCommand;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.objects.DragonMovementData;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.*;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.HunterHandler;
@@ -19,14 +20,17 @@ import by.dragonsurvivalteam.dragonsurvival.registry.dragon.*;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.ToolUtils;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
@@ -95,6 +99,7 @@ public class DragonStateHandler extends EntityStateHandler {
     // TODO: Will replace dragonType fully as I work and test stuff, but for now keep the old one around so the game launches
     private AbstractDragonType dragonType;
 
+    Object2IntOpenHashMap<Holder<DragonAbility>> abilityToLevelMap = new Object2IntOpenHashMap<>();
     private Holder<DragonType> realDragonType;
     private Holder<DragonBody> dragonBody;
     private Holder<DragonStage> dragonStage;
@@ -461,9 +466,14 @@ public class DragonStateHandler extends EntityStateHandler {
         tag.putString("subtype", dragonType != null ? dragonType.getSubtypeName() : "none");
         tag.putString(DRAGON_BODY, dragonBody != null ? Objects.requireNonNull(dragonBody.getKey()).location().toString() : "none");
         tag.putString(DRAGON_STAGE, dragonStage != null ? Objects.requireNonNull(dragonStage.getKey()).location().toString() : "none");
+        tag.putString(DRAGON_TYPE, realDragonType != null ? Objects.requireNonNull(realDragonType.getKey()).location().toString() : "none");
 
         if (isDragon()) {
             tag.put("typeData", dragonType.writeNBT());
+
+            CompoundTag abilityLevels = new CompoundTag();
+            abilityToLevelMap.forEach((ability, level) -> abilityLevels.putInt(Objects.requireNonNull(ability.getKey()).location().toString(), level));
+            tag.put("abilityLevels", abilityLevels);
 
             //Rendering
             DragonMovementData movementData = getMovementData();
@@ -530,6 +540,24 @@ public class DragonStateHandler extends EntityStateHandler {
         if (dragonType != null && tag.contains("typeData")) {
             dragonType.readNBT(tag.getCompound("typeData"));
         }
+
+        CompoundTag abilityLevels = tag.getCompound("abilityLevels");
+        abilityToLevelMap.clear();
+
+        for (String key : abilityLevels.getAllKeys()) {
+            provider.holder(DragonAbilities.key(ResourceLocation.parse(key)))
+                    .ifPresentOrElse(ability -> abilityToLevelMap.put(ability, abilityLevels.getInt(key)),
+                            () -> DragonSurvival.LOGGER.warn("Cannot set ability [{}] while deserializing NBT of [{}] due to the ability not existing", key, tag));
+        }
+
+        String storedDragonType = tag.getString(DRAGON_TYPE);
+
+        if(!storedDragonType.isEmpty()) {
+            provider.holder(by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonTypes.key(ResourceLocation.parse(storedDragonType)))
+                    .ifPresentOrElse(realDragonType -> this.realDragonType = realDragonType,
+                            () -> DragonSurvival.LOGGER.warn("Cannot set dragon type [{}] while deserializing NBT of [{}] due to the dragon type not existing", storedDragonType, tag));
+        }
+
 
         String storedDragonBody = tag.getString(DRAGON_BODY);
 
@@ -717,6 +745,7 @@ public class DragonStateHandler extends EntityStateHandler {
         return hunterStacks;
     }
 
+    public static final String DRAGON_TYPE = "dragon_type";
     public static final String DRAGON_BODY = "dragon_body";
     public static final String DRAGON_STAGE = "dragon_stage";
     public static final String PREVIOUS_DRAGON_STAGE = "previous_dragon_stage";
