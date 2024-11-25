@@ -10,21 +10,22 @@ public record Activation(Type type, int castTime, int cooldown) {
     public static final int NO_COOLDOWN = 0;
 
     public static final Codec<Activation> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Type.CODEC.optionalFieldOf("type", Type.NONE).forGetter(Activation::type),
+            Type.CODEC.optionalFieldOf("type", Type.SIMPLE).forGetter(Activation::type),
             // TODO :: validate
             Codec.INT.optionalFieldOf("cast_time", INSTANT).forGetter(Activation::castTime),
             Codec.INT.optionalFieldOf("cooldown", NO_COOLDOWN).forGetter(Activation::cooldown)
     ).apply(instance, Activation::new));
 
-    // Generally the logic triggers on 'InputEvent.Key' when they key KEY_PRESSED
+    // Generally the logic triggers on 'InputEvent.Key' when they key is KEY_PRESSED
     public enum Type implements StringRepresentable {
         // If the cast time has passed the 'InputEvent.Key' will trigger the existing effects while they key is KEY_HELD
+        // (Based on their 'Application')
         CHANNELED("channeled"),
-        // If the cast time has passed a boolean (in a map?) gets switched
+        // If the cast time has passed a boolean (in a map?) gets switched when the key is KEY_PRESSED
         // While that boolean is active the effects will try to run based on their 'Application'
         TOGGLED("charged"),
-        // If the cast time has passed the effects will trigger once
-        NONE("none");
+        // If the cast time has passed the effects will trigger once when the key is KEY_PRESSED
+        SIMPLE("simple");
 
         public static final Codec<Type> CODEC = StringRepresentable.fromEnum(Type::values);
 
