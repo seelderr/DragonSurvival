@@ -14,13 +14,12 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 
 import java.util.Arrays;
-import java.util.List;
 
 public class MiscCodecs {
-    public static Codec<List<Holder<DragonAbility>>> dragonAbilityCodec() {
+    public static Codec<HolderSet<DragonAbility>> dragonAbilityCodec() {
         int maximum = DragonAbility.MAX_ACTIVE + DragonAbility.MAX_PASSIVE;
 
-        return DragonAbility.CODEC.listOf().validate(abilities -> {
+        return RegistryCodecs.homogeneousList(DragonAbility.REGISTRY).validate(abilities -> {
             if (abilities.size() > maximum) {
                 return DataResult.error(() -> "Defined [" + abilities.size() + "] abilities - only up to [" + maximum + "] are allowed");
             }
