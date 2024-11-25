@@ -9,12 +9,15 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
-import net.neoforged.neoforge.common.CommonHooks;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.registries.DataPackRegistryEvent;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import javax.annotation.Nullable;
 
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public record DragonType(
         List<DragonAbility> abilities)
 {
@@ -23,6 +26,11 @@ public record DragonType(
     public static final Codec<DragonType> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
             DragonAbility.DIRECT_CODEC.listOf().optionalFieldOf("abilities", List.of()).forGetter(DragonType::abilities)
     ).apply(instance, instance.stable(DragonType::new)));
+
+    @SubscribeEvent
+    public static void register(final DataPackRegistryEvent.NewRegistry event) {
+        event.dataPackRegistry(REGISTRY, DIRECT_CODEC, DIRECT_CODEC);
+    }
 
     public static void update(@Nullable final HolderLookup.Provider provider) {
         validate(provider);
