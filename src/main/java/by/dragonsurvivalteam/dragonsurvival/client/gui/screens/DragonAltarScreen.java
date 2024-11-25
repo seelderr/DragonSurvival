@@ -60,7 +60,7 @@ public class DragonAltarScreen extends Screen {
 
     private final DragonStateHandler handler1 = new DragonStateHandler();
     private final DragonStateHandler handler2 = new DragonStateHandler();
-    private final String[] animations = {"sit_head_locked", "idle_head_locked", "fly_head_locked", "swim_fast_head_locked", "run_head_locked", "dig_head_locked", "resting_left_head_locked", "vibing_sitting", "shy_sitting", "vibing_sitting", "rocking_on_back"};
+    private final String[] animations = {"sit_animation", "idle_animation", "fly_animation", "swim_animation", "run_animation", "dig_animation", "resting_left_animation", "vibing_sitting", "shy_sitting", "vibing_sitting", "rocking_on_back"};
 
     private boolean hasInit = false;
     private int animation1 = 1;

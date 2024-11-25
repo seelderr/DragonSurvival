@@ -714,7 +714,7 @@
 				}
 			}
 		},
-		"idle_head_locked": {
+		"idle_animation": {
 			"loop": "loop",
 			"animation_length": 4.2,
 			"bones": {
@@ -4663,7 +4663,7 @@
 				}
 			}
 		},
-		"run_head_locked": {
+		"run_animation": {
 			"loop": "loop",
 			"animation_length": 0.48,
 			"bones": {
@@ -16807,7 +16807,7 @@
 				}
 			}
 		},
-		"dig_head_locked": {
+		"dig_animation": {
 			"loop": "loop",
 			"animation_length": 4.2,
 			"bones": {
@@ -28857,7 +28857,7 @@
 				}
 			}
 		},
-		"swim_fast_head_locked": {
+		"swim_animation": {
 			"loop": "loop",
 			"animation_length": 1.2,
 			"bones": {
@@ -33230,7 +33230,7 @@
 				}
 			}
 		},
-		"fly_head_locked": {
+		"fly_animation": {
 			"loop": "loop",
 			"animation_length": 2.52,
 			"bones": {
@@ -33964,7 +33964,7 @@
 				}
 			}
 		},
-		"fly_head_locked_magic": {
+		"fly_animation_magic": {
 			"loop": "loop",
 			"animation_length": 2.4,
 			"bones": {
@@ -47405,7 +47405,7 @@
 				}
 			}
 		},
-		"sit_head_locked": {
+		"sit_animation": {
 			"loop": "loop",
 			"animation_length": 4.2,
 			"bones": {
@@ -52141,7 +52141,7 @@
 				}
 			}
 		},
-		"sitting_curled_tail_left_head_locked": {
+		"sitting_curled_tail_left_animation": {
 			"loop": "loop",
 			"animation_length": 4.2,
 			"bones": {
@@ -53970,7 +53970,7 @@
 				}
 			}
 		},
-		"sitting_curled_tail_right_head_locked": {
+		"sitting_curled_tail_right_animation": {
 			"loop": "loop",
 			"animation_length": 4.2,
 			"bones": {
@@ -58512,7 +58512,7 @@
 				}
 			}
 		},
-		"resting_left_head_locked": {
+		"resting_left_animation": {
 			"loop": "loop",
 			"animation_length": 4.16,
 			"bones": {

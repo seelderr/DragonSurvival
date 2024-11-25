@@ -149,7 +149,7 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
     private final Screen source;
     private int guiLeft;
 
-    private final String[] animations = {"sit_dentist", "sit_head_locked", "idle_head_locked", "fly_head_locked", "swim_fast_head_locked", "run_head_locked", "spinning_on_back"};
+    private final String[] animations = {"sit_dentist", "sit_animation", "idle_animation", "fly_animation", "swim_animation", "run_animation", "spinning_on_back"};
     private final HashMap<Holder<DragonStage>, Integer> presetSelections = new HashMap<>();
     private final Map<EnumSkinLayer, DropDownButton> dropdownButtons = new HashMap<>();
     private final Map<EnumSkinLayer, ColorSelectorButton> colorSelectorButtons = new HashMap<>();

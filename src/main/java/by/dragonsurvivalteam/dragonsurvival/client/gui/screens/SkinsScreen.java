@@ -207,7 +207,7 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
                 handler.getSkinData().get(dragonStage.getKey()).get().defaultSkin = true;
             }
 
-            FakeClientPlayerUtils.getFakePlayer(0, handler).animationSupplier = () -> "fly_head_locked_magic";
+            FakeClientPlayerUtils.getFakePlayer(0, handler).animationSupplier = () -> "fly_animation_magic";
 
             Quaternionf quaternion = Axis.ZP.rotationDegrees(180.0F);
             quaternion.mul(Axis.XP.rotationDegrees(yRot * 10.0F));
