@@ -1,5 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.util;
 
+import net.minecraft.advancements.critereon.EntityPredicate;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.player.Player;
@@ -16,6 +18,21 @@ public class TargetingFunctions {
             if (isValidTarget(attacker, entity)) {
                 if (action.apply(entity)) {
                     valid = true;
+                }
+            }
+        }
+
+        return valid;
+    }
+
+    public static boolean attackTargets(ServerLevel level, EntityPredicate predicate, Entity attacker, Function<Entity, Boolean> action, Entity... entities) {
+        boolean valid = false;
+        for (Entity entity : entities) {
+            if (isValidTarget(attacker, entity)) {
+                if (predicate.matches(level, entity.position(), entity)) {
+                    if (action.apply(entity)) {
+                        valid = true;
+                    }
                 }
             }
         }

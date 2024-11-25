@@ -12,16 +12,14 @@ import by.dragonsurvivalteam.dragonsurvival.client.models.aligned_armor.DragonHe
 import by.dragonsurvivalteam.dragonsurvival.client.models.aligned_armor.DragonLeggings;
 import by.dragonsurvivalteam.dragonsurvival.client.models.creatures.*;
 import by.dragonsurvivalteam.dragonsurvival.client.models.projectiles.FireballModel;
+import by.dragonsurvivalteam.dragonsurvival.client.models.projectiles.GenericBallModel;
 import by.dragonsurvivalteam.dragonsurvival.client.models.projectiles.LightningBallModel;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.blocks.DragonBeaconRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.blocks.HelmetEntityRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.entity.creatures.*;
 import by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon.DragonRenderer;
-import by.dragonsurvivalteam.dragonsurvival.client.render.entity.projectiles.BallLightningRenderer;
-import by.dragonsurvivalteam.dragonsurvival.client.render.entity.projectiles.BolasEntityRenderer;
-import by.dragonsurvivalteam.dragonsurvival.client.render.entity.projectiles.DragonSpikeRenderer;
-import by.dragonsurvivalteam.dragonsurvival.client.render.entity.projectiles.FireBallRenderer;
+import by.dragonsurvivalteam.dragonsurvival.client.render.entity.projectiles.*;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.loader.DefaultPartLoader;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.loader.DragonPartLoader;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
@@ -75,6 +73,7 @@ public class DragonSurvivalClient {
             // GeckoLib renderers
             EntityRenderers.register(DSEntities.BALL_LIGHTNING.get(), manager -> new BallLightningRenderer(manager, new LightningBallModel()));
             EntityRenderers.register(DSEntities.FIREBALL.get(), manager -> new FireBallRenderer(manager, new FireballModel()));
+            EntityRenderers.register(DSEntities.GENERIC_BALL_ENTITY.get(), manager -> new GenericBallRenderer(manager, new GenericBallModel()));
 
             EntityRenderers.register(DSEntities.DRAGON.get(), manager -> new DragonRenderer(manager, ClientDragonRenderer.dragonModel));
             EntityRenderers.register(DSEntities.HUNTER_KNIGHT.get(), manager -> new KnightRenderer(manager, new KnightModel()));

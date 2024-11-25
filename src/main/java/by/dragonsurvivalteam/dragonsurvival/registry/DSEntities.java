@@ -3,10 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.registry;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.*;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.BallLightningEntity;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.Bolas;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.DragonSpikeEntity;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.FireBallEntity;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.*;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import com.google.common.collect.ImmutableSet;
@@ -74,6 +71,16 @@ public class DSEntities {
                     .clientTrackingRange(4)
                     .updateInterval(1)
                     .build("fireball"));
+
+    // TODO: Dynamic translation key for projectile name?
+    @Translation(type = Translation.Type.ENTITY, comments = "Generic Ball Entity")
+    public static DeferredHolder<EntityType<?>, EntityType<GenericBallEntity>> GENERIC_BALL_ENTITY = DS_ENTITY_TYPES.register(
+            "generic_ball_entity",
+            () -> EntityType.Builder.<GenericBallEntity>of(GenericBallEntity::new, MobCategory.MISC)
+                    .sized(1F, 1F)
+                    .clientTrackingRange(4)
+                    .updateInterval(1)
+                    .build("generic_ball_entity"));
 
     // --- Entities --- //
 
