@@ -2,7 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStage;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;

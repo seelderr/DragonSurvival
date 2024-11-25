@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.skins;
 
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStage;
 import net.minecraft.resources.ResourceKey;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;

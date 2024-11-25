@@ -1,8 +1,9 @@
-package by.dragonsurvivalteam.dragonsurvival.registry.dragon;
+package by.dragonsurvivalteam.dragonsurvival.registry.dragon.body;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.Modifier;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ModifierType;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.AttributeModifierSupplier;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;

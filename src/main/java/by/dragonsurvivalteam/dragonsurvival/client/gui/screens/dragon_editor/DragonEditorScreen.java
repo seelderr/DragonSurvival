@@ -31,9 +31,9 @@ import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncPlayerSkin
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.SyncComplete;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStages;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.body.DragonBody;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStage;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStages;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;

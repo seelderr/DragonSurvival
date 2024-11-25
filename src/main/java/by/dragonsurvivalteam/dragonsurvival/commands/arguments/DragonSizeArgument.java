@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.commands.arguments;
 
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.MiscCodecs;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStage;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.context.CommandContext;

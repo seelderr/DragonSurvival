@@ -1,4 +1,4 @@
-package by.dragonsurvivalteam.dragonsurvival.registry.dragon;
+package by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability;
 
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;

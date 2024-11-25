@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.codecs;
 
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonAbility;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbility;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;

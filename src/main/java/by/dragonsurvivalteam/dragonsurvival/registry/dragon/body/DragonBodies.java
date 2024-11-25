@@ -1,4 +1,4 @@
-package by.dragonsurvivalteam.dragonsurvival.registry.dragon;
+package by.dragonsurvivalteam.dragonsurvival.registry.dragon.body;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.Modifier;

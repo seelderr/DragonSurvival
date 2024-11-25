@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client.skins;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStage;
 import by.dragonsurvivalteam.dragonsurvival.util.json.GsonFactory;
 import com.google.gson.Gson;
 import net.minecraft.resources.ResourceKey;

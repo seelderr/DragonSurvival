@@ -8,8 +8,8 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.E
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonStageCustomization;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStages;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStage;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStages;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;

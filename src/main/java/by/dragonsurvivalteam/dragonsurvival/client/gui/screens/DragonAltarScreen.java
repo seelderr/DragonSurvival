@@ -10,9 +10,9 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStages;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.body.DragonBody;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStage;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStages;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;

@@ -3,7 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.util;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.body.DragonBody;
 import com.google.common.base.Objects;
 import net.minecraft.core.Holder;
 import net.minecraft.world.entity.Entity;

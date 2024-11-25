@@ -4,7 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.but
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ArrowButton;
 import by.dragonsurvivalteam.dragonsurvival.mixins.client.ScreenAccessor;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSBodyTags;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.body.DragonBody;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.Holder;

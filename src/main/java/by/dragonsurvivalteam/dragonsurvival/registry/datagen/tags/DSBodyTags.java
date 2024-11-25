@@ -1,8 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBodies;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.body.DragonBodies;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.body.DragonBody;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
