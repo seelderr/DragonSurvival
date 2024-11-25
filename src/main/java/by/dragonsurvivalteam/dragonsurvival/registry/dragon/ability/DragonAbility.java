@@ -33,8 +33,7 @@ public record DragonAbility(
         // On activation go through the list of effects and check the initial mana cost
         Optional<Activation> activation,
         Optional<Upgrade> upgrade,
-        // TODO :: should this be usage_blocked? Might be easier to define a blacklist than a whitelist
-        Optional<EntityPredicate> usageConditions,
+        Optional<EntityPredicate> usageBlocked,
         List<Effect> effects,
         ResourceLocation icon,
         Component description
@@ -45,7 +44,7 @@ public record DragonAbility(
             Activation.CODEC.optionalFieldOf("activation").forGetter(DragonAbility::activation),
             // TODO: We can remove the innate claw abilities from the DragonStages class and just add them here instead
             Upgrade.CODEC.optionalFieldOf("upgrade").forGetter(DragonAbility::upgrade),
-            EntityPredicate.CODEC.optionalFieldOf("usage_conditions").forGetter(DragonAbility::usageConditions),
+            EntityPredicate.CODEC.optionalFieldOf("usage_blocked").forGetter(DragonAbility::usageBlocked), // TODO :: e.g. when the ability is not supposed to be used underwater
             Effect.CODEC.listOf().optionalFieldOf("effects", List.of()).forGetter(DragonAbility::effects),
             ResourceLocation.CODEC.fieldOf("icon").forGetter(DragonAbility::icon),
             // TODO: How do we handle descriptions that are fed various values from the ability itself?

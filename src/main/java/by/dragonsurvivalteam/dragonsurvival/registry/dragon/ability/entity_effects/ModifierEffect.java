@@ -31,12 +31,12 @@ public record ModifierEffect(List<Modifier> modifiers) implements EntityEffect, 
     }
 
     @Override
-    public MapCodec<? extends EntityEffect> codec() {
-        return CODEC;
+    public ModifierType getModifierType() {
+        return ModifierType.CUSTOM;
     }
 
     @Override
-    public ModifierType getModifierType() {
-        return ModifierType.CUSTOM;
+    public MapCodec<? extends EntityEffect> codec() {
+        return CODEC;
     }
 }

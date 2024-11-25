@@ -25,6 +25,6 @@ public interface BlockEffect {
 
     Codec<BlockEffect> CODEC = REGISTRY.byNameCodec().dispatch(BlockEffect::codec, Function.identity());
 
-    MapCodec<? extends BlockEffect> codec();
     void apply(final ServerLevel level, final Player dragon, final DragonAbilityInstance ability, final BlockPos position);
+    MapCodec<? extends BlockEffect> codec();
 }

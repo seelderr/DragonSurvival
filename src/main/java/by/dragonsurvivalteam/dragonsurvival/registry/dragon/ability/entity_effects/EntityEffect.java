@@ -24,6 +24,6 @@ public interface EntityEffect { // TODO :: split into entity and block effects?
         Lazy<Codec<AbilityEffect>> CODEC = Lazy.of(() -> ((Registry<MapCodec<? extends AbilityEffect>>) BuiltInRegistries.REGISTRY.get(REGISTRY.registry())).byNameCodec().dispatch(AbilityEffect::codec, Function.identity()));
     */
 
-    MapCodec<? extends EntityEffect> codec();
     void apply(final ServerLevel level, final Player dragon, final DragonAbilityInstance ability, final Entity entity);
+    MapCodec<? extends EntityEffect> codec();
 }
