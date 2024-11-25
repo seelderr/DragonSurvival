@@ -35,7 +35,16 @@ public record ConversionEffect(List<ConversionData> conversionData, LevelBasedVa
             return;
         }
 
+        if (conversionData().isEmpty()) {
+            return;
+        }
+
         ConversionData data = conversionData().get(dragon.getRandom().nextInt(conversionData().size()));
+
+        if (data.blocks().size() == 0) {
+            return;
+        }
+
         Holder<Block> block = data.blocks().get(dragon.getRandom().nextInt(data.blocks().size()));
         level.setBlock(position, block.value().defaultBlockState(), Block.UPDATE_ALL);
     }

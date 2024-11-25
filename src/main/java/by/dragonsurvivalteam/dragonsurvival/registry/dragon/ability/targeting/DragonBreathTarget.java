@@ -49,7 +49,7 @@ public record DragonBreathTarget(Either<BlockTargeting, EntityTargeting> target,
 
     public static AABB calculateBreathArea(final Player player, double size, double range) {
         Vec3 viewVector = player.getLookAngle().scale(range);
-        double defaultRadius = size * 0.03; // TODO :: should this be configurable?
+        double defaultRadius = size * 0.03;
 
         // Set the radius (value will be at least the default radius)
         double xOffset = getOffset(viewVector.x(), defaultRadius);
