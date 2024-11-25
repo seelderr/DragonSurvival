@@ -14,12 +14,12 @@ import net.minecraft.world.phys.AABB;
 
 import java.util.Optional;
 
-public record AreaEntityTarget(Optional<EntityPredicate> targetConditions, LevelBasedValue radius, EntityEffect effect) implements Targeting {
+public record AreaEntityTarget(Optional<EntityPredicate> targetConditions, EntityEffect effect, LevelBasedValue radius) implements Targeting {
     public static final MapCodec<AreaEntityTarget> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             // TODO :: add sub entity predicate for easy 'enemy' / 'hostile' check (without having to add them all to a tag
             EntityPredicate.CODEC.optionalFieldOf("target_conditions").forGetter(AreaEntityTarget::targetConditions),
-            LevelBasedValue.CODEC.fieldOf("radius").forGetter(AreaEntityTarget::radius),
-            EntityEffect.CODEC.fieldOf("effect").forGetter(AreaEntityTarget::effect)
+            EntityEffect.CODEC.fieldOf("effect").forGetter(AreaEntityTarget::effect),
+            LevelBasedValue.CODEC.fieldOf("radius").forGetter(AreaEntityTarget::radius)
     ).apply(instance, AreaEntityTarget::new));
 
     public void apply(final ServerLevel level, final Player dragon, final DragonAbilityInstance ability) {

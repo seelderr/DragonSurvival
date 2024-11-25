@@ -33,10 +33,6 @@ public record Modifier(Holder<Attribute> attribute, LevelBasedValue amount, Attr
         return new Modifier(attribute, LevelBasedValue.perLevel(amount), operation, Optional.of(dragonType));
     }
 
-    public static Modifier perLevel(final Holder<Attribute> attribute, float amount, final AttributeModifier.Operation operation) {
-        return new Modifier(attribute, LevelBasedValue.perLevel(amount), operation, Optional.empty());
-    }
-
     public AttributeModifier getModifier(final ModifierType type, double value) {
         return getModifier(type, (int) value);
     }
