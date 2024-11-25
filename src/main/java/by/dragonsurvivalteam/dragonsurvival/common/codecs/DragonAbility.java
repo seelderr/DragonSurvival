@@ -34,7 +34,7 @@ public record DragonAbility(
         List<PenaltyEffect> penaltyEffects,
         Component description) implements AttributeModifierSupplier {
 
-    enum AbilityType {
+    public enum AbilityType {
         PASSIVE,
         ACTIVE,
         INNATE

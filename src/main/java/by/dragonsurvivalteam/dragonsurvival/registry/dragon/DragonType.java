@@ -13,6 +13,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.registries.DataPackRegistryEvent;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.annotation.Nullable;
@@ -36,6 +37,22 @@ public record DragonType(
         validate(provider);
     }
 
+    private static final HashSet<DragonAbility.AbilitySlot> REQUIRED_SLOTS = new HashSet<>();
+    static {
+        REQUIRED_SLOTS.add(new DragonAbility.AbilitySlot(0, DragonAbility.AbilityType.ACTIVE));
+        REQUIRED_SLOTS.add(new DragonAbility.AbilitySlot(1, DragonAbility.AbilityType.ACTIVE));
+        REQUIRED_SLOTS.add(new DragonAbility.AbilitySlot(2, DragonAbility.AbilityType.ACTIVE));
+        REQUIRED_SLOTS.add(new DragonAbility.AbilitySlot(3, DragonAbility.AbilityType.ACTIVE));
+        REQUIRED_SLOTS.add(new DragonAbility.AbilitySlot(0, DragonAbility.AbilityType.PASSIVE));
+        REQUIRED_SLOTS.add(new DragonAbility.AbilitySlot(1, DragonAbility.AbilityType.PASSIVE));
+        REQUIRED_SLOTS.add(new DragonAbility.AbilitySlot(2, DragonAbility.AbilityType.PASSIVE));
+        REQUIRED_SLOTS.add(new DragonAbility.AbilitySlot(3, DragonAbility.AbilityType.PASSIVE));
+        REQUIRED_SLOTS.add(new DragonAbility.AbilitySlot(0, DragonAbility.AbilityType.INNATE));
+        REQUIRED_SLOTS.add(new DragonAbility.AbilitySlot(1, DragonAbility.AbilityType.INNATE));
+        REQUIRED_SLOTS.add(new DragonAbility.AbilitySlot(2, DragonAbility.AbilityType.INNATE));
+        REQUIRED_SLOTS.add(new DragonAbility.AbilitySlot(3, DragonAbility.AbilityType.INNATE));
+    }
+
     private static void validate(@Nullable final HolderLookup.Provider provider) {
         StringBuilder nextAbilityCheck = new StringBuilder("The following types are incorrectly defined:");
         AtomicBoolean areAbilitiesValid = new AtomicBoolean(true);
@@ -44,7 +61,17 @@ public record DragonType(
             //noinspection OptionalGetWithoutIsPresent -> ignore
             Holder.Reference<DragonType> type = ResourceHelper.get(provider, key, REGISTRY).get();
 
-            // Nothing for now
+            HashSet<DragonAbility.AbilitySlot> slotsUsed = new HashSet<>();
+            type.value().abilities().forEach(ability -> slotsUsed.add(ability.slot()));
+            if (!slotsUsed.containsAll(REQUIRED_SLOTS)) {
+                nextAbilityCheck.append("\n- Type [").append(key.location()).append("] is missing required abilities");
+                areAbilitiesValid.set(false);
+            }
+
+            if (!REQUIRED_SLOTS.containsAll(slotsUsed)) {
+                nextAbilityCheck.append("\n- Type [").append(key.location()).append("] has extra abilities that are not required");
+                areAbilitiesValid.set(false);
+            }
         });
 
         if (!areAbilitiesValid.get()) {
