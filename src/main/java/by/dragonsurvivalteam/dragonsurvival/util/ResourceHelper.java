@@ -46,7 +46,7 @@ public class ResourceHelper {
     }
 
     public static <T> Optional<Holder.Reference<T>> get(@Nullable final HolderLookup.Provider provider, final ResourceKey<T> key, ResourceKey<Registry<T>> registryKey) {
-        HolderLookup.RegistryLookup<T> registry;
+        HolderLookup.RegistryLookup<T> registry; // TODO :: make custom lookup in PROXY which looks up holders from the resource key directly
 
         if (provider == null) {
             registry = CommonHooks.resolveLookup(registryKey);

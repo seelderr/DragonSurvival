@@ -39,18 +39,18 @@ public record DragonType(
 
     private static final HashSet<DragonAbility.AbilitySlot> REQUIRED_SLOTS = new HashSet<>();
     static {
-        REQUIRED_SLOTS.add(new DragonAbility.AbilitySlot(0, DragonAbility.AbilityType.ACTIVE));
-        REQUIRED_SLOTS.add(new DragonAbility.AbilitySlot(1, DragonAbility.AbilityType.ACTIVE));
-        REQUIRED_SLOTS.add(new DragonAbility.AbilitySlot(2, DragonAbility.AbilityType.ACTIVE));
-        REQUIRED_SLOTS.add(new DragonAbility.AbilitySlot(3, DragonAbility.AbilityType.ACTIVE));
-        REQUIRED_SLOTS.add(new DragonAbility.AbilitySlot(0, DragonAbility.AbilityType.PASSIVE));
-        REQUIRED_SLOTS.add(new DragonAbility.AbilitySlot(1, DragonAbility.AbilityType.PASSIVE));
-        REQUIRED_SLOTS.add(new DragonAbility.AbilitySlot(2, DragonAbility.AbilityType.PASSIVE));
-        REQUIRED_SLOTS.add(new DragonAbility.AbilitySlot(3, DragonAbility.AbilityType.PASSIVE));
-        REQUIRED_SLOTS.add(new DragonAbility.AbilitySlot(0, DragonAbility.AbilityType.INNATE));
-        REQUIRED_SLOTS.add(new DragonAbility.AbilitySlot(1, DragonAbility.AbilityType.INNATE));
-        REQUIRED_SLOTS.add(new DragonAbility.AbilitySlot(2, DragonAbility.AbilityType.INNATE));
-        REQUIRED_SLOTS.add(new DragonAbility.AbilitySlot(3, DragonAbility.AbilityType.INNATE));
+        REQUIRED_SLOTS.add(new DragonAbility.AbilitySlot(0, DragonAbility.Type.ACTIVE));
+        REQUIRED_SLOTS.add(new DragonAbility.AbilitySlot(1, DragonAbility.Type.ACTIVE));
+        REQUIRED_SLOTS.add(new DragonAbility.AbilitySlot(2, DragonAbility.Type.ACTIVE));
+        REQUIRED_SLOTS.add(new DragonAbility.AbilitySlot(3, DragonAbility.Type.ACTIVE));
+        REQUIRED_SLOTS.add(new DragonAbility.AbilitySlot(0, DragonAbility.Type.PASSIVE));
+        REQUIRED_SLOTS.add(new DragonAbility.AbilitySlot(1, DragonAbility.Type.PASSIVE));
+        REQUIRED_SLOTS.add(new DragonAbility.AbilitySlot(2, DragonAbility.Type.PASSIVE));
+        REQUIRED_SLOTS.add(new DragonAbility.AbilitySlot(3, DragonAbility.Type.PASSIVE));
+        REQUIRED_SLOTS.add(new DragonAbility.AbilitySlot(0, DragonAbility.Type.INNATE));
+        REQUIRED_SLOTS.add(new DragonAbility.AbilitySlot(1, DragonAbility.Type.INNATE));
+        REQUIRED_SLOTS.add(new DragonAbility.AbilitySlot(2, DragonAbility.Type.INNATE));
+        REQUIRED_SLOTS.add(new DragonAbility.AbilitySlot(3, DragonAbility.Type.INNATE));
     }
 
     private static void validate(@Nullable final HolderLookup.Provider provider) {
