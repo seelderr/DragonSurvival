@@ -1,6 +1,12 @@
 package by.dragonsurvivalteam.dragonsurvival.util;
 
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.DragonAbility;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
@@ -9,6 +15,12 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.PotionItem;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.level.block.Block;
+import net.neoforged.neoforge.common.CommonHooks;
+
+import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 public class ResourceHelper {
     public static ResourceLocation getKey(Block object) {
@@ -33,5 +45,30 @@ public class ResourceHelper {
 
     public static Potion getPotionFromItem(Item item) {
         return BuiltInRegistries.POTION.getHolder(PotionItem.getId(item)).get().value();
+    }
+
+    public static <T> Optional<Holder.Reference<T>> get(@Nullable final HolderLookup.Provider provider, final ResourceKey<T> key, ResourceKey<Registry<T>> registryKey) {
+        HolderLookup.RegistryLookup<T> registry;
+
+        if (provider == null) {
+            registry = CommonHooks.resolveLookup(registryKey);
+        } else {
+            registry = provider.lookupOrThrow(registryKey);
+        }
+
+        return Objects.requireNonNull(registry).get(key);
+    }
+
+    public static <T> List<ResourceKey<T>> keys(@Nullable final HolderLookup.Provider provider, ResourceKey<Registry<T>> registryKey) {
+        HolderLookup.RegistryLookup<T> registry;
+
+        if (provider == null) {
+            registry = CommonHooks.resolveLookup(registryKey);
+        } else {
+            registry = provider.lookupOrThrow(registryKey);
+        }
+
+        //noinspection DataFlowIssue -> registry is expected to be present
+        return registry.listElementIds().toList();
     }
 }

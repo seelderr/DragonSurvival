@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.codecs.MiscCodecs;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.Modifier;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.Pair;
@@ -92,9 +93,9 @@ public record DragonStage(
         StringBuilder nextStageCheck = new StringBuilder("The following stages are incorrectly defined:");
         AtomicBoolean areStagesValid = new AtomicBoolean(true);
 
-        keys(provider).forEach(key -> {
+        ResourceHelper.keys(provider, REGISTRY).forEach(key -> {
             //noinspection OptionalGetWithoutIsPresent -> ignore
-            Holder.Reference<DragonStage> stage = get(provider, key).get();
+            Holder.Reference<DragonStage> stage = ResourceHelper.get(provider, key, REGISTRY).get();
 
             // Validate that the block destruction size and the crushing size are within the bounds of the current dragon stage
             if (stage.value().destructionData().isPresent()) {
@@ -117,7 +118,7 @@ public record DragonStage(
                 return;
             }
 
-            Optional<Holder.Reference<DragonStage>> optional = get(provider, nextStage);
+            Optional<Holder.Reference<DragonStage>> optional = ResourceHelper.get(provider, nextStage, REGISTRY);
 
             if (optional.isEmpty()) {
                 nextStageCheck.append("\n- The next stage [").append(nextStage.location()).append("] of [").append(stage.getKey().location()).append("] is not present");
@@ -134,7 +135,7 @@ public record DragonStage(
     }
 
     private static boolean isValid(final StringBuilder builder, @Nullable final HolderLookup.Provider provider, final ResourceKey<DragonStage> stageKey) {
-        Optional<Holder.Reference<DragonStage>> optional = get(provider, stageKey);
+        Optional<Holder.Reference<DragonStage>> optional = ResourceHelper.get(provider, stageKey, REGISTRY);
 
         if (optional.isPresent()) {
             return true;
@@ -162,28 +163,15 @@ public record DragonStage(
     }
 
     public static boolean onlyBuiltInLevelsAreLoaded(final HolderLookup.Provider provider) {
-        return keys(provider).stream().allMatch(DragonStage::isBuiltinLevel);
+        return ResourceHelper.keys(provider, REGISTRY).stream().allMatch(DragonStage::isBuiltinLevel);
     }
 
     public static List<Holder<DragonStage>> allStages(@Nullable final HolderLookup.Provider provider) {
-        return keys(provider).stream().map(key -> get(provider, key).get().getDelegate()).toList();
+        return ResourceHelper.keys(provider, REGISTRY).stream().map(key -> ResourceHelper.get(provider, key, REGISTRY).get().getDelegate()).toList();
     }
 
     public static Component translatableName(final ResourceKey<DragonStage> dragonStage) {
         return Component.translatable(Translation.Type.STAGE.wrap(dragonStage.location().getNamespace(), dragonStage.location().getPath()));
-    }
-
-    public static List<ResourceKey<DragonStage>> keys(@Nullable final HolderLookup.Provider provider) {
-        HolderLookup.RegistryLookup<DragonStage> registry;
-
-        if (provider == null) {
-            registry = CommonHooks.resolveLookup(REGISTRY);
-        } else {
-            registry = provider.lookupOrThrow(REGISTRY);
-        }
-
-        //noinspection DataFlowIssue -> registry is expected to be present
-        return registry.listElementIds().toList();
     }
 
     public double getBoundedSize(double size) {
@@ -226,19 +214,7 @@ public record DragonStage(
     }
 
     public static Optional<Holder.Reference<DragonStage>> getNextStage(@Nullable final HolderLookup.Provider provider, final DragonStage stage) {
-        return stage.nextStage().flatMap(nextStage -> get(provider, nextStage));
-    }
-
-    public static Optional<Holder.Reference<DragonStage>> get(@Nullable final HolderLookup.Provider provider, final ResourceKey<DragonStage> key) {
-        HolderLookup.RegistryLookup<DragonStage> registry;
-
-        if (provider == null) {
-            registry = CommonHooks.resolveLookup(REGISTRY);
-        } else {
-            registry = provider.lookupOrThrow(REGISTRY);
-        }
-
-        return Objects.requireNonNull(registry).get(key);
+        return stage.nextStage().flatMap(nextStage -> ResourceHelper.get(provider, nextStage, REGISTRY));
     }
 
     public static Holder<DragonStage> get(@Nullable final HolderLookup.Provider provider, double size) {
