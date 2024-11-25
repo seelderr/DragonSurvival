@@ -1,7 +1,8 @@
-package by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.effects;
+package by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.targeting;
 
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
-import com.mojang.serialization.Codec;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.entity_effects.EntityEffect;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.server.level.ServerLevel;
@@ -13,14 +14,13 @@ import net.minecraft.world.phys.AABB;
 
 import java.util.Optional;
 
-// TODO :: have one 'AreaEffect' class which uses Codec.either() to decide between entity and block effect
-public record AreaEntityEffect(Optional<EntityPredicate> targetConditions, AbilityEffect effect, LevelBasedValue radius) {
-    public static final Codec<AreaEntityEffect> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+public record AreaEntityTarget(Optional<EntityPredicate> targetConditions, LevelBasedValue radius, EntityEffect effect) implements Targeting {
+    public static final MapCodec<AreaEntityTarget> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             // TODO :: add sub entity predicate for easy 'enemy' / 'hostile' check (without having to add them all to a tag
-            EntityPredicate.CODEC.optionalFieldOf("target_conditions").forGetter(AreaEntityEffect::targetConditions),
-            AbilityEffect.CODEC.fieldOf("effect").forGetter(AreaEntityEffect::effect),
-            LevelBasedValue.CODEC.fieldOf("radius").forGetter(AreaEntityEffect::radius)
-    ).apply(instance, AreaEntityEffect::new));
+            EntityPredicate.CODEC.optionalFieldOf("target_conditions").forGetter(AreaEntityTarget::targetConditions),
+            LevelBasedValue.CODEC.fieldOf("radius").forGetter(AreaEntityTarget::radius),
+            EntityEffect.CODEC.fieldOf("effect").forGetter(AreaEntityTarget::effect)
+    ).apply(instance, AreaEntityTarget::new));
 
     public void apply(final ServerLevel level, final Player dragon, final DragonAbilityInstance ability) {
         double radius = radius().calculate(ability.getLevel());
@@ -29,5 +29,10 @@ public record AreaEntityEffect(Optional<EntityPredicate> targetConditions, Abili
                 // This will include the dragon itself
                 entity -> targetConditions().map(conditions -> conditions.matches(level, dragon.position(), entity)).orElse(true)
         ).forEach(entity -> effect().apply(level, dragon, ability, entity));
+    }
+
+    @Override
+    public MapCodec<? extends Targeting> codec() {
+        return CODEC;
     }
 }

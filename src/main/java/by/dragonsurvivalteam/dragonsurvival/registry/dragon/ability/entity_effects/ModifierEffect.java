@@ -1,4 +1,4 @@
-package by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.effects;
+package by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.entity_effects;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
@@ -15,7 +15,7 @@ import net.minecraft.world.entity.player.Player;
 
 import java.util.List;
 
-public record ModifierEffect(List<Modifier> modifiers) implements AbilityEffect, AttributeModifierSupplier {
+public record ModifierEffect(List<Modifier> modifiers) implements EntityEffect, AttributeModifierSupplier {
     public static final MapCodec<ModifierEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             Modifier.CODEC.listOf().fieldOf("modifiers").forGetter(ModifierEffect::modifiers)
     ).apply(instance, ModifierEffect::new));
@@ -24,13 +24,14 @@ public record ModifierEffect(List<Modifier> modifiers) implements AbilityEffect,
     public void apply(final ServerLevel level, final Player dragon, final DragonAbilityInstance ability, final Entity entity) {
         if (entity instanceof LivingEntity livingEntity) {
             // TODO :: add a duration (to the codec as well) -> will need some sort of callback logic here
+            //   or add a separate codec (duration_modifier) which stores entity + modifier (ids) and then ticks down the duration
             String dragonType = DragonStateProvider.getOptional(entity).map(DragonStateHandler::getTypeNameLowerCase).orElse(null);
             applyModifiers(livingEntity, dragonType, ability.getLevel());
         }
     }
 
     @Override
-    public MapCodec<? extends AbilityEffect> codec() {
+    public MapCodec<? extends EntityEffect> codec() {
         return CODEC;
     }
 
