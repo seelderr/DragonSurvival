@@ -1,10 +1,12 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Activation;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Effect;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.ActiveType;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.PassiveType;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Upgrade;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.targeting.Targeting;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.advancements.critereon.EntityPredicate;
@@ -30,22 +32,20 @@ import javax.annotation.Nullable;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public record DragonAbility(
-        // On activation go through the list of effects and check the initial mana cost
-        Optional<Activation> activation,
+        Either<ActiveType, PassiveType> type,
         Optional<Upgrade> upgrade,
         Optional<EntityPredicate> usageBlocked,
-        List<Effect> effects,
+        List<Targeting> effects,
         ResourceLocation icon,
         Component description
 ) {
     public static final ResourceKey<Registry<DragonAbility>> REGISTRY = ResourceKey.createRegistryKey(DragonSurvival.res("dragon_abilities"));
 
     public static final Codec<DragonAbility> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Activation.CODEC.optionalFieldOf("activation").forGetter(DragonAbility::activation),
-            // TODO: We can remove the innate claw abilities from the DragonStages class and just add them here instead
+            Codec.either(ActiveType.CODEC, PassiveType.CODEC).fieldOf("type").forGetter(DragonAbility::type),
             Upgrade.CODEC.optionalFieldOf("upgrade").forGetter(DragonAbility::upgrade),
             EntityPredicate.CODEC.optionalFieldOf("usage_blocked").forGetter(DragonAbility::usageBlocked), // TODO :: e.g. when the ability is not supposed to be used underwater
-            Effect.CODEC.listOf().optionalFieldOf("effects", List.of()).forGetter(DragonAbility::effects),
+            Targeting.CODEC.listOf().optionalFieldOf("effects", List.of()).forGetter(DragonAbility::effects),
             ResourceLocation.CODEC.fieldOf("icon").forGetter(DragonAbility::icon),
             // TODO: How do we handle descriptions that are fed various values from the ability itself?
             ComponentSerialization.CODEC.fieldOf("description").forGetter(DragonAbility::description)
@@ -57,30 +57,9 @@ public record DragonAbility(
     public static final int MAX_ACTIVE = 4;
     public static final int MAX_PASSIVE = 8;
 
-    /*
-        The slot will not be specified in the ability
-        Players will be able to assign / customize the slot while playing
-        For the GUI we can have them move them around as well
-        (this was a thing in the past, currently it is kind of broken in the ability screen)
-    */
-
-    // TODO :: Can we define the dragon ability in way that this is no longer needed?
-    //  At the least we might want to move away from differentiating between 'PASSIVE' and 'INNATE'
-    //  Active can be it's own thing due to the active ability slots
-    //  The dragon can then have 8 'PASSIVE' abilities which are a separate class & codec (no Activation trigger)
-    //    Or we make Activation optional in here and if that is the case it is considered a PASSIVE ability, otherwise an ACTIVE one
-    public enum Type {
-        PASSIVE,
-        ACTIVE
-    }
-
     @SubscribeEvent
     public static void register(final DataPackRegistryEvent.NewRegistry event) {
         event.dataPackRegistry(REGISTRY, DIRECT_CODEC, DIRECT_CODEC);
-    }
-
-    public Type type() {
-        return activation().isPresent() ? Type.ACTIVE : Type.PASSIVE;
     }
 
     public static void update(@Nullable final HolderLookup.Provider provider) {

@@ -4,9 +4,11 @@ import by.dragonsurvivalteam.dragonsurvival.common.codecs.Modifier;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ModifierType;
 import by.dragonsurvivalteam.dragonsurvival.mixins.AttributeMapAccessor;
 import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 
 import java.util.List;
 import java.util.Map;
@@ -44,7 +46,9 @@ public interface AttributeModifierSupplier {
             return;
         }
 
-        instance.addPermanentModifier(modifier.getModifier(getModifierType(), value));
+        AttributeModifier attributeModifier = modifier.getModifier(getModifierType(), value);
+        instance.addPermanentModifier(attributeModifier);
+        storeId(instance.getAttribute(), attributeModifier.id());
     }
 
     private void applyModifier(final Modifier modifier, @Nullable final AttributeInstance instance, final String dragonType, int value) {
@@ -66,6 +70,8 @@ public interface AttributeModifierSupplier {
             }
         });
     }
+
+    default void storeId(final Holder<Attribute> attribute, final ResourceLocation id) { /* Nothing to do */ }
 
     default List<Modifier> modifiers() {
         return List.of();

@@ -8,9 +8,12 @@ import by.dragonsurvivalteam.dragonsurvival.registry.dragon.AttributeModifierSup
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.List;
@@ -33,6 +36,12 @@ public record ModifierEffect(List<Modifier> modifiers) implements EntityEffect, 
     @Override
     public ModifierType getModifierType() {
         return ModifierType.CUSTOM;
+    }
+
+    @Override
+    public void storeId(final Holder<Attribute> attribute, final ResourceLocation id) {
+        // TODO :: probably will need to pass entity reference here or dragon state handler
+        //  or this needs a custom application method in general (should be transient modifiers not permanent)
     }
 
     @Override
