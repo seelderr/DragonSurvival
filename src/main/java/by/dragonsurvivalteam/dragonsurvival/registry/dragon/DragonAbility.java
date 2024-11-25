@@ -1,9 +1,8 @@
-package by.dragonsurvivalteam.dragonsurvival.common.codecs;
+package by.dragonsurvivalteam.dragonsurvival.registry.dragon;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Activation;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Effect;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Penalty;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Upgrade;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import com.mojang.serialization.Codec;
@@ -12,8 +11,12 @@ import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.RegistryFixedCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -33,7 +36,6 @@ public record DragonAbility(
         // TODO :: should this be usage_blocked? Might be easier to define a blacklist than a whitelist
         Optional<EntityPredicate> usageConditions,
         List<Effect> effects,
-        List<Penalty> penalties, // TODO :: what is the purpose of this? sounds more like a thing for the dragon type?
         ResourceLocation icon,
         Component description
 ) {
@@ -45,11 +47,16 @@ public record DragonAbility(
             Upgrade.CODEC.optionalFieldOf("upgrade").forGetter(DragonAbility::upgrade),
             EntityPredicate.CODEC.optionalFieldOf("usage_conditions").forGetter(DragonAbility::usageConditions),
             Effect.CODEC.listOf().optionalFieldOf("effects", List.of()).forGetter(DragonAbility::effects),
-            Penalty.CODEC.listOf().optionalFieldOf("penalties", List.of()).forGetter(DragonAbility::penalties),
             ResourceLocation.CODEC.fieldOf("icon").forGetter(DragonAbility::icon),
             // TODO: How do we handle descriptions that are fed various values from the ability itself?
             ComponentSerialization.CODEC.fieldOf("description").forGetter(DragonAbility::description)
     ).apply(instance, instance.stable(DragonAbility::new)));
+
+    public static final Codec<Holder<DragonAbility>> CODEC = RegistryFixedCodec.create(REGISTRY);
+    public static final StreamCodec<RegistryFriendlyByteBuf, Holder<DragonAbility>> STREAM_CODEC = ByteBufCodecs.holderRegistry(REGISTRY);
+
+    public static final int MAX_ACTIVE = 4;
+    public static final int MAX_PASSIVE = 8;
 
     /*
         The slot will not be specified in the ability

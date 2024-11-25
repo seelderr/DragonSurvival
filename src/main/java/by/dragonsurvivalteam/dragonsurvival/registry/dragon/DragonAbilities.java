@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.dragon;
 
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.DragonAbility;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 
