@@ -27,7 +27,7 @@ import javax.annotation.Nullable;
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public record DragonAbility(
         List<Modifier> passiveModifiers,
-        LevelBasedValue upgradeCost,
+        Optional<LevelBasedValue> upgradeCost,
         AbilitySlot slot,
         Optional<EntityPredicate> usageConditions,
         Optional<ActiveAbility> activeAbility,
@@ -113,7 +113,7 @@ public record DragonAbility(
     public static final Codec<DragonAbility> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
             // TODO: We can remove the innate claw abilities from the DragonStages class and just add them here instead
             Modifier.CODEC.listOf().optionalFieldOf("passive_modifiers", List.of()).forGetter(DragonAbility::passiveModifiers),
-            LevelBasedValue.CODEC.fieldOf("upgrade_cost").forGetter(DragonAbility::upgradeCost),
+            LevelBasedValue.CODEC.optionalFieldOf("upgrade_cost").forGetter(DragonAbility::upgradeCost),
             AbilitySlot.CODEC.fieldOf("slot").forGetter(DragonAbility::slot),
             EntityPredicate.CODEC.optionalFieldOf("usage_conditions").forGetter(DragonAbility::usageConditions),
             ActiveAbility.CODEC.optionalFieldOf("active_ability").forGetter(DragonAbility::activeAbility),
@@ -146,6 +146,11 @@ public record DragonAbility(
 
             if(ability.value().slot.type == AbilityType.PASSIVE && ability.value().passiveModifiers.isEmpty()) {
                 nextAbilityCheck.append("\n- Ability [").append(key.location()).append("] has no passive modifiers but is defined as passive");
+                areAbilitiesValid.set(false);
+            }
+
+            if(ability.value().slot.type == AbilityType.PASSIVE && ability.value().upgradeCost.isPresent()) {
+                nextAbilityCheck.append("\n- Ability [").append(key.location()).append("] has an upgrade cost but is defined as passive");
                 areAbilitiesValid.set(false);
             }
 
