@@ -44,6 +44,11 @@ public record DragonAbility(
         (this was a thing in the past, currently it is kind of broken in the ability screen)
     */
 
+    // TODO :: Can we define the dragon ability in way that this is no longer needed?
+    //  At the least we might want to move away from differentiating between 'PASSIVE' and 'INNATE'
+    //  Active can be it's own thing due to the active ability slots
+    //  The dragon can then have 8 'PASSIVE' abilities which are a separate class & codec (no Activation trigger)
+    //    Or we make Activation optional in here and if that is the case it is considered a PASSIVE ability, otherwise an ACTIVE one
     public enum Type {
         PASSIVE,
         ACTIVE,

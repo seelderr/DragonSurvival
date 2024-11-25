@@ -20,7 +20,7 @@ public record Effect(
         double manaCost,
         // If this is present the mana cost is applied per tick specified here
         int manaDepletionRate,
-        // In ticks
+        // In ticks (merge with mana_depletion_rate?)
         int triggerRate,
         List<Modifier> modifiers,
         // TODO: For breath abilities, should we spawn particles through this entity effect or handle it ourselves?
