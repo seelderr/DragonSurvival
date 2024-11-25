@@ -5,10 +5,10 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 
-public record PassiveType(Either<Reserved, Ticked> manaHandling) {
-    public static final Codec<PassiveType> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Codec.either(Reserved.CODEC, Ticked.CODEC).fieldOf("mana_handling").forGetter(PassiveType::manaHandling)
-    ).apply(instance, PassiveType::new));
+public record Passive(Either<Reserved, Ticked> manaHandling) {
+    public static final Codec<Passive> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            Codec.either(Reserved.CODEC, Ticked.CODEC).fieldOf("mana_handling").forGetter(Passive::manaHandling)
+    ).apply(instance, Passive::new));
 
     public record Reserved(LevelBasedValue reservedMana) {
         public static final Codec<Reserved> CODEC = RecordCodecBuilder.create(instance -> instance.group(

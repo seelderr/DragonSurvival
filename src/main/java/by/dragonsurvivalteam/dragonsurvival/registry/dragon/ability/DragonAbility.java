@@ -1,8 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.ActiveType;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.PassiveType;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Active;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Passive;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Upgrade;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.targeting.Targeting;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
@@ -32,7 +32,7 @@ import javax.annotation.Nullable;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public record DragonAbility(
-        Either<ActiveType, PassiveType> type,
+        Either<Active, Passive> activation,
         Optional<Upgrade> upgrade,
         Optional<EntityPredicate> usageBlocked,
         List<Targeting> effects,
@@ -42,7 +42,7 @@ public record DragonAbility(
     public static final ResourceKey<Registry<DragonAbility>> REGISTRY = ResourceKey.createRegistryKey(DragonSurvival.res("dragon_abilities"));
 
     public static final Codec<DragonAbility> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Codec.either(ActiveType.CODEC, PassiveType.CODEC).fieldOf("type").forGetter(DragonAbility::type),
+            Codec.either(Active.CODEC, Passive.CODEC).fieldOf("activation").forGetter(DragonAbility::activation),
             Upgrade.CODEC.optionalFieldOf("upgrade").forGetter(DragonAbility::upgrade),
             EntityPredicate.CODEC.optionalFieldOf("usage_blocked").forGetter(DragonAbility::usageBlocked), // TODO :: e.g. when the ability is not supposed to be used underwater
             Targeting.CODEC.listOf().optionalFieldOf("effects", List.of()).forGetter(DragonAbility::effects),
