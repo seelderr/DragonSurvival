@@ -34,4 +34,8 @@ public record Effect(
                 Codec.INT.fieldOf("trigger_rate").forGetter(Application::triggerRate)
         ).apply(instance, Application::new));
     }
+
+    public int getDuration(int value) {
+        return (int) duration().calculate(value);
+    }
 }

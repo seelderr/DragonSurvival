@@ -16,6 +16,10 @@ public class DragonAbilityInstance implements INBTSerializable<CompoundTag> {
         this.ability = ability;
     }
 
+    public int getLevel() {
+        return level;
+    }
+
     // TODO :: could also handle this through a CODEC defined for the instance (like MobEffectInstance)
     @Override
     public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider) {

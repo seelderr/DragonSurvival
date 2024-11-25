@@ -119,7 +119,7 @@ public class DSModifiers {
         AttributeModifierSupplier.removeModifiers(ModifierType.DRAGON_STAGE, player);
 
         if (handler.isDragon()) {
-            handler.getStage().value().applyModifiers(player);
+            handler.getStage().value().applyModifiers(player, handler.getTypeNameLowerCase(), handler.getSize());
         }
     }
 
@@ -131,7 +131,7 @@ public class DSModifiers {
         AttributeModifierSupplier.removeModifiers(ModifierType.DRAGON_BODY, player);
 
         if (handler.isDragon()) {
-            handler.getBody().value().applyModifiers(player);
+            handler.getBody().value().applyModifiers(player, handler.getTypeNameLowerCase(), /* Body has nothing to scale */ 1);
         }
     }
 }
