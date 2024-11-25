@@ -15,10 +15,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncSize;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAdvancementTriggers;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBodies;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStage;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonStages;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.*;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.ToolUtils;
@@ -95,7 +92,10 @@ public class DragonStateHandler extends EntityStateHandler {
     private final SkinCap skinData = new SkinCap(this);
     private final Map<String, SavedDragonStage> savedDragonStages = new ConcurrentHashMap<>();
 
+    // TODO: Will replace dragonType fully as I work and test stuff, but for now keep the old one around so the game launches
     private AbstractDragonType dragonType;
+
+    private Holder<DragonType> realDragonType;
     private Holder<DragonBody> dragonBody;
     private Holder<DragonStage> dragonStage;
     public Holder<DragonStage> previousStage;
@@ -261,6 +261,10 @@ public class DragonStateHandler extends EntityStateHandler {
 
     public Holder<DragonStage> getStage() {
         return dragonStage;
+    }
+
+    public Holder<DragonType> getDragonType() {
+        return realDragonType;
     }
 
     public Holder<DragonBody> getBody() {
