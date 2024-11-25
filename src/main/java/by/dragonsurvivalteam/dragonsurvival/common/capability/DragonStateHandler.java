@@ -19,6 +19,7 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.*;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import by.dragonsurvivalteam.dragonsurvival.util.ToolUtils;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.ResourceLocationException;
@@ -690,7 +691,7 @@ public class DragonStateHandler extends EntityStateHandler {
     private @Nullable Holder<DragonStage> loadStage(@Nullable final HolderLookup.Provider provider, final String dragonStage) {
         try {
             ResourceLocation location = ResourceLocation.parse(dragonStage);
-            return DragonStage.get(provider, DragonStages.key(location)).orElse(null);
+            return ResourceHelper.get(provider, DragonStages.key(location), DragonStage.REGISTRY).orElse(null);
         } catch (ResourceLocationException ignored) {
             return null;
         }
