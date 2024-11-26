@@ -224,6 +224,7 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
             }
         }
 
+        // TODO: This should be data driven
         if (!level().isClientSide) {
             if (level().isThundering()) {
                 if (level().random.nextInt(100) < 30) {
