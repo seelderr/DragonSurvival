@@ -2,7 +2,6 @@ package by.dragonsurvivalteam.dragonsurvival.registry.dragon.penalty;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.Modifier;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.advancements.critereon.EntityPredicate;
@@ -16,10 +15,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.RegistryFixedCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.enchantment.effects.EnchantmentEntityEffect;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.registries.DataPackRegistryEvent;
@@ -57,7 +53,7 @@ public record DragonPenalty(
     }
 
     public void apply(final ServerPlayer player, final PenaltyInstance instance) {
-        if(trigger.apply(instance, condition.matches(player, null))) {
+        if(trigger.matches(instance, condition.matches(player, null))) {
             effect.apply(player);
         }
     }

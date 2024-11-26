@@ -11,7 +11,7 @@ public record PenaltyTrigger(int triggerRate, int durationToTrigger, float suppl
             Codec.FLOAT.fieldOf("supply_regen_rate").forGetter(PenaltyTrigger::supplyRegenRate)
     ).apply(instance, PenaltyTrigger::new));
 
-    boolean apply(final PenaltyInstance instance, boolean conditionMatched)  {
+    boolean matches(final PenaltyInstance instance, boolean conditionMatched)  {
         if(conditionMatched) {
             instance.penaltySupply = Math.max(0, instance.penaltySupply - 1);
         } else if(durationToTrigger > 0) {
