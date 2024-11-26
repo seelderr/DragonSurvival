@@ -25,11 +25,13 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.Optional;
 
+// TODO: Should we add in a way to apply effects to entities that are hit by the projectile?
 // TODO: We need some way to properly name the projectile entity itself through this codec (it currently has the generic name)
 public record ProjectileEffect(
         Either<GenericArrowData, GenericBallData> projectileData,
         Optional<EntityPredicate> canHitPredicate,
         ResourceKey<DamageType> damageTypeResourceKey,
+        // TODO: Should we using a sound here?
         ResourceKey<SoundEvent> soundEvent,
         LevelBasedValue damage,
         LevelBasedValue numberOfProjectiles,
@@ -131,6 +133,7 @@ public record ProjectileEffect(
                 GenericBallEntity projectile = new GenericBallEntity(
                         damageTypeResourceKey,
                         canHitPredicate,
+                        // TODO: Probably don't want to have explicit locations here, instead base them off of the name parameter that we would add
                         ballData.modelResourceLocation,
                         ballData.textureResourceLocation,
                         ballData.animationResourceLocation,
