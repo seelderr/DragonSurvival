@@ -26,7 +26,6 @@ import java.util.Optional;
 public record DragonPenalty(
         Component name,
         EntityPredicate condition,
-        Modifier modifier,
         PenaltyEffect effect,
         PenaltyTrigger trigger
 ) {
@@ -35,7 +34,6 @@ public record DragonPenalty(
     public static final Codec<DragonPenalty> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ComponentSerialization.CODEC.fieldOf("name").forGetter(DragonPenalty::name),
             EntityPredicate.CODEC.fieldOf("conditions").forGetter(DragonPenalty::condition),
-            Modifier.CODEC.fieldOf("modifier").forGetter(DragonPenalty::modifier),
             PenaltyEffect.CODEC.fieldOf("effect").forGetter(DragonPenalty::effect),
             PenaltyTrigger.CODEC.fieldOf("trigger").forGetter(DragonPenalty::trigger)
     ).apply(instance, instance.stable(DragonPenalty::new)));
