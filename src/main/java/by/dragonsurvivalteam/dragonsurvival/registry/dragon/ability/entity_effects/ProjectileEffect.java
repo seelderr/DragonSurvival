@@ -25,6 +25,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.Optional;
 
+// TODO: We need some way to properly name the projectile entity itself through this codec (it currently has the generic name)
 public record ProjectileEffect(
         Either<GenericArrowData, GenericBallData> projectileData,
         Optional<EntityPredicate> canHitPredicate,
