@@ -9,7 +9,8 @@ import org.jetbrains.annotations.UnknownNullability;
 
 public class PenaltyInstance implements INBTSerializable<CompoundTag>  {
     Holder<DragonPenalty> penalty;
-    int penaltySupply;
+    float penaltySupply;
+    float supplyRate;
 
     public PenaltyInstance(Holder<DragonPenalty> penalty) {
         this.penalty = penalty;
@@ -19,7 +20,7 @@ public class PenaltyInstance implements INBTSerializable<CompoundTag>  {
     @Override
     public @UnknownNullability CompoundTag serializeNBT(HolderLookup.@NotNull Provider provider) {
         CompoundTag tag = new CompoundTag();
-        tag.putInt(PENALTY_SUPPLY, penaltySupply);
+        tag.putFloat(PENALTY_SUPPLY, penaltySupply);
 
         return tag;
     }
