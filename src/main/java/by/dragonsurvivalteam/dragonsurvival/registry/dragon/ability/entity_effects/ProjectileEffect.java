@@ -1,5 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.entity_effects;
 
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.projectile.ProjectileInstance;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.projectile.block_effects.ProjectileBlockEffect;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.projectile.entity_effects.ProjectileEntityEffect;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.projectile.targeting.ProjectileTargeting;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.GenericArrowEntity;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.GenericBallEntity;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
@@ -15,7 +19,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
@@ -23,6 +26,7 @@ import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.List;
 import java.util.Optional;
 
 // TODO: Should we add in a way to apply effects to entities that are hit by the projectile?
@@ -30,11 +34,12 @@ public record ProjectileEffect(
         Component name,
         Either<GenericArrowData, GenericBallData> projectileData,
         Optional<EntityPredicate> canHitPredicate,
-        ResourceKey<DamageType> damageTypeResourceKey,
-        LevelBasedValue damage,
+        List<ProjectileTargeting> tickingEffects,
+        List<ProjectileTargeting> commonHitEffects,
+        List<ProjectileEntityEffect> entityHitEffects,
+        List<ProjectileBlockEffect> blockHitEffects,
         LevelBasedValue numberOfProjectiles,
         LevelBasedValue projectileSpread,
-        LevelBasedValue explosionPower,
         LevelBasedValue speed) implements EntityEffect {
 
     public record GenericArrowData(ResourceKey<EntityType<?>> entityType, LevelBasedValue piercingLevel) {
@@ -46,22 +51,17 @@ public record ProjectileEffect(
 
     public record GenericBallData(
             ParticleOptions trailParticle,
+            // Needed since there is a difference between being hit and destroyed (e.g if we linger)
+            List<ProjectileTargeting> onDestroyEffects,
             LevelBasedValue maxLingeringTicks,
-            LevelBasedValue chainedDamageRadius,
-            LevelBasedValue chainedDamageAmount,
             LevelBasedValue maxMoveDistance,
-            LevelBasedValue maxLifespan,
-            boolean canSelfDamage,
-            boolean canCauseFire) {
+            LevelBasedValue maxLifespan) {
         public static final Codec<GenericBallData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 ParticleTypes.CODEC.fieldOf("trail_particle").forGetter(GenericBallData::trailParticle),
+                ProjectileTargeting.CODEC.listOf().optionalFieldOf("on_destroy_effects", List.of()).forGetter(GenericBallData::onDestroyEffects),
                 LevelBasedValue.CODEC.optionalFieldOf("max_lingering_ticks", LevelBasedValue.constant(0)).forGetter(GenericBallData::maxLingeringTicks),
-                LevelBasedValue.CODEC.optionalFieldOf("chained_damage_radius", LevelBasedValue.constant(0)).forGetter(GenericBallData::chainedDamageRadius),
-                LevelBasedValue.CODEC.optionalFieldOf("chained_damage_amount", LevelBasedValue.constant(0)).forGetter(GenericBallData::chainedDamageAmount),
                 LevelBasedValue.CODEC.fieldOf("max_move_distance").forGetter(GenericBallData::maxMoveDistance),
-                LevelBasedValue.CODEC.fieldOf("max_lifespan").forGetter(GenericBallData::maxLifespan),
-                Codec.BOOL.fieldOf("can_self_damage").forGetter(GenericBallData::canSelfDamage),
-                Codec.BOOL.fieldOf("can_cause_fire").forGetter(GenericBallData::canCauseFire)
+                LevelBasedValue.CODEC.fieldOf("max_lifespan").forGetter(GenericBallData::maxLifespan)
         ).apply(instance, GenericBallData::new));
     }
 
@@ -69,11 +69,12 @@ public record ProjectileEffect(
             ComponentSerialization.CODEC.fieldOf("name").forGetter(ProjectileEffect::name),
             Codec.either(GenericArrowData.CODEC, GenericBallData.CODEC).fieldOf("projectile_data").forGetter(ProjectileEffect::projectileData),
             EntityPredicate.CODEC.optionalFieldOf("can_hit_predicate").forGetter(ProjectileEffect::canHitPredicate),
-            ResourceKey.codec(Registries.DAMAGE_TYPE).fieldOf("damage_type").forGetter(ProjectileEffect::damageTypeResourceKey),
-            LevelBasedValue.CODEC.fieldOf("damage").forGetter(ProjectileEffect::damage),
+            ProjectileTargeting.CODEC.listOf().fieldOf("ticking_effects").forGetter(ProjectileEffect::tickingEffects),
+            ProjectileTargeting.CODEC.listOf().fieldOf("common_hit_effects").forGetter(ProjectileEffect::commonHitEffects),
+            ProjectileEntityEffect.CODEC.listOf().fieldOf("entity_hit_effects").forGetter(ProjectileEffect::entityHitEffects),
+            ProjectileBlockEffect.CODEC.listOf().fieldOf("block_hit_effects").forGetter(ProjectileEffect::blockHitEffects),
             LevelBasedValue.CODEC.fieldOf("number_of_projectiles").forGetter(ProjectileEffect::numberOfProjectiles),
             LevelBasedValue.CODEC.optionalFieldOf("projectile_spread", LevelBasedValue.constant(0)).forGetter(ProjectileEffect::projectileSpread),
-            LevelBasedValue.CODEC.optionalFieldOf("explosion_power", LevelBasedValue.constant(0)).forGetter(ProjectileEffect::explosionPower),
             LevelBasedValue.CODEC.fieldOf("speed").forGetter(ProjectileEffect::speed)
     ).apply(instance, ProjectileEffect::new));
 
@@ -91,11 +92,14 @@ public record ProjectileEffect(
                         name,
                         entityType,
                         canHitPredicate,
-                        damageTypeResourceKey,
+                        tickingEffects,
+                        commonHitEffects,
+                        entityHitEffects,
+                        blockHitEffects,
+                        ability,
                         level,
-                        damage.calculate(ability.getLevel()),
-                        (int)arrowData.piercingLevel().calculate(ability.getLevel()),
-                        explosionPower.calculate(ability.getLevel())
+                        new ProjectileInstance(ability.getLevel()),
+                        (int)arrowData.piercingLevel().calculate(ability.getLevel())
                 );
                 arrow.setPos(launchPos);
                 arrow.setOwner(player);
@@ -119,23 +123,23 @@ public record ProjectileEffect(
 
                 GenericBallEntity projectile = new GenericBallEntity(
                         name,
-                        damageTypeResourceKey,
-                        canHitPredicate,
                         ballData.trailParticle,
                         level,
-                        damage.calculate(ability.getLevel()),
-                        explosionPower.calculate(ability.getLevel()),
+                        canHitPredicate,
+                        tickingEffects,
+                        commonHitEffects,
+                        entityHitEffects,
+                        blockHitEffects,
+                        ballData.onDestroyEffects,
+                        new ProjectileInstance(ability.getLevel()),
                         (int)ballData.maxLingeringTicks.calculate(ability.getLevel()),
-                        ballData.chainedDamageRadius.calculate(ability.getLevel()),
-                        ballData.chainedDamageAmount.calculate(ability.getLevel()),
                         (int)ballData.maxMoveDistance.calculate(ability.getLevel()),
-                        (int)ballData.maxLifespan.calculate(ability.getLevel()),
-                        ballData.canSelfDamage,
-                        ballData.canCauseFire);
+                        (int)ballData.maxLifespan.calculate(ability.getLevel())
+                );
 
                 projectile.setPos(projPos);
                 projectile.accelerationPower = 0;
-                projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), 1.0F, speed.calculate(ability.getLevel()), 0);
+                projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), 1.0F, speed.calculate(ability.getLevel()), i * projectileSpread.calculate(ability.getLevel()));
                 player.level().addFreshEntity(entity);
             }
         }

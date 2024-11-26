@@ -21,6 +21,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncDeltaMovement;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncFlyingStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.*;
+import by.dragonsurvivalteam.dragonsurvival.network.particle.SyncParticleTrail;
 import by.dragonsurvivalteam.dragonsurvival.network.player.*;
 import by.dragonsurvivalteam.dragonsurvival.network.status.*;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
@@ -34,6 +35,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec2;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
@@ -425,5 +427,19 @@ public class ClientProxy {
                 });
             }
         }
+    }
+
+    public static void handleSyncParticleTrail(SyncParticleTrail message) {
+            // Creates a trail of particles between the entity and target(s)
+            Vec3 source = new Vec3(message.source().x(), message.source().y(), message.source().z());
+            Vec3 target = new Vec3(message.target().x(), message.target().y(), message.target().z());
+            int steps = 10;
+            float stepSize = 1.f / steps;
+            Vec3 distV = new Vec3(source.x - target.x, source.y - target.y, source.z - target.z);
+            for (int i = 0; i < steps; i++) {
+                // the current entity coordinate + ((the distance between it and the target) * (the fraction of the total))
+                Vec3 step = target.add(distV.scale(stepSize * i));
+                Minecraft.getInstance().level.addParticle(message.trailParticle(), step.x(), step.y(), step.z(), 0.0, 0.0, 0.0);
+            }
     }
 }

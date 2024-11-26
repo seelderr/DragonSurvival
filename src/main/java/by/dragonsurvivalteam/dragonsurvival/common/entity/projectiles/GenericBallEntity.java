@@ -1,37 +1,23 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles;
 
-import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.StormBreathAbility;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.projectile.ProjectileInstance;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.projectile.block_effects.ProjectileBlockEffect;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.projectile.entity_effects.ProjectileEntityEffect;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.projectile.targeting.ProjectileTargeting;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
-import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
-import by.dragonsurvivalteam.dragonsurvival.util.TargetingFunctions;
 import net.minecraft.advancements.critereon.EntityPredicate;
-import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.DamageType;
-import net.minecraft.world.damagesource.DamageTypes;
-import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LightningBolt;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -52,16 +38,15 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
 
     private final Component name;
     private final Optional<EntityPredicate> canHitPredicate;
-    private final ResourceKey<DamageType> damageType;
-    private final float damage;
-    private final float explosionPower;
+    private final ProjectileInstance projectileInstance;
+    private final List<ProjectileTargeting> tickingEffects;
+    private final List<ProjectileTargeting> commonHitEffects;
+    private final List<ProjectileEntityEffect> entityHitEffects;
+    private final List<ProjectileBlockEffect> blockHitEffects;
+    private final List<ProjectileTargeting> onDestroyEffects;
     private final int maxLingeringTicks;
-    private final float chainedDamageRadius;
-    private final float chainedDamageAmount;
     private final int maxMoveDistance;
     private final int maxLifespan;
-    private final boolean canSelfDamage;
-    private final boolean canCauseFire;
     private final ParticleOptions trailParticle;
 
     public boolean hasHit = false;
@@ -70,52 +55,49 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
 
     public GenericBallEntity(
             Component name,
-            ResourceKey<DamageType> damageType,
-            Optional<EntityPredicate> canHitPredicate,
             ParticleOptions trailParticle,
             Level level,
-            float damage,
-            float explosionPower,
+            Optional<EntityPredicate> canHitPredicate,
+            List<ProjectileTargeting> tickingEffects,
+            List<ProjectileTargeting> commonHitEffects,
+            List<ProjectileEntityEffect> entityHitEffects,
+            List<ProjectileBlockEffect> blockHitEffects,
+            List<ProjectileTargeting> onDestroyEffects,
+            ProjectileInstance projectileInstance,
             int maxLingeringTicks,
-            float chainedDamageRadius,
-            float chainedDamageAmount,
             int maxMoveDistance,
-            int maxLifespan,
-            boolean canSelfDamage,
-            boolean canCauseFire) {
+            int maxLifespan) {
         super(DSEntities.GENERIC_BALL_ENTITY.get(), level);
         this.name = name;
         this.canHitPredicate = canHitPredicate;
         this.trailParticle = trailParticle;
-        this.damageType = damageType;
-        this.damage = damage;
-        this.explosionPower = explosionPower;
+        this.tickingEffects = tickingEffects;
+        this.commonHitEffects = commonHitEffects;
+        this.entityHitEffects = entityHitEffects;
+        this.blockHitEffects = blockHitEffects;
+        this.onDestroyEffects = onDestroyEffects;
+        this.projectileInstance = projectileInstance;
         this.maxLingeringTicks = maxLingeringTicks;
         this.lingerTicks = maxLingeringTicks;
-        this.chainedDamageRadius = chainedDamageRadius;
-        this.chainedDamageAmount = chainedDamageAmount;
         this.maxMoveDistance = maxMoveDistance;
         this.maxLifespan = maxLifespan;
-        this.canSelfDamage = canSelfDamage;
-        this.canCauseFire = canCauseFire;
     }
 
     public GenericBallEntity(EntityType<GenericBallEntity> genericBallEntityEntityType, Level level) {
         super(DSEntities.GENERIC_BALL_ENTITY.get(), level);
-        this.name = null;
+        this.name = Component.literal("Generic Ball");
         this.canHitPredicate = Optional.empty();
         this.trailParticle = ParticleTypes.FLAME;
-        this.damageType = DamageTypes.ARROW;
-        this.damage = 0;
-        this.explosionPower = 0;
+        this.tickingEffects = List.of();
+        this.commonHitEffects = List.of();
+        this.entityHitEffects = List.of();
+        this.blockHitEffects = List.of();
+        this.onDestroyEffects = List.of();
+        this.projectileInstance = null;
         this.maxLingeringTicks = 0;
         this.lingerTicks = 0;
-        this.chainedDamageRadius = 0;
-        this.chainedDamageAmount = 0;
         this.maxMoveDistance = 0;
         this.maxLifespan = 0;
-        this.canSelfDamage = false;
-        this.canCauseFire = false;
     }
 
     protected @NotNull Component getTypeName() {
@@ -134,6 +116,15 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
             canHit = canHit && canHitPredicate.get().matches(serverLevel, position(), target);
         }
         return canHit;
+    }
+
+    protected void onDestroy() {
+        if (level() instanceof ServerLevel serverLevel && getOwner() instanceof ServerPlayer player) {
+            for (ProjectileTargeting effect : onDestroyEffects) {
+                effect.apply(serverLevel, player, projectileInstance, position());
+            }
+        }
+        this.discard();
     }
 
     @Override
@@ -156,95 +147,23 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
             this.onHitBlock(new BlockHitResult(this.position(), this.getDirection(), this.blockPosition(), false));
         }
 
-        if (level().getGameTime() % 5 == 0 && chainedDamageRadius != 0) // Once per 5 ticks (0.25 seconds)
-            attackMobs();
-
         if (isLingering) {
             lingerTicks--;
             if (lingerTicks <= 0) {
-                if (!this.level().isClientSide) {
-                    causeExplosion();
-                }
-                this.discard();
+                this.onDestroy();
             }
         }
     }
 
-    public void attackMobs() {
-        Entity owner = getOwner();
-        DamageSource source;
-
-        if (owner instanceof Player) {
-            source = owner.damageSources().playerAttack((Player) owner);
-        } else {
-            source = damageSources().lightningBolt();
-        }
-
-        List<Entity> targets = level().getEntities(null, new AABB(position().x - chainedDamageRadius, position().y - chainedDamageRadius, position().z - chainedDamageRadius, position().x + chainedDamageRadius, position().y + chainedDamageRadius, position().z + chainedDamageRadius));
-        targets.removeIf(e -> e instanceof BallLightningEntity);
-        targets.removeIf(e -> !(e instanceof LivingEntity));
-
-        for (Entity target : targets) {
-            if (!level().isClientSide()) {
-                EntityPredicate predicate = canHitPredicate.orElse(null);
-                if(predicate == null) {
-                    TargetingFunctions.attackTargets(owner, ent1 -> ent1.hurt(source, chainedDamageAmount), target);
-                } else {
-                    TargetingFunctions.attackTargets((ServerLevel)level(), predicate, owner, ent1 -> ent1.hurt(source, chainedDamageAmount), target);
-                }
-
-                if (target instanceof LivingEntity livingEntity) {
-                    if (livingEntity.getRandom().nextInt(100) < 40) {
-                        // TODO: This needs to become data driven
-                        if (!livingEntity.level().isClientSide() && !StormBreathAbility.chargedBlacklist.contains(ResourceHelper.getKey(livingEntity).toString())) {
-                            livingEntity.addEffect(new MobEffectInstance(DSEffects.CHARGED, Functions.secondsToTicks(10), 0, false, true));
-                        }
-                    }
-
-                    level().playLocalSound(blockPosition(), SoundEvents.LIGHTNING_BOLT_IMPACT, SoundSource.WEATHER, 2.0F, 0.5f, true);
-                }
-
-                EnchantmentHelper.doPostAttackEffects(((ServerLevel) level()), target, source);
-            }
-
-            if (level().isClientSide()) {
-                // Creates a trail of particles between the entity and target(s)
-                int steps = 10;
-                float stepSize = 1.f / steps;
-                Vec3 distV = new Vec3(getX() - target.getX(), getY() - target.getY(), getZ() - target.getZ());
-                for (int i = 0; i < steps; i++) {
-                    // the current entity coordinate + ((the distance between it and the target) * (the fraction of the total))
-                    Vec3 step = target.position().add(distV.scale(stepSize * i));
-                    level().addParticle(trailParticle, step.x(), step.y(), step.z(), 0.0, 0.0, 0.0);
-                }
-            }
-        }
-
-        // TODO: This should be data driven
-        if (!level().isClientSide) {
-            if (level().isThundering()) {
-                if (level().random.nextInt(100) < 30) {
-                    if (level().canSeeSky(blockPosition())) {
-                        LightningBolt lightningboltentity = EntityType.LIGHTNING_BOLT.create(level());
-                        lightningboltentity.moveTo(new Vec3(position().x, position().y, position().z));
-
-                        level().addFreshEntity(lightningboltentity);
-                    }
-                }
-            }
-        }
-    }
-
-    private Holder<DamageType> getDamageTypeHolder() {
-        return ResourceHelper.get(level().registryAccess(), damageType, Registries.DAMAGE_TYPE).get();
-    }
 
     @Override
     protected void onHitEntity(@NotNull EntityHitResult hitResult) {
-        Entity attacker = getOwner();
-        hitResult.getEntity().hurt(new DamageSource(getDamageTypeHolder(), this, attacker), damage);
-        if(canCauseFire)
-            hitResult.getEntity().setRemainingFireTicks(40);
+        super.onHitEntity(hitResult);
+        if (level() instanceof ServerLevel serverLevel && getOwner() instanceof ServerPlayer player) {
+            for (ProjectileEntityEffect effect : entityHitEffects) {
+                effect.apply(serverLevel, player, projectileInstance, hitResult.getEntity());
+            }
+        }
 
         onHitCommon();
     }
@@ -252,28 +171,19 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
     @Override
     protected void onHitBlock(@NotNull BlockHitResult hitResult) {
         super.onHitBlock(hitResult);
+        if (level() instanceof ServerLevel serverLevel && getOwner() instanceof ServerPlayer player) {
+            for (ProjectileBlockEffect effect : blockHitEffects) {
+                effect.apply(serverLevel, player, projectileInstance, hitResult.getBlockPos());
+            }
+        }
+
         onHitCommon();
     }
 
-    private void causeExplosion() {
-        DamageSource damagesource;
-        if (getOwner() == null) {
-            damagesource = new DamageSource(getDamageTypeHolder(), this, this);
-        } else {
-            damagesource = new DamageSource(getDamageTypeHolder(), this, getOwner());
-        }
-        Entity attacker = canSelfDamage ? this : getOwner();
-        level().explode(attacker, damagesource, null, getX(), getY(), getZ(), explosionPower, canCauseFire, Level.ExplosionInteraction.BLOCK);
-    }
-
     public void onHitCommon() {
-        if (!this.level().isClientSide) {
-            if ((getOwner() == null || !getOwner().isRemoved())
-                    && this.level().hasChunkAt(this.blockPosition())
-                    && !hasHit
-                    && explosionPower > 0
-                    && maxLingeringTicks <= 0) {
-                causeExplosion();
+        if (level() instanceof ServerLevel serverLevel && getOwner() instanceof ServerPlayer player) {
+            for (ProjectileTargeting effect : commonHitEffects) {
+                effect.apply(serverLevel, player, projectileInstance, position());
             }
         }
 
