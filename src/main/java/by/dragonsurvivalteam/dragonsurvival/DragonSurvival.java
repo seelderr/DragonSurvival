@@ -1,11 +1,10 @@
 package by.dragonsurvivalteam.dragonsurvival;
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.registry.*;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachments;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.loot.AddTableLootExtendedLootModifier;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.loot.DragonHeartLootModifier;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.loot.DragonOreLootModifier;
@@ -23,7 +22,6 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.loading.FMLLoader;
-import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import net.neoforged.neoforge.event.AddPackFindersEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -46,12 +44,6 @@ public class DragonSurvival {
     private static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<DragonHeartLootModifier>> DRAGON_HEART = DragonSurvival.GLM.register("dragon_heart", DragonHeartLootModifier.CODEC);
     private static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<AddTableLootExtendedLootModifier>> ADD_TABLE_LOOT_EXTENDED = DragonSurvival.GLM.register("add_table_loot_extended", () -> AddTableLootExtendedLootModifier.CODEC);
 
-    public static final DeferredRegister<AttachmentType<?>> DS_ATTACHMENT_TYPES = DeferredRegister.create(NeoForgeRegistries.Keys.ATTACHMENT_TYPES, MODID);
-
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<EntityStateHandler>> ENTITY_HANDLER = DS_ATTACHMENT_TYPES.register("entity_handler", () -> AttachmentType.serializable(EntityStateHandler::new).build());
-    // TODO :: does this need a custom copy handle for entering the end portal?
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<DragonStateHandler>> DRAGON_HANDLER = DS_ATTACHMENT_TYPES.register("dragon_handler", () -> AttachmentType.serializable(DragonStateHandler::new).copyOnDeath().build());
-
     public DragonSurvival(IEventBus bus, ModContainer container) {
         PROXY = FMLLoader.getDist().isClient() ? new ClientProxy() : new ServerProxy();
 
@@ -62,7 +54,7 @@ public class DragonSurvival {
 
         bus.addListener(this::addPackFinders);
 
-        DS_ATTACHMENT_TYPES.register(bus);
+        DSDataAttachments.DS_ATTACHMENT_TYPES.register(bus);
         DSAttributes.DS_ATTRIBUTES.register(bus);
         DSEquipment.DS_ARMOR_MATERIALS.register(bus);
         // We need to register blocks before items, since otherwise the items will register before the item-blocks can be assigned

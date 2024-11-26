@@ -43,9 +43,9 @@ public record DragonPenalty(
         event.dataPackRegistry(REGISTRY, DIRECT_CODEC, DIRECT_CODEC);
     }
 
-    public void apply(final ServerPlayer player, final PenaltyInstance instance) {
-        if(trigger.matches(instance, condition.matches(player, null))) {
-            effect.apply(player);
+    public void apply(final ServerPlayer dragon, final PenaltyInstance instance) {
+        if (trigger.matches(dragon, instance, condition.matches(dragon.serverLevel(), dragon.position(), dragon))) {
+            effect.apply(dragon);
         }
     }
 }

@@ -5,6 +5,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 
 import java.util.function.Function;
@@ -15,6 +16,6 @@ public interface PenaltyTrigger {
 
     Codec<PenaltyTrigger> CODEC = REGISTRY.byNameCodec().dispatch(PenaltyTrigger::codec, Function.identity());
 
-    boolean matches(final PenaltyInstance instance, boolean conditionMatched);
+    boolean matches(final Player dragon, final PenaltyInstance instance, boolean conditionMatched);
     MapCodec<? extends PenaltyTrigger> codec();
 }

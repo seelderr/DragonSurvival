@@ -1,33 +1,34 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.dragon.penalty;
 
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachments;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.PenaltySupply;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 
-public record SupplyTrigger(int triggerRate, float maxSupply, float reductionRate, float regenerationRate, ResourceLocation supplyBarSprites) implements PenaltyTrigger {
-
+public record SupplyTrigger(String id, int triggerRate, float maximumSupply, float reductionRate, float regenerationRate, ResourceLocation supplyBar) implements PenaltyTrigger {
     public static final MapCodec<SupplyTrigger> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+            Codec.STRING.fieldOf("id").forGetter(SupplyTrigger::id),
             Codec.INT.fieldOf("trigger_rate").forGetter(SupplyTrigger::triggerRate),
-            Codec.FLOAT.fieldOf("max").forGetter(SupplyTrigger::maxSupply),
+            Codec.FLOAT.fieldOf("maximum_supply").forGetter(SupplyTrigger::maximumSupply),
             Codec.FLOAT.fieldOf("reduction_rate").forGetter(SupplyTrigger::reductionRate),
             Codec.FLOAT.fieldOf("regeneration_rate").forGetter(SupplyTrigger::regenerationRate),
-            ResourceLocation.CODEC.fieldOf("supply_bar").forGetter(SupplyTrigger::supplyBarSprites)
+            ResourceLocation.CODEC.fieldOf("supply_bar").forGetter(SupplyTrigger::supplyBar)
     ).apply(instance, SupplyTrigger::new));
 
-    public boolean matches(final PenaltyInstance instance, boolean conditionMatched)  {
-        if(conditionMatched) {
-            instance.penaltySupply = Math.max(0, instance.penaltySupply - reductionRate);
+    public boolean matches(final Player dragon, final PenaltyInstance instance, boolean conditionMatched) {
+        PenaltySupply penaltySupply = dragon.getData(DSDataAttachments.PENALTY_SUPPLY);
+        penaltySupply.initialize(id(), maximumSupply(), reductionRate(), regenerationRate()); // TODO :: do this somewhere else?
+
+        if (conditionMatched) {
+            penaltySupply.reduce(id());
         } else {
-            instance.penaltySupply = Math.min(maxSupply, instance.penaltySupply + regenerationRate);
+            penaltySupply.regenerate(id());
         }
 
-        if(instance.penaltySupply == 0) {
-            instance.penaltySupply = triggerRate;
-            return true;
-        } else {
-            return false;
-        }
+        return !penaltySupply.hasSupply(id());
     }
 
     @Override

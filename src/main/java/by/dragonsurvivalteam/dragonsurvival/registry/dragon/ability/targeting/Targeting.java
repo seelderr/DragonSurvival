@@ -27,14 +27,14 @@ public interface Targeting {
     record BlockTargeting(Optional<BlockPredicate> targetConditions, BlockEffect effect) {
         public static final Codec<BlockTargeting> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 BlockPredicate.CODEC.optionalFieldOf("target_conditions").forGetter(BlockTargeting::targetConditions),
-                BlockEffect.CODEC.fieldOf("effect").forGetter(BlockTargeting::effect)
+                BlockEffect.CODEC.fieldOf("block_effect").forGetter(BlockTargeting::effect)
         ).apply(instance, BlockTargeting::new));
     }
 
     record EntityTargeting(Optional<EntityPredicate> targetConditions, EntityEffect effect) {
         public static final Codec<EntityTargeting> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 EntityPredicate.CODEC.optionalFieldOf("target_conditions").forGetter(EntityTargeting::targetConditions),
-                EntityEffect.CODEC.fieldOf("effect").forGetter(EntityTargeting::effect)
+                EntityEffect.CODEC.fieldOf("entity_effect").forGetter(EntityTargeting::effect)
         ).apply(instance, EntityTargeting::new));
     }
 
