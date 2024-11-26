@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.objects.DragonMovementData;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
@@ -8,6 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.HunterHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.CaveDragonConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.DragonBonusConfig;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachments;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSEntityTypeTags;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
@@ -98,7 +98,7 @@ public abstract class EntityMixin {
         Entity entity = (Entity) (Object) this;
 
         // Disable fire texture
-        if (entity instanceof ItemEntity item && item.getData(DragonSurvival.ENTITY_HANDLER).isFireImmune) {
+        if (entity instanceof ItemEntity item && item.getData(DSDataAttachments.ENTITY_HANDLER).isFireImmune) {
             callback.setReturnValue(false);
         }
 

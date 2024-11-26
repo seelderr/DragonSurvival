@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachments;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
@@ -21,16 +21,16 @@ public abstract class ItemEntityMixin extends Entity implements IEntityWithCompl
 
     @Override
     public void writeSpawnData(@NotNull final RegistryFriendlyByteBuf buffer) {
-        buffer.writeBoolean(getData(DragonSurvival.ENTITY_HANDLER).isFireImmune);
+        buffer.writeBoolean(getData(DSDataAttachments.ENTITY_HANDLER).isFireImmune);
     }
 
     @Override
     public void readSpawnData(@NotNull final RegistryFriendlyByteBuf buffer) {
-        getData(DragonSurvival.ENTITY_HANDLER).isFireImmune = buffer.readBoolean();
+        getData(DSDataAttachments.ENTITY_HANDLER).isFireImmune = buffer.readBoolean();
     }
 
     @ModifyReturnValue(method = "fireImmune", at = @At("RETURN"))
     private boolean dragonSurvival$makeFireImmune(boolean isFireImmune) {
-        return isFireImmune || getData(DragonSurvival.ENTITY_HANDLER).isFireImmune;
+        return isFireImmune || getData(DSDataAttachments.ENTITY_HANDLER).isFireImmune;
     }
 }

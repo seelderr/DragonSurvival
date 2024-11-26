@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.common.capability;
 
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayer;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachments;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.capabilities.ICapabilityProvider;
@@ -8,9 +9,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
-
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.DRAGON_HANDLER;
-import static by.dragonsurvivalteam.dragonsurvival.common.capability.Capabilities.DRAGON_CAPABILITY;
 
 public class DragonStateProvider implements ICapabilityProvider<Player, Void, DragonStateHandler> {
     @Override
@@ -25,7 +23,7 @@ public class DragonStateProvider implements ICapabilityProvider<Player, Void, Dr
             return fakeData;
         }
 
-        return player.getData(DRAGON_HANDLER);
+        return player.getData(DSDataAttachments.DRAGON_HANDLER);
     }
 
     public static Optional<DragonStateHandler> getOptional(@Nullable final Entity entity) {
@@ -33,7 +31,7 @@ public class DragonStateProvider implements ICapabilityProvider<Player, Void, Dr
             return Optional.empty();
         }
 
-        return Optional.ofNullable(entity.getCapability(DRAGON_CAPABILITY));
+        return Optional.ofNullable(entity.getCapability(Capabilities.DRAGON_CAPABILITY));
     }
 
     public static boolean isDragon(@Nullable Entity entity) {

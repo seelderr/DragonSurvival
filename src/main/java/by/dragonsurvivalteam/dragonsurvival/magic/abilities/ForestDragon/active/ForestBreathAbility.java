@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.active;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.PoisonBreathSound;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
@@ -13,6 +12,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.active.BreathAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAdvancementTriggers;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSSounds;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachments;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSBlockTags;
@@ -319,7 +319,7 @@ public class ForestBreathAbility extends BreathAbility {
 
         if (!entityHit.level().isClientSide()) {
             if (entityHit.getRandom().nextInt(100) < 30) {
-                entityHit.getData(DragonSurvival.ENTITY_HANDLER).lastAfflicted = player != null ? player.getId() : -1;
+                entityHit.getData(DSDataAttachments.ENTITY_HANDLER).lastAfflicted = player != null ? player.getId() : -1;
                 entityHit.addEffect(new MobEffectInstance(DSEffects.DRAIN, Functions.secondsToTicks(10), 0, false, true));
             }
         }

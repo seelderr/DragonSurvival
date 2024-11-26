@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.StormBreathSound;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateHandler;
@@ -14,6 +13,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.active.BreathAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSSounds;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachments;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
@@ -207,8 +207,8 @@ public class StormBreathAbility extends BreathAbility {
 
             if (!chargedSpreadBlacklist.contains(ResourceHelper.getKey(source).toString())) {
                 if (target != source) {
-                    EntityStateHandler sourceData = source.getData(DragonSurvival.ENTITY_HANDLER);
-                    EntityStateHandler targetData = target.getData(DragonSurvival.ENTITY_HANDLER);
+                    EntityStateHandler sourceData = source.getData(DSDataAttachments.ENTITY_HANDLER);
+                    EntityStateHandler targetData = target.getData(DSDataAttachments.ENTITY_HANDLER);
 
                     targetData.chainCount = sourceData.chainCount + 1;
 
@@ -260,7 +260,7 @@ public class StormBreathAbility extends BreathAbility {
         TargetingFunctions.attackTargets(getPlayer(), e -> e.hurt(new DamageSource(DSDamageTypes.get(player.level(), DSDamageTypes.SEA_DRAGON_BREATH), player), getDamage()), entity);
         onDamage(entity);
 
-        if (player.getRandom().nextInt(100) < 50) {
+        if (Functions.chance(player.getRandom(), 50)) {
             if (!player.level().isClientSide()) {
                 player.addEffect(new MobEffectInstance(DSEffects.CHARGED, Functions.secondsToTicks(30)));
             }
@@ -268,8 +268,8 @@ public class StormBreathAbility extends BreathAbility {
 
         if (!entity.level().isClientSide()) {
             if (!chargedBlacklist.contains(ResourceHelper.getKey(entity).toString())) {
-                if (entity.getRandom().nextInt(100) < 40) {
-                    EntityStateHandler data = entity.getData(DragonSurvival.ENTITY_HANDLER);
+                if (Functions.chance(entity.getRandom(), 40)) {
+                    EntityStateHandler data = entity.getData(DSDataAttachments.ENTITY_HANDLER);
                     data.lastAfflicted = player.getId();
                     data.chainCount = 1;
 

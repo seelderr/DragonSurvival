@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers.magic;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateHandler;
@@ -18,6 +17,7 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEnchantments;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachments;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSDamageTypeTags;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSEffectTags;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
@@ -89,7 +89,7 @@ public class MagicHandler {
     @SubscribeEvent
     public static void livingTick(EntityTickEvent.Post event){
         if(event.getEntity() instanceof LivingEntity entity) {
-            EntityStateHandler data = entity.getData(DragonSurvival.ENTITY_HANDLER);
+            EntityStateHandler data = entity.getData(DSDataAttachments.ENTITY_HANDLER);
 
             if (entity.hasEffect(DSEffects.BURN)) {
                 if (entity.isEyeInFluidType(NeoForgeMod.WATER_TYPE.value()) || entity.isInWaterRainOrBubble()) {
@@ -248,7 +248,7 @@ public class MagicHandler {
                     int chance = DragonAbilities.getAbility(player, BurnAbility.class).map(BurnAbility::getChance).orElse(0);
 
                     if (Functions.chance(player, chance)) {
-                        event.getEntity().getData(DragonSurvival.ENTITY_HANDLER).lastAfflicted = player.getId();
+                        event.getEntity().getData(DSDataAttachments.ENTITY_HANDLER).lastAfflicted = player.getId();
 
                         if (!player.level().isClientSide()) {
                             event.getEntity().addEffect(new MobEffectInstance(DSEffects.BURN, Functions.secondsToTicks(30)));

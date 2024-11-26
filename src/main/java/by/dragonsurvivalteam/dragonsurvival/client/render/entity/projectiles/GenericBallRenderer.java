@@ -20,6 +20,6 @@ public class GenericBallRenderer extends GeoEntityRenderer<GenericBallEntity> {
 
     @Override
     public @NotNull ResourceLocation getTextureLocation(@NotNull final GenericBallEntity entity) {
-        return entity.textureResourceLocation;
+        return entity.textureResourceLocation; // FIXME
     }
 }
