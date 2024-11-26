@@ -11,6 +11,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -50,10 +51,8 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
     public static final EntityDataAccessor<Float> MOVE_DISTANCE = SynchedEntityData.defineId(GenericBallEntity.class, EntityDataSerializers.FLOAT);
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
+    private final Component name;
     private final Optional<EntityPredicate> canHitPredicate;
-    public final ResourceLocation modelResourceLocation;
-    public final ResourceLocation textureResourceLocation;
-    public final ResourceLocation animationResourceLocation;
     private final ResourceKey<DamageType> damageType;
     private final float damage;
     private final float explosionPower;
@@ -71,11 +70,9 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
     protected int lingerTicks;
 
     public GenericBallEntity(
+            Component name,
             ResourceKey<DamageType> damageType,
             Optional<EntityPredicate> canHitPredicate,
-            ResourceLocation modelResourceLocation,
-            ResourceLocation textureResourceLocation,
-            ResourceLocation animationResourceLocation,
             ParticleOptions trailParticle,
             Level level,
             float damage,
@@ -88,10 +85,8 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
             boolean canSelfDamage,
             boolean canCauseFire) {
         super(DSEntities.GENERIC_BALL_ENTITY.get(), level);
+        this.name = name;
         this.canHitPredicate = canHitPredicate;
-        this.modelResourceLocation = modelResourceLocation;
-        this.textureResourceLocation = textureResourceLocation;
-        this.animationResourceLocation = animationResourceLocation;
         this.trailParticle = trailParticle;
         this.damageType = damageType;
         this.damage = damage;
@@ -108,10 +103,8 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
 
     public GenericBallEntity(EntityType<GenericBallEntity> genericBallEntityEntityType, Level level) {
         super(DSEntities.GENERIC_BALL_ENTITY.get(), level);
+        this.name = null;
         this.canHitPredicate = Optional.empty();
-        this.modelResourceLocation = null;
-        this.textureResourceLocation = null;
-        this.animationResourceLocation = null;
         this.trailParticle = ParticleTypes.FLAME;
         this.damageType = DamageTypes.ARROW;
         this.damage = 0;
@@ -124,6 +117,10 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
         this.maxLifespan = 0;
         this.canSelfDamage = false;
         this.canCauseFire = false;
+    }
+
+    protected @NotNull Component getTypeName() {
+        return name;
     }
 
     @Override

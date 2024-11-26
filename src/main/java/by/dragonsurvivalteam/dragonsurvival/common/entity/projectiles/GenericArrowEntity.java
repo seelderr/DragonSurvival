@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles;
 import by.dragonsurvivalteam.dragonsurvival.util.TargetingFunctions;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
@@ -25,24 +26,33 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 
 public class GenericArrowEntity extends AbstractArrow {
+    private final Component name;
     private final double damage;
     private final float explosionPower;
     private final ResourceKey<DamageType> damageType;
     private final Optional<EntityPredicate> canHitPredicate;
 
-    public GenericArrowEntity(EntityType<? extends AbstractArrow> entityType,
-                              Optional<EntityPredicate> canHitPredicate,
-                              ResourceKey<DamageType> damageType,
-                              Level level,
-                              double damage,
-                              int piercingLevel,
-                              float explosionPower) {
+    public GenericArrowEntity(
+            Component name,
+            EntityType<? extends AbstractArrow> entityType,
+            Optional<EntityPredicate> canHitPredicate,
+            ResourceKey<DamageType> damageType,
+            Level level,
+            double damage,
+            int piercingLevel,
+            float explosionPower) {
         super(entityType, level);
+        this.name = name;
         this.damage = damage;
         this.explosionPower = explosionPower;
         this.damageType = damageType;
         this.canHitPredicate = canHitPredicate;
         this.setPierceLevel((byte)piercingLevel);
+    }
+
+    @Override
+    protected @NotNull Component getTypeName() {
+        return name;
     }
 
     @Override

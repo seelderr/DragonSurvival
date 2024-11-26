@@ -11,6 +11,8 @@ import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -20,6 +22,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 import net.minecraft.world.phys.Vec3;
 
@@ -28,11 +31,10 @@ import java.util.Optional;
 // TODO: Should we add in a way to apply effects to entities that are hit by the projectile?
 // TODO: We need some way to properly name the projectile entity itself through this codec (it currently has the generic name)
 public record ProjectileEffect(
+        Component name,
         Either<GenericArrowData, GenericBallData> projectileData,
         Optional<EntityPredicate> canHitPredicate,
         ResourceKey<DamageType> damageTypeResourceKey,
-        // TODO: Should we using a sound here?
-        ResourceKey<SoundEvent> soundEvent,
         LevelBasedValue damage,
         LevelBasedValue numberOfProjectiles,
         LevelBasedValue projectileSpread,
@@ -47,9 +49,6 @@ public record ProjectileEffect(
     }
 
     public record GenericBallData(
-            ResourceLocation modelResourceLocation,
-            ResourceLocation textureResourceLocation,
-            ResourceLocation animationResourceLocation,
             ParticleOptions trailParticle,
             LevelBasedValue maxLingeringTicks,
             LevelBasedValue chainedDamageRadius,
@@ -59,9 +58,6 @@ public record ProjectileEffect(
             boolean canSelfDamage,
             boolean canCauseFire) {
         public static final Codec<GenericBallData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                ResourceLocation.CODEC.fieldOf("model").forGetter(GenericBallData::modelResourceLocation),
-                ResourceLocation.CODEC.fieldOf("texture").forGetter(GenericBallData::textureResourceLocation),
-                ResourceLocation.CODEC.fieldOf("animation").forGetter(GenericBallData::animationResourceLocation),
                 ParticleTypes.CODEC.fieldOf("trail_particle").forGetter(GenericBallData::trailParticle),
                 LevelBasedValue.CODEC.optionalFieldOf("max_lingering_ticks", LevelBasedValue.constant(0)).forGetter(GenericBallData::maxLingeringTicks),
                 LevelBasedValue.CODEC.optionalFieldOf("chained_damage_radius", LevelBasedValue.constant(0)).forGetter(GenericBallData::chainedDamageRadius),
@@ -74,10 +70,10 @@ public record ProjectileEffect(
     }
 
     public static final MapCodec<ProjectileEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+            ComponentSerialization.CODEC.fieldOf("name").forGetter(ProjectileEffect::name),
             Codec.either(GenericArrowData.CODEC, GenericBallData.CODEC).fieldOf("projectile_data").forGetter(ProjectileEffect::projectileData),
             EntityPredicate.CODEC.optionalFieldOf("can_hit_predicate").forGetter(ProjectileEffect::canHitPredicate),
             ResourceKey.codec(Registries.DAMAGE_TYPE).fieldOf("damage_type").forGetter(ProjectileEffect::damageTypeResourceKey),
-            ResourceKey.codec(Registries.SOUND_EVENT).fieldOf("sound_event").forGetter(ProjectileEffect::soundEvent),
             LevelBasedValue.CODEC.fieldOf("damage").forGetter(ProjectileEffect::damage),
             LevelBasedValue.CODEC.fieldOf("number_of_projectiles").forGetter(ProjectileEffect::numberOfProjectiles),
             LevelBasedValue.CODEC.optionalFieldOf("projectile_spread", LevelBasedValue.constant(0)).forGetter(ProjectileEffect::projectileSpread),
@@ -93,12 +89,12 @@ public record ProjectileEffect(
         if(projectileData.left().isPresent()) {
             GenericArrowData arrowData = projectileData.left().get();
             EntityType<? extends AbstractArrow> entityType = (EntityType<? extends AbstractArrow>) level.registryAccess().registry(Registries.ENTITY_TYPE).get().getOrThrow(arrowData.entityType());
-            SoundEvent soundEvent = level.registryAccess().registry(Registries.SOUND_EVENT).get().getOrThrow(soundEvent());
 
             for (int i = 0; i < numberOfProjectiles.calculate(ability.getLevel()); i++) {
                 // Copied from AbstractArrow.java constructor
                 Vec3 launchPos = new Vec3(player.getX(), player.getEyeY() - 0.1F, player.getZ());
                 GenericArrowEntity arrow = new GenericArrowEntity(
+                        name,
                         entityType,
                         canHitPredicate,
                         damageTypeResourceKey,
@@ -111,12 +107,10 @@ public record ProjectileEffect(
                 arrow.setOwner(player);
                 arrow.pickup = AbstractArrow.Pickup.DISALLOWED;
                 arrow.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, speed, i * projectileSpread.calculate(ability.getLevel()));
-                player.level().playSound(null, player.getX(), player.getY(), player.getZ(), soundEvent, entity.getSoundSource(), 1.0F, 2.0F);
                 player.level().addFreshEntity(entity);
             }
         } else if(projectileData.right().isPresent()) {
             GenericBallData ballData = projectileData.right().get();
-            SoundEvent soundEvent = level.registryAccess().registry(Registries.SOUND_EVENT).get().getOrThrow(soundEvent());
 
             for (int i = 0; i < numberOfProjectiles.calculate(ability.getLevel()); i++) {
                 Vec3 eyePos = player.getEyePosition();
@@ -130,12 +124,9 @@ public record ProjectileEffect(
                 }
 
                 GenericBallEntity projectile = new GenericBallEntity(
+                        name,
                         damageTypeResourceKey,
                         canHitPredicate,
-                        // TODO: Probably don't want to have explicit locations here, instead base them off of the name parameter that we would add
-                        ballData.modelResourceLocation,
-                        ballData.textureResourceLocation,
-                        ballData.animationResourceLocation,
                         ballData.trailParticle,
                         level,
                         damage.calculate(ability.getLevel()),
@@ -151,7 +142,6 @@ public record ProjectileEffect(
                 projectile.setPos(projPos);
                 projectile.accelerationPower = 0;
                 projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), 1.0F, speed, 0);
-                player.level().playSound(null, player.getX(), player.getY(), player.getZ(), soundEvent, entity.getSoundSource(), 1.0F, 2.0F);
                 player.level().addFreshEntity(entity);
             }
         }
