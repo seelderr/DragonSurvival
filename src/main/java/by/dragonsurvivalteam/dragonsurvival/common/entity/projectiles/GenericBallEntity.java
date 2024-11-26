@@ -275,7 +275,7 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
                     && this.level().hasChunkAt(this.blockPosition())
                     && !hasHit
                     && explosionPower > 0
-                    && lingerTicks <= 0) {
+                    && maxLingeringTicks <= 0) {
                 causeExplosion();
             }
         }
@@ -291,16 +291,16 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
 
         hasHit = true;
 
-        if(this.lingerTicks <= 0)
+        if(this.maxLingeringTicks <= 0)
             this.discard();
     }
 
     public PlayState predicate(final AnimationState<GenericBallEntity> state) {
 
-        if (!isLingering) {
+        if (!isLingering && maxLingeringTicks > 0) {
             state.getController().setAnimation(FLY);
             return PlayState.CONTINUE;
-        } else if (lingerTicks < 16) {
+        } else if (lingerTicks < 16 && maxLingeringTicks > 0) {
             state.getController().setAnimation(EXPLOSION);
         } else {
             state.getController().setAnimation(IDLE);
