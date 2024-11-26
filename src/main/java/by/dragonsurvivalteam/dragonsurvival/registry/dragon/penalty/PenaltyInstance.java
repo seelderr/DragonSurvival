@@ -13,7 +13,7 @@ public class PenaltyInstance implements INBTSerializable<CompoundTag>  {
 
     public PenaltyInstance(Holder<DragonPenalty> penalty) {
         this.penalty = penalty;
-        this.penaltySupply = penalty.value().trigger().durationToTrigger() == 0 ? penalty.value().trigger().triggerRate() : penalty.value().trigger().durationToTrigger();
+        this.penaltySupply = 0;
     }
 
     @Override
