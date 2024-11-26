@@ -28,10 +28,7 @@ public record DragonPenalty(
         EntityPredicate condition,
         Modifier modifier,
         PenaltyEffect effect,
-        PenaltyTrigger trigger,
-        // TODO: Will need to break up the sprite sheet for each penalty ability to show the correct icons
-        // No resource sprites = this penalty triggers instantly (cave dragon in water)
-        Optional<ResourceLocation> resourceSprites
+        PenaltyTrigger trigger
 ) {
     public static final ResourceKey<Registry<DragonPenalty>> REGISTRY = ResourceKey.createRegistryKey(DragonSurvival.res("dragon_penalties"));
 
@@ -40,8 +37,7 @@ public record DragonPenalty(
             EntityPredicate.CODEC.fieldOf("conditions").forGetter(DragonPenalty::condition),
             Modifier.CODEC.fieldOf("modifier").forGetter(DragonPenalty::modifier),
             PenaltyEffect.CODEC.fieldOf("effect").forGetter(DragonPenalty::effect),
-            PenaltyTrigger.CODEC.fieldOf("trigger").forGetter(DragonPenalty::trigger),
-            ResourceLocation.CODEC.optionalFieldOf("resource_sprites").forGetter(DragonPenalty::resourceSprites)
+            PenaltyTrigger.CODEC.fieldOf("trigger").forGetter(DragonPenalty::trigger)
     ).apply(instance, instance.stable(DragonPenalty::new)));
 
     public static final Codec<Holder<DragonPenalty>> CODEC = RegistryFixedCodec.create(REGISTRY);

@@ -1,30 +1,24 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.dragon.penalty;
 
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.mojang.serialization.MapCodec;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.registries.RegistryBuilder;
 
-public record PenaltyTrigger(int triggerRate, int durationToTrigger, float supplyRegenRate) {
+import javax.annotation.Nullable;
+import java.util.function.Function;
 
-    public static final Codec<PenaltyTrigger> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Codec.INT.fieldOf("trigger_rate").forGetter(PenaltyTrigger::triggerRate),
-            Codec.INT.fieldOf("duration_to_trigger").forGetter(PenaltyTrigger::durationToTrigger),
-            Codec.FLOAT.fieldOf("supply_regen_rate").forGetter(PenaltyTrigger::supplyRegenRate)
-    ).apply(instance, PenaltyTrigger::new));
+public interface PenaltyTrigger {
+    ResourceKey<Registry<MapCodec<? extends PenaltyTrigger>>> REGISTRY_KEY = ResourceKey.createRegistryKey(DragonSurvival.res("penalty_triggers"));
+    Registry<MapCodec<? extends PenaltyTrigger>> REGISTRY = new RegistryBuilder<>(REGISTRY_KEY).create();
 
-    boolean matches(final PenaltyInstance instance, boolean conditionMatched)  {
-        if(conditionMatched) {
-            instance.penaltySupply = Math.max(0, instance.penaltySupply - 1);
-        } else if(durationToTrigger > 0) {
-            instance.penaltySupply = Math.min(durationToTrigger, instance.penaltySupply + (int) Math.ceil(durationToTrigger * supplyRegenRate));
-        } else {
-            instance.penaltySupply = triggerRate;
-        }
+    Codec<PenaltyTrigger> CODEC = REGISTRY.byNameCodec().dispatch(PenaltyTrigger::codec, Function.identity());
 
-        if(instance.penaltySupply == 0) {
-            instance.penaltySupply = triggerRate;
-            return true;
-        } else {
-            return false;
-        }
-    }
+    @Nullable
+    ResourceLocation resourceBar();
+    boolean matches(final PenaltyInstance instance, boolean conditionMatched);
+    MapCodec<? extends PenaltyTrigger> codec();
 }
