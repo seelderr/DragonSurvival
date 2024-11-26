@@ -28,7 +28,7 @@ public record DragonType(
         HolderSet<DragonStage> stages,
         HolderSet<DragonBody> bodies,
         HolderSet<DragonAbility> abilities,
-        List<DragonPenalty> penalties
+        List<Holder<DragonPenalty>> penalties
 ) {
     public static final ResourceKey<Registry<DragonType>> REGISTRY = ResourceKey.createRegistryKey(DragonSurvival.res("dragon_types"));
 
