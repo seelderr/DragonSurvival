@@ -199,6 +199,7 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
 
                 if (target instanceof LivingEntity livingEntity) {
                     if (livingEntity.getRandom().nextInt(100) < 40) {
+                        // TODO: This needs to become data driven
                         if (!livingEntity.level().isClientSide() && !StormBreathAbility.chargedBlacklist.contains(ResourceHelper.getKey(livingEntity).toString())) {
                             livingEntity.addEffect(new MobEffectInstance(DSEffects.CHARGED, Functions.secondsToTicks(10), 0, false, true));
                         }
