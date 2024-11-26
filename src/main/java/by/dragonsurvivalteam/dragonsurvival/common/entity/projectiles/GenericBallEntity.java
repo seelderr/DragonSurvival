@@ -144,6 +144,12 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
         if (!this.level().isClientSide || (getOwner() == null || !getOwner().isRemoved()) && this.level().hasChunkAt(this.blockPosition())) {
             entityData.set(MOVE_DISTANCE, entityData.get(MOVE_DISTANCE) + (float) getDeltaMovement().length());
             entityData.set(LIFESPAN, entityData.get(LIFESPAN) + 1);
+
+            if (level() instanceof ServerLevel serverLevel && getOwner() instanceof Player player) {
+                for (PositionalTargeting effect : tickingEffects) {
+                    effect.apply(serverLevel, player, ability, position());
+                }
+            }
         }
         if (entityData.get(MOVE_DISTANCE) > maxMoveDistance || entityData.get(LIFESPAN) > maxLifespan) {
             // Call onHitBlock rather than onHit, since calling onHit using the helper function from
