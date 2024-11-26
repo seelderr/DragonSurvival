@@ -26,7 +26,6 @@ import net.minecraft.world.phys.Vec3;
 import java.util.Optional;
 
 // TODO: Should we add in a way to apply effects to entities that are hit by the projectile?
-// TODO: We need some way to properly name the projectile entity itself through this codec (it currently has the generic name)
 public record ProjectileEffect(
         Component name,
         Either<GenericArrowData, GenericBallData> projectileData,
@@ -81,8 +80,6 @@ public record ProjectileEffect(
 
     @Override
     public void apply(ServerLevel level, Player player, DragonAbilityInstance ability, Entity entity) {
-        float speed = 1;
-
         if(projectileData.left().isPresent()) {
             GenericArrowData arrowData = projectileData.left().get();
             EntityType<? extends AbstractArrow> entityType = (EntityType<? extends AbstractArrow>) level.registryAccess().registry(Registries.ENTITY_TYPE).get().getOrThrow(arrowData.entityType());
@@ -103,7 +100,7 @@ public record ProjectileEffect(
                 arrow.setPos(launchPos);
                 arrow.setOwner(player);
                 arrow.pickup = AbstractArrow.Pickup.DISALLOWED;
-                arrow.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, speed, i * projectileSpread.calculate(ability.getLevel()));
+                arrow.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, speed.calculate(ability.getLevel()), i * projectileSpread.calculate(ability.getLevel()));
                 player.level().addFreshEntity(entity);
             }
         } else if(projectileData.right().isPresent()) {
@@ -138,7 +135,7 @@ public record ProjectileEffect(
 
                 projectile.setPos(projPos);
                 projectile.accelerationPower = 0;
-                projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), 1.0F, speed, 0);
+                projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), 1.0F, speed.calculate(ability.getLevel()), 0);
                 player.level().addFreshEntity(entity);
             }
         }
