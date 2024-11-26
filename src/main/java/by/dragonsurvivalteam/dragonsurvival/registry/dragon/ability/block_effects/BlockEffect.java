@@ -23,8 +23,8 @@ public interface BlockEffect {
     ResourceKey<Registry<MapCodec<? extends BlockEffect>>> REGISTRY_KEY = ResourceKey.createRegistryKey(DragonSurvival.res("block_effects"));
     Registry<MapCodec<? extends BlockEffect>> REGISTRY = new RegistryBuilder<>(REGISTRY_KEY).create();
 
-    Codec<BlockEffect> CODEC = REGISTRY.byNameCodec().dispatch(BlockEffect::codec, Function.identity());
+    Codec<BlockEffect> CODEC = REGISTRY.byNameCodec().dispatch(BlockEffect::blockCodec, Function.identity());
 
     void apply(final ServerLevel level, final Player dragon, final DragonAbilityInstance ability, final BlockPos position);
-    MapCodec<? extends BlockEffect> codec();
+    MapCodec<? extends BlockEffect> blockCodec();
 }

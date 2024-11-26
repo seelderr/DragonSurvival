@@ -38,6 +38,7 @@ public interface Targeting {
         ).apply(instance, EntityTargeting::new));
     }
 
+    // TODO :: convert player to serverplayer
     void apply(final ServerLevel level, final Player dragon, final DragonAbilityInstance ability);
     MapCodec<? extends Targeting> codec();
 }

@@ -17,7 +17,7 @@ public interface EntityEffect { // TODO :: split into entity and block effects?
     ResourceKey<Registry<MapCodec<? extends EntityEffect>>> REGISTRY_KEY = ResourceKey.createRegistryKey(DragonSurvival.res("ability_effects"));
     Registry<MapCodec<? extends EntityEffect>> REGISTRY = new RegistryBuilder<>(REGISTRY_KEY).create();
 
-    Codec<EntityEffect> CODEC = REGISTRY.byNameCodec().dispatch(EntityEffect::codec, Function.identity());
+    Codec<EntityEffect> CODEC = REGISTRY.byNameCodec().dispatch(EntityEffect::entityCodec, Function.identity());
 
     /* Not sure if this would even work:
         ResourceKey<Registry<MapCodec<? extends AbilityEffect>>> REGISTRY = ResourceKey.createRegistryKey(DragonSurvival.res("dragon_abilities"));
@@ -25,5 +25,5 @@ public interface EntityEffect { // TODO :: split into entity and block effects?
     */
 
     void apply(final ServerLevel level, final Player dragon, final DragonAbilityInstance ability, final Entity entity);
-    MapCodec<? extends EntityEffect> codec();
+    MapCodec<? extends EntityEffect> entityCodec();
 }

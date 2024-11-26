@@ -27,7 +27,7 @@ public record DamageEffect(Holder<DamageType> damageType, LevelBasedValue amount
     }
 
     @Override
-    public MapCodec<? extends EntityEffect> codec() {
+    public MapCodec<? extends EntityEffect> entityCodec() {
         return CODEC;
     }
 }

@@ -13,6 +13,7 @@ import net.minecraft.world.item.enchantment.LevelBasedValue;
 import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.phys.AABB;
 
+// TODO :: provide boolean to only target exposed blocks / visible entities (isVisible)
 public record AreaTarget(Either<BlockTargeting, EntityTargeting> target, LevelBasedValue radius) implements Targeting {
     public static final MapCodec<AreaTarget> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             Codec.either(BlockTargeting.CODEC, EntityTargeting.CODEC).fieldOf("target").forGetter(AreaTarget::target),

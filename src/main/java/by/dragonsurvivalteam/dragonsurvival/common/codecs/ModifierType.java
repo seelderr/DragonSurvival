@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public enum ModifierType implements StringRepresentable { // TODO :: can this be removed?
+public enum ModifierType implements StringRepresentable {
     DRAGON_TYPE("type"),
     DRAGON_BODY("body"),
     DRAGON_STAGE("stage"),

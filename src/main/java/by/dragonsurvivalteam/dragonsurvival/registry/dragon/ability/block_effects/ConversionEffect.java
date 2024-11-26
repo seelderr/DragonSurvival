@@ -15,6 +15,7 @@ import net.minecraft.world.item.enchantment.LevelBasedValue;
 import net.minecraft.world.level.block.Block;
 
 import java.util.List;
+import java.util.Optional;
 
 public record ConversionEffect(List<ConversionData> conversionData, LevelBasedValue probability) implements BlockEffect {
     public static final MapCodec<ConversionEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
@@ -40,17 +41,12 @@ public record ConversionEffect(List<ConversionData> conversionData, LevelBasedVa
         }
 
         ConversionData data = conversionData().get(dragon.getRandom().nextInt(conversionData().size()));
-
-        if (data.blocks().size() == 0) {
-            return;
-        }
-
-        Holder<Block> block = data.blocks().get(dragon.getRandom().nextInt(data.blocks().size()));
-        level.setBlock(position, block.value().defaultBlockState(), Block.UPDATE_ALL);
+        Optional<Holder<Block>> block = data.blocks().getRandomElement(dragon.getRandom());
+        block.ifPresent(blockHolder -> level.setBlock(position, blockHolder.value().defaultBlockState(), Block.UPDATE_ALL));
     }
 
     @Override
-    public MapCodec<? extends BlockEffect> codec() {
+    public MapCodec<? extends BlockEffect> blockCodec() {
         return CODEC;
     }
 }

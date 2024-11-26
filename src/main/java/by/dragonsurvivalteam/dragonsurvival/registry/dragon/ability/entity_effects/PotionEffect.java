@@ -36,7 +36,7 @@ public record PotionEffect(HolderSet<MobEffect> effects, LevelBasedValue amplifi
     }
 
     @Override
-    public MapCodec<? extends EntityEffect> codec() {
+    public MapCodec<? extends EntityEffect> entityCodec() {
         return CODEC;
     }
 }

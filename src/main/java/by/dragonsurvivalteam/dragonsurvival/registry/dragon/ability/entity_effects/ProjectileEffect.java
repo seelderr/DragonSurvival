@@ -158,7 +158,7 @@ public record ProjectileEffect(
     }
 
     @Override
-    public MapCodec<? extends EntityEffect> codec() {
+    public MapCodec<? extends EntityEffect> entityCodec() {
         return null;
     }
 }

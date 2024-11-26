@@ -33,7 +33,7 @@ public record BonemealEffect(LevelBasedValue attempts, LevelBasedValue probabili
     }
 
     @Override
-    public MapCodec<? extends BlockEffect> codec() {
+    public MapCodec<? extends BlockEffect> blockCodec() {
         return CODEC;
     }
 }

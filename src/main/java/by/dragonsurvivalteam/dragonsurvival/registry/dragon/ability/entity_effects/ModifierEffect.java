@@ -45,7 +45,7 @@ public record ModifierEffect(List<Modifier> modifiers) implements EntityEffect, 
     }
 
     @Override
-    public MapCodec<? extends EntityEffect> codec() {
+    public MapCodec<? extends EntityEffect> entityCodec() {
         return CODEC;
     }
 }
