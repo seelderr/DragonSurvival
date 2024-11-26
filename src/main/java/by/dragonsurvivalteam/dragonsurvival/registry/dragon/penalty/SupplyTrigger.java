@@ -4,7 +4,6 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.resources.ResourceLocation;
-import org.jetbrains.annotations.Nullable;
 
 public record SupplyTrigger(int triggerRate, int durationToTrigger, float supplyRegenRate, ResourceLocation supplyBarSprites) implements PenaltyTrigger {
 
@@ -14,12 +13,6 @@ public record SupplyTrigger(int triggerRate, int durationToTrigger, float supply
             Codec.FLOAT.fieldOf("supply_regen_rate").forGetter(SupplyTrigger::supplyRegenRate),
             ResourceLocation.CODEC.fieldOf("supply_bar_sprites").forGetter(SupplyTrigger::supplyBarSprites)
     ).apply(instance, SupplyTrigger::new));
-
-    @Nullable
-    @Override
-    public ResourceLocation resourceBar() {
-        return supplyBarSprites;
-    }
 
     public boolean matches(final PenaltyInstance instance, boolean conditionMatched)  {
         if(conditionMatched) {

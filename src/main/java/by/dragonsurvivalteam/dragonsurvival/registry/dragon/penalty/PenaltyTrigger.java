@@ -17,8 +17,6 @@ public interface PenaltyTrigger {
 
     Codec<PenaltyTrigger> CODEC = REGISTRY.byNameCodec().dispatch(PenaltyTrigger::codec, Function.identity());
 
-    @Nullable
-    ResourceLocation resourceBar();
     boolean matches(final PenaltyInstance instance, boolean conditionMatched);
     MapCodec<? extends PenaltyTrigger> codec();
 }
