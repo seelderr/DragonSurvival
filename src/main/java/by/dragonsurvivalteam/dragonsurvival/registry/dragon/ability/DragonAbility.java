@@ -35,7 +35,7 @@ public record DragonAbility(
         Either<Active, Passive> activation,
         Optional<Upgrade> upgrade,
         Optional<EntityPredicate> usageBlocked,
-        List<Targeting> effects,
+        List<Targeting> effects, // TODO :: depending on the logic, mark an entity / block with an outline?
         ResourceLocation icon,
         Component description
 ) {

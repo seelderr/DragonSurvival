@@ -26,6 +26,9 @@ import net.minecraft.world.level.Level;
 import java.util.List;
 import java.util.Optional;
 
+// TODO :: add optional mana cost for keeping the entity?
+// TODO :: add option to add some goals to make sure entities can act as proper summons?
+//   e.g. a target entity goal with switchable modes (on entity right click or sth.) between stuff like aggressive, stay in place, etc.
 public record SummonEntityEffect(HolderSet<EntityType<?>> entities, List<AttributeScale> attributeScales, boolean joinTeam) implements BlockEffect, EntityEffect {
     public static final MapCodec<SummonEntityEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                     RegistryCodecs.homogeneousList(Registries.ENTITY_TYPE).fieldOf("entities").forGetter(SummonEntityEffect::entities),
@@ -41,12 +44,14 @@ public record SummonEntityEffect(HolderSet<EntityType<?>> entities, List<Attribu
         ).apply(instance, AttributeScale::new));
 
         public void apply(final LivingEntity entity, int abilityLevel) {
+            float scale = scale().calculate(abilityLevel);
+
             for (Holder<Attribute> attribute : attributes()) {
                 AttributeInstance instance = entity.getAttribute(attribute);
 
                 if (instance != null) {
                     ResourceLocation id = ModifierType.CUSTOM.randomId(attribute, AttributeModifier.Operation.ADD_MULTIPLIED_BASE);
-                    instance.addPermanentModifier(new AttributeModifier(id, scale().calculate(abilityLevel), AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
+                    instance.addPermanentModifier(new AttributeModifier(id, scale, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
                 }
             }
         }
@@ -83,6 +88,7 @@ public record SummonEntityEffect(HolderSet<EntityType<?>> entities, List<Attribu
                         level.getScoreboard().addPlayerToTeam(entity.getScoreboardName(), entity.getTeam());
                     }
 
+                    // TODO :: not needed? or maybe add offset to y? not sure if blockpos means it spawns inside a block or not
                     entity.moveTo(spawnPosition.getX(), spawnPosition.getY(), spawnPosition.getZ(), entity.getYRot(), entity.getXRot());
                 }
             }

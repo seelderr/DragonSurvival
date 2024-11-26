@@ -31,6 +31,7 @@ public record AreaTarget(Either<BlockTargeting, EntityTargeting> target, LevelBa
             });
         }).ifRight(entityTarget -> {
             // TODO :: use Entity.class (would affect items etc.)?
+            // ProjectileUtil.getHitResultOnViewVector()
             level.getEntities(EntityTypeTest.forClass(LivingEntity.class), AABB.ofSize(dragon.position(), radius, radius, radius),
                     entity -> entityTarget.targetConditions().map(conditions -> conditions.matches(level, dragon.position(), entity)).orElse(true)
             ).forEach(entity -> entityTarget.effect().apply(level, dragon, ability, entity));
