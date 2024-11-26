@@ -119,7 +119,6 @@ public record ProjectileEffect(
             SoundEvent soundEvent = level.registryAccess().registry(Registries.SOUND_EVENT).get().getOrThrow(soundEvent());
 
             for (int i = 0; i < numberOfProjectiles.calculate(ability.getLevel()); i++) {
-                // Copied from AbstractArrow.java constructor
                 Vec3 eyePos = player.getEyePosition();
                 Vec3 lookAngle = player.getLookAngle();
 
