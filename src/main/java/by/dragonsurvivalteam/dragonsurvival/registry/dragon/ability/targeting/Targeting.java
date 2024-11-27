@@ -13,11 +13,15 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 
 import java.util.Optional;
 import java.util.function.Function;
 
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public interface Targeting {
     ResourceKey<Registry<MapCodec<? extends Targeting>>> REGISTRY_KEY = ResourceKey.createRegistryKey(DragonSurvival.res("targeting"));
     Registry<MapCodec<? extends Targeting>> REGISTRY = new RegistryBuilder<>(REGISTRY_KEY).create();
@@ -36,6 +40,11 @@ public interface Targeting {
                 EntityPredicate.CODEC.optionalFieldOf("target_conditions").forGetter(EntityTargeting::targetConditions),
                 EntityEffect.CODEC.fieldOf("entity_effect").forGetter(EntityTargeting::effect)
         ).apply(instance, EntityTargeting::new));
+    }
+
+    @SubscribeEvent
+    static void register(final NewRegistryEvent event) {
+        event.register(REGISTRY);
     }
 
     // TODO :: convert player to serverplayer
