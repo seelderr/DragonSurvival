@@ -433,7 +433,8 @@ public class ClientProxy {
             // Creates a trail of particles between the entity and target(s)
             Vec3 source = new Vec3(message.source().x(), message.source().y(), message.source().z());
             Vec3 target = new Vec3(message.target().x(), message.target().y(), message.target().z());
-            int steps = 10;
+            // Scale steps based off of the distance between the source and target
+            int steps = Math.max(20, (int) Math.ceil(source.distanceTo(target) * 2.5));
             float stepSize = 1.f / steps;
             Vec3 distV = new Vec3(source.x - target.x, source.y - target.y, source.z - target.z);
             for (int i = 0; i < steps; i++) {
