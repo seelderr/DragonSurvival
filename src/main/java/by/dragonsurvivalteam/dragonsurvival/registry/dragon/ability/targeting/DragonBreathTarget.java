@@ -3,12 +3,11 @@ package by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.targeting;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import com.mojang.datafixers.util.Either;
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 import net.minecraft.world.level.entity.EntityTypeTest;
@@ -17,28 +16,27 @@ import net.minecraft.world.phys.Vec3;
 
 // TODO :: add sub entity predicate for easy is ally / team check (and tamable animals) / spectator
 public record DragonBreathTarget(Either<BlockTargeting, EntityTargeting> target, LevelBasedValue range) implements AbilityTargeting {
-    public static final MapCodec<DragonBreathTarget> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-            Codec.either(BlockTargeting.CODEC, EntityTargeting.CODEC).fieldOf("target").forGetter(DragonBreathTarget::target),
-            LevelBasedValue.CODEC.fieldOf("range").forGetter(DragonBreathTarget::range)
-    ).apply(instance, DragonBreathTarget::new));
+    public static final MapCodec<DragonBreathTarget> CODEC = RecordCodecBuilder.mapCodec(instance -> AbilityTargeting.codecStart(instance)
+            .and(LevelBasedValue.CODEC.fieldOf("range").forGetter(DragonBreathTarget::range)).apply(instance, DragonBreathTarget::new)
+    );
 
     @Override
-    public void apply(final ServerLevel level, final Player dragon, final DragonAbilityInstance ability) {
+    public void apply(final ServerPlayer dragon, final DragonAbilityInstance ability) {
         target().ifLeft(blockTarget -> {
             AABB breathArea = calculateBreathArea(dragon, DragonStateProvider.getData(dragon).getSize(), range().calculate(ability.getLevel()));
 
             BlockPos.betweenClosedStream(breathArea).forEach(position -> {
-                if (blockTarget.targetConditions().isEmpty() || blockTarget.targetConditions().get().matches(level, position)) {
-                    blockTarget.effect().apply(level, dragon, ability, position);
+                if (blockTarget.targetConditions().isEmpty() || blockTarget.targetConditions().get().matches(dragon.serverLevel(), position)) {
+                    blockTarget.effect().forEach(target -> target.apply(dragon, ability, position));
                 }
             });
         }).ifRight(entityTarget -> {
             AABB breathArea = calculateBreathArea(dragon, DragonStateProvider.getData(dragon).getSize(), range().calculate(ability.getLevel()));
 
-            // TODO :: use Entity.class (would affect items etc.)?
-            level.getEntities(EntityTypeTest.forClass(LivingEntity.class), breathArea,
-                    entity -> entityTarget.targetConditions().map(conditions -> conditions.matches(level, dragon.position(), entity)).orElse(true)
-            ).forEach(entity -> entityTarget.effect().apply(level, dragon, ability, entity));
+            // TODO :: add sub predicate to only target living entities
+            dragon.serverLevel().getEntities(EntityTypeTest.forClass(Entity.class), breathArea,
+                    entity -> entityTarget.targetConditions().map(conditions -> conditions.matches(dragon.serverLevel(), dragon.position(), entity)).orElse(true)
+            ).forEach(entity -> entityTarget.effect().forEach(target -> target.apply(dragon, ability, entity)));
         });
     }
 

@@ -7,9 +7,8 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
@@ -25,7 +24,7 @@ public interface AbilityEntityEffect { // TODO :: split into entity and block ef
 
     Codec<AbilityEntityEffect> CODEC = REGISTRY.byNameCodec().dispatch(AbilityEntityEffect::entityCodec, Function.identity());
 
-    void apply(final ServerLevel level, final Player dragon, final DragonAbilityInstance ability, final Entity entity);
+    void apply(final ServerPlayer dragon, final DragonAbilityInstance ability, final Entity entity);
     MapCodec<? extends AbilityEntityEffect> entityCodec();
 
     @SubscribeEvent

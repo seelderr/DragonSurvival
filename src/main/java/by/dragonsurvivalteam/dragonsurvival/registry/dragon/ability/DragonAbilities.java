@@ -4,10 +4,12 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Activation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.entity_effects.ProjectileEffect;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.targeting.AbilityTargeting;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.targeting.SelfTarget;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.ProjectileData;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.Projectiles;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+import com.mojang.datafixers.util.Either;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
@@ -32,17 +34,15 @@ public class DragonAbilities {
                 )),
                 Optional.empty(),
                 Optional.empty(),
-                List.of(
-                        new SelfTarget(
-                                Optional.empty(),
-                                new ProjectileEffect(
-                                        context.lookup(ProjectileData.REGISTRY).getOrThrow(Projectiles.FIRE_BALL_TEST),
-                                        LevelBasedValue.constant(1),
-                                        LevelBasedValue.constant(0),
-                                        LevelBasedValue.constant(1)
-                                )
+                List.of(new SelfTarget(Either.right(new AbilityTargeting.EntityTargeting(
+                        Optional.empty(),
+                        new ProjectileEffect(
+                                context.lookup(ProjectileData.REGISTRY).getOrThrow(Projectiles.FIRE_BALL_TEST),
+                                LevelBasedValue.constant(1),
+                                LevelBasedValue.constant(0),
+                                LevelBasedValue.constant(1)
                         )
-                ),
+                )))),
                 ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/icons/body_type_central.png"),
                 Component.literal("test description")
                 )
