@@ -3,15 +3,15 @@ package by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Activation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.entity_effects.DamageEffect;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.entity_effects.ProjectileEffect;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.targeting.SelfTarget;
+import by.dragonsurvivalteam.dragonsurvival.registry.projectile.ProjectileData;
+import by.dragonsurvivalteam.dragonsurvival.registry.projectile.Projectiles;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 
 import java.util.List;
@@ -35,47 +35,12 @@ public class DragonAbilities {
                 List.of(
                         new SelfTarget(
                                 Optional.empty(),
-                                new DamageEffect(
-                                        context.lookup(Registries.DAMAGE_TYPE).getOrThrow(DamageTypes.FIREBALL),
-                                        LevelBasedValue.constant(10)
-                                )
-                                /*new ProjectileEffect(
-                                        Component.literal("fireball"),
-                                        Either.right(
-                                                new ProjectileEffect.GenericBallData(
-                                                        ParticleTypes.SMOKE,
-                                                        List.of(new ProjectilePointTarget(
-                                                                new ProjectileTargeting.WorldTargeting(
-                                                                        Optional.empty(),
-                                                                        Optional.empty(),
-                                                                        new ProjectileExplosionEffect(
-                                                                                context.lookup(Registries.DAMAGE_TYPE).getOrThrow(DamageTypes.FIREBALL),
-                                                                                LevelBasedValue.constant(10),
-                                                                                true,
-                                                                                true,
-                                                                                true
-                                                                        )
-                                                                )
-                                                        )),
-                                                        LevelBasedValue.constant(0),
-                                                        LevelBasedValue.constant(64),
-                                                        LevelBasedValue.constant(1000)
-                                                )
-                                        ),
-                                        Optional.empty(),
-                                        List.of(),
-                                        List.of(),
-                                        List.of(
-                                                new ProjectileDamageEffect(
-                                                        context.lookup(Registries.DAMAGE_TYPE).getOrThrow(DamageTypes.FIREBALL),
-                                                        LevelBasedValue.constant(10)
-                                                )
-                                        ),
-                                        List.of(),
+                                new ProjectileEffect(
+                                        context.lookup(ProjectileData.REGISTRY).getOrThrow(Projectiles.FIRE_BALL_TEST),
                                         LevelBasedValue.constant(1),
                                         LevelBasedValue.constant(0),
                                         LevelBasedValue.constant(1)
-                                )*/
+                                )
                         )
                 ),
                 ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/icons/body_type_central.png"),

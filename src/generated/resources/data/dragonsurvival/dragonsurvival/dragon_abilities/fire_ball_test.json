@@ -9,9 +9,10 @@
     {
       "type": "dragonsurvival:self",
       "effect": {
-        "type": "dragonsurvival:damage",
-        "amount": 10.0,
-        "damage_type": "minecraft:fireball"
+        "type": "dragonsurvival:projectile",
+        "number_of_projectiles": 1.0,
+        "projectile_data": "dragonsurvival:fire_ball_projectile_test",
+        "speed": 1.0
       }
     }
   ],

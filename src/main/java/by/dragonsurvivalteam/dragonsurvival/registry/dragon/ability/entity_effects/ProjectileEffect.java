@@ -93,13 +93,13 @@ public record ProjectileEffect(
                 projectile.setPos(projPos);
                 projectile.accelerationPower = 0;
                 projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), 1.0F, speed.calculate(ability.getLevel()), i * projectileSpread.calculate(ability.getLevel()));
-                player.level().addFreshEntity(entity);
+                player.level().addFreshEntity(projectile);
             }
         }
     }
 
     @Override
     public MapCodec<? extends AbilityEntityEffect> entityCodec() {
-        return null;
+        return CODEC;
     }
 }

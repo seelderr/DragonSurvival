@@ -20,6 +20,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Vector3f;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.*;
@@ -30,9 +31,8 @@ import java.util.Optional;
 
 
 public class GenericBallEntity extends AbstractHurtingProjectile implements GeoEntity {
-    public static final EntityDataAccessor<Integer> LIFESPAN = SynchedEntityData.defineId(GenericBallEntity.class, EntityDataSerializers.INT);
-    public static final EntityDataAccessor<Float> MOVE_DISTANCE = SynchedEntityData.defineId(GenericBallEntity.class, EntityDataSerializers.FLOAT);
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
+    public static final EntityDataAccessor<Vector3f> DELTA_MOVEMENT = SynchedEntityData.defineId(GenericBallEntity.class, EntityDataSerializers.VECTOR3);
 
     private final Component name;
     private final Optional<EntityPredicate> canHitPredicate;
@@ -50,6 +50,8 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
     public boolean hasHit = false;
     protected boolean isLingering = false;
     protected int lingerTicks;
+    private float moveDistance;
+    private int lifespan;
 
     public GenericBallEntity(
             Component name,
@@ -79,6 +81,8 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
         this.lingerTicks = maxLingeringTicks;
         this.maxMoveDistance = maxMoveDistance;
         this.maxLifespan = maxLifespan;
+        this.lifespan = 0;
+        this.moveDistance = 0;
     }
 
     public GenericBallEntity(EntityType<GenericBallEntity> genericBallEntityEntityType, Level level) {
@@ -96,6 +100,23 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
         this.lingerTicks = 0;
         this.maxMoveDistance = 0;
         this.maxLifespan = 0;
+        this.moveDistance = 0;
+        this.lifespan = 0;
+    }
+
+    @Override
+    public void setDeltaMovement(@NotNull Vec3 deltaMovement) {
+        if(!level().isClientSide) {
+            setSyncedDeltaMovement(deltaMovement);
+        }
+    }
+
+    private Vec3 getSyncedDeltaMovement() {
+        return new Vec3(this.entityData.get(DELTA_MOVEMENT));
+    }
+
+    private void setSyncedDeltaMovement(Vec3 deltaMovement) {
+        this.entityData.set(DELTA_MOVEMENT, new Vector3f((float) deltaMovement.x, (float) deltaMovement.y, (float) deltaMovement.z));
     }
 
     protected @NotNull Component getTypeName() {
@@ -121,15 +142,15 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
             for (ProjectileTargeting effect : onDestroyEffects) {
                 effect.apply(this, projectileLevel);
             }
+
+            this.discard();
         }
-        this.discard();
     }
 
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder pBuilder) {
         super.defineSynchedData(pBuilder);
-        pBuilder.define(MOVE_DISTANCE, 0f);
-        pBuilder.define(LIFESPAN, 0);
+        pBuilder.define(DELTA_MOVEMENT, new Vector3f(0, 0, 0));
     }
 
     @Override
@@ -138,32 +159,32 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
             return Vec3.ZERO;
         }
 
-        return super.getDeltaMovement();
+        return getSyncedDeltaMovement();
     }
+
 
     @Override
     public void tick() {
         super.tick();
-        if (!this.level().isClientSide || (getOwner() == null || !getOwner().isRemoved()) && this.level().hasChunkAt(this.blockPosition())) {
-            entityData.set(MOVE_DISTANCE, entityData.get(MOVE_DISTANCE) + (float) getDeltaMovement().length());
-            entityData.set(LIFESPAN, entityData.get(LIFESPAN) + 1);
-        }
-        if (entityData.get(MOVE_DISTANCE) > maxMoveDistance || entityData.get(LIFESPAN) > maxLifespan) {
-            // Call onHitBlock rather than onHit, since calling onHit using the helper function from
-            // vanilla will result in HitResult.Miss from 1.20.6 onwards, causing nothing to happen
-            this.onHitBlock(new BlockHitResult(this.position(), this.getDirection(), this.blockPosition(), false));
-        }
+        if (!this.level().isClientSide) {
+            moveDistance += (float) getDeltaMovement().length();
+            lifespan++;
 
-        if (!level().isClientSide) {
+            if (moveDistance > maxMoveDistance || lifespan > maxLifespan) {
+                // Call onHitBlock rather than onHit, since calling onHit using the helper function from
+                // vanilla will result in HitResult.Miss from 1.20.6 onwards, causing nothing to happen
+                this.onHitBlock(new BlockHitResult(this.position(), this.getDirection(), this.blockPosition(), false));
+            }
+
             for (ProjectileTargeting effect : tickingEffects) {
                 effect.apply(this, projectileLevel);
             }
-        }
 
-        if (isLingering) {
-            lingerTicks--;
-            if (lingerTicks <= 0) {
-                this.onDestroy();
+            if (isLingering) {
+                lingerTicks--;
+                if (lingerTicks <= 0) {
+                    this.onDestroy();
+                }
             }
         }
     }
@@ -198,21 +219,19 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
             for (ProjectileTargeting effect : commonHitEffects) {
                 effect.apply(this, projectileLevel);
             }
-        }
 
-        if ((getOwner() == null || !getOwner().isRemoved()) && this.level().hasChunkAt(this.blockPosition()) && !hasHit) {
             if (!isLingering) {
                 isLingering = true;
                 // These power variables drive the movement of the entity in the parent tick() function, so we need to zero them out as well.
                 accelerationPower = 0;
                 setDeltaMovement(Vec3.ZERO);
             }
+
+            hasHit = true;
+
+            if(this.maxLingeringTicks <= 0)
+                this.discard();
         }
-
-        hasHit = true;
-
-        if(this.maxLingeringTicks <= 0)
-            this.discard();
     }
 
     public PlayState predicate(final AnimationState<GenericBallEntity> state) {
@@ -238,6 +257,11 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
     @Override
     protected float getInertia() {
         return 1.0F;
+    }
+
+    @Override
+    protected boolean shouldBurn() {
+        return false;
     }
 
     @Override
