@@ -1,0 +1,22 @@
+{
+  "activation": {
+    "type": {
+      "type": "simple"
+    },
+    "cast_time": 1.0,
+    "cooldown": 1.0,
+    "initial_mana_cost": 0.0
+  },
+  "description": "test description",
+  "effects": [
+    {
+      "type": "dragonsurvival:self",
+      "effect": {
+        "type": "dragonsurvival:damage",
+        "amount": 10.0,
+        "damage_type": "minecraft:fireball"
+      }
+    }
+  ],
+  "icon": "dragonsurvival:textures/icons/body_type_central.png"
+}
