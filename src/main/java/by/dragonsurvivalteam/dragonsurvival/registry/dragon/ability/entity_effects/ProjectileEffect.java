@@ -8,10 +8,9 @@ import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
@@ -37,14 +36,11 @@ public record ProjectileEffect(
         Either<ProjectileData.GenericArrowData, ProjectileData.GenericBallData> specificData = projectileData.specificProjectileData();
         if(specificData.left().isPresent()) {
             ProjectileData.GenericArrowData arrowData = specificData.left().get();
-            EntityType<? extends AbstractArrow> entityType = (EntityType<? extends AbstractArrow>) level.registryAccess().registry(Registries.ENTITY_TYPE).get().getOrThrow(arrowData.entityType());
-
             for (int i = 0; i < numberOfProjectiles.calculate(ability.getLevel()); i++) {
                 // Copied from AbstractArrow.java constructor
                 Vec3 launchPos = new Vec3(player.getX(), player.getEyeY() - 0.1F, player.getZ());
                 GenericArrowEntity arrow = new GenericArrowEntity(
-                        projectileData.name(),
-                        entityType,
+                        projectileData.location(),
                         projectileData.canHitPredicate(),
                         projectileData.tickingEffects(),
                         projectileData.commonHitEffects(),
@@ -75,9 +71,10 @@ public record ProjectileEffect(
                 }
 
                 GenericBallEntity projectile = new GenericBallEntity(
-                        projectileData.name(),
+                        projectileData.location(),
                         ballData.trailParticle(),
                         level,
+                        EntityDimensions.scalable(ballData.xSize().calculate(ability.getLevel()), ballData.ySize().calculate(ability.getLevel())),
                         projectileData.canHitPredicate(),
                         projectileData.tickingEffects(),
                         projectileData.commonHitEffects(),

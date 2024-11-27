@@ -12,7 +12,7 @@
         "effect": {
           "type": "dragonsurvival:projectile",
           "number_of_projectiles": 1.0,
-          "projectile_data": "dragonsurvival:fireball",
+          "projectile_data": "dragonsurvival:spike",
           "speed": 1.0
         }
       },

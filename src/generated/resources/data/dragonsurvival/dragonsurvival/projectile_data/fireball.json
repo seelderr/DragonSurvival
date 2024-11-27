@@ -4,14 +4,18 @@
   "entity_hit_effects": [
     {
       "type": "dragonsurvival:damage",
-      "amount": 10.0,
+      "amount": {
+        "type": "minecraft:linear",
+        "base": 5.0,
+        "per_level_above_first": 5.0
+      },
       "damage_type": "minecraft:fireball"
     }
   ],
-  "name": "fireball",
+  "location": "dragonsurvival:fireball",
   "specific_projectile_data": {
-    "max_lifespan": 1000.0,
-    "max_move_distance": 64.0,
+    "max_lifespan": 100.0,
+    "max_move_distance": 32.0,
     "on_destroy_effects": [
       {
         "type": "dragonsurvival:point",
@@ -21,15 +25,21 @@
             "break_blocks": true,
             "can_damage_self": true,
             "damage_type": "minecraft:fireball",
-            "explosion_power": 10.0,
+            "explosion_power": {
+              "type": "minecraft:linear",
+              "base": 1.0,
+              "per_level_above_first": 1.0
+            },
             "fire": true
           }
         }
       }
     ],
     "trail_particle": {
-      "type": "minecraft:smoke"
-    }
+      "type": "minecraft:large_smoke"
+    },
+    "x_size": 1.0,
+    "y_size": 1.0
   },
   "ticking_effects": []
 }

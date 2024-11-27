@@ -1,6 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles;
 
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.block_effects.ProjectileBlockEffect;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.entity_effects.ProjectileEntityEffect;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.targeting.ProjectileTargeting;
@@ -11,9 +13,12 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
@@ -33,8 +38,11 @@ import java.util.Optional;
 public class GenericBallEntity extends AbstractHurtingProjectile implements GeoEntity {
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
     public static final EntityDataAccessor<Vector3f> DELTA_MOVEMENT = SynchedEntityData.defineId(GenericBallEntity.class, EntityDataSerializers.VECTOR3);
+    public static final EntityDataAccessor<String> RES_LOCATION = SynchedEntityData.defineId(GenericBallEntity.class, EntityDataSerializers.STRING);
+    public static final EntityDataAccessor<Boolean> LINGERING = SynchedEntityData.defineId(GenericBallEntity.class, EntityDataSerializers.BOOLEAN);
+    public static final EntityDataAccessor<Float> DIMENSION_WIDTH = SynchedEntityData.defineId(GenericBallEntity.class, EntityDataSerializers.FLOAT);
+    public static final EntityDataAccessor<Float> DIMENSION_HEIGHT = SynchedEntityData.defineId(GenericBallEntity.class, EntityDataSerializers.FLOAT);
 
-    private final Component name;
     private final Optional<EntityPredicate> canHitPredicate;
     private final int projectileLevel;
     private final List<ProjectileTargeting> tickingEffects;
@@ -45,18 +53,18 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
     private final int maxLingeringTicks;
     private final int maxMoveDistance;
     private final int maxLifespan;
-    private final ParticleOptions trailParticle;
+    private final Optional<ParticleOptions> trailParticle;
 
     public boolean hasHit = false;
-    protected boolean isLingering = false;
     protected int lingerTicks;
     private float moveDistance;
     private int lifespan;
 
     public GenericBallEntity(
-            Component name,
-            ParticleOptions trailParticle,
+            ResourceLocation location,
+            Optional<ParticleOptions> trailParticle,
             Level level,
+            EntityDimensions dimensions,
             Optional<EntityPredicate> canHitPredicate,
             List<ProjectileTargeting> tickingEffects,
             List<ProjectileTargeting> commonHitEffects,
@@ -68,7 +76,9 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
             int maxMoveDistance,
             int maxLifespan) {
         super(DSEntities.GENERIC_BALL_ENTITY.get(), level);
-        this.name = name;
+        setResourceLocation(location);
+        setDimensionWidth(dimensions.width());
+        setDimensionHeight(dimensions.height());
         this.canHitPredicate = canHitPredicate;
         this.trailParticle = trailParticle;
         this.tickingEffects = tickingEffects;
@@ -83,13 +93,14 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
         this.maxLifespan = maxLifespan;
         this.lifespan = 0;
         this.moveDistance = 0;
+        // TODO: Currently unused, but we could use acceleration in the future. Would just need to sync it.
+        this.accelerationPower = 0;
     }
 
     public GenericBallEntity(EntityType<GenericBallEntity> genericBallEntityEntityType, Level level) {
         super(DSEntities.GENERIC_BALL_ENTITY.get(), level);
-        this.name = Component.literal("Generic Ball");
         this.canHitPredicate = Optional.empty();
-        this.trailParticle = ParticleTypes.FLAME;
+        this.trailParticle = Optional.empty();
         this.tickingEffects = List.of();
         this.commonHitEffects = List.of();
         this.entityHitEffects = List.of();
@@ -102,6 +113,41 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
         this.maxLifespan = 0;
         this.moveDistance = 0;
         this.lifespan = 0;
+        // TODO: Currently unused, but we could use acceleration in the future. Would just need to sync it.
+        this.accelerationPower = 0;
+    }
+
+    @Override
+    public void onSyncedDataUpdated(@NotNull EntityDataAccessor<?> key) {
+        super.onSyncedDataUpdated(key);
+        if (key.equals(DIMENSION_WIDTH) || key.equals(DIMENSION_HEIGHT)) {
+            this.refreshDimensions();
+        }
+    }
+
+    private void setDimensionWidth(float width) {
+        this.entityData.set(DIMENSION_WIDTH, width);
+    }
+
+    private void setDimensionHeight(float height) {
+        this.entityData.set(DIMENSION_HEIGHT, height);
+    }
+
+    private EntityDimensions getDimensions() {
+        return EntityDimensions.scalable(this.entityData.get(DIMENSION_WIDTH), this.entityData.get(DIMENSION_HEIGHT));
+    }
+
+    @Override
+    public @NotNull EntityDimensions getDimensions(@NotNull Pose pose) {
+        return getDimensions();
+    }
+
+    private void setResourceLocation(ResourceLocation location) {
+        this.entityData.set(RES_LOCATION, location.toString());
+    }
+
+    public ResourceLocation getResourceLocation() {
+        return ResourceLocation.read(this.entityData.get(RES_LOCATION)).getOrThrow();
     }
 
     @Override
@@ -119,13 +165,22 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
         this.entityData.set(DELTA_MOVEMENT, new Vector3f((float) deltaMovement.x, (float) deltaMovement.y, (float) deltaMovement.z));
     }
 
+    private boolean isLingering() {
+        return this.entityData.get(LINGERING);
+    }
+
+    private void setLingering(boolean lingering) {
+        this.entityData.set(LINGERING, lingering);
+    }
+
+    @Override
     protected @NotNull Component getTypeName() {
-        return name;
+        return Component.translatable(getResourceLocation().getNamespace() + Translation.Type.PROJECTILE.suffix + "." + getResourceLocation().getPath());
     }
 
     @Override
     protected ParticleOptions getTrailParticle() {
-        return trailParticle;
+        return trailParticle.orElse(null);
     }
 
     @Override
@@ -151,11 +206,15 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder pBuilder) {
         super.defineSynchedData(pBuilder);
         pBuilder.define(DELTA_MOVEMENT, new Vector3f(0, 0, 0));
+        pBuilder.define(RES_LOCATION, ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "generic_ball").toString());
+        pBuilder.define(LINGERING, false);
+        pBuilder.define(DIMENSION_WIDTH, 0.5F);
+        pBuilder.define(DIMENSION_HEIGHT, 0.5F);
     }
 
     @Override
     public @NotNull Vec3 getDeltaMovement() {
-        if (isLingering) {
+        if (isLingering()) {
             return Vec3.ZERO;
         }
 
@@ -180,7 +239,7 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
                 effect.apply(this, projectileLevel);
             }
 
-            if (isLingering) {
+            if (isLingering()) {
                 lingerTicks--;
                 if (lingerTicks <= 0) {
                     this.onDestroy();
@@ -220,10 +279,9 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
                 effect.apply(this, projectileLevel);
             }
 
-            if (!isLingering) {
-                isLingering = true;
+            if (!isLingering()) {
+                setLingering(true);
                 // These power variables drive the movement of the entity in the parent tick() function, so we need to zero them out as well.
-                accelerationPower = 0;
                 setDeltaMovement(Vec3.ZERO);
             }
 
@@ -236,7 +294,7 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
 
     public PlayState predicate(final AnimationState<GenericBallEntity> state) {
 
-        if (!isLingering && maxLingeringTicks > 0) {
+        if (!isLingering() && maxLingeringTicks > 0) {
             state.getController().setAnimation(FLY);
             return PlayState.CONTINUE;
         } else if (lingerTicks < 16 && maxLingeringTicks > 0) {

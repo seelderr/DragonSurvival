@@ -66,6 +66,7 @@ public class DragonSurvivalClient {
         event.enqueueWork(() -> {
             EntityRenderers.register(DSEntities.DRAGON_SPIKE.get(), DragonSpikeRenderer::new);
             EntityRenderers.register(DSEntities.BOLAS_ENTITY.get(), BolasEntityRenderer::new);
+            EntityRenderers.register(DSEntities.GENERIC_ARROW_ENTITY.get(), GenericArrowRenderer::new);
 
             BlockEntityRenderers.register(DSTileEntities.HELMET_TILE.get(), HelmetEntityRenderer::new);
             BlockEntityRenderers.register(DSTileEntities.DRAGON_BEACON.get(), DragonBeaconRenderer::new);

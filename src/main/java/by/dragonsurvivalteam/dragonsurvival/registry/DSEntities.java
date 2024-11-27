@@ -72,7 +72,6 @@ public class DSEntities {
                     .updateInterval(1)
                     .build("fireball"));
 
-    // TODO: Dynamic translation key for projectile name?
     @Translation(type = Translation.Type.ENTITY, comments = "Generic Ball Entity")
     public static DeferredHolder<EntityType<?>, EntityType<GenericBallEntity>> GENERIC_BALL_ENTITY = DS_ENTITY_TYPES.register(
             "generic_ball_entity",
@@ -81,6 +80,15 @@ public class DSEntities {
                     .clientTrackingRange(4)
                     .updateInterval(1)
                     .build("generic_ball_entity"));
+
+    @Translation(type = Translation.Type.ENTITY, comments = "Generic Arrow Entity")
+    public static DeferredHolder<EntityType<?>, EntityType<GenericArrowEntity>> GENERIC_ARROW_ENTITY = DS_ENTITY_TYPES.register(
+            "generic_arrow_entity",
+            () -> EntityType.Builder.<GenericArrowEntity>of(GenericArrowEntity::new, MobCategory.MISC)
+                    .sized(0.5F, 0.5F)
+                    .clientTrackingRange(4)
+                    .updateInterval(1)
+                    .build("generic_arrow_entity"));
 
     // --- Entities --- //
 

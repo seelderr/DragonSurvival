@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render.entity.projectiles;
 
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.GenericBallEntity;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.core.BlockPos;
@@ -8,10 +9,8 @@ import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class GenericBallRenderer extends GeoEntityRenderer<GenericBallEntity> {
-    // TODO: Make this dynamically work correctly
 
     public GenericBallRenderer(EntityRendererProvider.Context renderManager, GeoModel<GenericBallEntity> model) {
         super(renderManager, model);
@@ -24,7 +23,6 @@ public class GenericBallRenderer extends GeoEntityRenderer<GenericBallEntity> {
 
     @Override
     public @NotNull ResourceLocation getTextureLocation(@NotNull final GenericBallEntity entity) {
-        return ResourceLocation.fromNamespaceAndPath(MODID, "textures/entity/lightning_texture.png");
-        //return ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/entity/" + animatable.getName() + ".png");
+        return ResourceLocation.fromNamespaceAndPath(animatable.getResourceLocation().getNamespace(), "textures/entity/projectiles/" + animatable.getResourceLocation().getPath() + ".png");
     }
 }
