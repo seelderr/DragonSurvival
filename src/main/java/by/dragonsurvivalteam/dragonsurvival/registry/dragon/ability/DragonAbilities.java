@@ -1,11 +1,11 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Active;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Activation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.entity_effects.DamageEffect;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.targeting.SelfTarget;
-import com.mojang.datafixers.util.Either;
+import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.network.chat.Component;
@@ -24,11 +24,11 @@ public class DragonAbilities {
 
     public static void registerAbilities(final BootstrapContext<DragonAbility> context) {
         context.register(FIRE_BALL_TEST, new DragonAbility(
-                Either.left(new Active(
-                        Either.left(new Active.Once(Active.Once.Type.SIMPLE, Optional.empty())),
-                        LevelBasedValue.constant(0),
-                        LevelBasedValue.constant(1),
-                        LevelBasedValue.constant(1)
+                Optional.of(new Activation(
+                        Activation.Type.SIMPLE,
+                        Optional.empty(),
+                        Optional.of(LevelBasedValue.constant(1)),
+                        Optional.of(LevelBasedValue.constant((float) Functions.secondsToTicks(2)))
                 )),
                 Optional.empty(),
                 Optional.empty(),

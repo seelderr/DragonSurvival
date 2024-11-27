@@ -1,12 +1,10 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Active;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Passive;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Activation;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Upgrade;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.targeting.AbilityTargeting;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
-import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.advancements.critereon.EntityPredicate;
@@ -25,14 +23,14 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.registries.DataPackRegistryEvent;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
-import javax.annotation.Nullable;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public record DragonAbility(
-        Either<Active, Passive> activation,
+        Optional<Activation> activation,
         Optional<Upgrade> upgrade,
         Optional<EntityPredicate> usageBlocked,
         List<AbilityTargeting> effects, // TODO :: depending on the logic, mark an entity / block with an outline?
@@ -42,7 +40,7 @@ public record DragonAbility(
     public static final ResourceKey<Registry<DragonAbility>> REGISTRY = ResourceKey.createRegistryKey(DragonSurvival.res("dragon_abilities"));
 
     public static final Codec<DragonAbility> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Codec.either(Active.CODEC, Passive.CODEC).fieldOf("activation").forGetter(DragonAbility::activation),
+            Activation.CODEC.optionalFieldOf("activation").forGetter(DragonAbility::activation),
             Upgrade.CODEC.optionalFieldOf("upgrade").forGetter(DragonAbility::upgrade),
             EntityPredicate.CODEC.optionalFieldOf("usage_blocked").forGetter(DragonAbility::usageBlocked), // TODO :: e.g. when the ability is not supposed to be used underwater
             AbilityTargeting.CODEC.listOf().optionalFieldOf("effects", List.of()).forGetter(DragonAbility::effects),

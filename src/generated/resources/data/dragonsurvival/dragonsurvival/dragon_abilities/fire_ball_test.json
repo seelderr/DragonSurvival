@@ -1,11 +1,8 @@
 {
   "activation": {
-    "type": {
-      "type": "simple"
-    },
+    "type": "simple",
     "cast_time": 1.0,
-    "cooldown": 1.0,
-    "initial_mana_cost": 0.0
+    "cooldown": 40.0
   },
   "description": "test description",
   "effects": [

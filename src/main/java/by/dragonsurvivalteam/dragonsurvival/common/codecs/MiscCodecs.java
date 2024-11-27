@@ -28,7 +28,7 @@ public class MiscCodecs {
             int currentPassive = 0;
 
             for (Holder<DragonAbility> ability : abilities) {
-                if (ability.value().activation().right().isPresent()) {
+                if (ability.value().activation().isPresent()) {
                     currentActive++;
                 } else {
                     currentPassive++;

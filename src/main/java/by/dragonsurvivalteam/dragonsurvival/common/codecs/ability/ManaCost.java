@@ -4,7 +4,13 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 
-public class ManaCost {
+public class ManaCost { // TODO :: unsure about this
+    public record Once(LevelBasedValue manaCost) {
+        public static final Codec<Once> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                LevelBasedValue.CODEC.fieldOf("mana_cost").forGetter(Once::manaCost)
+        ).apply(instance, Once::new));
+    }
+
     public record Reserved(LevelBasedValue reservedMana) {
         public static final Codec<Reserved> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 LevelBasedValue.CODEC.fieldOf("reserved_mana").forGetter(Reserved::reservedMana)
