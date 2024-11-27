@@ -1,16 +1,13 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles;
 
-import by.dragonsurvivalteam.dragonsurvival.registry.projectile.ProjectileInstance;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.block_effects.ProjectileBlockEffect;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.entity_effects.ProjectileDamageEffect;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.entity_effects.ProjectileEntityEffect;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.targeting.ProjectileTargeting;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Unit;
 import net.minecraft.world.damagesource.DamageSource;
@@ -29,13 +26,12 @@ import java.util.Optional;
 
 public class GenericArrowEntity extends AbstractArrow {
     private final Component name;
-    private final ProjectileInstance projectileInstance;
+    private final int projectileLevel;
     private final Optional<EntityPredicate> canHitPredicate;
     private final List<ProjectileTargeting> tickingEffects;
     private final List<ProjectileTargeting> commonHitEffects;
     private final List<ProjectileEntityEffect> entityHitEffects;
     private final List<ProjectileBlockEffect> blockHitEffects;
-    private final DragonAbilityInstance ability;
 
     public GenericArrowEntity(
             Component name,
@@ -45,9 +41,8 @@ public class GenericArrowEntity extends AbstractArrow {
             List<ProjectileTargeting> commonHitEffects,
             List<ProjectileEntityEffect> entityHitEffects,
             List<ProjectileBlockEffect> blockHitEffects,
-            DragonAbilityInstance ability,
             Level level,
-            ProjectileInstance projectileInstance,
+            int projectileLevel,
             int piercingLevel) {
         super(entityType, level);
         this.name = name;
@@ -56,8 +51,7 @@ public class GenericArrowEntity extends AbstractArrow {
         this.commonHitEffects = commonHitEffects;
         this.entityHitEffects = entityHitEffects;
         this.blockHitEffects = blockHitEffects;
-        this.ability = ability;
-        this.projectileInstance = projectileInstance;
+        this.projectileLevel = projectileLevel;
         this.setPierceLevel((byte)piercingLevel);
     }
 
@@ -76,9 +70,9 @@ public class GenericArrowEntity extends AbstractArrow {
     }
 
     private void onHitCommon() {
-        if (level() instanceof ServerLevel serverLevel && getOwner() instanceof ServerPlayer player) {
+        if (!level().isClientSide) {
             for (ProjectileTargeting effect : commonHitEffects) {
-                effect.apply(serverLevel, player, projectileInstance, position());
+                effect.apply(this, projectileLevel);
             }
         }
     }
@@ -86,9 +80,9 @@ public class GenericArrowEntity extends AbstractArrow {
     @Override
     protected void onHitBlock(BlockHitResult result) {
         super.onHitBlock(result);
-        if (level() instanceof ServerLevel serverLevel && getOwner() instanceof ServerPlayer player) {
+        if (!level().isClientSide) {
             for (ProjectileBlockEffect effect : blockHitEffects) {
-                effect.apply(serverLevel, player, projectileInstance, result.getBlockPos());
+                effect.apply(this, result.getBlockPos(), projectileLevel);
             }
         }
 
@@ -96,10 +90,10 @@ public class GenericArrowEntity extends AbstractArrow {
     }
 
     @Override
-    protected void onHitEntity(EntityHitResult entityHitResult) {
-        Entity target = entityHitResult.getEntity();
+    protected void onHitEntity(EntityHitResult result) {
+        Entity target = result.getEntity();
         Entity attacker = getOwner();
-        if(level() instanceof ServerLevel serverLevel && getOwner() instanceof ServerPlayer player)
+        if(!level().isClientSide)
         {
             boolean targetIsInImmunityFrames = target.invulnerableTime > 10.0F;
             for(ProjectileEntityEffect effect : entityHitEffects)
@@ -124,7 +118,7 @@ public class GenericArrowEntity extends AbstractArrow {
                 }
             } else {
                 for (ProjectileEntityEffect effect : entityHitEffects) {
-                    effect.apply(serverLevel, player, projectileInstance, target);
+                    effect.apply(this, result.getEntity(), projectileLevel);
                 }
             }
         }
@@ -135,9 +129,9 @@ public class GenericArrowEntity extends AbstractArrow {
     @Override
     public void tick() {
         super.tick();
-        if (level() instanceof ServerLevel serverLevel && getOwner() instanceof ServerPlayer player) {
+        if (!level().isClientSide) {
             for (ProjectileTargeting effect : tickingEffects) {
-                effect.apply(serverLevel, player, projectileInstance, position());
+                effect.apply(this, projectileLevel);
             }
         }
     }

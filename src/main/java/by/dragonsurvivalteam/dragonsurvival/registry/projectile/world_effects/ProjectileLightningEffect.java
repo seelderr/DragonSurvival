@@ -1,27 +1,20 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.projectile.world_effects;
 
-import by.dragonsurvivalteam.dragonsurvival.registry.projectile.ProjectileInstance;
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.entity.projectile.Projectile;
 
-// TODO: How to make identity codec here?
-public record ProjectileLightningEffect(int unused) implements ProjectileWorldEffect {
+public record ProjectileLightningEffect() implements ProjectileWorldEffect {
 
-    public static final MapCodec<ProjectileLightningEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-            Codec.INT.fieldOf("unused").forGetter(ProjectileLightningEffect::unused)
-    ).apply(instance, ProjectileLightningEffect::new));
+    public static final ProjectileLightningEffect INSTANCE = new ProjectileLightningEffect();
+    public static final MapCodec<ProjectileLightningEffect> CODEC = MapCodec.unit(INSTANCE);
 
     @Override
-    public void apply(ServerLevel level, ServerPlayer player, ProjectileInstance projectile, Vec3 position) {
-        LightningBolt lightningboltentity = EntityType.LIGHTNING_BOLT.create(level);
-        lightningboltentity.moveTo(new Vec3(position.x, position.y, position.z));
-        level.addFreshEntity(lightningboltentity);
+    public void apply(Projectile projectile, int projectileLevel) {
+        LightningBolt lightningboltentity = EntityType.LIGHTNING_BOLT.create(projectile.level());
+        lightningboltentity.moveTo(projectile.position());
+        projectile.level().addFreshEntity(lightningboltentity);
     }
 
     @Override

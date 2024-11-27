@@ -1,17 +1,14 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.projectile.world_effects;
 
-import by.dragonsurvivalteam.dragonsurvival.registry.projectile.ProjectileInstance;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
 
 public record ProjectileExplosionEffect(Holder<DamageType> damageType, LevelBasedValue explosionPower, boolean fire, boolean breakBlocks, boolean canDamageSelf) implements ProjectileWorldEffect {
     public static final MapCodec<ProjectileExplosionEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
@@ -22,12 +19,20 @@ public record ProjectileExplosionEffect(Holder<DamageType> damageType, LevelBase
             Codec.BOOL.fieldOf("can_damage_self").forGetter(ProjectileExplosionEffect::canDamageSelf)
     ).apply(instance, ProjectileExplosionEffect::new));
 
-    public void apply(final ServerLevel level, final ServerPlayer player, final ProjectileInstance projectile, final Vec3 position) {
-        level.explode(player,
-                canDamageSelf ? new DamageSource(damageType, player) : new DamageSource(damageType),
+    public void apply(final Projectile projectile, final int projectileLevel) {
+        DamageSource source;
+        if (projectile.getOwner() == null) {
+            source = new DamageSource(damageType, projectile, projectile);
+        } else {
+            source = new DamageSource(damageType, projectile, projectile.getOwner());
+        }
+
+        projectile.level().explode(
+                canDamageSelf ? projectile : projectile.getOwner(),
+                source,
                 null,
-                position.x(), position.y(), position.z(),
-                explosionPower.calculate(projectile.getLevel()),
+                projectile.position().x(), projectile.position().y(), projectile.position().z(),
+                explosionPower.calculate(projectileLevel),
                 fire,
                 breakBlocks ? Level.ExplosionInteraction.BLOCK : Level.ExplosionInteraction.NONE);
     }

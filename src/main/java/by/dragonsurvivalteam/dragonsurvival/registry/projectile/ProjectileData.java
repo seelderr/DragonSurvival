@@ -1,0 +1,85 @@
+package by.dragonsurvivalteam.dragonsurvival.registry.projectile;
+
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
+import by.dragonsurvivalteam.dragonsurvival.registry.projectile.block_effects.ProjectileBlockEffect;
+import by.dragonsurvivalteam.dragonsurvival.registry.projectile.entity_effects.ProjectileEntityEffect;
+import by.dragonsurvivalteam.dragonsurvival.registry.projectile.targeting.ProjectileTargeting;
+import com.mojang.datafixers.util.Either;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.advancements.critereon.EntityPredicate;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.RegistryFixedCodec;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.enchantment.LevelBasedValue;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.registries.DataPackRegistryEvent;
+
+import java.util.List;
+import java.util.Optional;
+
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
+public record ProjectileData(
+        Component name,
+        Either<GenericArrowData, GenericBallData> specificProjectileData,
+        Optional<EntityPredicate> canHitPredicate,
+        List<ProjectileTargeting> tickingEffects,
+        List<ProjectileTargeting> commonHitEffects,
+        List<ProjectileEntityEffect> entityHitEffects,
+        List<ProjectileBlockEffect> blockHitEffects) {
+
+    public record GenericArrowData(ResourceKey<EntityType<?>> entityType, LevelBasedValue piercingLevel) {
+        public static final Codec<GenericArrowData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                ResourceKey.codec(Registries.ENTITY_TYPE).fieldOf("entity_type").forGetter(GenericArrowData::entityType),
+                LevelBasedValue.CODEC.optionalFieldOf("piercing_level", LevelBasedValue.constant(0)).forGetter(GenericArrowData::piercingLevel)
+        ).apply(instance, GenericArrowData::new));
+    }
+
+    public record GenericBallData(
+            ParticleOptions trailParticle,
+            // Needed since there is a difference between being hit and destroyed (e.g if we linger)
+            List<ProjectileTargeting> onDestroyEffects,
+            LevelBasedValue maxLingeringTicks,
+            LevelBasedValue maxMoveDistance,
+            LevelBasedValue maxLifespan) {
+        public static final Codec<GenericBallData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                ParticleTypes.CODEC.fieldOf("trail_particle").forGetter(GenericBallData::trailParticle),
+                ProjectileTargeting.CODEC.listOf().optionalFieldOf("on_destroy_effects", List.of()).forGetter(GenericBallData::onDestroyEffects),
+                LevelBasedValue.CODEC.optionalFieldOf("max_lingering_ticks", LevelBasedValue.constant(0)).forGetter(GenericBallData::maxLingeringTicks),
+                LevelBasedValue.CODEC.fieldOf("max_move_distance").forGetter(GenericBallData::maxMoveDistance),
+                LevelBasedValue.CODEC.fieldOf("max_lifespan").forGetter(GenericBallData::maxLifespan)
+        ).apply(instance, GenericBallData::new));
+    }
+
+    public static final ResourceKey<Registry<ProjectileData>> REGISTRY = ResourceKey.createRegistryKey(DragonSurvival.res("projectile_data"));
+
+    public static final Codec<ProjectileData> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            ComponentSerialization.CODEC.fieldOf("name").forGetter(ProjectileData::name),
+            Codec.either(GenericArrowData.CODEC, GenericBallData.CODEC).fieldOf("specific_projectile_data").forGetter(ProjectileData::specificProjectileData),
+            EntityPredicate.CODEC.optionalFieldOf("can_hit_predicate").forGetter(ProjectileData::canHitPredicate),
+            ProjectileTargeting.CODEC.listOf().fieldOf("ticking_effects").forGetter(ProjectileData::tickingEffects),
+            ProjectileTargeting.CODEC.listOf().fieldOf("common_hit_effects").forGetter(ProjectileData::commonHitEffects),
+            ProjectileEntityEffect.CODEC.listOf().fieldOf("entity_hit_effects").forGetter(ProjectileData::entityHitEffects),
+            ProjectileBlockEffect.CODEC.listOf().fieldOf("block_hit_effects").forGetter(ProjectileData::blockHitEffects)
+    ).apply(instance, ProjectileData::new));
+
+    public static final Codec<Holder<ProjectileData>> CODEC = RegistryFixedCodec.create(REGISTRY);
+    public static final StreamCodec<RegistryFriendlyByteBuf, Holder<ProjectileData>> STREAM_CODEC = ByteBufCodecs.holderRegistry(REGISTRY);
+
+    @SubscribeEvent
+    public static void register(final DataPackRegistryEvent.NewRegistry event) {
+        event.dataPackRegistry(REGISTRY, DIRECT_CODEC, DIRECT_CODEC);
+    }
+
+}

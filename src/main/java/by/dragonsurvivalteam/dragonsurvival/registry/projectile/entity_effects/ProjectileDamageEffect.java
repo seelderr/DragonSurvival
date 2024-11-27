@@ -1,15 +1,13 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.projectile.entity_effects;
 
-import by.dragonsurvivalteam.dragonsurvival.registry.projectile.ProjectileInstance;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 
 public record ProjectileDamageEffect(Holder<DamageType> damageType, LevelBasedValue amount) implements ProjectileEntityEffect {
@@ -19,10 +17,10 @@ public record ProjectileDamageEffect(Holder<DamageType> damageType, LevelBasedVa
     ).apply(instance, ProjectileDamageEffect::new));
 
     @Override
-    public void apply(final ServerLevel level, final ServerPlayer player, final ProjectileInstance projectile, final Entity entity) {
+    public void apply(final Projectile projectile, final Entity target, final int level) {
         // TODO :: also apply damage to entities (e.g. items, boats or experience)?
-        if (entity instanceof LivingEntity livingEntity) {
-            livingEntity.hurt(new DamageSource(damageType(), player), amount().calculate(projectile.getLevel()));
+        if (target instanceof LivingEntity) {
+            target.hurt(new DamageSource(damageType(), projectile.getOwner()), amount().calculate(level));
         }
     }
 

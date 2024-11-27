@@ -1,10 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.projectile.targeting;
 
-import by.dragonsurvivalteam.dragonsurvival.registry.projectile.ProjectileInstance;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.phys.Vec3;
 
 public record ProjectilePointTarget(ProjectileTargeting.WorldTargeting target) implements ProjectileTargeting {
@@ -13,12 +12,18 @@ public record ProjectilePointTarget(ProjectileTargeting.WorldTargeting target) i
     ).apply(instance, ProjectilePointTarget::new));
 
     @Override
-    public void apply(ServerLevel level, ServerPlayer player, ProjectileInstance projectile, Vec3 position) {
+    public void apply(Projectile projectile, int projectileLevel) {
+        Vec3 position = projectile.position();
+        ServerLevel level = (ServerLevel) projectile.level();
+        if(level.getGameTime() % target.tickRate() != 0) {
+            return;
+        }
+
         if(target.locationConditions().isPresent() && !target.locationConditions().get().matches(level, position.x, position.y, position.z)
                 || target.weatherConditions().isPresent() && !target.weatherConditions().get().matches(level)) {
             return;
         }
-        target.effect().apply(level, player, projectile, position);
+        target.effect().apply(projectile, projectileLevel);
     }
 
     @Override

@@ -1,17 +1,16 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.projectile.world_effects;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
-import by.dragonsurvivalteam.dragonsurvival.registry.projectile.ProjectileInstance;
+import by.dragonsurvivalteam.dragonsurvival.registry.projectile.targeting.ProjectilePointTarget;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
+import net.neoforged.neoforge.registries.RegisterEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 
 import java.util.function.Function;
@@ -23,11 +22,20 @@ public interface ProjectileWorldEffect {
 
     Codec<ProjectileWorldEffect> CODEC = REGISTRY.byNameCodec().dispatch(ProjectileWorldEffect::worldCodec, Function.identity());
 
-    void apply(final ServerLevel level, final ServerPlayer dragon, final ProjectileInstance projectile, final Vec3 position);
+    void apply(final Projectile projectile, final int level);
     MapCodec<? extends ProjectileWorldEffect> worldCodec();
 
     @SubscribeEvent
     static void register(final NewRegistryEvent event) {
         event.register(REGISTRY);
+    }
+
+    @SubscribeEvent
+    static void registerEntries(final RegisterEvent event) {
+        if (event.getRegistry() == REGISTRY) {
+            event.register(REGISTRY_KEY, DragonSurvival.res("explosion"), () -> ProjectileExplosionEffect.CODEC);
+            event.register(REGISTRY_KEY, DragonSurvival.res("lightning"), () -> ProjectileLightningEffect.CODEC);
+
+        }
     }
 }

@@ -1,14 +1,12 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.projectile.entity_effects;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
-import by.dragonsurvivalteam.dragonsurvival.registry.projectile.ProjectileInstance;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
@@ -24,7 +22,7 @@ public interface ProjectileEntityEffect {
 
     Codec<ProjectileEntityEffect> CODEC = REGISTRY.byNameCodec().dispatch(ProjectileEntityEffect::entityCodec, Function.identity());
 
-    void apply(final ServerLevel level, final ServerPlayer player, final ProjectileInstance projectile, final Entity entity);
+    void apply(final Projectile projectile, final Entity target, final int projectileLevel);
     MapCodec<? extends ProjectileEntityEffect> entityCodec();
 
     @SubscribeEvent

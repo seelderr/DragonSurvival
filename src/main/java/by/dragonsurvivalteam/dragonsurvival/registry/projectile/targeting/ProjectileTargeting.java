@@ -2,7 +2,6 @@ package by.dragonsurvivalteam.dragonsurvival.registry.projectile.targeting;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.WeatherPredicate;
-import by.dragonsurvivalteam.dragonsurvival.registry.projectile.ProjectileInstance;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.block_effects.ProjectileBlockEffect;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.entity_effects.ProjectileEntityEffect;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.world_effects.ProjectileWorldEffect;
@@ -14,9 +13,7 @@ import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.LocationPredicate;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
@@ -33,25 +30,28 @@ public interface ProjectileTargeting {
 
     Codec<ProjectileTargeting> CODEC = REGISTRY.byNameCodec().dispatch(ProjectileTargeting::codec, Function.identity());
 
-    record BlockTargeting(Optional<BlockPredicate> targetConditions, ProjectileBlockEffect effect) {
+    record BlockTargeting(Optional<BlockPredicate> targetConditions, ProjectileBlockEffect effect, int tickRate) {
         public static final Codec<ProjectileTargeting.BlockTargeting> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 BlockPredicate.CODEC.optionalFieldOf("target_conditions").forGetter(ProjectileTargeting.BlockTargeting::targetConditions),
-                ProjectileBlockEffect.CODEC.fieldOf("block_effect").forGetter(ProjectileTargeting.BlockTargeting::effect)
+                ProjectileBlockEffect.CODEC.fieldOf("block_effect").forGetter(ProjectileTargeting.BlockTargeting::effect),
+                Codec.INT.optionalFieldOf("tick_rate", 1).forGetter(ProjectileTargeting.BlockTargeting::tickRate)
         ).apply(instance, ProjectileTargeting.BlockTargeting::new));
     }
 
-    record EntityTargeting(Optional<EntityPredicate> targetConditions, ProjectileEntityEffect effect) {
+    record EntityTargeting(Optional<EntityPredicate> targetConditions, ProjectileEntityEffect effect, int tickRate) {
         public static final Codec<ProjectileTargeting.EntityTargeting> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 EntityPredicate.CODEC.optionalFieldOf("target_conditions").forGetter(ProjectileTargeting.EntityTargeting::targetConditions),
-                ProjectileEntityEffect.CODEC.fieldOf("entity_effect").forGetter(ProjectileTargeting.EntityTargeting::effect)
+                ProjectileEntityEffect.CODEC.fieldOf("entity_effect").forGetter(ProjectileTargeting.EntityTargeting::effect),
+                Codec.INT.optionalFieldOf("tick_rate", 1).forGetter(ProjectileTargeting.EntityTargeting::tickRate)
         ).apply(instance, ProjectileTargeting.EntityTargeting::new));
     }
 
-    record WorldTargeting(Optional<LocationPredicate> locationConditions, Optional<WeatherPredicate> weatherConditions, ProjectileWorldEffect effect) {
+    record WorldTargeting(Optional<LocationPredicate> locationConditions, Optional<WeatherPredicate> weatherConditions, ProjectileWorldEffect effect, int tickRate) {
         public static final Codec<ProjectileTargeting.WorldTargeting> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 LocationPredicate.CODEC.optionalFieldOf("location_conditions").forGetter(ProjectileTargeting.WorldTargeting::locationConditions),
                 WeatherPredicate.CODEC.optionalFieldOf("weather_conditions").forGetter(ProjectileTargeting.WorldTargeting::weatherConditions),
-                ProjectileWorldEffect.CODEC.fieldOf("world_effect").forGetter(ProjectileTargeting.WorldTargeting::effect)
+                ProjectileWorldEffect.CODEC.fieldOf("world_effect").forGetter(ProjectileTargeting.WorldTargeting::effect),
+                Codec.INT.optionalFieldOf("tick_rate", 1).forGetter(ProjectileTargeting.WorldTargeting::tickRate)
         ).apply(instance, ProjectileTargeting.WorldTargeting::new));
     }
 
@@ -68,8 +68,6 @@ public interface ProjectileTargeting {
         }
     }
 
-    // TODO :: shouldn't this have the projectile as parameter (which has reference to the player, projectile and position)?
-    //  same for the effects
-    void apply(final ServerLevel level, final ServerPlayer player, final ProjectileInstance projectile, final Vec3 position);
+    void apply(final Projectile projectile, int projectileLevel);
     MapCodec<? extends ProjectileTargeting> codec();
 }

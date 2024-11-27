@@ -1,10 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles;
 
-import by.dragonsurvivalteam.dragonsurvival.registry.projectile.ProjectileInstance;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.block_effects.ProjectileBlockEffect;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.entity_effects.ProjectileEntityEffect;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.targeting.ProjectileTargeting;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -13,7 +12,6 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
@@ -38,7 +36,7 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
 
     private final Component name;
     private final Optional<EntityPredicate> canHitPredicate;
-    private final ProjectileInstance projectileInstance;
+    private final int projectileLevel;
     private final List<ProjectileTargeting> tickingEffects;
     private final List<ProjectileTargeting> commonHitEffects;
     private final List<ProjectileEntityEffect> entityHitEffects;
@@ -63,7 +61,7 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
             List<ProjectileEntityEffect> entityHitEffects,
             List<ProjectileBlockEffect> blockHitEffects,
             List<ProjectileTargeting> onDestroyEffects,
-            ProjectileInstance projectileInstance,
+            int projectileLevel,
             int maxLingeringTicks,
             int maxMoveDistance,
             int maxLifespan) {
@@ -76,7 +74,7 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
         this.entityHitEffects = entityHitEffects;
         this.blockHitEffects = blockHitEffects;
         this.onDestroyEffects = onDestroyEffects;
-        this.projectileInstance = projectileInstance;
+        this.projectileLevel = projectileLevel;
         this.maxLingeringTicks = maxLingeringTicks;
         this.lingerTicks = maxLingeringTicks;
         this.maxMoveDistance = maxMoveDistance;
@@ -93,7 +91,7 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
         this.entityHitEffects = List.of();
         this.blockHitEffects = List.of();
         this.onDestroyEffects = List.of();
-        this.projectileInstance = null;
+        this.projectileLevel = 0;
         this.maxLingeringTicks = 0;
         this.lingerTicks = 0;
         this.maxMoveDistance = 0;
@@ -119,9 +117,9 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
     }
 
     protected void onDestroy() {
-        if (level() instanceof ServerLevel serverLevel && getOwner() instanceof ServerPlayer player) {
+        if (!level().isClientSide) {
             for (ProjectileTargeting effect : onDestroyEffects) {
-                effect.apply(serverLevel, player, projectileInstance, position());
+                effect.apply(this, projectileLevel);
             }
         }
         this.discard();
@@ -132,6 +130,15 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
         super.defineSynchedData(pBuilder);
         pBuilder.define(MOVE_DISTANCE, 0f);
         pBuilder.define(LIFESPAN, 0);
+    }
+
+    @Override
+    public @NotNull Vec3 getDeltaMovement() {
+        if (isLingering) {
+            return Vec3.ZERO;
+        }
+
+        return super.getDeltaMovement();
     }
 
     @Override
@@ -147,6 +154,12 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
             this.onHitBlock(new BlockHitResult(this.position(), this.getDirection(), this.blockPosition(), false));
         }
 
+        if (!level().isClientSide) {
+            for (ProjectileTargeting effect : tickingEffects) {
+                effect.apply(this, projectileLevel);
+            }
+        }
+
         if (isLingering) {
             lingerTicks--;
             if (lingerTicks <= 0) {
@@ -159,9 +172,9 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
     @Override
     protected void onHitEntity(@NotNull EntityHitResult hitResult) {
         super.onHitEntity(hitResult);
-        if (level() instanceof ServerLevel serverLevel && getOwner() instanceof ServerPlayer player) {
+        if (!level().isClientSide) {
             for (ProjectileEntityEffect effect : entityHitEffects) {
-                effect.apply(serverLevel, player, projectileInstance, hitResult.getEntity());
+                effect.apply(this, hitResult.getEntity(), projectileLevel);
             }
         }
 
@@ -171,9 +184,9 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
     @Override
     protected void onHitBlock(@NotNull BlockHitResult hitResult) {
         super.onHitBlock(hitResult);
-        if (level() instanceof ServerLevel serverLevel && getOwner() instanceof ServerPlayer player) {
+        if (!level().isClientSide) {
             for (ProjectileBlockEffect effect : blockHitEffects) {
-                effect.apply(serverLevel, player, projectileInstance, hitResult.getBlockPos());
+                effect.apply(this, hitResult.getBlockPos(), projectileLevel);
             }
         }
 
@@ -181,9 +194,9 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
     }
 
     public void onHitCommon() {
-        if (level() instanceof ServerLevel serverLevel && getOwner() instanceof ServerPlayer player) {
+        if (!level().isClientSide) {
             for (ProjectileTargeting effect : commonHitEffects) {
-                effect.apply(serverLevel, player, projectileInstance, position());
+                effect.apply(this, projectileLevel);
             }
         }
 
