@@ -9,21 +9,25 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 
 import java.util.function.Function;
 
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public interface EntityEffect { // TODO :: split into entity and block effects?
     ResourceKey<Registry<MapCodec<? extends EntityEffect>>> REGISTRY_KEY = ResourceKey.createRegistryKey(DragonSurvival.res("ability_effects"));
     Registry<MapCodec<? extends EntityEffect>> REGISTRY = new RegistryBuilder<>(REGISTRY_KEY).create();
 
     Codec<EntityEffect> CODEC = REGISTRY.byNameCodec().dispatch(EntityEffect::entityCodec, Function.identity());
 
-    /* Not sure if this would even work:
-        ResourceKey<Registry<MapCodec<? extends AbilityEffect>>> REGISTRY = ResourceKey.createRegistryKey(DragonSurvival.res("dragon_abilities"));
-        Lazy<Codec<AbilityEffect>> CODEC = Lazy.of(() -> ((Registry<MapCodec<? extends AbilityEffect>>) BuiltInRegistries.REGISTRY.get(REGISTRY.registry())).byNameCodec().dispatch(AbilityEffect::codec, Function.identity()));
-    */
-
     void apply(final ServerLevel level, final Player dragon, final DragonAbilityInstance ability, final Entity entity);
     MapCodec<? extends EntityEffect> entityCodec();
+
+    @SubscribeEvent
+    static void register(final NewRegistryEvent event) {
+        event.register(REGISTRY);
+    }
 }

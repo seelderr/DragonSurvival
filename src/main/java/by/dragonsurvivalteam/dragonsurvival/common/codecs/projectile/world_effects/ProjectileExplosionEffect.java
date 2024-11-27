@@ -9,13 +9,14 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.world.item.enchantment.LevelBasedValue;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
-public record ProjectileExplosionEffect(Holder<DamageType> damageType, float explosionPower, boolean fire, boolean breakBlocks, boolean canDamageSelf) implements ProjectileWorldEffect {
+public record ProjectileExplosionEffect(Holder<DamageType> damageType, LevelBasedValue explosionPower, boolean fire, boolean breakBlocks, boolean canDamageSelf) implements ProjectileWorldEffect {
     public static final MapCodec<ProjectileExplosionEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             DamageType.CODEC.fieldOf("damage_type").forGetter(ProjectileExplosionEffect::damageType),
-            Codec.FLOAT.fieldOf("explosion_power").forGetter(ProjectileExplosionEffect::explosionPower),
+            LevelBasedValue.CODEC.fieldOf("explosion_power").forGetter(ProjectileExplosionEffect::explosionPower),
             Codec.BOOL.fieldOf("fire").forGetter(ProjectileExplosionEffect::fire),
             Codec.BOOL.fieldOf("break_blocks").forGetter(ProjectileExplosionEffect::breakBlocks),
             Codec.BOOL.fieldOf("can_damage_self").forGetter(ProjectileExplosionEffect::canDamageSelf)
@@ -26,7 +27,7 @@ public record ProjectileExplosionEffect(Holder<DamageType> damageType, float exp
                 canDamageSelf ? new DamageSource(damageType, player) : new DamageSource(damageType),
                 null,
                 position.x(), position.y(), position.z(),
-                explosionPower,
+                explosionPower.calculate(projectile.getLevel()),
                 fire,
                 breakBlocks ? Level.ExplosionInteraction.BLOCK : Level.ExplosionInteraction.NONE);
     }

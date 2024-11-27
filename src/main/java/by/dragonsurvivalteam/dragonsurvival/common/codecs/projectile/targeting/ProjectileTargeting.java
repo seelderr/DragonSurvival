@@ -17,11 +17,15 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 
 import java.util.Optional;
 import java.util.function.Function;
 
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public interface ProjectileTargeting {
     ResourceKey<Registry<MapCodec<? extends ProjectileTargeting>>> REGISTRY_KEY = ResourceKey.createRegistryKey(DragonSurvival.res("projectile_targeting"));
     Registry<MapCodec<? extends ProjectileTargeting>> REGISTRY = new RegistryBuilder<>(REGISTRY_KEY).create();
@@ -48,6 +52,11 @@ public interface ProjectileTargeting {
                 WeatherPredicate.CODEC.optionalFieldOf("weather_conditions").forGetter(ProjectileTargeting.WorldTargeting::weatherConditions),
                 ProjectileWorldEffect.CODEC.fieldOf("world_effect").forGetter(ProjectileTargeting.WorldTargeting::effect)
         ).apply(instance, ProjectileTargeting.WorldTargeting::new));
+    }
+
+    @SubscribeEvent
+    static void register(final NewRegistryEvent event) {
+        event.register(REGISTRY);
     }
 
     void apply(final ServerLevel level, final ServerPlayer player, final ProjectileInstance projectile, final Vec3 position);

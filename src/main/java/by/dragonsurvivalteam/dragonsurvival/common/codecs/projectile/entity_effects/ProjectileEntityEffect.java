@@ -9,10 +9,14 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 
 import java.util.function.Function;
 
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public interface ProjectileEntityEffect {
     ResourceKey<Registry<MapCodec<? extends ProjectileEntityEffect>>> REGISTRY_KEY = ResourceKey.createRegistryKey(DragonSurvival.res("projectile_entity_effects"));
     Registry<MapCodec<? extends ProjectileEntityEffect>> REGISTRY = new RegistryBuilder<>(REGISTRY_KEY).create();
@@ -21,4 +25,9 @@ public interface ProjectileEntityEffect {
 
     void apply(final ServerLevel level, final ServerPlayer player, final ProjectileInstance projectile, final Entity entity);
     MapCodec<? extends ProjectileEntityEffect> entityCodec();
+
+    @SubscribeEvent
+    static void register(final NewRegistryEvent event) {
+        event.register(REGISTRY);
+    }
 }

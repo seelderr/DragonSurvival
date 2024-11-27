@@ -105,7 +105,7 @@ public record ProjectileEffect(
                 arrow.setOwner(player);
                 arrow.pickup = AbstractArrow.Pickup.DISALLOWED;
                 arrow.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, speed.calculate(ability.getLevel()), i * projectileSpread.calculate(ability.getLevel()));
-                player.level().addFreshEntity(entity);
+                player.level().addFreshEntity(arrow);
             }
         } else if(projectileData.right().isPresent()) {
             GenericBallData ballData = projectileData.right().get();
