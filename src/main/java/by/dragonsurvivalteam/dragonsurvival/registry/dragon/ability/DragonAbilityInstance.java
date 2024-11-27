@@ -16,6 +16,10 @@ public class DragonAbilityInstance implements INBTSerializable<CompoundTag> {
         this.ability = ability;
     }
 
+    public DragonAbility getAbility() {
+        return ability.value();
+    }
+
     public int getLevel() {
         return level;
     }
