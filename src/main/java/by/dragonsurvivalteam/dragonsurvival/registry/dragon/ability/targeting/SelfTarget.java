@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.targeting;
 
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.entity_effects.EntityEffect;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.entity_effects.AbilityEntityEffect;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.advancements.critereon.EntityPredicate;
@@ -10,10 +10,10 @@ import net.minecraft.world.entity.player.Player;
 
 import java.util.Optional;
 
-public record SelfTarget(Optional<EntityPredicate> targetConditions, EntityEffect effect) implements Targeting {
+public record SelfTarget(Optional<EntityPredicate> targetConditions, AbilityEntityEffect effect) implements AbilityTargeting {
     public static final MapCodec<SelfTarget> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             EntityPredicate.CODEC.optionalFieldOf("target_conditions").forGetter(SelfTarget::targetConditions),
-            EntityEffect.CODEC.fieldOf("effect").forGetter(SelfTarget::effect)
+            AbilityEntityEffect.CODEC.fieldOf("effect").forGetter(SelfTarget::effect)
     ).apply(instance, SelfTarget::new));
 
     @Override
@@ -26,7 +26,7 @@ public record SelfTarget(Optional<EntityPredicate> targetConditions, EntityEffec
     }
 
     @Override
-    public MapCodec<? extends Targeting> codec() {
+    public MapCodec<? extends AbilityTargeting> codec() {
         return CODEC;
     }
 }

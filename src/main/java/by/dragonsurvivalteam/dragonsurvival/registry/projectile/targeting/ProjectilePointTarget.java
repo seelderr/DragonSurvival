@@ -1,6 +1,6 @@
-package by.dragonsurvivalteam.dragonsurvival.common.codecs.projectile.targeting;
+package by.dragonsurvivalteam.dragonsurvival.registry.projectile.targeting;
 
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.projectile.ProjectileInstance;
+import by.dragonsurvivalteam.dragonsurvival.registry.projectile.ProjectileInstance;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.server.level.ServerLevel;

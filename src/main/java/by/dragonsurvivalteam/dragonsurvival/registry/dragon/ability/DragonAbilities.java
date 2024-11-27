@@ -2,18 +2,10 @@ package by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Active;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.ManaCost;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.projectile.entity_effects.ProjectileDamageEffect;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.projectile.targeting.ProjectilePointTarget;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.projectile.targeting.ProjectileTargeting;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.projectile.world_effects.ProjectileExplosionEffect;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.entity_effects.DamageEffect;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.entity_effects.ProjectileEffect;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.targeting.SelfTarget;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.body.DragonBody;
 import com.mojang.datafixers.util.Either;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.network.chat.Component;
@@ -33,9 +25,7 @@ public class DragonAbilities {
     public static void registerAbilities(final BootstrapContext<DragonAbility> context) {
         context.register(FIRE_BALL_TEST, new DragonAbility(
                 Either.left(new Active(
-                        Either.left(new Active.Once(
-                                Active.Once.Type.SIMPLE,
-                                Optional.empty())),
+                        Either.left(new Active.Once(Active.Once.Type.SIMPLE, Optional.empty())),
                         LevelBasedValue.constant(0),
                         LevelBasedValue.constant(1),
                         LevelBasedValue.constant(1)

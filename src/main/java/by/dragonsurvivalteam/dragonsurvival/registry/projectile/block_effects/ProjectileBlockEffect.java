@@ -1,7 +1,12 @@
-package by.dragonsurvivalteam.dragonsurvival.common.codecs.projectile.block_effects;
+package by.dragonsurvivalteam.dragonsurvival.registry.projectile.block_effects;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.projectile.ProjectileInstance;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.common_effects.SummonEntityEffect;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.entity_effects.DamageEffect;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.entity_effects.ModifierEffect;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.entity_effects.PotionEffect;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.entity_effects.ProjectileEffect;
+import by.dragonsurvivalteam.dragonsurvival.registry.projectile.ProjectileInstance;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
@@ -12,6 +17,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
+import net.neoforged.neoforge.registries.RegisterEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 
 import java.util.function.Function;
@@ -29,5 +35,11 @@ public interface ProjectileBlockEffect {
     @SubscribeEvent
     static void register(final NewRegistryEvent event) {
         event.register(REGISTRY);
+    }
+
+    @SubscribeEvent
+    static void registerEntries(final RegisterEvent event) {
+        if (event.getRegistry() == REGISTRY) {
+        }
     }
 }

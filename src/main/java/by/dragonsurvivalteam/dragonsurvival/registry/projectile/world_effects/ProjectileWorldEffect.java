@@ -1,7 +1,7 @@
-package by.dragonsurvivalteam.dragonsurvival.common.codecs.projectile.world_effects;
+package by.dragonsurvivalteam.dragonsurvival.registry.projectile.world_effects;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.projectile.ProjectileInstance;
+import by.dragonsurvivalteam.dragonsurvival.registry.projectile.ProjectileInstance;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Registry;

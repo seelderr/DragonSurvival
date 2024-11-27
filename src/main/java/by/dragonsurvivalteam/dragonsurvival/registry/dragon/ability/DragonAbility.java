@@ -4,7 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Active;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Passive;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Upgrade;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.targeting.Targeting;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.targeting.AbilityTargeting;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
@@ -35,7 +35,7 @@ public record DragonAbility(
         Either<Active, Passive> activation,
         Optional<Upgrade> upgrade,
         Optional<EntityPredicate> usageBlocked,
-        List<Targeting> effects, // TODO :: depending on the logic, mark an entity / block with an outline?
+        List<AbilityTargeting> effects, // TODO :: depending on the logic, mark an entity / block with an outline?
         ResourceLocation icon,
         Component description
 ) {
@@ -45,7 +45,7 @@ public record DragonAbility(
             Codec.either(Active.CODEC, Passive.CODEC).fieldOf("activation").forGetter(DragonAbility::activation),
             Upgrade.CODEC.optionalFieldOf("upgrade").forGetter(DragonAbility::upgrade),
             EntityPredicate.CODEC.optionalFieldOf("usage_blocked").forGetter(DragonAbility::usageBlocked), // TODO :: e.g. when the ability is not supposed to be used underwater
-            Targeting.CODEC.listOf().optionalFieldOf("effects", List.of()).forGetter(DragonAbility::effects),
+            AbilityTargeting.CODEC.listOf().optionalFieldOf("effects", List.of()).forGetter(DragonAbility::effects),
             ResourceLocation.CODEC.fieldOf("icon").forGetter(DragonAbility::icon),
             // TODO: How do we handle descriptions that are fed various values from the ability itself?
             ComponentSerialization.CODEC.fieldOf("description").forGetter(DragonAbility::description)

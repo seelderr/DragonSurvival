@@ -10,7 +10,7 @@ import net.minecraft.world.item.enchantment.LevelBasedValue;
 import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
-public record BonemealEffect(LevelBasedValue attempts, LevelBasedValue probability) implements BlockEffect {
+public record BonemealEffect(LevelBasedValue attempts, LevelBasedValue probability) implements AbilityBlockEffect {
     public static final MapCodec<BonemealEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             LevelBasedValue.CODEC.fieldOf("attempts").forGetter(BonemealEffect::attempts),
             LevelBasedValue.CODEC.fieldOf("probability").forGetter(BonemealEffect::probability)
@@ -33,7 +33,7 @@ public record BonemealEffect(LevelBasedValue attempts, LevelBasedValue probabili
     }
 
     @Override
-    public MapCodec<? extends BlockEffect> blockCodec() {
+    public MapCodec<? extends AbilityBlockEffect> blockCodec() {
         return CODEC;
     }
 }

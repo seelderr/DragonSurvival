@@ -18,7 +18,7 @@ import net.minecraft.world.entity.player.Player;
 
 import java.util.List;
 
-public record ModifierEffect(List<Modifier> modifiers) implements EntityEffect, AttributeModifierSupplier {
+public record ModifierEffect(List<Modifier> modifiers) implements AbilityEntityEffect, AttributeModifierSupplier {
     public static final MapCodec<ModifierEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             Modifier.CODEC.listOf().fieldOf("modifiers").forGetter(ModifierEffect::modifiers)
     ).apply(instance, ModifierEffect::new));
@@ -45,7 +45,7 @@ public record ModifierEffect(List<Modifier> modifiers) implements EntityEffect, 
     }
 
     @Override
-    public MapCodec<? extends EntityEffect> entityCodec() {
+    public MapCodec<? extends AbilityEntityEffect> entityCodec() {
         return CODEC;
     }
 }

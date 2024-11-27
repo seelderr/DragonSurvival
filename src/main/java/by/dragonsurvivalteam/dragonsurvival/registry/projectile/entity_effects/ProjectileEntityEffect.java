@@ -1,7 +1,7 @@
-package by.dragonsurvivalteam.dragonsurvival.common.codecs.projectile.entity_effects;
+package by.dragonsurvivalteam.dragonsurvival.registry.projectile.entity_effects;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.projectile.ProjectileInstance;
+import by.dragonsurvivalteam.dragonsurvival.registry.projectile.ProjectileInstance;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Registry;
@@ -12,6 +12,7 @@ import net.minecraft.world.entity.Entity;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
+import net.neoforged.neoforge.registries.RegisterEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 
 import java.util.function.Function;
@@ -29,5 +30,12 @@ public interface ProjectileEntityEffect {
     @SubscribeEvent
     static void register(final NewRegistryEvent event) {
         event.register(REGISTRY);
+    }
+
+    @SubscribeEvent
+    static void registerEntries(final RegisterEvent event) {
+        if (event.getRegistry() == REGISTRY) {
+            event.register(REGISTRY_KEY, DragonSurvival.res("damage"), () -> ProjectileDamageEffect.CODEC);
+        }
     }
 }

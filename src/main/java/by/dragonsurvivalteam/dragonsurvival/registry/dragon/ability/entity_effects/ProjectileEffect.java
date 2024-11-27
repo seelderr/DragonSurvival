@@ -1,9 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.entity_effects;
 
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.projectile.ProjectileInstance;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.projectile.block_effects.ProjectileBlockEffect;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.projectile.entity_effects.ProjectileEntityEffect;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.projectile.targeting.ProjectileTargeting;
+import by.dragonsurvivalteam.dragonsurvival.registry.projectile.ProjectileInstance;
+import by.dragonsurvivalteam.dragonsurvival.registry.projectile.block_effects.ProjectileBlockEffect;
+import by.dragonsurvivalteam.dragonsurvival.registry.projectile.entity_effects.ProjectileEntityEffect;
+import by.dragonsurvivalteam.dragonsurvival.registry.projectile.targeting.ProjectileTargeting;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.GenericArrowEntity;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.GenericBallEntity;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
@@ -40,7 +40,7 @@ public record ProjectileEffect(
         List<ProjectileBlockEffect> blockHitEffects,
         LevelBasedValue numberOfProjectiles,
         LevelBasedValue projectileSpread,
-        LevelBasedValue speed) implements EntityEffect {
+        LevelBasedValue speed) implements AbilityEntityEffect {
 
     public record GenericArrowData(ResourceKey<EntityType<?>> entityType, LevelBasedValue piercingLevel) {
         public static final Codec<GenericArrowData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
@@ -146,7 +146,7 @@ public record ProjectileEffect(
     }
 
     @Override
-    public MapCodec<? extends EntityEffect> entityCodec() {
+    public MapCodec<? extends AbilityEntityEffect> entityCodec() {
         return null;
     }
 }

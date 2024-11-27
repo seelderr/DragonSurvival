@@ -2,7 +2,6 @@
   "can_hide_wings": false,
   "modifiers": [
     {
-      "type": "dragonsurvival/body/",
       "amount": 0.2,
       "attribute": "dragonsurvival:flight_speed",
       "operation": "add_value"

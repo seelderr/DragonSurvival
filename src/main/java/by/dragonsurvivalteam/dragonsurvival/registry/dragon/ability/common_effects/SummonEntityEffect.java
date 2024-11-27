@@ -2,8 +2,8 @@ package by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.common_effe
 
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ModifierType;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.block_effects.BlockEffect;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.entity_effects.EntityEffect;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.block_effects.AbilityBlockEffect;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.entity_effects.AbilityEntityEffect;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -29,7 +29,7 @@ import java.util.Optional;
 // TODO :: add optional mana cost for keeping the entity?
 // TODO :: add option to add some goals to make sure entities can act as proper summons?
 //   e.g. a target entity goal with switchable modes (on entity right click or sth.) between stuff like aggressive, stay in place, etc.
-public record SummonEntityEffect(HolderSet<EntityType<?>> entities, List<AttributeScale> attributeScales, boolean joinTeam) implements BlockEffect, EntityEffect {
+public record SummonEntityEffect(HolderSet<EntityType<?>> entities, List<AttributeScale> attributeScales, boolean joinTeam) implements AbilityBlockEffect, AbilityEntityEffect {
     public static final MapCodec<SummonEntityEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                     RegistryCodecs.homogeneousList(Registries.ENTITY_TYPE).fieldOf("entities").forGetter(SummonEntityEffect::entities),
                     AttributeScale.CODEC.listOf().optionalFieldOf("attribute_scales", List.of()).forGetter(SummonEntityEffect::attributeScales),
@@ -96,12 +96,12 @@ public record SummonEntityEffect(HolderSet<EntityType<?>> entities, List<Attribu
     }
 
     @Override
-    public MapCodec<? extends BlockEffect> blockCodec() {
+    public MapCodec<? extends AbilityBlockEffect> blockCodec() {
         return CODEC;
     }
 
     @Override
-    public MapCodec<? extends EntityEffect> entityCodec() {
+    public MapCodec<? extends AbilityEntityEffect> entityCodec() {
         return CODEC;
     }
 }

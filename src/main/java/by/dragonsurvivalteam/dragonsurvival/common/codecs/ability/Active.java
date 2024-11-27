@@ -13,6 +13,7 @@ public record Active(Either<Once, Channeled> type, LevelBasedValue initialManaCo
     public static final int INSTANT = -1;
     public static final int NO_COOLDOWN = 0;
 
+    // TODO :: if both codecs match in either the first is returned
     public static final Codec<Active> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.either(Once.CODEC, Channeled.CODEC).fieldOf("type").forGetter(Active::type),
             LevelBasedValue.CODEC.fieldOf("initial_mana_cost").forGetter(Active::initialManaCost), // once the cast went through (either instant or after the charge-up time)
@@ -22,7 +23,7 @@ public record Active(Either<Once, Channeled> type, LevelBasedValue initialManaCo
 
     public record Once(Type type, Optional<Either<ManaCost.Ticked, ManaCost.Reserved>> manaHandling) {
         public static final Codec<Once> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                Type.CODEC.optionalFieldOf("type", Type.SIMPLE).forGetter(Once::type),
+                Type.CODEC.fieldOf("type").forGetter(Once::type),
                 Codec.either(ManaCost.Ticked.CODEC, ManaCost.Reserved.CODEC).optionalFieldOf("usage_mana_cost").forGetter(Once::manaHandling)
         ).apply(instance, Once::new));
 

@@ -163,7 +163,7 @@ public class PenaltySupply implements INBTSerializable<CompoundTag> {
         private float multiplyBaseModifier;
         private float multiplyTotalModifier;
 
-        public Rate(final float baseRate) {
+        public Rate(float baseRate) {
             this.baseRate = baseRate;
         }
 

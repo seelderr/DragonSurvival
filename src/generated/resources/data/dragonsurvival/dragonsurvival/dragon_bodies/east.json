@@ -1,61 +1,51 @@
 {
   "modifiers": [
     {
-      "type": "dragonsurvival/body/",
       "amount": 2.0,
       "attribute": "minecraft:generic.armor",
       "operation": "add_value"
     },
     {
-      "type": "dragonsurvival/body/",
       "amount": -1.0,
       "attribute": "minecraft:generic.attack_damage",
       "operation": "add_value"
     },
     {
-      "type": "dragonsurvival/body/",
       "amount": -1.0,
       "attribute": "minecraft:generic.attack_knockback",
       "operation": "add_value"
     },
     {
-      "type": "dragonsurvival/body/",
       "amount": 0.1,
       "attribute": "minecraft:generic.gravity",
       "operation": "add_multiplied_total"
     },
     {
-      "type": "dragonsurvival/body/",
       "amount": 0.1,
       "attribute": "minecraft:generic.jump_strength",
       "operation": "add_value"
     },
     {
-      "type": "dragonsurvival/body/",
       "amount": 0.1,
       "attribute": "minecraft:generic.movement_speed",
       "operation": "add_multiplied_total"
     },
     {
-      "type": "dragonsurvival/body/",
       "amount": 1.0,
       "attribute": "neoforge:swim_speed",
       "operation": "add_value"
     },
     {
-      "type": "dragonsurvival/body/",
       "amount": 2.0,
       "attribute": "dragonsurvival:mana",
       "operation": "add_value"
     },
     {
-      "type": "dragonsurvival/body/",
       "amount": 0.2,
       "attribute": "dragonsurvival:flight_speed",
       "operation": "add_value"
     },
     {
-      "type": "dragonsurvival/body/",
       "amount": -0.2,
       "attribute": "dragonsurvival:flight_stamina",
       "operation": "add_multiplied_total"

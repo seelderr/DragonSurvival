@@ -1,6 +1,6 @@
-package by.dragonsurvivalteam.dragonsurvival.common.codecs.projectile.entity_effects;
+package by.dragonsurvivalteam.dragonsurvival.registry.projectile.entity_effects;
 
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.projectile.ProjectileInstance;
+import by.dragonsurvivalteam.dragonsurvival.registry.projectile.ProjectileInstance;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;

@@ -16,7 +16,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 
-public record SingleTarget(Either<BlockTargeting, EntityTargeting> target, LevelBasedValue range) implements Targeting {
+public record SingleTarget(Either<BlockTargeting, EntityTargeting> target, LevelBasedValue range) implements AbilityTargeting {
     public static final MapCodec<SingleTarget> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             Codec.either(BlockTargeting.CODEC, EntityTargeting.CODEC).fieldOf("target").forGetter(SingleTarget::target),
             LevelBasedValue.CODEC.fieldOf("range").forGetter(SingleTarget::range)
@@ -47,7 +47,7 @@ public record SingleTarget(Either<BlockTargeting, EntityTargeting> target, Level
     }
 
     @Override
-    public MapCodec<? extends Targeting> codec() {
+    public MapCodec<? extends AbilityTargeting> codec() {
         return CODEC;
     }
 }

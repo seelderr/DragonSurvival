@@ -1,9 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles;
 
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.projectile.ProjectileInstance;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.projectile.block_effects.ProjectileBlockEffect;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.projectile.entity_effects.ProjectileEntityEffect;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.projectile.targeting.ProjectileTargeting;
+import by.dragonsurvivalteam.dragonsurvival.registry.projectile.ProjectileInstance;
+import by.dragonsurvivalteam.dragonsurvival.registry.projectile.block_effects.ProjectileBlockEffect;
+import by.dragonsurvivalteam.dragonsurvival.registry.projectile.entity_effects.ProjectileEntityEffect;
+import by.dragonsurvivalteam.dragonsurvival.registry.projectile.targeting.ProjectileTargeting;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.core.particles.ParticleOptions;

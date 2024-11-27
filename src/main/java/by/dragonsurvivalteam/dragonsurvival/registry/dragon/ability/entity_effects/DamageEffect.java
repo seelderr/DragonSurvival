@@ -12,7 +12,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 
-public record DamageEffect(Holder<DamageType> damageType, LevelBasedValue amount) implements EntityEffect {
+public record DamageEffect(Holder<DamageType> damageType, LevelBasedValue amount) implements AbilityEntityEffect {
     public static final MapCodec<DamageEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             DamageType.CODEC.fieldOf("damage_type").forGetter(DamageEffect::damageType),
             LevelBasedValue.CODEC.fieldOf("amount").forGetter(DamageEffect::amount)
@@ -27,7 +27,7 @@ public record DamageEffect(Holder<DamageType> damageType, LevelBasedValue amount
     }
 
     @Override
-    public MapCodec<? extends EntityEffect> entityCodec() {
+    public MapCodec<? extends AbilityEntityEffect> entityCodec() {
         return CODEC;
     }
 }

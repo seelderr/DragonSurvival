@@ -1,6 +1,6 @@
-package by.dragonsurvivalteam.dragonsurvival.common.codecs.projectile.targeting;
+package by.dragonsurvivalteam.dragonsurvival.registry.projectile.targeting;
 
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.projectile.ProjectileInstance;
+import by.dragonsurvivalteam.dragonsurvival.registry.projectile.ProjectileInstance;
 import by.dragonsurvivalteam.dragonsurvival.network.particle.SyncParticleTrail;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;

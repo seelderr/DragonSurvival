@@ -1,4 +1,4 @@
-package by.dragonsurvivalteam.dragonsurvival.common.codecs.projectile;
+package by.dragonsurvivalteam.dragonsurvival.registry.projectile;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;

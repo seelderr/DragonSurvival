@@ -16,7 +16,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 // TODO :: add sub entity predicate for easy is ally / team check (and tamable animals) / spectator
-public record DragonBreathTarget(Either<BlockTargeting, EntityTargeting> target, LevelBasedValue range) implements Targeting {
+public record DragonBreathTarget(Either<BlockTargeting, EntityTargeting> target, LevelBasedValue range) implements AbilityTargeting {
     public static final MapCodec<DragonBreathTarget> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             Codec.either(BlockTargeting.CODEC, EntityTargeting.CODEC).fieldOf("target").forGetter(DragonBreathTarget::target),
             LevelBasedValue.CODEC.fieldOf("range").forGetter(DragonBreathTarget::range)
@@ -43,7 +43,7 @@ public record DragonBreathTarget(Either<BlockTargeting, EntityTargeting> target,
     }
 
     @Override
-    public MapCodec<? extends Targeting> codec() {
+    public MapCodec<? extends AbilityTargeting> codec() {
         return CODEC;
     }
 

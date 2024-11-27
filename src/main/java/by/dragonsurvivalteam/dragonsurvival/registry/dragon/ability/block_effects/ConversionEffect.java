@@ -17,7 +17,7 @@ import net.minecraft.world.level.block.Block;
 import java.util.List;
 import java.util.Optional;
 
-public record ConversionEffect(List<ConversionData> conversionData, LevelBasedValue probability) implements BlockEffect {
+public record ConversionEffect(List<ConversionData> conversionData, LevelBasedValue probability) implements AbilityBlockEffect {
     public static final MapCodec<ConversionEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             ConversionData.CODEC.listOf().fieldOf("conversion_data").forGetter(ConversionEffect::conversionData),
             LevelBasedValue.CODEC.fieldOf("probability").forGetter(ConversionEffect::probability)
@@ -46,7 +46,7 @@ public record ConversionEffect(List<ConversionData> conversionData, LevelBasedVa
     }
 
     @Override
-    public MapCodec<? extends BlockEffect> blockCodec() {
+    public MapCodec<? extends AbilityBlockEffect> blockCodec() {
         return CODEC;
     }
 }

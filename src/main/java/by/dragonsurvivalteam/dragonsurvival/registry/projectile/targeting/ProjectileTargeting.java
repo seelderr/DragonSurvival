@@ -1,11 +1,11 @@
-package by.dragonsurvivalteam.dragonsurvival.common.codecs.projectile.targeting;
+package by.dragonsurvivalteam.dragonsurvival.registry.projectile.targeting;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.WeatherPredicate;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.projectile.ProjectileInstance;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.projectile.block_effects.ProjectileBlockEffect;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.projectile.entity_effects.ProjectileEntityEffect;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.projectile.world_effects.ProjectileWorldEffect;
+import by.dragonsurvivalteam.dragonsurvival.registry.projectile.ProjectileInstance;
+import by.dragonsurvivalteam.dragonsurvival.registry.projectile.block_effects.ProjectileBlockEffect;
+import by.dragonsurvivalteam.dragonsurvival.registry.projectile.entity_effects.ProjectileEntityEffect;
+import by.dragonsurvivalteam.dragonsurvival.registry.projectile.world_effects.ProjectileWorldEffect;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -20,6 +20,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
+import net.neoforged.neoforge.registries.RegisterEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 
 import java.util.Optional;
@@ -59,6 +60,16 @@ public interface ProjectileTargeting {
         event.register(REGISTRY);
     }
 
+    @SubscribeEvent
+    static void registerEntries(final RegisterEvent event) {
+        if (event.getRegistry() == REGISTRY) {
+            event.register(REGISTRY_KEY, DragonSurvival.res("area"), () -> ProjectileAreaTarget.CODEC);
+            event.register(REGISTRY_KEY, DragonSurvival.res("point"), () -> ProjectilePointTarget.CODEC);
+        }
+    }
+
+    // TODO :: shouldn't this have the projectile as parameter (which has reference to the player, projectile and position)?
+    //  same for the effects
     void apply(final ServerLevel level, final ServerPlayer player, final ProjectileInstance projectile, final Vec3 position);
     MapCodec<? extends ProjectileTargeting> codec();
 }

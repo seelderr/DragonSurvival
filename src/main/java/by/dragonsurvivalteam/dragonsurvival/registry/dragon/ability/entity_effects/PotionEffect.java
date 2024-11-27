@@ -14,7 +14,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 
-public record PotionEffect(HolderSet<MobEffect> effects, LevelBasedValue amplifier, LevelBasedValue duration, LevelBasedValue probability) implements EntityEffect {
+public record PotionEffect(HolderSet<MobEffect> effects, LevelBasedValue amplifier, LevelBasedValue duration, LevelBasedValue probability) implements AbilityEntityEffect {
     public static final MapCodec<PotionEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             RegistryCodecs.homogeneousList(BuiltInRegistries.MOB_EFFECT.key()).fieldOf("effects").forGetter(PotionEffect::effects),
             LevelBasedValue.CODEC.fieldOf("amplifier").forGetter(PotionEffect::amplifier),
@@ -36,7 +36,7 @@ public record PotionEffect(HolderSet<MobEffect> effects, LevelBasedValue amplifi
     }
 
     @Override
-    public MapCodec<? extends EntityEffect> entityCodec() {
+    public MapCodec<? extends AbilityEntityEffect> entityCodec() {
         return CODEC;
     }
 }
