@@ -2,26 +2,31 @@ package by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.entity_effe
 
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.GenericArrowEntity;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.GenericBallEntity;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.AbilityInfo;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.ProjectileData;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 import net.minecraft.world.phys.Vec3;
 
+@AbilityInfo(compatibleWith = {AbilityInfo.Type.ACTIVE_SIMPLE, AbilityInfo.Type.ACTIVE_CHANNELED})
 public record ProjectileEffect(
         Holder<ProjectileData> projectileData,
         LevelBasedValue numberOfProjectiles,
         LevelBasedValue projectileSpread,
-        LevelBasedValue speed) implements AbilityEntityEffect {
-
+        LevelBasedValue speed
+) implements AbilityEntityEffect {
     public static final MapCodec<ProjectileEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             ProjectileData.CODEC.fieldOf("projectile_data").forGetter(ProjectileEffect::projectileData),
             LevelBasedValue.CODEC.fieldOf("number_of_projectiles").forGetter(ProjectileEffect::numberOfProjectiles),
@@ -29,16 +34,19 @@ public record ProjectileEffect(
             LevelBasedValue.CODEC.fieldOf("speed").forGetter(ProjectileEffect::speed)
     ).apply(instance, ProjectileEffect::new));
 
-
     @Override
-    public void apply(ServerLevel level, Player player, DragonAbilityInstance ability, Entity entity) {
+    public void apply(final ServerPlayer dragon, final DragonAbilityInstance ability, final Entity entity) {
         ProjectileData projectileData = projectileData().value();
         Either<ProjectileData.GenericArrowData, ProjectileData.GenericBallData> specificData = projectileData.specificProjectileData();
         if(specificData.left().isPresent()) {
             ProjectileData.GenericArrowData arrowData = specificData.left().get();
+            // TODO :: why not 'Projectile'?
+            //noinspection unchecked, OptionalGetWithoutIsPresent -> entity type is expected to be of said type
+            EntityType<? extends AbstractArrow> entityType = (EntityType<? extends AbstractArrow>) dragon.serverLevel().registryAccess().registry(Registries.ENTITY_TYPE).get().getOrThrow(arrowData.entityType());
+
             for (int i = 0; i < numberOfProjectiles.calculate(ability.getLevel()); i++) {
                 // Copied from AbstractArrow.java constructor
-                Vec3 launchPos = new Vec3(player.getX(), player.getEyeY() - 0.1F, player.getZ());
+                Vec3 launchPos = new Vec3(dragon.getX(), dragon.getEyeY() - 0.1F, dragon.getZ());
                 GenericArrowEntity arrow = new GenericArrowEntity(
                         projectileData.location(),
                         projectileData.canHitPredicate(),
@@ -46,25 +54,25 @@ public record ProjectileEffect(
                         projectileData.commonHitEffects(),
                         projectileData.entityHitEffects(),
                         projectileData.blockHitEffects(),
-                        level,
+                        dragon.serverLevel(),
                         ability.getLevel(),
                         (int)arrowData.piercingLevel().calculate(ability.getLevel())
                 );
                 arrow.setPos(launchPos);
-                arrow.setOwner(player);
+                arrow.setOwner(dragon);
                 arrow.pickup = AbstractArrow.Pickup.DISALLOWED;
-                arrow.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, speed.calculate(ability.getLevel()), i * projectileSpread.calculate(ability.getLevel()));
-                player.level().addFreshEntity(arrow);
+                arrow.shootFromRotation(dragon, dragon.getXRot(), dragon.getYRot(), 0.0F, speed.calculate(ability.getLevel()), i * projectileSpread.calculate(ability.getLevel()));
+                dragon.level().addFreshEntity(arrow);
             }
         } else if(specificData.right().isPresent()) {
             ProjectileData.GenericBallData ballData = specificData.right().get();
 
             for (int i = 0; i < numberOfProjectiles.calculate(ability.getLevel()); i++) {
-                Vec3 eyePos = player.getEyePosition();
-                Vec3 lookAngle = player.getLookAngle();
+                Vec3 eyePos = dragon.getEyePosition();
+                Vec3 lookAngle = dragon.getLookAngle();
 
                 Vec3 projPos;
-                if (player.getAbilities().flying) {
+                if (dragon.getAbilities().flying) {
                     projPos = lookAngle.scale(2.0F).add(eyePos);
                 } else {
                     projPos = lookAngle.scale(1.0F).add(eyePos);
@@ -73,6 +81,7 @@ public record ProjectileEffect(
                 GenericBallEntity projectile = new GenericBallEntity(
                         projectileData.location(),
                         ballData.trailParticle(),
+                        dragon.serverLevel(),
                         level,
                         EntityDimensions.scalable(ballData.xSize().calculate(ability.getLevel()), ballData.ySize().calculate(ability.getLevel())),
                         projectileData.canHitPredicate(),
@@ -89,8 +98,8 @@ public record ProjectileEffect(
 
                 projectile.setPos(projPos);
                 projectile.accelerationPower = 0;
-                projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), 1.0F, speed.calculate(ability.getLevel()), i * projectileSpread.calculate(ability.getLevel()));
-                player.level().addFreshEntity(projectile);
+                projectile.shootFromRotation(dragon, dragon.getXRot(), dragon.getYRot(), 1.0F, speed.calculate(ability.getLevel()), i * projectileSpread.calculate(ability.getLevel()));
+                dragon.level().addFreshEntity(projectile);
             }
         }
     }

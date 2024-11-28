@@ -23,10 +23,11 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.registries.DataPackRegistryEvent;
 
+import javax.annotation.Nullable;
+import java.lang.reflect.AnnotatedType;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
-import javax.annotation.Nullable;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public record DragonAbility(
@@ -56,6 +57,13 @@ public record DragonAbility(
 
     public static final int MAX_ACTIVE = 4;
     public static final int MAX_PASSIVE = 8;
+
+    public DragonAbility {
+        // TODO :: check compatible abilities
+         effects().forEach(target -> {
+             AnnotatedType[] annotations = target.effect().getClass().getAnnotatedInterfaces();
+         });
+    }
 
     @SubscribeEvent
     public static void register(final DataPackRegistryEvent.NewRegistry event) {

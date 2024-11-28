@@ -8,8 +8,7 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
@@ -19,7 +18,6 @@ import net.neoforged.neoforge.registries.RegistryBuilder;
 import java.util.function.Function;
 
 /*
-- convert block
 - destroy block
 - explode block
 - do something with falling block entities to make blocks explode and move around but not actually destroy them through that?
@@ -31,7 +29,7 @@ public interface AbilityBlockEffect {
 
     Codec<AbilityBlockEffect> CODEC = REGISTRY.byNameCodec().dispatch(AbilityBlockEffect::blockCodec, Function.identity());
 
-    void apply(final ServerLevel level, final Player dragon, final DragonAbilityInstance ability, final BlockPos position);
+    void apply(final ServerPlayer dragon, final DragonAbilityInstance ability, final BlockPos position);
     MapCodec<? extends AbilityBlockEffect> blockCodec();
 
     @SubscribeEvent

@@ -2,11 +2,9 @@ package by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.targeting;
 
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import com.mojang.datafixers.util.Either;
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 import net.minecraft.world.level.ClipContext;
@@ -17,31 +15,30 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 
 public record SingleTarget(Either<BlockTargeting, EntityTargeting> target, LevelBasedValue range) implements AbilityTargeting {
-    public static final MapCodec<SingleTarget> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-            Codec.either(BlockTargeting.CODEC, EntityTargeting.CODEC).fieldOf("target").forGetter(SingleTarget::target),
-            LevelBasedValue.CODEC.fieldOf("range").forGetter(SingleTarget::range)
-    ).apply(instance, SingleTarget::new));
+    public static final MapCodec<SingleTarget> CODEC = RecordCodecBuilder.mapCodec(instance -> AbilityTargeting.codecStart(instance)
+            .and(LevelBasedValue.CODEC.fieldOf("range").forGetter(SingleTarget::range)).apply(instance, SingleTarget::new)
+    );
 
     @Override
-    public void apply(final ServerLevel level, final Player dragon, final DragonAbilityInstance ability) {
+    public void apply(final ServerPlayer dragon, final DragonAbilityInstance ability) {
         target().ifLeft(blockTarget -> {
             Vec3 viewVector = dragon.getViewVector(0);
-            BlockHitResult result = level.clip(new ClipContext(viewVector, viewVector.scale(range().calculate(ability.getLevel())), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, CollisionContext.empty()));
+            BlockHitResult result = dragon.serverLevel().clip(new ClipContext(viewVector, viewVector.scale(range().calculate(ability.getLevel())), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, CollisionContext.empty()));
 
             if (result.getType() == HitResult.Type.MISS) {
                 return;
             }
 
-            if (blockTarget.targetConditions().isPresent() && !blockTarget.targetConditions().get().matches(level, result.getBlockPos()) || /* This is always checked by the predicate */ !level.isLoaded(result.getBlockPos())) {
+            if (blockTarget.targetConditions().isPresent() && !blockTarget.targetConditions().get().matches(dragon.serverLevel(), result.getBlockPos()) || /* This is always checked by the predicate */ !dragon.serverLevel().isLoaded(result.getBlockPos())) {
                 return;
             }
 
-            blockTarget.effect().apply(level, dragon, ability, result.getBlockPos());
+            blockTarget.effect().forEach(target -> target.apply(dragon, ability, result.getBlockPos()));
         }).ifRight(entityTarget -> {
-            HitResult result = ProjectileUtil.getHitResultOnViewVector(dragon, entity -> entityTarget.targetConditions().map(conditions -> conditions.matches(level, dragon.position(), entity)).orElse(true), range().calculate(ability.getLevel()));
+            HitResult result = ProjectileUtil.getHitResultOnViewVector(dragon, entity -> entityTarget.targetConditions().map(conditions -> conditions.matches(dragon.serverLevel(), dragon.position(), entity)).orElse(true), range().calculate(ability.getLevel()));
 
             if (result instanceof EntityHitResult entityHitResult) {
-                entityTarget.effect().apply(level, dragon, ability, entityHitResult.getEntity());
+                entityTarget.effect().forEach(target -> target.apply(dragon, ability, entityHitResult.getEntity()));
             }
         });
     }
