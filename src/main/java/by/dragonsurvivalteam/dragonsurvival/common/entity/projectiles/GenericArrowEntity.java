@@ -7,9 +7,14 @@ import by.dragonsurvivalteam.dragonsurvival.registry.projectile.block_effects.Pr
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.entity_effects.ProjectileDamageEffect;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.entity_effects.ProjectileEntityEffect;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.targeting.ProjectileTargeting;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -23,7 +28,9 @@ import net.minecraft.util.Unit;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.projectile.ProjectileDeflection;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -36,16 +43,19 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 
 public class GenericArrowEntity extends AbstractArrow {
-    private final int projectileLevel;
+    private int projectileLevel;
     public static final EntityDataAccessor<String> RES_LOCATION = SynchedEntityData.defineId(GenericArrowEntity.class, EntityDataSerializers.STRING);
-    private final Optional<EntityPredicate> canHitPredicate;
-    private final List<ProjectileTargeting> tickingEffects;
-    private final List<ProjectileTargeting> commonHitEffects;
-    private final List<ProjectileEntityEffect> entityHitEffects;
-    private final List<ProjectileBlockEffect> blockHitEffects;
+    private Optional<EntityPredicate> canHitPredicate;
+    private List<ProjectileTargeting> tickingEffects;
+    private List<ProjectileTargeting> commonHitEffects;
+    private List<ProjectileEntityEffect> entityHitEffects;
+    private List<ProjectileBlockEffect> blockHitEffects;
 
     // Copied from AbstractArrow.java
     @Nullable private IntOpenHashSet piercingIgnoreEntityIds;
+
+    // Copied from AbstractArrow.java
+    @Nullable private Entity lastDeflectedBy;
 
     public GenericArrowEntity(
             ResourceLocation location,
@@ -76,6 +86,67 @@ public class GenericArrowEntity extends AbstractArrow {
         this.commonHitEffects = List.of();
         this.entityHitEffects = List.of();
         this.blockHitEffects = List.of();
+    }
+
+    private record GenericArrowEntityInstance(
+            ResourceLocation location,
+            Optional<EntityPredicate> canHitPredicate,
+            List<ProjectileTargeting> tickingEffects,
+            List<ProjectileTargeting> commonHitEffects,
+            List<ProjectileEntityEffect> entityHitEffects,
+            List<ProjectileBlockEffect> blockHitEffects,
+            int projectileLevel,
+            int piercingLevel)
+    {
+        public static final Codec<GenericArrowEntityInstance> CODEC = RecordCodecBuilder.create(
+                instance -> instance.group(
+                        ResourceLocation.CODEC.fieldOf("location").forGetter(GenericArrowEntityInstance::location),
+                        EntityPredicate.CODEC.optionalFieldOf("can_hit_predicate").forGetter(GenericArrowEntityInstance::canHitPredicate),
+                        ProjectileTargeting.CODEC.listOf().fieldOf("ticking_effects").forGetter(GenericArrowEntityInstance::tickingEffects),
+                        ProjectileTargeting.CODEC.listOf().fieldOf("common_hit_effects").forGetter(GenericArrowEntityInstance::commonHitEffects),
+                        ProjectileEntityEffect.CODEC.listOf().fieldOf("entity_hit_effects").forGetter(GenericArrowEntityInstance::entityHitEffects),
+                        ProjectileBlockEffect.CODEC.listOf().fieldOf("block_hit_effects").forGetter(GenericArrowEntityInstance::blockHitEffects),
+                        Codec.INT.fieldOf("projectile_level").forGetter(GenericArrowEntityInstance::projectileLevel),
+                        Codec.INT.fieldOf("piercing_level").forGetter(GenericArrowEntityInstance::piercingLevel)
+                ).apply(instance, GenericArrowEntityInstance::new)
+        );
+
+        public void load(GenericArrowEntity entity) {
+            entity.setResourceLocation(location);
+            entity.canHitPredicate = canHitPredicate;
+            entity.tickingEffects = tickingEffects;
+            entity.commonHitEffects = commonHitEffects;
+            entity.entityHitEffects = entityHitEffects;
+            entity.blockHitEffects = blockHitEffects;
+            entity.projectileLevel = projectileLevel;
+            entity.setPierceLevel((byte)piercingLevel);
+        }
+
+        public static GenericArrowEntityInstance fromEntity(GenericArrowEntity entity) {
+            return new GenericArrowEntityInstance(
+                    entity.getResourceLocation(),
+                    entity.canHitPredicate,
+                    entity.tickingEffects,
+                    entity.commonHitEffects,
+                    entity.entityHitEffects,
+                    entity.blockHitEffects,
+                    entity.projectileLevel,
+                    entity.getPierceLevel()
+            );
+        }
+    }
+
+    @Override
+    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+        super.addAdditionalSaveData(compound);
+        Tag data = GenericArrowEntityInstance.CODEC.encodeStart(level().registryAccess().createSerializationContext(NbtOps.INSTANCE), GenericArrowEntityInstance.fromEntity(this)).getOrThrow();
+        compound.put("generic_arrow_entity_instance", data);
+    }
+
+    @Override
+    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+        super.readAdditionalSaveData(compound);
+        GenericArrowEntityInstance.CODEC.parse(level().registryAccess().createSerializationContext(NbtOps.INSTANCE), compound.get("generic_arrow_entity_instance")).getOrThrow().load(this);
     }
 
     @Override
@@ -141,34 +212,45 @@ public class GenericArrowEntity extends AbstractArrow {
         Entity attacker = getOwner();
         if(!level().isClientSide)
         {
-            boolean targetIsInImmunityFrames = target.invulnerableTime > 10.0F;
+            boolean targetIsInvulnerableToDamageType = false;
+            boolean considerImmunityFrames = true;
             for(ProjectileEntityEffect effect : entityHitEffects)
             {
                 if(effect instanceof ProjectileDamageEffect damageEffect)
                 {
-                    DamageSource damageSource = new DamageSource(damageEffect.damageType(), this, attacker);
-                    if(damageSource.is(DamageTypeTags.BYPASSES_COOLDOWN) || target.isInvulnerableTo(damageSource))
+                    if(damageEffect.damageType().is(DamageTypeTags.BYPASSES_COOLDOWN))
                     {
-                        targetIsInImmunityFrames = true;
+                        considerImmunityFrames = false;
+                    }
+
+                    DamageSource source = new DamageSource(damageEffect.damageType(), attacker);
+                    if(target.isInvulnerableTo(source))
+                    {
+                        targetIsInvulnerableToDamageType = true;
                     }
                 }
             }
 
-            if (getPierceLevel() == 0 && targetIsInImmunityFrames) {
-                setDeltaMovement(getDeltaMovement().scale(-0.1D));
-                setYRot(getYRot() + 180.0F);
-                yRotO += 180.0F;
+            boolean targetIsInImmunityFrames = target.invulnerableTime > 10.0F;
+            boolean targetIsInvulnerable = considerImmunityFrames ? targetIsInImmunityFrames && targetIsInvulnerableToDamageType : targetIsInvulnerableToDamageType;
 
-                if (getDeltaMovement().lengthSqr() < 1.0E-7D) {
-                    this.discard();
-                }
+            ProjectileDeflection deflection = target.deflection(this);
+            if (target != this.lastDeflectedBy
+                    && deflection != ProjectileDeflection.NONE
+                    && this.piercingIgnoreEntityIds.size() >= this.getPierceLevel() + 1
+                    && targetIsInvulnerable
+                    // Short-circuit eval will prevent this from being called in situations where we don't want it
+                    && this.deflect(ProjectileDeflection.REVERSE, this.getOwner(), target, target instanceof Player)) {
+                this.lastDeflectedBy = target;
             } else {
-                for (ProjectileEntityEffect effect : entityHitEffects) {
-                    effect.apply(this, result.getEntity(), projectileLevel);
-                }
+                if(!targetIsInvulnerable) {
+                    for (ProjectileEntityEffect effect : entityHitEffects) {
+                        effect.apply(this, result.getEntity(), projectileLevel);
+                    }
 
-                if (attacker instanceof ServerPlayer serverPlayer && !isSilent()) {
-                    serverPlayer.connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.ARROW_HIT_PLAYER, 0.0F));
+                    if (attacker instanceof ServerPlayer serverPlayer && !isSilent()) {
+                        serverPlayer.connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.ARROW_HIT_PLAYER, 0.0F));
+                    }
                 }
 
                 // Copied from AbstractArrow.java
@@ -183,6 +265,8 @@ public class GenericArrowEntity extends AbstractArrow {
                     }
 
                     this.piercingIgnoreEntityIds.add(target.getId());
+                } else {
+                    this.discard();
                 }
             }
             onHitCommon();
@@ -192,7 +276,7 @@ public class GenericArrowEntity extends AbstractArrow {
     @Override
     public void tick() {
         super.tick();
-        if (!level().isClientSide) {
+        if (!level().isClientSide && !inGround) {
             for (ProjectileTargeting effect : tickingEffects) {
                 effect.apply(this, projectileLevel);
             }

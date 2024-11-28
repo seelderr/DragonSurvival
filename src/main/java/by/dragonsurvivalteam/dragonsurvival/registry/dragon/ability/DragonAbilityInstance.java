@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class DragonAbilityInstance implements INBTSerializable<CompoundTag> {
     private final Holder<DragonAbility> ability;
-    private int level;
+    private int level = 1;
 
     // TODO :: store cooldown here?
 
