@@ -97,10 +97,9 @@ public class BallLightningAbility extends ChargeCastAbility {
             return;
         }
 
-        DragonAbility ability = player.registryAccess().registry(DragonAbility.REGISTRY).get().get(DragonAbilities.BALL_LIGHTNING);
-        Holder<DragonAbility> holder = player.registryAccess().registry(DragonAbility.REGISTRY).get().getHolderOrThrow(DragonAbilities.BALL_LIGHTNING);
-        ability.effects().getFirst().apply((ServerPlayer)player, new DragonAbilityInstance(holder));
-
+        Holder<DragonAbility> ability = player.registryAccess().holderOrThrow(DragonAbilities.BALL_LIGHTNING);
+        DragonAbilityInstance instance = new DragonAbilityInstance(ability);
+        instance.apply((ServerPlayer) player);
         /*float speed = 1;
 
         Vec3 eyePos = player.getEyePosition();

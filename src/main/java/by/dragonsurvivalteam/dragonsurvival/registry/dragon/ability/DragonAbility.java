@@ -23,10 +23,10 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.registries.DataPackRegistryEvent;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
+import javax.annotation.Nullable;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public record DragonAbility(
@@ -65,6 +65,15 @@ public record DragonAbility(
         effects.forEach(target -> target.effect().target()
                 .ifLeft(block -> block.effect().forEach(effect -> validate(type, effect)))
                 .ifRight(entity -> entity.effect().forEach(effect -> validate(type, effect))));
+    }
+
+    public AbilityInfo.Type type() {
+        return getType(activation().map(Activation::type).orElse(null));
+    }
+
+    public int getCooldown(int abilityLevel) {
+        // TODO :: We should probably use Minecraft's way of handling time (meaning measure things in ticks (int))
+        return activation().map(activation -> activation.cooldown().map(cooldown -> cooldown.calculate(abilityLevel)).orElse(0f)).orElse(0f).intValue();
     }
 
     @SubscribeEvent
@@ -123,10 +132,10 @@ public record DragonAbility(
         throw new IllegalStateException("Invalid effect [" + effect + "] for the activation type of ability [" + this + "]");
     }
 
-    private AbilityInfo.Type getType(final Activation.Type type) {
-        if (type == null) {
+    private AbilityInfo.Type getType(final Activation.Type activationType) {
+        if (activationType == null) {
             return AbilityInfo.Type.PASSIVE;
-        } else if (type == Activation.Type.SIMPLE) {
+        } else if (activationType == Activation.Type.SIMPLE) {
             return AbilityInfo.Type.ACTIVE_SIMPLE;
         }
 

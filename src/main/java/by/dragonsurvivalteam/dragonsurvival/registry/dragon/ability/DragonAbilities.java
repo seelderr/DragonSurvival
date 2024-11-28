@@ -56,7 +56,7 @@ public class DragonAbilities {
                                 )
                         ),
                         LevelBasedValue.constant(1),
-                        LevelBasedValue.constant(0)
+                        Optional.empty()
                 )),
                 ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/icons/body_type_central.png"),
                 Component.literal("test description")
@@ -87,7 +87,7 @@ public class DragonAbilities {
                                         )
                                 ),
                                 LevelBasedValue.constant(1),
-                                LevelBasedValue.constant(0)
+                                Optional.empty()
                         )),
                         ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/icons/body_type_central.png"),
                         Component.literal("test description")
@@ -119,7 +119,7 @@ public class DragonAbilities {
                                 )
                         ),
                         LevelBasedValue.constant(1),
-                        LevelBasedValue.constant(0)
+                        Optional.empty()
                 )),
                 ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/icons/body_type_central.png"),
                 Component.literal("test description")

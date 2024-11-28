@@ -159,9 +159,9 @@ public class SpikeAbility extends InstantCastAbility {
             return;
         }
 
-        DragonAbility ability = player.registryAccess().registry(DragonAbility.REGISTRY).get().get(DragonAbilities.SPIKE_TEST);
-        Holder<DragonAbility> holder = player.registryAccess().registry(DragonAbility.REGISTRY).get().getHolderOrThrow(DragonAbilities.SPIKE_TEST);
-        ability.effects().getFirst().apply((ServerPlayer)player, new DragonAbilityInstance(holder));
+        Holder<DragonAbility> ability = player.registryAccess().holderOrThrow(DragonAbilities.SPIKE_TEST);
+        DragonAbilityInstance instance = new DragonAbilityInstance(ability);
+        instance.apply((ServerPlayer) player);
         /*float speed = 1;
         // Copied from AbstractArrow.java constructor
         Vec3 launchPos = new Vec3(player.getX(), player.getEyeY() - 0.1F, player.getZ());

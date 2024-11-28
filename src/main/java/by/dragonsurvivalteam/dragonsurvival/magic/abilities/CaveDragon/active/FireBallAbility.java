@@ -163,9 +163,9 @@ public class FireBallAbility extends ChargeCastAbility {
             return;
         }
 
-        DragonAbility ability = player.registryAccess().registry(DragonAbility.REGISTRY).get().get(DragonAbilities.FIRE_BALL_TEST);
-        Holder<DragonAbility> holder = player.registryAccess().registry(DragonAbility.REGISTRY).get().getHolderOrThrow(DragonAbilities.FIRE_BALL_TEST);
-        ability.effects().getFirst().apply((ServerPlayer)player, new DragonAbilityInstance(holder));
+        Holder<DragonAbility> ability = player.registryAccess().holderOrThrow(DragonAbilities.FIRE_BALL_TEST);
+        DragonAbilityInstance instance = new DragonAbilityInstance(ability);
+        instance.apply((ServerPlayer) player);
         /*float speed = 1;
 
         Vec3 eyePos = player.getEyePosition();
