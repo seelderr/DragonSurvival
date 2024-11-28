@@ -13,6 +13,7 @@ import by.dragonsurvivalteam.dragonsurvival.registry.projectile.targeting.Projec
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.targeting.ProjectilePointTarget;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.targeting.ProjectileTargeting;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.world_effects.ProjectileExplosionEffect;
+import by.dragonsurvivalteam.dragonsurvival.server.handlers.LightningHandler;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.LocationPredicate;
@@ -160,9 +161,11 @@ public class Projectiles {
                                                 )),
                                                 List.of(
                                                         new ProjectileLightningEntityEffect(
-                                                                true,
-                                                                false,
-                                                                false
+                                                                new LightningHandler.Data(
+                                                                        true,
+                                                                        true,
+                                                                        false
+                                                                )
                                                         )
                                                 ),
                                                 5
