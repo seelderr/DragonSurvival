@@ -34,7 +34,9 @@ public record ProjectileAreaTarget(Either<BlockTargeting, EntityTargeting> targe
         target().ifLeft(blockTarget -> {
             if(level.getGameTime() % blockTarget.tickRate() == 0) {
                 BlockPos.betweenClosedStream(AABB.ofSize(position, radius * 2, radius * 2, radius * 2)).forEach(blockPos -> {
-                    if (blockTarget.targetConditions().isEmpty() || blockTarget.targetConditions().get().matches(level, blockPos)) {
+                    if (blockTarget.targetConditions().isEmpty() || blockTarget.targetConditions().get().matches(level, blockPos)
+                    && blockTarget.weatherConditions().isEmpty() || blockTarget.weatherConditions().get().matches(level)
+                    && blockTarget.randomCondition().isEmpty() || blockTarget.randomCondition().get().matches(level, projectileLevel)) {
                         blockTarget.effects().forEach(effect -> effect.apply(projectile, blockPos, projectileLevel));
                         if(particleTrail().isPresent()) {
                             Vec3 trailMidpoint = blockPos.getCenter().subtract(position).scale(0.5).add(position);
@@ -54,7 +56,9 @@ public record ProjectileAreaTarget(Either<BlockTargeting, EntityTargeting> targe
             if(level.getGameTime() % entityTarget.tickRate() == 0) {
                 // TODO :: use Entity.class (would affect items etc.)?
                 level.getEntities(EntityTypeTest.forClass(LivingEntity.class), AABB.ofSize(position, radius * 2, radius * 2, radius * 2),
-                        entity -> entityTarget.targetConditions().map(conditions -> conditions.matches(level, position, entity)).orElse(true)
+                        entity -> entityTarget.targetConditions().isEmpty() || entityTarget.targetConditions().get().matches(level, position, entity)
+                                && entityTarget.weatherConditions().isEmpty() || entityTarget.weatherConditions().get().matches(level)
+                                && entityTarget.randomCondition().isEmpty() || entityTarget.randomCondition().get().matches(level, projectileLevel)
                 ).forEach(entity -> {
                     entityTarget.effects().forEach(effect -> effect.apply(projectile, entity, projectileLevel));
                     if(particleTrail().isPresent()) {

@@ -33,7 +33,7 @@ public interface ProjectileWorldEffect {
     static void registerEntries(final RegisterEvent event) {
         if (event.getRegistry() == REGISTRY) {
             event.register(REGISTRY_KEY, DragonSurvival.res("explosion"), () -> ProjectileExplosionEffect.CODEC);
-            event.register(REGISTRY_KEY, DragonSurvival.res("lightning"), () -> ProjectileLightningEffect.CODEC);
+            event.register(REGISTRY_KEY, DragonSurvival.res("lightning"), () -> ProjectileLightningWorldEffect.CODEC);
 
         }
     }

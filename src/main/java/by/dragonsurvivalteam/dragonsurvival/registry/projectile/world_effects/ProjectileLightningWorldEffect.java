@@ -5,10 +5,10 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.projectile.Projectile;
 
-public record ProjectileLightningEffect() implements ProjectileWorldEffect {
+public record ProjectileLightningWorldEffect() implements ProjectileWorldEffect {
 
-    public static final ProjectileLightningEffect INSTANCE = new ProjectileLightningEffect();
-    public static final MapCodec<ProjectileLightningEffect> CODEC = MapCodec.unit(INSTANCE);
+    public static final ProjectileLightningWorldEffect INSTANCE = new ProjectileLightningWorldEffect();
+    public static final MapCodec<ProjectileLightningWorldEffect> CODEC = MapCodec.unit(INSTANCE);
 
     @Override
     public void apply(Projectile projectile, int projectileLevel) {

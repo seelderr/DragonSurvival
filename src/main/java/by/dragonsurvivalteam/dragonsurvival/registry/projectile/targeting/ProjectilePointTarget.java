@@ -20,7 +20,8 @@ public record ProjectilePointTarget(ProjectileTargeting.WorldTargeting target) i
         }
 
         if(target.locationConditions().isPresent() && !target.locationConditions().get().matches(level, position.x, position.y, position.z)
-                || target.weatherConditions().isPresent() && !target.weatherConditions().get().matches(level)) {
+                || target.weatherConditions().isPresent() && !target.weatherConditions().get().matches(level)
+                || target.randomConditions().isPresent() && !target.randomConditions().get().matches(level, projectileLevel)) {
             return;
         }
 

@@ -19,7 +19,7 @@
               "damage_type": "dragonsurvival:dragon_ball_lightning",
               "explosion_power": {
                 "type": "minecraft:linear",
-                "base": 1.0,
+                "base": 2.0,
                 "per_level_above_first": 1.0
               },
               "fire": false
@@ -39,11 +39,7 @@
         "duration": 37.0,
         "swirls": false
       },
-      "radius": {
-        "type": "minecraft:linear",
-        "base": 2.0,
-        "per_level_above_first": 1.0
-      },
+      "radius": 4.0,
       "target": {
         "entity_effects": [
           {
@@ -64,6 +60,29 @@
           }
         ],
         "tick_rate": 5
+      }
+    },
+    {
+      "type": "dragonsurvival:area",
+      "radius": 4.0,
+      "target": {
+        "entity_effects": [
+          {
+            "type": "dragonsurvival:lightning"
+          }
+        ],
+        "random_conditions": {
+          "probability": 0.3
+        },
+        "target_conditions": {
+          "location": {
+            "can_see_sky": true
+          }
+        },
+        "tick_rate": 5,
+        "weather_conditions": {
+          "is_thundering": true
+        }
       }
     }
   ]

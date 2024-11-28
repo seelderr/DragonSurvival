@@ -1,16 +1,21 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.projectile;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.RandomPredicate;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.WeatherPredicate;
 import by.dragonsurvivalteam.dragonsurvival.common.particles.LargeLightningParticleOption;
 import by.dragonsurvivalteam.dragonsurvival.registry.*;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.entity_effects.ProjectileDamageEffect;
+import by.dragonsurvivalteam.dragonsurvival.registry.projectile.entity_effects.ProjectileLightningEntityEffect;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.entity_effects.ProjectileMobEffect;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.targeting.ProjectileAreaTarget;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.targeting.ProjectilePointTarget;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.targeting.ProjectileTargeting;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.world_effects.ProjectileExplosionEffect;
 import com.mojang.datafixers.util.Either;
+import net.minecraft.advancements.critereon.EntityPredicate;
+import net.minecraft.advancements.critereon.LocationPredicate;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
@@ -41,6 +46,7 @@ public class Projectiles {
                                 Optional.of(ParticleTypes.LARGE_SMOKE),
                                 List.of(new ProjectilePointTarget(
                                         new ProjectileTargeting.WorldTargeting(
+                                                Optional.empty(),
                                                 Optional.empty(),
                                                 Optional.empty(),
                                                 List.of(new ProjectileExplosionEffect(
@@ -98,9 +104,10 @@ public class Projectiles {
                                         new ProjectileTargeting.WorldTargeting(
                                                 Optional.empty(),
                                                 Optional.empty(),
+                                                Optional.empty(),
                                                 List.of(new ProjectileExplosionEffect(
                                                         context.lookup(Registries.DAMAGE_TYPE).getOrThrow(DSDamageTypes.DRAGON_BALL_LIGHTNING),
-                                                        LevelBasedValue.perLevel(1),
+                                                        LevelBasedValue.perLevel(2, 1),
                                                         false,
                                                         true,
                                                         false
@@ -120,6 +127,8 @@ public class Projectiles {
                             Either.right(
                                 new ProjectileTargeting.EntityTargeting(
                                     Optional.empty(),
+                                    Optional.empty(),
+                                    Optional.empty(),
                                     List.of(
                                             new ProjectileDamageEffect(
                                                     context.lookup(Registries.DAMAGE_TYPE).getOrThrow(DSDamageTypes.DRAGON_BALL_LIGHTNING),
@@ -135,8 +144,28 @@ public class Projectiles {
                                     5
                                 )
                             ),
-                            LevelBasedValue.perLevel(2, 1),
+                            LevelBasedValue.constant(4),
                             Optional.of(new LargeLightningParticleOption(37, false))
+                        ),
+                        new ProjectileAreaTarget(
+                                Either.right(
+                                        new ProjectileTargeting.EntityTargeting(
+                                                Optional.of(EntityPredicate.Builder.entity().located(LocationPredicate.Builder.location().setCanSeeSky(true)).build()),
+                                                Optional.of(new WeatherPredicate(
+                                                        Optional.empty(),
+                                                        Optional.of(true)
+                                                )),
+                                                Optional.of(new RandomPredicate(
+                                                        LevelBasedValue.constant(0.3f)
+                                                )),
+                                                List.of(
+                                                        new ProjectileLightningEntityEffect()
+                                                ),
+                                                5
+                                        )
+                                ),
+                                LevelBasedValue.constant(4),
+                                Optional.empty()
                         )
                 ),
                 List.of(),
