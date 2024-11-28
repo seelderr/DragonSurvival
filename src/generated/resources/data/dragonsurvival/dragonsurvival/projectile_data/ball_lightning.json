@@ -5,6 +5,7 @@
   "location": "dragonsurvival:ball_lightning",
   "specific_projectile_data": {
     "max_lifespan": 100.0,
+    "max_lingering_ticks": 100.0,
     "max_move_distance": 32.0,
     "on_destroy_effects": [
       {
@@ -38,11 +39,7 @@
         "duration": 37.0,
         "swirls": false
       },
-      "radius": {
-        "type": "minecraft:linear",
-        "base": 2.0,
-        "per_level_above_first": 1.0
-      },
+      "radius": 4.0,
       "target": {
         "entity_effects": [
           {

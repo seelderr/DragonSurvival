@@ -36,7 +36,7 @@ public class Projectiles {
     public static void registerProjectiles(final BootstrapContext<ProjectileData> context) {
         context.register(FIREBALL, new ProjectileData(
                 FIREBALL.location(),
-                Either.right(
+                Either.left(
                         new ProjectileData.GenericBallData(
                                 Optional.of(ParticleTypes.LARGE_SMOKE),
                                 List.of(new ProjectilePointTarget(
@@ -74,7 +74,7 @@ public class Projectiles {
 
         context.register(SPIKE, new ProjectileData(
                 SPIKE.location(),
-                Either.left(
+                Either.right(
                         new ProjectileData.GenericArrowData(
                                 LevelBasedValue.constant(3)
                         )
@@ -91,7 +91,7 @@ public class Projectiles {
 
         context.register(BALL_LIGHTNING, new ProjectileData(
                 BALL_LIGHTNING.location(),
-                Either.right(
+                Either.left(
                         new ProjectileData.GenericBallData(
                                 Optional.empty(),
                                 List.of(new ProjectilePointTarget(
@@ -110,7 +110,7 @@ public class Projectiles {
                                 ),
                                 LevelBasedValue.constant(1f),
                                 LevelBasedValue.constant(1f),
-                                LevelBasedValue.constant(0),
+                                LevelBasedValue.constant(100),
                                 LevelBasedValue.constant(32),
                                 LevelBasedValue.constant(100)
                         )

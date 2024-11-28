@@ -6,6 +6,8 @@ import by.dragonsurvivalteam.dragonsurvival.registry.projectile.entity_effects.P
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.targeting.ProjectileTargeting;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.MapEncoder;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.core.Holder;
@@ -29,7 +31,7 @@ import java.util.Optional;
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public record ProjectileData(
         ResourceLocation location,
-        Either<GenericArrowData, GenericBallData> specificProjectileData,
+        Either<GenericBallData, GenericArrowData> specificProjectileData,
         Optional<EntityPredicate> canHitPredicate,
         List<ProjectileTargeting> tickingEffects,
         List<ProjectileTargeting> commonHitEffects,
@@ -66,7 +68,7 @@ public record ProjectileData(
 
     public static final Codec<ProjectileData> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ResourceLocation.CODEC.fieldOf("location").forGetter(ProjectileData::location),
-            Codec.either(GenericArrowData.CODEC, GenericBallData.CODEC).fieldOf("specific_projectile_data").forGetter(ProjectileData::specificProjectileData),
+            Codec.either(GenericBallData.CODEC, GenericArrowData.CODEC).fieldOf("specific_projectile_data").forGetter(ProjectileData::specificProjectileData),
             EntityPredicate.CODEC.optionalFieldOf("can_hit_predicate").forGetter(ProjectileData::canHitPredicate),
             ProjectileTargeting.CODEC.listOf().fieldOf("ticking_effects").forGetter(ProjectileData::tickingEffects),
             ProjectileTargeting.CODEC.listOf().fieldOf("common_hit_effects").forGetter(ProjectileData::commonHitEffects),

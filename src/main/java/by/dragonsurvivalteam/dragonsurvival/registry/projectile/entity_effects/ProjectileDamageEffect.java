@@ -14,6 +14,7 @@ public record ProjectileDamageEffect(Holder<DamageType> damageType, LevelBasedVa
     public static final MapCodec<ProjectileDamageEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             DamageType.CODEC.fieldOf("damage_type").forGetter(ProjectileDamageEffect::damageType),
             LevelBasedValue.CODEC.fieldOf("amount").forGetter(ProjectileDamageEffect::amount)
+
     ).apply(instance, ProjectileDamageEffect::new));
 
     @Override

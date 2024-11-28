@@ -2,23 +2,23 @@ package by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.active
 
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.DragonSpikeEntity;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.InstantCastAbility;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilities;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbility;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvents;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.AbstractArrow;
-import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -155,7 +155,14 @@ public class SpikeAbility extends InstantCastAbility {
 
     @Override
     public void onCast(Player player) {
-        float speed = 1;
+        if(player.level().isClientSide) {
+            return;
+        }
+
+        DragonAbility ability = player.registryAccess().registry(DragonAbility.REGISTRY).get().get(DragonAbilities.SPIKE_TEST);
+        Holder<DragonAbility> holder = player.registryAccess().registry(DragonAbility.REGISTRY).get().getHolderOrThrow(DragonAbilities.SPIKE_TEST);
+        ability.effects().getFirst().apply((ServerPlayer)player, new DragonAbilityInstance(holder));
+        /*float speed = 1;
         // Copied from AbstractArrow.java constructor
         Vec3 launchPos = new Vec3(player.getX(), player.getEyeY() - 0.1F, player.getZ());
         for (int i = 0; i < getLevel(); i++) {
@@ -172,6 +179,6 @@ public class SpikeAbility extends InstantCastAbility {
             if (!spikeMultishot) {
                 break;
             }
-        }
+        }*/
     }
 }

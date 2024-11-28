@@ -72,7 +72,8 @@ public class DSDamageTypeTags extends DamageTypeTagsProvider {
                 .add(DSDamageTypes.CRUSHED)
                 .add(DSDamageTypes.DEHYDRATION)
                 .add(DSDamageTypes.WATER_BURN)
-                .add(DSDamageTypes.RAIN_BURN);
+                .add(DSDamageTypes.RAIN_BURN)
+                .add(DSDamageTypes.DRAGON_BALL_LIGHTNING);
     }
 
     private static TagKey<DamageType> key(@NotNull final String name) {

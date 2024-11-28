@@ -33,9 +33,9 @@ public record ProjectileEffect(
     @Override
     public void apply(final ServerPlayer dragon, final DragonAbilityInstance ability, final Entity entity) {
         ProjectileData projectileData = projectileData().value();
-        Either<ProjectileData.GenericArrowData, ProjectileData.GenericBallData> specificData = projectileData.specificProjectileData();
-        if(specificData.left().isPresent()) {
-            ProjectileData.GenericArrowData arrowData = specificData.left().get();
+        Either<ProjectileData.GenericBallData, ProjectileData.GenericArrowData> specificData = projectileData.specificProjectileData();
+        if(specificData.right().isPresent()) {
+            ProjectileData.GenericArrowData arrowData = specificData.right().get();
 
             for (int i = 0; i < numberOfProjectiles.calculate(ability.getLevel()); i++) {
                 // Copied from AbstractArrow.java constructor
@@ -57,8 +57,8 @@ public record ProjectileEffect(
                 arrow.shootFromRotation(dragon, dragon.getXRot(), dragon.getYRot(), 0.0F, speed.calculate(ability.getLevel()), i * projectileSpread.calculate(ability.getLevel()));
                 dragon.level().addFreshEntity(arrow);
             }
-        } else if(specificData.right().isPresent()) {
-            ProjectileData.GenericBallData ballData = specificData.right().get();
+        } else if(specificData.left().isPresent()) {
+            ProjectileData.GenericBallData ballData = specificData.left().get();
 
             for (int i = 0; i < numberOfProjectiles.calculate(ability.getLevel()); i++) {
                 Vec3 eyePos = dragon.getEyePosition();
