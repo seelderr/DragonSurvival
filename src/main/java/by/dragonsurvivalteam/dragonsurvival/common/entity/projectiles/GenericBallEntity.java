@@ -255,14 +255,14 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
-        Tag data = GenericBallEntityInstance.CODEC.encodeStart(NbtOps.INSTANCE, GenericBallEntityInstance.fromEntity(this)).getOrThrow();
+        Tag data = GenericBallEntityInstance.CODEC.encodeStart(level().registryAccess().createSerializationContext(NbtOps.INSTANCE), GenericBallEntityInstance.fromEntity(this)).getOrThrow();
         compound.put("generic_ball_entity_instance", data);
     }
 
     @Override
     public void readAdditionalSaveData(@NotNull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
-        GenericBallEntityInstance.CODEC.parse(NbtOps.INSTANCE, compound.get("generic_ball_entity_instance")).getOrThrow().load(this);
+        GenericBallEntityInstance.CODEC.parse(level().registryAccess().createSerializationContext(NbtOps.INSTANCE), compound.get("generic_ball_entity_instance")).getOrThrow().load(this);
     }
 
     @Override
