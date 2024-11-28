@@ -161,6 +161,7 @@ public class Projectiles {
                                                 List.of(
                                                         new ProjectileLightningEntityEffect(
                                                                 true,
+                                                                false,
                                                                 false
                                                         )
                                                 ),

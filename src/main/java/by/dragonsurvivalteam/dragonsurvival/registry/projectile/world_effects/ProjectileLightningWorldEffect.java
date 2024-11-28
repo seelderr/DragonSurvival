@@ -10,11 +10,12 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.projectile.Projectile;
 
-public record ProjectileLightningWorldEffect(boolean ignoresItemsAndExperience, boolean spawnsFire) implements ProjectileWorldEffect {
+public record ProjectileLightningWorldEffect(boolean ignoresItemsAndExperience, boolean spawnsFire, boolean canHurtSelf) implements ProjectileWorldEffect {
 
     public static final MapCodec<ProjectileLightningWorldEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                     Codec.BOOL.fieldOf("ignores_items_and_experience").forGetter(ProjectileLightningWorldEffect::ignoresItemsAndExperience),
-                    Codec.BOOL.fieldOf("spawns_fire").forGetter(ProjectileLightningWorldEffect::spawnsFire)
+                    Codec.BOOL.fieldOf("spawns_fire").forGetter(ProjectileLightningWorldEffect::spawnsFire),
+                    Codec.BOOL.fieldOf("can_hurt_self").forGetter(ProjectileLightningWorldEffect::canHurtSelf)
             ).apply(instance, ProjectileLightningWorldEffect::new)
     );
 
@@ -28,6 +29,7 @@ public record ProjectileLightningWorldEffect(boolean ignoresItemsAndExperience, 
         LightningHandler lightningHandler = new LightningHandler();
         lightningHandler.ignoresItemsAndExperience = ignoresItemsAndExperience;
         lightningHandler.spawnsFire = spawnsFire;
+        lightningHandler.canHurtSelf = canHurtSelf;
         lightningboltentity.setData(DSDataAttachments.LIGHTNING_BOLT_DATA, lightningHandler);
         projectile.level().addFreshEntity(lightningboltentity);
     }

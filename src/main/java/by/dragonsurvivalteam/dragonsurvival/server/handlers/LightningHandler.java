@@ -19,12 +19,14 @@ import org.jetbrains.annotations.UnknownNullability;
 public class LightningHandler implements INBTSerializable<CompoundTag> {
     public boolean ignoresItemsAndExperience;
     public boolean spawnsFire;
+    public boolean canHurtSelf;
 
     @Override
     public @UnknownNullability CompoundTag serializeNBT(HolderLookup.@NotNull Provider provider) {
         CompoundTag tag = new CompoundTag();
         tag.putBoolean("ignores_items_and_experience", ignoresItemsAndExperience);
         tag.putBoolean("spawns_fire", spawnsFire);
+        tag.putBoolean("can_hurt_self", canHurtSelf);
         return tag;
     }
 
@@ -32,6 +34,7 @@ public class LightningHandler implements INBTSerializable<CompoundTag> {
     public void deserializeNBT(HolderLookup.@NotNull Provider provider, CompoundTag nbt) {
         ignoresItemsAndExperience = nbt.getBoolean("ignores_items_and_experience");
         spawnsFire = nbt.getBoolean("spawns_fire");
+        canHurtSelf = nbt.getBoolean("can_hurt_self");
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
@@ -42,6 +45,12 @@ public class LightningHandler implements INBTSerializable<CompoundTag> {
 
         if (handler.ignoresItemsAndExperience) {
             if (target instanceof ItemEntity || target instanceof ExperienceOrb) {
+                event.setCanceled(true);
+            }
+        }
+
+        if(!handler.canHurtSelf) {
+            if (target == bolt.getCause()) {
                 event.setCanceled(true);
             }
         }

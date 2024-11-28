@@ -69,6 +69,7 @@
         "entity_effects": [
           {
             "type": "dragonsurvival:lightning",
+            "can_hurt_self": false,
             "ignores_items_and_experience": true,
             "spawns_fire": false
           }
