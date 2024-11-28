@@ -9,11 +9,15 @@
     {
       "effect": {
         "type": "dragonsurvival:self",
-        "effect": {
-          "type": "dragonsurvival:projectile",
-          "number_of_projectiles": 1.0,
-          "projectile_data": "dragonsurvival:fireball",
-          "speed": 1.0
+        "target": {
+          "entity_effect": [
+            {
+              "type": "dragonsurvival:projectile",
+              "number_of_projectiles": 1.0,
+              "projectile_data": "dragonsurvival:fireball",
+              "speed": 1.0
+            }
+          ]
         }
       },
       "mana_cost": 0.0,

@@ -60,9 +60,11 @@ public record DragonAbility(
 
     public DragonAbility {
         // TODO :: check compatible abilities
-         effects().forEach(target -> {
-             AnnotatedType[] annotations = target.effect().getClass().getAnnotatedInterfaces();
-         });
+        if (effects() != null) {
+            effects().forEach(target -> {
+                AnnotatedType[] annotations = target.effect().getClass().getAnnotatedInterfaces();
+            });
+        }
     }
 
     @SubscribeEvent

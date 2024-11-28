@@ -40,9 +40,6 @@ public record ProjectileEffect(
         Either<ProjectileData.GenericArrowData, ProjectileData.GenericBallData> specificData = projectileData.specificProjectileData();
         if(specificData.left().isPresent()) {
             ProjectileData.GenericArrowData arrowData = specificData.left().get();
-            // TODO :: why not 'Projectile'?
-            //noinspection unchecked, OptionalGetWithoutIsPresent -> entity type is expected to be of said type
-            EntityType<? extends AbstractArrow> entityType = (EntityType<? extends AbstractArrow>) dragon.serverLevel().registryAccess().registry(Registries.ENTITY_TYPE).get().getOrThrow(arrowData.entityType());
 
             for (int i = 0; i < numberOfProjectiles.calculate(ability.getLevel()); i++) {
                 // Copied from AbstractArrow.java constructor
@@ -82,7 +79,6 @@ public record ProjectileEffect(
                         projectileData.location(),
                         ballData.trailParticle(),
                         dragon.serverLevel(),
-                        level,
                         EntityDimensions.scalable(ballData.xSize().calculate(ability.getLevel()), ballData.ySize().calculate(ability.getLevel())),
                         projectileData.canHitPredicate(),
                         projectileData.tickingEffects(),

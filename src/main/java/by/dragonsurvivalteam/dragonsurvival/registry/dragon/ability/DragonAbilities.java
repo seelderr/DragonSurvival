@@ -40,12 +40,16 @@ public class DragonAbilities {
                 Optional.empty(),
                 List.of(new EffectContainer(
                         new SelfTarget(
-                                Optional.empty(),
-                                new ProjectileEffect(
-                                        context.lookup(ProjectileData.REGISTRY).getOrThrow(Projectiles.FIREBALL),
-                                        LevelBasedValue.constant(1),
-                                        LevelBasedValue.constant(0),
-                                        LevelBasedValue.constant(1)
+                                Either.right(
+                                        new AbilityTargeting.EntityTargeting(
+                                                Optional.empty(),
+                                                List.of(new ProjectileEffect(
+                                                        context.lookup(ProjectileData.REGISTRY).getOrThrow(Projectiles.FIREBALL),
+                                                        LevelBasedValue.constant(1),
+                                                        LevelBasedValue.constant(0),
+                                                        LevelBasedValue.constant(1)
+                                                ))
+                                        )
                                 )
                         ),
                         LevelBasedValue.constant(1),
@@ -67,12 +71,16 @@ public class DragonAbilities {
                         Optional.empty(),
                         List.of(new EffectContainer(
                                 new SelfTarget(
-                                        Optional.empty(),
-                                        new ProjectileEffect(
-                                                context.lookup(ProjectileData.REGISTRY).getOrThrow(Projectiles.SPIKE),
-                                                LevelBasedValue.constant(1),
-                                                LevelBasedValue.constant(0),
-                                                LevelBasedValue.constant(1)
+                                        Either.right(
+                                                new AbilityTargeting.EntityTargeting(
+                                                        Optional.empty(),
+                                                        List.of(new ProjectileEffect(
+                                                                context.lookup(ProjectileData.REGISTRY).getOrThrow(Projectiles.SPIKE),
+                                                                LevelBasedValue.constant(1),
+                                                                LevelBasedValue.constant(0),
+                                                                LevelBasedValue.constant(1)
+                                                        ))
+                                                )
                                         )
                                 ),
                                 LevelBasedValue.constant(1),

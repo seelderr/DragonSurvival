@@ -21,7 +21,7 @@ public record EffectContainer(AbilityTargeting effect, LevelBasedValue triggerRa
     // Active (simple): Triggered once on key press (trigger_rate is not relevant in this case)
     // Active (channeled): Triggered per tick while key is being held
     // TODO :: current_tick parameter? for active it's the time the ability was being held and for passive the entity tick count?
-    public void apply(final ServerLevel level, final ServerPlayer dragon, final DragonAbilityInstance instance) {
+    public void apply(final ServerPlayer dragon, final DragonAbilityInstance instance) {
         Activation.Type type = instance.getAbility().activation().map(Activation::type).orElse(null);
 
         if ((type == null || type == Activation.Type.CHANNELED)) {
@@ -32,6 +32,6 @@ public record EffectContainer(AbilityTargeting effect, LevelBasedValue triggerRa
             return;
         }
 
-        effect.apply(level, dragon, instance);
+        effect.apply(dragon, instance);
     }
 }
