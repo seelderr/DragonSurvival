@@ -15,11 +15,13 @@
   "specific_projectile_data": {
     "ball_resources": {
       "resource": {
-        "location": "dragonsurvival:fireball"
-      },
-      "use_levels_for_animation": false,
-      "use_levels_for_geo": false,
-      "use_levels_for_texture": false
+        "texture_entries": [
+          {
+            "from_level": 1,
+            "texture_resource": "dragonsurvival:fireball"
+          }
+        ]
+      }
     },
     "max_lifespan": 100.0,
     "max_move_distance": 32.0,

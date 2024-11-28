@@ -15,12 +15,12 @@
   "specific_projectile_data": {
     "piercing_level": 3.0,
     "resource": {
-      "location": "dragonsurvival:spike",
-      "value": {
-        "type": "minecraft:linear",
-        "base": 1.0,
-        "per_level_above_first": 1.0
-      }
+      "texture_entries": [
+        {
+          "from_level": 1,
+          "texture_resource": "dragonsurvival:spike"
+        }
+      ]
     }
   },
   "ticking_effects": []

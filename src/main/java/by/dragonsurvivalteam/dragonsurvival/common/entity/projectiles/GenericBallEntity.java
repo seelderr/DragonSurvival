@@ -53,7 +53,7 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
 
     private ProjectileData.GenericBallResource resources;
     private Optional<EntityPredicate> canHitPredicate;
-    private int projectileLevel;
+    private int projectileLevel; // TODO :: name this ability level to make it clear what this represents?
     private List<ProjectileTargeting> tickingEffects;
     private List<ProjectileTargeting> commonHitEffects;
     private List<ProjectileEntityEffect> entityHitEffects;
@@ -308,11 +308,10 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
 
     private void setResourceLocations(ProjectileData.GenericBallResource location) {
         this.resources = location;
-        String leveledLocation = location.resource().location(projectileLevel).toString();
-        String baseLocation = location.resource().rawLocation().toString();
-        this.entityData.set(TEXTURE_LOCATION, location.useLevelsForTexture() ? leveledLocation : baseLocation);
-        this.entityData.set(ANIM_LOCATION, location.useLevelsForAnimation() ? leveledLocation : baseLocation);
-        this.entityData.set(GEO_LOCATION, location.useLevelsForGeo() ? leveledLocation : baseLocation);
+        String texture = location.resource().get(projectileLevel).toString();
+        this.entityData.set(TEXTURE_LOCATION, texture);
+        this.entityData.set(ANIM_LOCATION, texture);
+        this.entityData.set(GEO_LOCATION, texture);
     }
 
     @Override
@@ -344,7 +343,9 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
             return super.getTypeName();
         }
 
-        return Component.translatable(resources.resource().rawLocation().getNamespace() + Translation.Type.PROJECTILE.suffix + "." + resources.resource().rawLocation().getPath());
+        // TODO :: maybe it needs 1 key that define just the name - don't think they'll provide multiple translations that change per level
+        ResourceLocation texture = resources.resource().get(projectileLevel);
+        return Component.translatable(Translation.Type.PROJECTILE.wrap(texture.getNamespace(), texture.getPath()));
     }
 
     @Override

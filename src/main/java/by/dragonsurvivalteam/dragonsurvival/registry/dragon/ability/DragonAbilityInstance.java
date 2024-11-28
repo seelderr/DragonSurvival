@@ -8,6 +8,9 @@ import net.neoforged.neoforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
 
 public class DragonAbilityInstance implements INBTSerializable<CompoundTag> {
+    public static final int MIN_LEVEL = 0;
+    public static final int MAX_LEVEL = 255;
+
     private final Holder<DragonAbility> ability;
     private int level = 1; // TODO :: remove value
     private int cooldown;

@@ -5,11 +5,13 @@
   "specific_projectile_data": {
     "ball_resources": {
       "resource": {
-        "location": "dragonsurvival:ball_lightning"
-      },
-      "use_levels_for_animation": false,
-      "use_levels_for_geo": false,
-      "use_levels_for_texture": false
+        "texture_entries": [
+          {
+            "from_level": 1,
+            "texture_resource": "dragonsurvival:ball_lightning"
+          }
+        ]
+      }
     },
     "max_lifespan": 100.0,
     "max_lingering_ticks": 100.0,

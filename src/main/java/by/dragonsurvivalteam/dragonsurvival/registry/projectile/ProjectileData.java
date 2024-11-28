@@ -18,7 +18,6 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.RegistryFixedCodec;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -43,17 +42,9 @@ public record ProjectileData(
         ).apply(instance, GenericArrowData::new));
     }
 
-    public record GenericBallResource(
-            LevelBasedResource resource,
-            boolean useLevelsForTexture,
-            boolean useLevelsForGeo,
-            boolean useLevelsForAnimation)
-    {
+    public record GenericBallResource(LevelBasedResource resource) {
         public static final Codec<GenericBallResource> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                LevelBasedResource.CODEC.fieldOf("resource").forGetter(GenericBallResource::resource),
-                Codec.BOOL.fieldOf("use_levels_for_texture").forGetter(GenericBallResource::useLevelsForTexture),
-                Codec.BOOL.fieldOf("use_levels_for_geo").forGetter(GenericBallResource::useLevelsForGeo),
-                Codec.BOOL.fieldOf("use_levels_for_animation").forGetter(GenericBallResource::useLevelsForAnimation)
+                LevelBasedResource.CODEC.fieldOf("resource").forGetter(GenericBallResource::resource)
         ).apply(instance, GenericBallResource::new));
     }
 
