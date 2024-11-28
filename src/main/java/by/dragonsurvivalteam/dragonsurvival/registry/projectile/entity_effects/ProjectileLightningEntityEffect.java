@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.projectile.entity_effects;
 
 import com.mojang.serialization.MapCodec;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
@@ -15,6 +16,9 @@ public record ProjectileLightningEntityEffect() implements ProjectileEntityEffec
     public void apply(Projectile projectile, Entity target, int projectileLevel) {
         LightningBolt lightningboltentity = EntityType.LIGHTNING_BOLT.create(projectile.level());
         lightningboltentity.moveTo(target.position());
+        if(projectile.getOwner() instanceof ServerPlayer serverPlayer) {
+            lightningboltentity.setCause(serverPlayer);
+        }
         projectile.level().addFreshEntity(lightningboltentity);
     }
 

@@ -468,6 +468,12 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
         return false;
     }
 
+    // Stops fire from completely smothering the animations
+    @Override
+    public boolean fireImmune() {
+        return true;
+    }
+
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return cache;
