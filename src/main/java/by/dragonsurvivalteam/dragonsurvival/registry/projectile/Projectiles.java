@@ -37,13 +37,13 @@ public class Projectiles {
                                         new ProjectileTargeting.WorldTargeting(
                                                 Optional.empty(),
                                                 Optional.empty(),
-                                                new ProjectileExplosionEffect(
+                                                List.of(new ProjectileExplosionEffect(
                                                         context.lookup(Registries.DAMAGE_TYPE).getOrThrow(DamageTypes.FIREBALL),
                                                         LevelBasedValue.perLevel(1),
                                                         true,
                                                         true,
                                                         true
-                                                ),
+                                                )),
                                                 1)
                                         )
                                 ),
