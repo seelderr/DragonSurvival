@@ -7,15 +7,12 @@ import by.dragonsurvivalteam.dragonsurvival.registry.projectile.block_effects.Pr
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.entity_effects.ProjectileDamageEffect;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.entity_effects.ProjectileEntityEffect;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.targeting.ProjectileTargeting;
-import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
-import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
@@ -33,11 +30,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Vector3f;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
+import javax.annotation.Nullable;
 
 public class GenericArrowEntity extends AbstractArrow {
     private final int projectileLevel;
@@ -49,8 +45,7 @@ public class GenericArrowEntity extends AbstractArrow {
     private final List<ProjectileBlockEffect> blockHitEffects;
 
     // Copied from AbstractArrow.java
-    @Nullable
-    private IntOpenHashSet piercingIgnoreEntityIds;
+    @Nullable private IntOpenHashSet piercingIgnoreEntityIds;
 
     public GenericArrowEntity(
             ResourceLocation location,

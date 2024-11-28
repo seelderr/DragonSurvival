@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.client.models.projectiles;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.GenericBallEntity;
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib.model.GeoModel;

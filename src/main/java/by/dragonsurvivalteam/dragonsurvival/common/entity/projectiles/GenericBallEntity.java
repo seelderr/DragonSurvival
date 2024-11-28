@@ -8,7 +8,6 @@ import by.dragonsurvivalteam.dragonsurvival.registry.projectile.entity_effects.P
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.targeting.ProjectileTargeting;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;

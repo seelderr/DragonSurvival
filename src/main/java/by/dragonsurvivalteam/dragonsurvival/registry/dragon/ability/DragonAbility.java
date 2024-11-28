@@ -23,11 +23,11 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.registries.DataPackRegistryEvent;
 
-import javax.annotation.Nullable;
 import java.lang.reflect.AnnotatedType;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
+import javax.annotation.Nullable;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public record DragonAbility(

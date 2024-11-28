@@ -1,7 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.projectile.targeting;
 
 import by.dragonsurvivalteam.dragonsurvival.network.particle.SyncParticleTrail;
-import by.dragonsurvivalteam.dragonsurvival.registry.projectile.block_effects.ProjectileBlockEffect;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
