@@ -22,14 +22,14 @@ public record AreaTarget(Either<BlockTargeting, EntityTargeting> target, LevelBa
         double radius = radius().calculate(ability.getLevel());
 
         target().ifLeft(blockTarget -> {
-            BlockPos.betweenClosedStream(AABB.ofSize(dragon.position(), radius, radius, radius)).forEach(position -> {
+            BlockPos.betweenClosedStream(AABB.ofSize(dragon.position(), radius * 2, radius * 2, radius * 2)).forEach(position -> {
                 if (blockTarget.targetConditions().isEmpty() || blockTarget.targetConditions().get().matches(dragon.serverLevel(), position)) {
                     blockTarget.effect().forEach(target -> target.apply(dragon, ability, position));
                 }
             });
         }).ifRight(entityTarget -> {
             // ProjectileUtil.getHitResultOnViewVector()
-            dragon.serverLevel().getEntities(EntityTypeTest.forClass(Entity.class), AABB.ofSize(dragon.position(), radius, radius, radius),
+            dragon.serverLevel().getEntities(EntityTypeTest.forClass(Entity.class), AABB.ofSize(dragon.position(), radius * 2, radius * 2, radius * 2),
                     entity -> entityTarget.targetConditions().map(conditions -> conditions.matches(dragon.serverLevel(), dragon.position(), entity)).orElse(true)
             ).forEach(entity -> entityTarget.effect().forEach(target -> target.apply(dragon, ability, entity)));
         });

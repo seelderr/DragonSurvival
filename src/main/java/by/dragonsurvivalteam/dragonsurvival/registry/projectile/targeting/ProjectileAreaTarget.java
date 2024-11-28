@@ -33,7 +33,7 @@ public record ProjectileAreaTarget(Either<BlockTargeting, EntityTargeting> targe
 
         target().ifLeft(blockTarget -> {
             if(level.getGameTime() % blockTarget.tickRate() == 0) {
-                BlockPos.betweenClosedStream(AABB.ofSize(position, radius, radius, radius)).forEach(blockPos -> {
+                BlockPos.betweenClosedStream(AABB.ofSize(position, radius * 2, radius * 2, radius * 2)).forEach(blockPos -> {
                     if (blockTarget.targetConditions().isEmpty() || blockTarget.targetConditions().get().matches(level, blockPos)) {
                         blockTarget.effects().forEach(effect -> effect.apply(projectile, blockPos, projectileLevel));
                         if(particleTrail().isPresent()) {
@@ -53,7 +53,7 @@ public record ProjectileAreaTarget(Either<BlockTargeting, EntityTargeting> targe
         }).ifRight(entityTarget -> {
             if(level.getGameTime() % entityTarget.tickRate() == 0) {
                 // TODO :: use Entity.class (would affect items etc.)?
-                level.getEntities(EntityTypeTest.forClass(LivingEntity.class), AABB.ofSize(position, radius, radius, radius),
+                level.getEntities(EntityTypeTest.forClass(LivingEntity.class), AABB.ofSize(position, radius * 2, radius * 2, radius * 2),
                         entity -> entityTarget.targetConditions().map(conditions -> conditions.matches(level, position, entity)).orElse(true)
                 ).forEach(entity -> {
                     entityTarget.effects().forEach(effect -> effect.apply(projectile, entity, projectileLevel));
