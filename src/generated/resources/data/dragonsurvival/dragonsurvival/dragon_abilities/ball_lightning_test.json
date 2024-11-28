@@ -1,0 +1,28 @@
+{
+  "activation": {
+    "type": "simple",
+    "cast_time": 1.0,
+    "cooldown": 40.0
+  },
+  "description": "test description",
+  "effects": [
+    {
+      "effect": {
+        "type": "dragonsurvival:self",
+        "target": {
+          "entity_effect": [
+            {
+              "type": "dragonsurvival:projectile",
+              "number_of_projectiles": 1.0,
+              "projectile_data": "dragonsurvival:ball_lightning",
+              "speed": 1.0
+            }
+          ]
+        }
+      },
+      "mana_cost": 0.0,
+      "trigger_rate": 1.0
+    }
+  ],
+  "icon": "dragonsurvival:textures/icons/body_type_central.png"
+}

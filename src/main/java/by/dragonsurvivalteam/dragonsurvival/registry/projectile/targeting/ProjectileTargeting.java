@@ -31,27 +31,27 @@ public interface ProjectileTargeting {
 
     Codec<ProjectileTargeting> CODEC = REGISTRY.byNameCodec().dispatch(ProjectileTargeting::codec, Function.identity());
 
-    record BlockTargeting(Optional<BlockPredicate> targetConditions, List<ProjectileBlockEffect> effect, int tickRate) {
+    record BlockTargeting(Optional<BlockPredicate> targetConditions, List<ProjectileBlockEffect> effects, int tickRate) {
         public static final Codec<ProjectileTargeting.BlockTargeting> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 BlockPredicate.CODEC.optionalFieldOf("target_conditions").forGetter(ProjectileTargeting.BlockTargeting::targetConditions),
-                ProjectileBlockEffect.CODEC.listOf().fieldOf("block_effect").forGetter(ProjectileTargeting.BlockTargeting::effect),
+                ProjectileBlockEffect.CODEC.listOf().fieldOf("block_effects").forGetter(ProjectileTargeting.BlockTargeting::effects),
                 Codec.INT.optionalFieldOf("tick_rate", 1).forGetter(ProjectileTargeting.BlockTargeting::tickRate)
         ).apply(instance, ProjectileTargeting.BlockTargeting::new));
     }
 
-    record EntityTargeting(Optional<EntityPredicate> targetConditions, List<ProjectileEntityEffect> effect, int tickRate) {
+    record EntityTargeting(Optional<EntityPredicate> targetConditions, List<ProjectileEntityEffect> effects, int tickRate) {
         public static final Codec<ProjectileTargeting.EntityTargeting> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 EntityPredicate.CODEC.optionalFieldOf("target_conditions").forGetter(ProjectileTargeting.EntityTargeting::targetConditions),
-                ProjectileEntityEffect.CODEC.listOf().fieldOf("entity_effect").forGetter(ProjectileTargeting.EntityTargeting::effect),
+                ProjectileEntityEffect.CODEC.listOf().fieldOf("entity_effects").forGetter(ProjectileTargeting.EntityTargeting::effects),
                 Codec.INT.optionalFieldOf("tick_rate", 1).forGetter(ProjectileTargeting.EntityTargeting::tickRate)
         ).apply(instance, ProjectileTargeting.EntityTargeting::new));
     }
 
-    record WorldTargeting(Optional<LocationPredicate> locationConditions, Optional<WeatherPredicate> weatherConditions, List<ProjectileWorldEffect> effect, int tickRate) {
+    record WorldTargeting(Optional<LocationPredicate> locationConditions, Optional<WeatherPredicate> weatherConditions, List<ProjectileWorldEffect> effects, int tickRate) {
         public static final Codec<ProjectileTargeting.WorldTargeting> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 LocationPredicate.CODEC.optionalFieldOf("location_conditions").forGetter(ProjectileTargeting.WorldTargeting::locationConditions),
                 WeatherPredicate.CODEC.optionalFieldOf("weather_conditions").forGetter(ProjectileTargeting.WorldTargeting::weatherConditions),
-                ProjectileWorldEffect.CODEC.listOf().fieldOf("world_effect").forGetter(ProjectileTargeting.WorldTargeting::effect),
+                ProjectileWorldEffect.CODEC.listOf().fieldOf("world_effects").forGetter(ProjectileTargeting.WorldTargeting::effects),
                 Codec.INT.optionalFieldOf("tick_rate", 1).forGetter(ProjectileTargeting.WorldTargeting::tickRate)
         ).apply(instance, ProjectileTargeting.WorldTargeting::new));
     }

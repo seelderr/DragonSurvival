@@ -25,8 +25,11 @@ public class DragonAbilities {
     @Translation(type = Translation.Type.ABILITY, comments = {"Test fireball ability."})
     public static final ResourceKey<DragonAbility> FIRE_BALL_TEST = key("fire_ball_test");
 
-    @Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = {"Spike test."})
+    @Translation(type = Translation.Type.ABILITY, comments = {"Spike test."})
     public static final ResourceKey<DragonAbility> SPIKE_TEST = key("spike_test");
+
+    @Translation(type = Translation.Type.ABILITY, comments = {"Test ball lightning ability."})
+    public static final ResourceKey<DragonAbility> BALL_LIGHTNING = key("ball_lightning_test");
 
     public static void registerAbilities(final BootstrapContext<DragonAbility> context) {
         context.register(FIRE_BALL_TEST, new DragonAbility(
@@ -88,6 +91,38 @@ public class DragonAbilities {
                         )),
                         ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/icons/body_type_central.png"),
                         Component.literal("test description")
+                )
+        );
+
+        context.register(BALL_LIGHTNING, new DragonAbility(
+                Optional.of(new Activation(
+                        Activation.Type.SIMPLE,
+                        Optional.empty(),
+                        Optional.of(LevelBasedValue.constant(1)),
+                        Optional.of(LevelBasedValue.constant((float) Functions.secondsToTicks(2))
+                        )
+                )),
+                Optional.empty(),
+                Optional.empty(),
+                List.of(new EffectContainer(
+                        new SelfTarget(
+                                Either.right(
+                                        new AbilityTargeting.EntityTargeting(
+                                                Optional.empty(),
+                                                List.of(new ProjectileEffect(
+                                                        context.lookup(ProjectileData.REGISTRY).getOrThrow(Projectiles.BALL_LIGHTNING),
+                                                        LevelBasedValue.constant(1),
+                                                        LevelBasedValue.constant(0),
+                                                        LevelBasedValue.constant(1)
+                                                ))
+                                        )
+                                )
+                        ),
+                        LevelBasedValue.constant(1),
+                        LevelBasedValue.constant(0)
+                )),
+                ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/icons/body_type_central.png"),
+                Component.literal("test description")
                 )
         );
     }

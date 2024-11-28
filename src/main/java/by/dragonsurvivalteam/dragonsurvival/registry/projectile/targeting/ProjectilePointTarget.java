@@ -23,7 +23,8 @@ public record ProjectilePointTarget(ProjectileTargeting.WorldTargeting target) i
                 || target.weatherConditions().isPresent() && !target.weatherConditions().get().matches(level)) {
             return;
         }
-        target.effect().apply(projectile, projectileLevel);
+
+        target.effects().forEach(effect -> effect.apply(projectile, projectileLevel));
     }
 
     @Override

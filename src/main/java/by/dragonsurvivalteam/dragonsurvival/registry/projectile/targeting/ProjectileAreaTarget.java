@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.projectile.targeting;
 
 import by.dragonsurvivalteam.dragonsurvival.network.particle.SyncParticleTrail;
+import by.dragonsurvivalteam.dragonsurvival.registry.projectile.block_effects.ProjectileBlockEffect;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -35,7 +36,7 @@ public record ProjectileAreaTarget(Either<BlockTargeting, EntityTargeting> targe
             if(level.getGameTime() % blockTarget.tickRate() == 0) {
                 BlockPos.betweenClosedStream(AABB.ofSize(position, radius, radius, radius)).forEach(blockPos -> {
                     if (blockTarget.targetConditions().isEmpty() || blockTarget.targetConditions().get().matches(level, blockPos)) {
-                        blockTarget.effect().apply(projectile, blockPos, projectileLevel);
+                        blockTarget.effects().forEach(effect -> effect.apply(projectile, blockPos, projectileLevel));
                         if(particleTrail().isPresent()) {
                             Vec3 trailMidpoint = blockPos.getCenter().subtract(position).scale(0.5).add(position);
                             PacketDistributor.sendToPlayersNear(
@@ -56,7 +57,7 @@ public record ProjectileAreaTarget(Either<BlockTargeting, EntityTargeting> targe
                 level.getEntities(EntityTypeTest.forClass(LivingEntity.class), AABB.ofSize(position, radius, radius, radius),
                         entity -> entityTarget.targetConditions().map(conditions -> conditions.matches(level, position, entity)).orElse(true)
                 ).forEach(entity -> {
-                    entityTarget.effect().apply(projectile, entity, projectileLevel);
+                    entityTarget.effects().forEach(effect -> effect.apply(projectile, entity, projectileLevel));
                     if(particleTrail().isPresent()) {
                         Vec3 trailMidpoint = entity.position().subtract(position).scale(0.5).add(position);
                         PacketDistributor.sendToPlayersNear(

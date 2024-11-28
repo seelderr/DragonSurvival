@@ -20,18 +20,20 @@
       {
         "type": "dragonsurvival:point",
         "target": {
-          "world_effect": {
-            "type": "dragonsurvival:explosion",
-            "break_blocks": true,
-            "can_damage_self": true,
-            "damage_type": "minecraft:fireball",
-            "explosion_power": {
-              "type": "minecraft:linear",
-              "base": 1.0,
-              "per_level_above_first": 1.0
-            },
-            "fire": true
-          }
+          "world_effects": [
+            {
+              "type": "dragonsurvival:explosion",
+              "break_blocks": true,
+              "can_damage_self": false,
+              "damage_type": "minecraft:fireball",
+              "explosion_power": {
+                "type": "minecraft:linear",
+                "base": 1.0,
+                "per_level_above_first": 1.0
+              },
+              "fire": true
+            }
+          ]
         }
       }
     ],
