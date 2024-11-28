@@ -39,7 +39,11 @@
         "duration": 37.0,
         "swirls": false
       },
-      "radius": 4.0,
+      "radius": {
+        "type": "minecraft:linear",
+        "base": 2.0,
+        "per_level_above_first": 1.0
+      },
       "target": {
         "entity_effects": [
           {

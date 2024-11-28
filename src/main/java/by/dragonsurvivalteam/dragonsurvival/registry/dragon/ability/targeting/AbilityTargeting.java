@@ -31,14 +31,6 @@ public interface AbilityTargeting {
 
     Codec<AbilityTargeting> CODEC = REGISTRY.byNameCodec().dispatch(AbilityTargeting::codec, Function.identity());
 
-    static <T extends AbilityTargeting> Products.P1<RecordCodecBuilder.Mu<T>, Either<BlockTargeting, EntityTargeting>> codecStart(final RecordCodecBuilder.Instance<T> instance) {
-        return instance.group(Codec.either(BlockTargeting.CODEC, EntityTargeting.CODEC).fieldOf("target").forGetter(AbilityTargeting::target));
-    }
-
-    // TODO :: define Codec.either here
-    //   use the merge (?) method to merge this base codec with the custom stuff
-    //   implement getEffect method which will be used to check for active, passive etc.
-
     record BlockTargeting(Optional<BlockPredicate> targetConditions, List<AbilityBlockEffect> effect) {
         public static final Codec<BlockTargeting> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 BlockPredicate.CODEC.optionalFieldOf("target_conditions").forGetter(BlockTargeting::targetConditions),
@@ -51,6 +43,10 @@ public interface AbilityTargeting {
                 EntityPredicate.CODEC.optionalFieldOf("target_conditions").forGetter(EntityTargeting::targetConditions),
                 AbilityEntityEffect.CODEC.listOf().fieldOf("entity_effect").forGetter(EntityTargeting::effect)
         ).apply(instance, EntityTargeting::new));
+    }
+
+    static <T extends AbilityTargeting> Products.P1<RecordCodecBuilder.Mu<T>, Either<BlockTargeting, EntityTargeting>> codecStart(final RecordCodecBuilder.Instance<T> instance) {
+        return instance.group(Codec.either(BlockTargeting.CODEC, EntityTargeting.CODEC).fieldOf("target").forGetter(AbilityTargeting::target));
     }
 
     @SubscribeEvent

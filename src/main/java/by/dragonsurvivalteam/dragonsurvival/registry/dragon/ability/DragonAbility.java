@@ -23,11 +23,10 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.registries.DataPackRegistryEvent;
 
-import java.lang.reflect.AnnotatedType;
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
-import javax.annotation.Nullable;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public record DragonAbility(
@@ -59,12 +58,13 @@ public record DragonAbility(
     public static final int MAX_PASSIVE = 8;
 
     public DragonAbility {
-        // TODO :: check compatible abilities
-        if (effects() != null) {
-            effects().forEach(target -> {
-                AnnotatedType[] annotations = target.effect().getClass().getAnnotatedInterfaces();
-            });
-        }
+        // Usage as direct field access since that relates to the (invisible) constructor parameters
+        // (Method call would be null at this point in time)
+        Activation.Type type = activation.map(Activation::type).orElse(null);
+
+        effects.forEach(target -> target.effect().target()
+                .ifLeft(block -> block.effect().forEach(effect -> validate(type, effect)))
+                .ifRight(entity -> entity.effect().forEach(effect -> validate(type, effect))));
     }
 
     @SubscribeEvent
@@ -108,5 +108,28 @@ public record DragonAbility(
         if (!areAbilitiesValid.get()) {
             throw new IllegalStateException(nextAbilityCheck.toString());
         }
+    }
+
+    private void validate(final Activation.Type activationType, final Object effect) {
+        AbilityInfo abilityInfo = effect.getClass().getAnnotation(AbilityInfo.class);
+        AbilityInfo.Type abilityType = getType(activationType);
+
+        for (AbilityInfo.Type type : abilityInfo.compatibleWith()) {
+            if (type == abilityType) {
+                return;
+            }
+        }
+
+        throw new IllegalStateException("Invalid effect [" + effect + "] for the activation type of ability [" + this + "]");
+    }
+
+    private AbilityInfo.Type getType(final Activation.Type type) {
+        if (type == null) {
+            return AbilityInfo.Type.PASSIVE;
+        } else if (type == Activation.Type.SIMPLE) {
+            return AbilityInfo.Type.ACTIVE_SIMPLE;
+        }
+
+        return AbilityInfo.Type.ACTIVE_CHANNELED;
     }
 }
