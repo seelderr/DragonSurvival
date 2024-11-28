@@ -7,16 +7,16 @@ import software.bernie.geckolib.model.GeoModel;
 public class GenericBallModel extends GeoModel<GenericBallEntity> {
     @Override
     public ResourceLocation getModelResource(GenericBallEntity animatable) {
-        return ResourceLocation.fromNamespaceAndPath(animatable.getResourceLocation().getNamespace(), "geo/projectiles/" + animatable.getResourceLocation().getPath() + ".geo.json");
+        return ResourceLocation.fromNamespaceAndPath(animatable.getGeoLocation().getNamespace(), "geo/projectiles/" + animatable.getGeoLocation().getPath() + ".geo.json");
     }
 
     @Override
     public ResourceLocation getTextureResource(GenericBallEntity animatable) {
-        return ResourceLocation.fromNamespaceAndPath(animatable.getResourceLocation().getNamespace(), "textures/entity/projectiles/" + animatable.getResourceLocation().getPath() + ".png");
+        return ResourceLocation.fromNamespaceAndPath(animatable.getTextureLocation().getNamespace(), "textures/entity/projectiles/" + animatable.getTextureLocation().getPath() + ".png");
     }
 
     @Override
     public ResourceLocation getAnimationResource(GenericBallEntity animatable) {
-        return ResourceLocation.fromNamespaceAndPath(animatable.getResourceLocation().getNamespace(), "animations/projectiles/" + animatable.getResourceLocation().getPath() + ".animation.json");
+        return ResourceLocation.fromNamespaceAndPath(animatable.getAnimLocation().getNamespace(), "animations/projectiles/" + animatable.getAnimLocation().getPath() + ".animation.json");
     }
 }

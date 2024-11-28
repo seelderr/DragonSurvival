@@ -12,9 +12,16 @@
       "damage_type": "dragonsurvival:forest_dragon_spike"
     }
   ],
-  "location": "dragonsurvival:spike",
   "specific_projectile_data": {
-    "piercing_level": 3.0
+    "piercing_level": 3.0,
+    "resource": {
+      "location": "dragonsurvival:spike",
+      "value": {
+        "type": "minecraft:linear",
+        "base": 1.0,
+        "per_level_above_first": 1.0
+      }
+    }
   },
   "ticking_effects": []
 }

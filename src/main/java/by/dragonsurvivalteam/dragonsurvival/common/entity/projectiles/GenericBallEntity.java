@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import by.dragonsurvivalteam.dragonsurvival.registry.projectile.ProjectileData;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.block_effects.ProjectileBlockEffect;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.entity_effects.ProjectileEntityEffect;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.targeting.ProjectileTargeting;
@@ -43,11 +44,14 @@ import java.util.Optional;
 public class GenericBallEntity extends AbstractHurtingProjectile implements GeoEntity {
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
     public static final EntityDataAccessor<Vector3f> DELTA_MOVEMENT = SynchedEntityData.defineId(GenericBallEntity.class, EntityDataSerializers.VECTOR3);
-    public static final EntityDataAccessor<String> RES_LOCATION = SynchedEntityData.defineId(GenericBallEntity.class, EntityDataSerializers.STRING);
+    public static final EntityDataAccessor<String> TEXTURE_LOCATION = SynchedEntityData.defineId(GenericBallEntity.class, EntityDataSerializers.STRING);
+    public static final EntityDataAccessor<String> ANIM_LOCATION = SynchedEntityData.defineId(GenericBallEntity.class, EntityDataSerializers.STRING);
+    public static final EntityDataAccessor<String> GEO_LOCATION = SynchedEntityData.defineId(GenericBallEntity.class, EntityDataSerializers.STRING);
     public static final EntityDataAccessor<Boolean> LINGERING = SynchedEntityData.defineId(GenericBallEntity.class, EntityDataSerializers.BOOLEAN);
     public static final EntityDataAccessor<Float> DIMENSION_WIDTH = SynchedEntityData.defineId(GenericBallEntity.class, EntityDataSerializers.FLOAT);
     public static final EntityDataAccessor<Float> DIMENSION_HEIGHT = SynchedEntityData.defineId(GenericBallEntity.class, EntityDataSerializers.FLOAT);
 
+    private ProjectileData.GenericBallResource resources;
     private Optional<EntityPredicate> canHitPredicate;
     private int projectileLevel;
     private List<ProjectileTargeting> tickingEffects;
@@ -65,7 +69,7 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
     private int lifespan;
 
     public GenericBallEntity(
-            ResourceLocation location,
+            ProjectileData.GenericBallResource location,
             Optional<ParticleOptions> trailParticle,
             Level level,
             EntityDimensions dimensions,
@@ -80,7 +84,7 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
             int maxMoveDistance,
             int maxLifespan) {
         super(DSEntities.GENERIC_BALL_ENTITY.get(), level);
-        setResourceLocation(location);
+        setResourceLocations(location);
         setDimensionWidth(dimensions.width());
         setDimensionHeight(dimensions.height());
         this.canHitPredicate = canHitPredicate;
@@ -102,7 +106,7 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
     }
 
     public void setFromData(
-            ResourceLocation location,
+            ProjectileData.GenericBallResource location,
             Optional<ParticleOptions> trailParticle,
             Level level,
             EntityDimensions dimensions,
@@ -119,7 +123,7 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
             int lifespan,
             float moveDistance,
             int lingerTicks) {
-        setResourceLocation(location);
+        setResourceLocations(location);
         setDimensionWidth(dimensions.width());
         setDimensionHeight(dimensions.height());
         this.canHitPredicate = canHitPredicate;
@@ -161,7 +165,7 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
     }
 
     private record GenericBallEntityInstance(
-            ResourceLocation location,
+            ProjectileData.GenericBallResource location,
             Optional<ParticleOptions> trailParticle,
             int projectileLevel,
             int maxLingeringTicks,
@@ -181,7 +185,7 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
     {
         public static final Codec<GenericBallEntityInstance> CODEC = RecordCodecBuilder.create(
                 instance -> instance.group(
-                        ResourceLocation.CODEC.fieldOf("location").forGetter(GenericBallEntityInstance::location),
+                        ProjectileData.GenericBallResource.CODEC.fieldOf("location").forGetter(GenericBallEntityInstance::location),
                         ParticleTypes.CODEC.optionalFieldOf("trail_particle").forGetter(GenericBallEntityInstance::trailParticle),
                         Codec.INT.fieldOf("projectile_level").forGetter(GenericBallEntityInstance::projectileLevel),
                         Codec.INT.fieldOf("max_lingering_ticks").forGetter(GenericBallEntityInstance::maxLingeringTicks),
@@ -224,7 +228,7 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
 
         public static GenericBallEntityInstance fromEntity(GenericBallEntity entity) {
             return new GenericBallEntityInstance(
-                    entity.getResourceLocation(),
+                    entity.resources,
                     Optional.ofNullable(entity.getTrailParticle()),
                     entity.projectileLevel,
                     entity.maxLingeringTicks,
@@ -290,12 +294,25 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
         return getDimensions();
     }
 
-    private void setResourceLocation(ResourceLocation location) {
-        this.entityData.set(RES_LOCATION, location.toString());
+    public ResourceLocation getTextureLocation() {
+        return ResourceLocation.read(this.entityData.get(TEXTURE_LOCATION)).getOrThrow();
     }
 
-    public ResourceLocation getResourceLocation() {
-        return ResourceLocation.read(this.entityData.get(RES_LOCATION)).getOrThrow();
+    public ResourceLocation getAnimLocation() {
+        return ResourceLocation.read(this.entityData.get(ANIM_LOCATION)).getOrThrow();
+    }
+
+    public ResourceLocation getGeoLocation() {
+        return ResourceLocation.read(this.entityData.get(GEO_LOCATION)).getOrThrow();
+    }
+
+    private void setResourceLocations(ProjectileData.GenericBallResource location) {
+        this.resources = location;
+        String leveledLocation = location.resource().location(projectileLevel).toString();
+        String baseLocation = location.resource().rawLocation().toString();
+        this.entityData.set(TEXTURE_LOCATION, location.useLevelsForTexture() ? leveledLocation : baseLocation);
+        this.entityData.set(ANIM_LOCATION, location.useLevelsForAnimation() ? leveledLocation : baseLocation);
+        this.entityData.set(GEO_LOCATION, location.useLevelsForGeo() ? leveledLocation : baseLocation);
     }
 
     @Override
@@ -323,7 +340,11 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
 
     @Override
     protected @NotNull Component getTypeName() {
-        return Component.translatable(getResourceLocation().getNamespace() + Translation.Type.PROJECTILE.suffix + "." + getResourceLocation().getPath());
+        if(resources == null) {
+            return super.getTypeName();
+        }
+
+        return Component.translatable(resources.resource().rawLocation().getNamespace() + Translation.Type.PROJECTILE.suffix + "." + resources.resource().rawLocation().getPath());
     }
 
     @Override
@@ -354,7 +375,9 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder pBuilder) {
         super.defineSynchedData(pBuilder);
         pBuilder.define(DELTA_MOVEMENT, new Vector3f(0, 0, 0));
-        pBuilder.define(RES_LOCATION, ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "generic_ball").toString());
+        pBuilder.define(TEXTURE_LOCATION, ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "generic_ball").toString());
+        pBuilder.define(ANIM_LOCATION, ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "generic_ball").toString());
+        pBuilder.define(GEO_LOCATION, ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "generic_ball").toString());
         pBuilder.define(LINGERING, false);
         pBuilder.define(DIMENSION_WIDTH, 0.5F);
         pBuilder.define(DIMENSION_HEIGHT, 0.5F);

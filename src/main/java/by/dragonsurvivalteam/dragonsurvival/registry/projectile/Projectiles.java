@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.projectile;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.LevelBasedResource;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.RandomPredicate;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.WeatherPredicate;
 import by.dragonsurvivalteam.dragonsurvival.common.particles.LargeLightningParticleOption;
@@ -41,9 +42,14 @@ public class Projectiles {
 
     public static void registerProjectiles(final BootstrapContext<ProjectileData> context) {
         context.register(FIREBALL, new ProjectileData(
-                FIREBALL.location(),
                 Either.left(
                         new ProjectileData.GenericBallData(
+                                new ProjectileData.GenericBallResource(
+                                        new LevelBasedResource(FIREBALL.location(), Optional.empty()),
+                                        false,
+                                        false,
+                                        false
+                                ),
                                 Optional.of(ParticleTypes.LARGE_SMOKE),
                                 List.of(new ProjectilePointTarget(
                                         new ProjectileTargeting.WorldTargeting(
@@ -80,9 +86,9 @@ public class Projectiles {
         );
 
         context.register(SPIKE, new ProjectileData(
-                SPIKE.location(),
                 Either.right(
                         new ProjectileData.GenericArrowData(
+                                new LevelBasedResource(SPIKE.location(), Optional.of(LevelBasedValue.perLevel(1))),
                                 LevelBasedValue.constant(3)
                         )
                 ),
@@ -97,9 +103,14 @@ public class Projectiles {
         ));
 
         context.register(BALL_LIGHTNING, new ProjectileData(
-                BALL_LIGHTNING.location(),
                 Either.left(
                         new ProjectileData.GenericBallData(
+                                new ProjectileData.GenericBallResource(
+                                        new LevelBasedResource(BALL_LIGHTNING.location(), Optional.empty()),
+                                        false,
+                                        false,
+                                        false
+                                ),
                                 Optional.empty(),
                                 List.of(new ProjectilePointTarget(
                                         new ProjectileTargeting.WorldTargeting(

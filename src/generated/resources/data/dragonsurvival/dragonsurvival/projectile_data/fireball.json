@@ -12,8 +12,15 @@
       "damage_type": "minecraft:fireball"
     }
   ],
-  "location": "dragonsurvival:fireball",
   "specific_projectile_data": {
+    "ball_resources": {
+      "resource": {
+        "location": "dragonsurvival:fireball"
+      },
+      "use_levels_for_animation": false,
+      "use_levels_for_geo": false,
+      "use_levels_for_texture": false
+    },
     "max_lifespan": 100.0,
     "max_move_distance": 32.0,
     "on_destroy_effects": [

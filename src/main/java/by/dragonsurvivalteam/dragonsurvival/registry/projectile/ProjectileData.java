@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.projectile;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.LevelBasedResource;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.block_effects.ProjectileBlockEffect;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.entity_effects.ProjectileEntityEffect;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.targeting.ProjectileTargeting;
@@ -28,7 +29,6 @@ import java.util.Optional;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public record ProjectileData(
-        ResourceLocation location,
         Either<GenericBallData, GenericArrowData> specificProjectileData,
         Optional<EntityPredicate> canHitPredicate,
         List<ProjectileTargeting> tickingEffects,
@@ -36,13 +36,29 @@ public record ProjectileData(
         List<ProjectileEntityEffect> entityHitEffects,
         List<ProjectileBlockEffect> blockHitEffects) {
 
-    public record GenericArrowData(LevelBasedValue piercingLevel) {
+    public record GenericArrowData(LevelBasedResource resource, LevelBasedValue piercingLevel) {
         public static final Codec<GenericArrowData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                LevelBasedResource.CODEC.fieldOf("resource").forGetter(GenericArrowData::resource),
                 LevelBasedValue.CODEC.optionalFieldOf("piercing_level", LevelBasedValue.constant(0)).forGetter(GenericArrowData::piercingLevel)
         ).apply(instance, GenericArrowData::new));
     }
 
+    public record GenericBallResource(
+            LevelBasedResource resource,
+            boolean useLevelsForTexture,
+            boolean useLevelsForGeo,
+            boolean useLevelsForAnimation)
+    {
+        public static final Codec<GenericBallResource> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                LevelBasedResource.CODEC.fieldOf("resource").forGetter(GenericBallResource::resource),
+                Codec.BOOL.fieldOf("use_levels_for_texture").forGetter(GenericBallResource::useLevelsForTexture),
+                Codec.BOOL.fieldOf("use_levels_for_geo").forGetter(GenericBallResource::useLevelsForGeo),
+                Codec.BOOL.fieldOf("use_levels_for_animation").forGetter(GenericBallResource::useLevelsForAnimation)
+        ).apply(instance, GenericBallResource::new));
+    }
+
     public record GenericBallData(
+            GenericBallResource ballResources,
             Optional<ParticleOptions> trailParticle,
             // Needed since there is a difference between being hit and destroyed (e.g if we linger)
             List<ProjectileTargeting> onDestroyEffects,
@@ -52,6 +68,7 @@ public record ProjectileData(
             LevelBasedValue maxMoveDistance,
             LevelBasedValue maxLifespan) {
         public static final Codec<GenericBallData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                GenericBallResource.CODEC.fieldOf("ball_resources").forGetter(GenericBallData::ballResources),
                 ParticleTypes.CODEC.optionalFieldOf("trail_particle").forGetter(GenericBallData::trailParticle),
                 ProjectileTargeting.CODEC.listOf().optionalFieldOf("on_destroy_effects", List.of()).forGetter(GenericBallData::onDestroyEffects),
                 LevelBasedValue.CODEC.fieldOf("x_size").forGetter(GenericBallData::xSize),
@@ -65,7 +82,6 @@ public record ProjectileData(
     public static final ResourceKey<Registry<ProjectileData>> REGISTRY = ResourceKey.createRegistryKey(DragonSurvival.res("projectile_data"));
 
     public static final Codec<ProjectileData> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            ResourceLocation.CODEC.fieldOf("location").forGetter(ProjectileData::location),
             Codec.either(GenericBallData.CODEC, GenericArrowData.CODEC).fieldOf("specific_projectile_data").forGetter(ProjectileData::specificProjectileData),
             EntityPredicate.CODEC.optionalFieldOf("can_hit_predicate").forGetter(ProjectileData::canHitPredicate),
             ProjectileTargeting.CODEC.listOf().fieldOf("ticking_effects").forGetter(ProjectileData::tickingEffects),
