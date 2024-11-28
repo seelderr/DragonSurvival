@@ -1,15 +1,22 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.projectile.world_effects;
 
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachments;
+import by.dragonsurvivalteam.dragonsurvival.server.handlers.LightningHandler;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.projectile.Projectile;
 
-public record ProjectileLightningWorldEffect() implements ProjectileWorldEffect {
+public record ProjectileLightningWorldEffect(boolean ignoresItemsAndExperience, boolean spawnsFire) implements ProjectileWorldEffect {
 
-    public static final ProjectileLightningWorldEffect INSTANCE = new ProjectileLightningWorldEffect();
-    public static final MapCodec<ProjectileLightningWorldEffect> CODEC = MapCodec.unit(INSTANCE);
+    public static final MapCodec<ProjectileLightningWorldEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+                    Codec.BOOL.fieldOf("ignores_items_and_experience").forGetter(ProjectileLightningWorldEffect::ignoresItemsAndExperience),
+                    Codec.BOOL.fieldOf("spawns_fire").forGetter(ProjectileLightningWorldEffect::spawnsFire)
+            ).apply(instance, ProjectileLightningWorldEffect::new)
+    );
 
     @Override
     public void apply(Projectile projectile, int projectileLevel) {
@@ -18,6 +25,10 @@ public record ProjectileLightningWorldEffect() implements ProjectileWorldEffect 
         if(projectile.getOwner() instanceof ServerPlayer serverPlayer) {
             lightningboltentity.setCause(serverPlayer);
         }
+        LightningHandler lightningHandler = new LightningHandler();
+        lightningHandler.ignoresItemsAndExperience = ignoresItemsAndExperience;
+        lightningHandler.spawnsFire = spawnsFire;
+        lightningboltentity.setData(DSDataAttachments.LIGHTNING_BOLT_DATA, lightningHandler);
         projectile.level().addFreshEntity(lightningboltentity);
     }
 

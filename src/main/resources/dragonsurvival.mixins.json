@@ -17,6 +17,7 @@
     "ILivingEntityExtensionMixin",
     "ItemEntityMixin",
     "ItemStackMixin",
+    "LightningBoltMixin",
     "LivingEntityMixin",
     "MaceItemMixin",
     "PlayerEndMixin",

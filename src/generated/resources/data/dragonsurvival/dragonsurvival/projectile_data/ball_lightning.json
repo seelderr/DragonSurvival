@@ -68,7 +68,9 @@
       "target": {
         "entity_effects": [
           {
-            "type": "dragonsurvival:lightning"
+            "type": "dragonsurvival:lightning",
+            "ignores_items_and_experience": true,
+            "spawns_fire": false
           }
         ],
         "random_conditions": {

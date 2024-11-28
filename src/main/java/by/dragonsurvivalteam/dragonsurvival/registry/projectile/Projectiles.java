@@ -159,7 +159,10 @@ public class Projectiles {
                                                         LevelBasedValue.constant(0.3f)
                                                 )),
                                                 List.of(
-                                                        new ProjectileLightningEntityEffect()
+                                                        new ProjectileLightningEntityEffect(
+                                                                true,
+                                                                false
+                                                        )
                                                 ),
                                                 5
                                         )

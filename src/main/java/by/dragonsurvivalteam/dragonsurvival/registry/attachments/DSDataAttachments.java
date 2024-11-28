@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.registry.attachments;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.server.handlers.LightningHandler;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -17,4 +18,6 @@ public class DSDataAttachments {
 
     // TODO :: copy on death?
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<PenaltySupply>> PENALTY_SUPPLY = DS_ATTACHMENT_TYPES.register("penalty_supply", () -> AttachmentType.serializable(PenaltySupply::new).build());
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<LightningHandler>> LIGHTNING_BOLT_DATA = DS_ATTACHMENT_TYPES.register("lightning_bolt_data", () -> AttachmentType.serializable(LightningHandler::new).build());
 }
