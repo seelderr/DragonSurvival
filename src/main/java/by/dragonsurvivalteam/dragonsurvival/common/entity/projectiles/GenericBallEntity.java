@@ -43,7 +43,6 @@ import java.util.Optional;
 
 public class GenericBallEntity extends AbstractHurtingProjectile implements GeoEntity {
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
-    public static final EntityDataAccessor<Vector3f> DELTA_MOVEMENT = SynchedEntityData.defineId(GenericBallEntity.class, EntityDataSerializers.VECTOR3);
     public static final EntityDataAccessor<String> NAME = SynchedEntityData.defineId(GenericBallEntity.class, EntityDataSerializers.STRING);
     public static final EntityDataAccessor<String> TEXTURE_LOCATION = SynchedEntityData.defineId(GenericBallEntity.class, EntityDataSerializers.STRING);
     public static final EntityDataAccessor<String> ANIM_LOCATION = SynchedEntityData.defineId(GenericBallEntity.class, EntityDataSerializers.STRING);
@@ -344,21 +343,6 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
         this.entityData.set(GEO_LOCATION, texture);
     }
 
-    @Override
-    public void setDeltaMovement(@NotNull Vec3 deltaMovement) {
-        if(!level().isClientSide) {
-            setSyncedDeltaMovement(deltaMovement);
-        }
-    }
-
-    private Vec3 getSyncedDeltaMovement() {
-        return new Vec3(this.entityData.get(DELTA_MOVEMENT));
-    }
-
-    private void setSyncedDeltaMovement(Vec3 deltaMovement) {
-        this.entityData.set(DELTA_MOVEMENT, new Vector3f((float) deltaMovement.x, (float) deltaMovement.y, (float) deltaMovement.z));
-    }
-
     private boolean isLingering() {
         return this.entityData.get(LINGERING);
     }
@@ -404,7 +388,6 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder pBuilder) {
         super.defineSynchedData(pBuilder);
-        pBuilder.define(DELTA_MOVEMENT, new Vector3f(0, 0, 0));
         pBuilder.define(NAME, ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "generic_ball").toString());
         pBuilder.define(TEXTURE_LOCATION, ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "generic_ball").toString());
         pBuilder.define(ANIM_LOCATION, ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "generic_ball").toString());
@@ -420,7 +403,7 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
             return Vec3.ZERO;
         }
 
-        return getSyncedDeltaMovement();
+        return super.getDeltaMovement();
     }
 
 
