@@ -191,7 +191,7 @@ public class GenericArrowEntity extends AbstractArrow {
         if(name.isEmpty()) {
             return super.getTypeName();
         }
-        return Component.translatable(name.get().getNamespace() + Translation.Type.PROJECTILE.suffix + "." + name.get().getPath());
+        return Component.translatable(Translation.Type.PROJECTILE.wrap(name.get().getNamespace(), name.get().getPath()));
     }
 
     @Override

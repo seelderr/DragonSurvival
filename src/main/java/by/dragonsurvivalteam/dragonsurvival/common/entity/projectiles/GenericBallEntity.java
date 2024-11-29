@@ -169,14 +169,15 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
     }
 
     private record GenericBallEntityInstance(
+            ResourceLocation name,
             ProjectileData.GenericBallResource location,
             Optional<ParticleOptions> trailParticle,
             int projectileLevel,
             int maxLingeringTicks,
             int maxMoveDistance,
             int maxLifespan,
-            // Needs to be Vec3 as there is no Vec2 codec
-            Vec3 dimensions,
+            // Needs to pack moveDistance here as the Codec only allows 16 max entries
+            Vec3 dimensionsPlusMoveDistance,
             Optional<EntityPredicate> canHitPredicate,
             List<ProjectileTargeting> tickingEffects,
             List<ProjectileTargeting> commonHitEffects,
@@ -184,18 +185,18 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
             List<ProjectileBlockEffect> blockHitEffects,
             List<ProjectileTargeting> onDestroyEffects,
             int lingerTicks,
-            float moveDistance,
             int lifespan)
     {
         public static final Codec<GenericBallEntityInstance> CODEC = RecordCodecBuilder.create(
                 instance -> instance.group(
+                        ResourceLocation.CODEC.fieldOf("name").forGetter(GenericBallEntityInstance::name),
                         ProjectileData.GenericBallResource.CODEC.fieldOf("location").forGetter(GenericBallEntityInstance::location),
                         ParticleTypes.CODEC.optionalFieldOf("trail_particle").forGetter(GenericBallEntityInstance::trailParticle),
                         Codec.INT.fieldOf("projectile_level").forGetter(GenericBallEntityInstance::projectileLevel),
                         Codec.INT.fieldOf("max_lingering_ticks").forGetter(GenericBallEntityInstance::maxLingeringTicks),
                         Codec.INT.fieldOf("max_move_distance").forGetter(GenericBallEntityInstance::maxMoveDistance),
                         Codec.INT.fieldOf("max_lifespan").forGetter(GenericBallEntityInstance::maxLifespan),
-                        Vec3.CODEC.fieldOf("dimensions").forGetter(GenericBallEntityInstance::dimensions),
+                        Vec3.CODEC.fieldOf("dimensions").forGetter(GenericBallEntityInstance::dimensionsPlusMoveDistance),
                         EntityPredicate.CODEC.optionalFieldOf("can_hit_predicate").forGetter(GenericBallEntityInstance::canHitPredicate),
                         ProjectileTargeting.CODEC.listOf().fieldOf("ticking_effects").forGetter(GenericBallEntityInstance::tickingEffects),
                         ProjectileTargeting.CODEC.listOf().fieldOf("common_hit_effects").forGetter(GenericBallEntityInstance::commonHitEffects),
@@ -203,7 +204,6 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
                         ProjectileBlockEffect.CODEC.listOf().fieldOf("block_hit_effects").forGetter(GenericBallEntityInstance::blockHitEffects),
                         ProjectileTargeting.CODEC.listOf().fieldOf("on_destroy_effects").forGetter(GenericBallEntityInstance::onDestroyEffects),
                         Codec.INT.fieldOf("linger_ticks").forGetter(GenericBallEntityInstance::lingerTicks),
-                        Codec.FLOAT.fieldOf("move_distance").forGetter(GenericBallEntityInstance::moveDistance),
                         Codec.INT.fieldOf("lifespan").forGetter(GenericBallEntityInstance::lifespan)
                 ).apply(instance, GenericBallEntityInstance::new)
         );
@@ -213,7 +213,7 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
                     ResourceLocation.read(entity.entityData.get(NAME)).getOrThrow(),
                     location,
                     trailParticle,
-                    EntityDimensions.scalable((float) dimensions.x(), (float) dimensions.y()),
+                    EntityDimensions.scalable((float) dimensionsPlusMoveDistance.x(), (float) dimensionsPlusMoveDistance.y()),
                     canHitPredicate,
                     tickingEffects,
                     commonHitEffects,
@@ -225,20 +225,21 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
                     maxMoveDistance,
                     maxLifespan,
                     lifespan,
-                    moveDistance,
+                    (float) dimensionsPlusMoveDistance.z(),
                     lingerTicks
             );
         }
 
         public static GenericBallEntityInstance fromEntity(GenericBallEntity entity) {
             return new GenericBallEntityInstance(
+                    ResourceLocation.read(entity.entityData.get(NAME)).getOrThrow(),
                     entity.resources,
                     Optional.ofNullable(entity.getTrailParticle()),
                     entity.projectileLevel,
                     entity.maxLingeringTicks,
                     entity.maxMoveDistance,
                     entity.maxLifespan,
-                    new Vec3(entity.getWidth(), entity.getHeight(), 0),
+                    new Vec3(entity.getWidth(), entity.getHeight(), entity.moveDistance),
                     entity.canHitPredicate,
                     entity.tickingEffects,
                     entity.commonHitEffects,
@@ -246,7 +247,6 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
                     entity.blockHitEffects,
                     entity.onDestroyEffects,
                     entity.lingerTicks,
-                    entity.moveDistance,
                     entity.lifespan
             );
         }
