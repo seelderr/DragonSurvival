@@ -49,8 +49,6 @@ public class ModifiersWithDuration implements INBTSerializable<CompoundTag> {
             return false;
         }
 
-        // FIXME :: this will probably not work once it gets (de) serialized since it's not the same object anymore?
-        //  will probably need some other way to check this
         return modifiersWithDuration.contains(modifier);
     }
 
@@ -92,7 +90,7 @@ public class ModifiersWithDuration implements INBTSerializable<CompoundTag> {
         }
 
         if (event.getEntity() instanceof LivingEntity livingEntity) {
-            livingEntity.getData(DSDataAttachments.MODIFIERS_WITH_DURATION).tick(livingEntity);
+            livingEntity.getExistingData(DSDataAttachments.MODIFIERS_WITH_DURATION).ifPresent(data -> data.tick(livingEntity));
         }
     }
 }

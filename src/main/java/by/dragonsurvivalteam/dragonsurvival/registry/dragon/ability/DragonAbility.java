@@ -39,6 +39,13 @@ public record DragonAbility(
         ResourceLocation icon,
         Component description
 ) {
+    /* TODO ::
+        when / how do we reset applied modifications?
+        - e.g. dragon changes -> could remove the data attachment (entity.removeData(...))
+        - but what if the data is changed and an effect is removed or the id was changed -> there is not really a way to track that, is there?
+            (do we need to consider that? or consider it an unsafe / unstable modification?)
+    */
+
     public static final ResourceKey<Registry<DragonAbility>> REGISTRY = ResourceKey.createRegistryKey(DragonSurvival.res("dragon_abilities"));
 
     public static final Codec<DragonAbility> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(

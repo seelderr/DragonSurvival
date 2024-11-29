@@ -30,6 +30,7 @@ public class ModifierWithDuration implements AttributeModifierSupplier {
     public static int NO_LEVEL = -1;
 
     public static final Codec<ModifierWithDuration> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            ResourceLocation.CODEC.fieldOf("id").forGetter(ModifierWithDuration::id),
             Modifier.CODEC.listOf().fieldOf("modifiers").forGetter(ModifierWithDuration::modifiers),
             LevelBasedValue.CODEC.optionalFieldOf("duration", LevelBasedValue.constant(INFINITE_DURATION)).forGetter(ModifierWithDuration::duration)
     ).apply(instance, ModifierWithDuration::new));
@@ -44,6 +45,7 @@ public class ModifierWithDuration implements AttributeModifierSupplier {
                 ids.forEach((attribute, value) -> pairs.add(new Pair<>(attribute, value)));
                 return pairs;
             }).fieldOf("ids").forGetter(ModifierWithDuration::ids),
+            ResourceLocation.CODEC.fieldOf("id").forGetter(ModifierWithDuration::id),
             Modifier.CODEC.listOf().fieldOf("modifiers").forGetter(ModifierWithDuration::modifiers),
             LevelBasedValue.CODEC.optionalFieldOf("duration", LevelBasedValue.constant(INFINITE_DURATION)).forGetter(ModifierWithDuration::duration),
             Codec.INT.fieldOf("current_duration").forGetter(ModifierWithDuration::currentDuration),
@@ -51,20 +53,23 @@ public class ModifierWithDuration implements AttributeModifierSupplier {
     ).apply(instance, ModifierWithDuration::new));
 
     private final Map<Holder<Attribute>, List<ResourceLocation>> ids;
+    private final ResourceLocation id;
     private final List<Modifier> modifiers;
     private final LevelBasedValue duration;
 
     private int currentDuration;
     private int appliedAbilityLevel = NO_LEVEL;
 
-    public ModifierWithDuration(final List<Modifier> modifiers, final LevelBasedValue duration) {
+    public ModifierWithDuration(final ResourceLocation id, final List<Modifier> modifiers, final LevelBasedValue duration) {
         this.ids = new HashMap<>();
+        this.id = id;
         this.modifiers = modifiers;
         this.duration = duration;
     }
 
-    public ModifierWithDuration(final Map<Holder<Attribute>, List<ResourceLocation>> ids, final List<Modifier> modifiers, final LevelBasedValue duration, int currentDuration, int appliedAbilityLevel) {
+    public ModifierWithDuration(final Map<Holder<Attribute>, List<ResourceLocation>> ids, final ResourceLocation id, final List<Modifier> modifiers, final LevelBasedValue duration, int currentDuration, int appliedAbilityLevel) {
         this.ids = ids;
+        this.id = id;
         this.modifiers = modifiers;
         this.duration = duration;
         this.currentDuration = currentDuration;
@@ -116,6 +121,10 @@ public class ModifierWithDuration implements AttributeModifierSupplier {
         return ids;
     }
 
+    public ResourceLocation id() {
+        return id;
+    }
+
     public List<Modifier> modifiers() {
         return modifiers;
     }
@@ -145,5 +154,18 @@ public class ModifierWithDuration implements AttributeModifierSupplier {
     @Override
     public ModifierType getModifierType() {
         return ModifierType.CUSTOM;
+    }
+
+    @Override
+    public boolean equals(final Object other) {
+        if (this == other) {
+            return true;
+        }
+
+        if (other instanceof ModifierWithDuration otherModifier && id().equals(otherModifier.id())) {
+            return true;
+        }
+
+        return super.equals(other);
     }
 }

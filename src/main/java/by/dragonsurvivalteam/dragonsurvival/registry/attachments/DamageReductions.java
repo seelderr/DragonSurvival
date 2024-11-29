@@ -55,8 +55,6 @@ public class DamageReductions implements INBTSerializable<CompoundTag> {
             return false;
         }
 
-        // FIXME :: this will probably not work once it gets (de) serialized since it's not the same object anymore?
-        //  will probably need some other way to check this
         return damageReductions.contains(reduction);
     }
 

@@ -12,6 +12,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
@@ -24,12 +25,14 @@ public class DamageReduction {
     public static int NO_LEVEL = -1;
 
     public static final Codec<DamageReduction> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            ResourceLocation.CODEC.fieldOf("id").forGetter(DamageReduction::id),
             RegistryCodecs.homogeneousList(Registries.DAMAGE_TYPE).fieldOf("damage_types").forGetter(DamageReduction::damageTypes),
             LevelBasedValue.CODEC.optionalFieldOf("damage_reduction", LevelBasedValue.constant(IMMUNE)).forGetter(DamageReduction::damageReduction),
             LevelBasedValue.CODEC.optionalFieldOf("duration", LevelBasedValue.constant(INFINITE_DURATION)).forGetter(DamageReduction::duration)
     ).apply(instance, DamageReduction::new));
 
     public static final Codec<DamageReduction> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            ResourceLocation.CODEC.fieldOf("id").forGetter(DamageReduction::id),
             RegistryCodecs.homogeneousList(Registries.DAMAGE_TYPE).fieldOf("damage_types").forGetter(DamageReduction::damageTypes),
             LevelBasedValue.CODEC.optionalFieldOf("damage_reduction", LevelBasedValue.constant(IMMUNE)).forGetter(DamageReduction::damageReduction),
             LevelBasedValue.CODEC.optionalFieldOf("duration", LevelBasedValue.constant(INFINITE_DURATION)).forGetter(DamageReduction::duration),
@@ -37,6 +40,7 @@ public class DamageReduction {
             Codec.INT.fieldOf("applied_ability_level").forGetter(DamageReduction::appliedAbilityLevel)
     ).apply(instance, DamageReduction::new));
 
+    private final ResourceLocation id;
     private final HolderSet<DamageType> damageTypes;
     private final LevelBasedValue reduction;
     private final LevelBasedValue duration;
@@ -44,13 +48,15 @@ public class DamageReduction {
     private int currentDuration;
     private int appliedAbilityLevel = NO_LEVEL;
 
-    public DamageReduction(final HolderSet<DamageType> damageTypes, final LevelBasedValue reduction, final LevelBasedValue duration) {
+    public DamageReduction(final ResourceLocation id, final HolderSet<DamageType> damageTypes, final LevelBasedValue reduction, final LevelBasedValue duration) {
+        this.id = id;
         this.damageTypes = damageTypes;
         this.reduction = reduction;
         this.duration = duration;
     }
 
-    public DamageReduction(final HolderSet<DamageType> damageTypes, final LevelBasedValue reduction, final LevelBasedValue duration, int currentDuration, int appliedAbilityLevel) {
+    public DamageReduction(final ResourceLocation id, final HolderSet<DamageType> damageTypes, final LevelBasedValue reduction, final LevelBasedValue duration, int currentDuration, int appliedAbilityLevel) {
+        this.id = id;
         this.damageTypes = damageTypes;
         this.reduction = reduction;
         this.duration = duration;
@@ -108,6 +114,10 @@ public class DamageReduction {
         return damageAmount * (1 - reduction);
     }
 
+    public ResourceLocation id() {
+        return id;
+    }
+
     public HolderSet<DamageType> damageTypes() {
         return damageTypes;
     }
@@ -126,5 +136,18 @@ public class DamageReduction {
 
     public int appliedAbilityLevel() {
         return appliedAbilityLevel;
+    }
+
+    @Override
+    public boolean equals(final Object other) {
+        if (this == other) {
+            return true;
+        }
+
+        if (other instanceof DamageReduction otherReduction && id().equals(otherReduction.id())) {
+            return true;
+        }
+
+        return super.equals(other);
     }
 }
