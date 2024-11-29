@@ -19,6 +19,7 @@ public interface AttributeModifierSupplier {
         removeModifiers(type, ((AttributeMapAccessor) entity.getAttributes()).dragonSurvival$getAttributes());
     }
 
+    // TODO :: Throw an exception if this is called with the type 'CUSTOM'? Since CUSTOM would remove modifiers it shouldn't remove
     static void removeModifiers(final ModifierType type, final Map<Holder<Attribute>, AttributeInstance> attributes) {
         attributes.values().forEach(instance -> instance.getModifiers().forEach(modifier -> {
             if (modifier.id().getPath().startsWith(type.path())) {
