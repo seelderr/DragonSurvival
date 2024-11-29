@@ -35,6 +35,23 @@ public class ModifiersWithDuration implements INBTSerializable<CompoundTag> {
         modifiersWithDuration.add(modifier);
     }
 
+    public void remove(final LivingEntity entity, final ModifierWithDuration modifier) {
+        if (modifiersWithDuration == null) {
+            return;
+        }
+
+        modifiersWithDuration.remove(modifier);
+        modifier.removeModifiers(entity);
+    }
+
+    public boolean contains(final ModifierWithDuration modifier) {
+        if (modifiersWithDuration == null) {
+            return false;
+        }
+
+        return modifiersWithDuration.contains(modifier);
+    }
+
     @Override
     public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider) {
         CompoundTag tag = new CompoundTag();

@@ -10,6 +10,7 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Nullable;
@@ -32,6 +33,16 @@ public interface AttributeModifierSupplier {
         modifiers().forEach(modifier -> {
             AttributeInstance instance = entity.getAttribute(modifier.attribute());
             applyModifier(modifier, instance, dragonType, level);
+        });
+    }
+
+    default void removeModifiers(final LivingEntity entity) {
+        getStoredIds().forEach((attribute, modifiers) -> {
+            AttributeInstance instance = entity.getAttribute(attribute);
+
+            if (instance != null) {
+                modifiers.forEach(instance::removeModifier);
+            }
         });
     }
 
@@ -73,6 +84,10 @@ public interface AttributeModifierSupplier {
     }
 
     default void storeId(final Holder<Attribute> attribute, final ResourceLocation id) { /* Nothing to do */ }
+
+    default Map<Holder<Attribute>, List<ResourceLocation>> getStoredIds() {
+        return Collections.emptyMap();
+    }
 
     default List<Modifier> modifiers() {
         return List.of();
