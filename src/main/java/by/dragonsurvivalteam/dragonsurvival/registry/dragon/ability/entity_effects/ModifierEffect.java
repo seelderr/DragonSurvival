@@ -24,8 +24,7 @@ public record ModifierEffect(List<ModifierWithDuration> modifiers) implements Ab
         if (entity instanceof LivingEntity livingEntity) {
             String dragonType = DragonStateProvider.getOptional(entity).map(DragonStateHandler::getTypeNameLowerCase).orElse(null);
             int abilityLevel = ability.getLevel();
-
-            modifiers().forEach(modifier -> modifier.applyModifiers(livingEntity, dragonType, abilityLevel));
+            modifiers().forEach(modifier -> modifier.apply(livingEntity, abilityLevel, dragonType));
         }
     }
 

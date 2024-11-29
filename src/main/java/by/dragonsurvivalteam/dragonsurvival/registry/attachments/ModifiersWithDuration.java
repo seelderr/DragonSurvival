@@ -11,9 +11,9 @@ import net.neoforged.neoforge.common.util.INBTSerializable;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.Nullable;
 
 @EventBusSubscriber
 public class ModifiersWithDuration implements INBTSerializable<CompoundTag> {

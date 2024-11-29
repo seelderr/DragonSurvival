@@ -33,11 +33,11 @@ public record Modifier(Holder<Attribute> attribute, LevelBasedValue amount, Attr
         return new Modifier(attribute, LevelBasedValue.perLevel(amount), operation, Optional.of(dragonType));
     }
 
-    public AttributeModifier getModifier(final ModifierType type, double value) {
-        return getModifier(type, (int) value);
+    public AttributeModifier getModifier(final ModifierType type, double level) {
+        return getModifier(type, (int) level);
     }
 
-    public AttributeModifier getModifier(final ModifierType type, int value) {
-        return new AttributeModifier(type.randomId(attribute(), operation()), amount().calculate(value), operation());
+    public AttributeModifier getModifier(final ModifierType type, int level) {
+        return new AttributeModifier(type.randomId(attribute(), operation()), amount().calculate(level), operation());
     }
 }
