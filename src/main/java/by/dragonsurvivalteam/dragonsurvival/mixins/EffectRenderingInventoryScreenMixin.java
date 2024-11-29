@@ -39,9 +39,9 @@ public class EffectRenderingInventoryScreenMixin {
         return original;
     }
 
-    @Unique private void dragonSurvival$renderAbilityBackgrounds(GuiGraphics guiGraphics, int renderX, int yOffset, Iterable<ModifierWithDuration> modifiers, boolean isSmall) {
+    @Unique private void dragonSurvival$renderAbilityBackgrounds(GuiGraphics guiGraphics, int renderX, int yOffset, int initialYOffset, Iterable<ModifierWithDuration> modifiers, boolean isSmall) {
         EffectRenderingInventoryScreen self = (EffectRenderingInventoryScreen) (Object) this;
-        int topPos = ((AbstractContainerScreenAccessor)self).dragonSurvival$getTopPos();
+        int topPos = ((AbstractContainerScreenAccessor)self).dragonSurvival$getTopPos() + initialYOffset;
 
         for (ModifierWithDuration modifier : modifiers) {
             if (isSmall) {
@@ -54,9 +54,9 @@ public class EffectRenderingInventoryScreenMixin {
         }
     }
 
-    @Unique private void dragonSurvival$renderAbilityIcons(GuiGraphics guiGraphics, int renderX, int yOffset, Iterable<ModifierWithDuration> modifiers, boolean isSmall) {
+    @Unique private void dragonSurvival$renderAbilityIcons(GuiGraphics guiGraphics, int renderX, int yOffset, int initialYOffset, Iterable<ModifierWithDuration> modifiers, boolean isSmall) {
         EffectRenderingInventoryScreen self = (EffectRenderingInventoryScreen) (Object) this;
-        int topPos = ((AbstractContainerScreenAccessor)self).dragonSurvival$getTopPos();
+        int topPos = ((AbstractContainerScreenAccessor)self).dragonSurvival$getTopPos() + initialYOffset;
 
         for (ModifierWithDuration modifier : modifiers) {
             // TODO: Actually parse a texture here
@@ -66,9 +66,9 @@ public class EffectRenderingInventoryScreenMixin {
         }
     }
 
-    @Unique private void dragonSurvival$renderAbilityLabels(GuiGraphics guiGraphics, int renderX, int yOffset, Iterable<ModifierWithDuration> modifiers) {
+    @Unique private void dragonSurvival$renderAbilityLabels(GuiGraphics guiGraphics, int renderX, int yOffset, int initialYOffset, Iterable<ModifierWithDuration> modifiers) {
         EffectRenderingInventoryScreen self = (EffectRenderingInventoryScreen) (Object) this;
-        int topPos = ((AbstractContainerScreenAccessor)self).dragonSurvival$getTopPos();
+        int topPos = ((AbstractContainerScreenAccessor)self).dragonSurvival$getTopPos() + initialYOffset;
 
         for (ModifierWithDuration modifier : modifiers) {
             // TODO: Add a proper translation key here
@@ -97,26 +97,28 @@ public class EffectRenderingInventoryScreenMixin {
             if (event.isCanceled()) return;
             notCompact = !event.isCompact();
             offset = event.getHorizontalOffset();
-            int height = 33;
+            int yOffset = 33;
             if (modifiersWithDuration.size() > 5) {
-                height = 132 / (modifiersWithDuration.size() - 1);
+                yOffset = 132 / (modifiersWithDuration.size() - 1);
             }
 
-            this.dragonSurvival$renderAbilityBackgrounds(guiGraphics, offset, height, modifiersWithDuration, notCompact);
-            this.dragonSurvival$renderAbilityIcons(guiGraphics, offset, height, modifiersWithDuration, notCompact);
+            int numRenderedEffectElements = Minecraft.getInstance().player.getActiveEffects().stream().filter(net.neoforged.neoforge.client.ClientHooks::shouldRenderEffect).sorted().collect(java.util.stream.Collectors.toList()).size();
+            int initialYOffset = yOffset * numRenderedEffectElements;
+            this.dragonSurvival$renderAbilityBackgrounds(guiGraphics, offset, yOffset, initialYOffset, modifiersWithDuration, notCompact);
+            this.dragonSurvival$renderAbilityIcons(guiGraphics, offset, yOffset, initialYOffset, modifiersWithDuration, notCompact);
             if (notCompact) {
                 // TODO: Potentially render extra tooltip data anyways?
-                this.dragonSurvival$renderAbilityLabels(guiGraphics, offset, height, modifiersWithDuration);
+                this.dragonSurvival$renderAbilityLabels(guiGraphics, offset, yOffset, initialYOffset, modifiersWithDuration);
             } else if (mouseX >= offset && mouseX <= offset + 33) {
                 int topPos = ((AbstractContainerScreenAccessor)self).dragonSurvival$getTopPos();
                 ModifierWithDuration hoveredModifier = null;
 
                 for (ModifierWithDuration modifier : modifiersWithDuration) {
-                    if (mouseY >= topPos && mouseY <= topPos + height) {
+                    if (mouseY >= topPos && mouseY <= topPos + yOffset) {
                         hoveredModifier = modifier;
                     }
 
-                    topPos += height;
+                    topPos += yOffset;
                 }
 
                 if (hoveredModifier != null) {
