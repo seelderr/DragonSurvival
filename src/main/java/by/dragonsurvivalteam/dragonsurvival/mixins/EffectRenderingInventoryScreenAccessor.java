@@ -8,8 +8,8 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(EffectRenderingInventoryScreen.class)
 public interface EffectRenderingInventoryScreenAccessor {
     @Accessor("EFFECT_BACKGROUND_LARGE_SPRITE")
-    ResourceLocation getEffectBackgroundLargeSprite();
+    ResourceLocation dragonSurvival$getEffectBackgroundLargeSprite();
 
     @Accessor("EFFECT_BACKGROUND_SMALL_SPRITE")
-    ResourceLocation getEffectBackgroundSmallSprite();
+    ResourceLocation dragonSurvival$getEffectBackgroundSmallSprite();
 }

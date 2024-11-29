@@ -41,13 +41,13 @@ public class EffectRenderingInventoryScreenMixin {
 
     @Unique private void dragonSurvival$renderAbilityBackgrounds(GuiGraphics guiGraphics, int renderX, int yOffset, Iterable<ModifierWithDuration> modifiers, boolean isSmall) {
         EffectRenderingInventoryScreen self = (EffectRenderingInventoryScreen) (Object) this;
-        int topPos = ((AbstractContainerScreenAccessor)self).getTopPos();
+        int topPos = ((AbstractContainerScreenAccessor)self).dragonSurvival$getTopPos();
 
         for (ModifierWithDuration modifier : modifiers) {
             if (isSmall) {
-                guiGraphics.blitSprite(((EffectRenderingInventoryScreenAccessor)self).getEffectBackgroundLargeSprite(), renderX, topPos, 120, 32);
+                guiGraphics.blitSprite(((EffectRenderingInventoryScreenAccessor)self).dragonSurvival$getEffectBackgroundLargeSprite(), renderX, topPos, 120, 32);
             } else {
-                guiGraphics.blitSprite(((EffectRenderingInventoryScreenAccessor)self).getEffectBackgroundSmallSprite(), renderX, topPos, 32, 32);
+                guiGraphics.blitSprite(((EffectRenderingInventoryScreenAccessor)self).dragonSurvival$getEffectBackgroundSmallSprite(), renderX, topPos, 32, 32);
             }
 
             topPos += yOffset;
@@ -56,7 +56,7 @@ public class EffectRenderingInventoryScreenMixin {
 
     @Unique private void dragonSurvival$renderAbilityIcons(GuiGraphics guiGraphics, int renderX, int yOffset, Iterable<ModifierWithDuration> modifiers, boolean isSmall) {
         EffectRenderingInventoryScreen self = (EffectRenderingInventoryScreen) (Object) this;
-        int topPos = ((AbstractContainerScreenAccessor)self).getTopPos();
+        int topPos = ((AbstractContainerScreenAccessor)self).dragonSurvival$getTopPos();
 
         for (ModifierWithDuration modifier : modifiers) {
             // TODO: Actually parse a texture here
@@ -68,14 +68,14 @@ public class EffectRenderingInventoryScreenMixin {
 
     @Unique private void dragonSurvival$renderAbilityLabels(GuiGraphics guiGraphics, int renderX, int yOffset, Iterable<ModifierWithDuration> modifiers) {
         EffectRenderingInventoryScreen self = (EffectRenderingInventoryScreen) (Object) this;
-        int topPos = ((AbstractContainerScreenAccessor)self).getTopPos();
+        int topPos = ((AbstractContainerScreenAccessor)self).dragonSurvival$getTopPos();
 
         for (ModifierWithDuration modifier : modifiers) {
             // TODO: Add a proper translation key here
             Component name = Component.translatable(modifier.id().getPath());
-            guiGraphics.drawString(((ScreenAccessor)self).getFont(), name, renderX + 10 + 18, topPos+ 6, 16777215);
+            guiGraphics.drawString(((ScreenAccessor)self).dragonSurvival$getFont(), name, renderX + 10 + 18, topPos+ 6, 16777215);
             Component duration = Component.literal(Integer.toString(modifier.currentDuration()));
-            guiGraphics.drawString(((ScreenAccessor)self).getFont(), duration, renderX + 10 + 18, topPos + 6 + 10, 8355711);
+            guiGraphics.drawString(((ScreenAccessor)self).dragonSurvival$getFont(), duration, renderX + 10 + 18, topPos + 6 + 10, 8355711);
             topPos += yOffset;
         }
     }
@@ -83,7 +83,7 @@ public class EffectRenderingInventoryScreenMixin {
     @Inject(method = "renderEffects", at = @At(value = "TAIL"))
     private void renderAbilityModifiers(GuiGraphics guiGraphics, int mouseX, int mouseY, CallbackInfo ci, @Share("event")LocalRef<ScreenEvent.RenderInventoryMobEffects> storedEvent, @Share("eventWasStored") LocalBooleanRef eventWasStored) {
         EffectRenderingInventoryScreen self = (EffectRenderingInventoryScreen) (Object) this;
-        int offset = ((AbstractContainerScreenAccessor)self).getLeftPos() + ((AbstractContainerScreenAccessor)self).getImageWidth() + 2;
+        int offset = ((AbstractContainerScreenAccessor)self).dragonSurvival$getLeftPos() + ((AbstractContainerScreenAccessor)self).dragonSurvival$imageWidth() + 2;
         int width = self.width;
         List<ModifierWithDuration> modifiersWithDuration = Minecraft.getInstance().player.getData(DSDataAttachments.MODIFIERS_WITH_DURATION).modifiersWithDuration;
         if (modifiersWithDuration != null && !modifiersWithDuration.isEmpty() && width >= 32) {
@@ -108,7 +108,7 @@ public class EffectRenderingInventoryScreenMixin {
                 // TODO: Potentially render extra tooltip data anyways?
                 this.dragonSurvival$renderAbilityLabels(guiGraphics, offset, height, modifiersWithDuration);
             } else if (mouseX >= offset && mouseX <= offset + 33) {
-                int topPos = ((AbstractContainerScreenAccessor)self).getTopPos();
+                int topPos = ((AbstractContainerScreenAccessor)self).dragonSurvival$getTopPos();
                 ModifierWithDuration hoveredModifier = null;
 
                 for (ModifierWithDuration modifier : modifiersWithDuration) {
@@ -125,7 +125,7 @@ public class EffectRenderingInventoryScreenMixin {
                             Component.translatable(hoveredModifier.id().getPath()),
                             Component.literal(Integer.toString(hoveredModifier.currentDuration()))
                     );
-                    guiGraphics.renderTooltip(((ScreenAccessor)self).getFont(), list, Optional.empty(), mouseX, mouseY);
+                    guiGraphics.renderTooltip(((ScreenAccessor)self).dragonSurvival$getFont(), list, Optional.empty(), mouseX, mouseY);
                 }
             }
         }

@@ -7,11 +7,11 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(AbstractContainerScreen.class)
 public interface AbstractContainerScreenAccessor {
     @Accessor("topPos")
-    int getTopPos();
+    int dragonSurvival$getTopPos();
 
     @Accessor("leftPos")
-    int getLeftPos();
+    int dragonSurvival$getLeftPos();
 
     @Accessor("imageWidth")
-    int getImageWidth();
+    int dragonSurvival$imageWidth();
 }
