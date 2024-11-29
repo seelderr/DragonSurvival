@@ -35,6 +35,9 @@
     "tool_swap.ServerPlayerGameModeStartMixin"
   ],
   "client": [
+    "AbstractContainerScreenAccessor",
+    "EffectRenderingInventoryScreenAccessor",
+    "EffectRenderingInventoryScreenMixin",
     "client.AbstractContainerEventHandlerMixin",
     "client.ClientLevelMixin",
     "client.EntityRenderDispatcherMixin",
@@ -61,7 +64,8 @@
     "iris.GameRendererMixin",
     "sodium.ClientNeoForgeModMixin",
     "tool_swap.MultiPlayerGameModeEndMixin",
-    "tool_swap.MultiPlayerGameModeStartMixin"
+    "tool_swap.MultiPlayerGameModeStartMixin",
+    "ScreenAccessor"
   ],
   "injectors": {
     "maxShiftBy": 2

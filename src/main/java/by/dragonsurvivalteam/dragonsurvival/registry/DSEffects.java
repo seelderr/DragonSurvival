@@ -130,4 +130,6 @@ public class DSEffects { // TODO :: add descriptions for the missing N/A marked 
     @Translation(type = Translation.Type.EFFECT, comments = "Forest Dragon Wings")
     @Translation(type = Translation.Type.EFFECT_DESCRIPTION, comments = "Grants forest dragons the ability to fly.")
     public static Holder<MobEffect> FOREST_DRAGON_WINGS = DS_MOB_EFFECTS.register("forest_dragon_wings", () -> new ModifiableMobEffect(MobEffectCategory.BENEFICIAL, 0x0, true));
+
+    public static Holder<MobEffect> CUSTOM_MODIFIER_PLACEHOLDER_EFFECT = DS_MOB_EFFECTS.register("custom_modifier_placeholder_effect", () -> new ModifiableMobEffect(MobEffectCategory.NEUTRAL, 0x0, true));
 }
