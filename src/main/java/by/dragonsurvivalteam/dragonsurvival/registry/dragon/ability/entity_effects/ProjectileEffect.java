@@ -50,9 +50,10 @@ public record ProjectileEffect(
                         projectileData.blockHitEffects(),
                         dragon.serverLevel(),
                         ability.getLevel(),
-                        (int)arrowData.piercingLevel().calculate(ability.getLevel())
+                        (int)arrowData.piercingLevel().calculate(ability.getLevel()),
+                        launchPos
                 );
-                arrow.setPos(launchPos);
+
                 arrow.setOwner(dragon);
                 arrow.pickup = AbstractArrow.Pickup.DISALLOWED;
                 arrow.shootFromRotation(dragon, dragon.getXRot(), dragon.getYRot(), 0.0F, speed.calculate(ability.getLevel()), i * projectileSpread.calculate(ability.getLevel()));
@@ -87,10 +88,10 @@ public record ProjectileEffect(
                         ability.getLevel(),
                         (int)ballData.maxLingeringTicks().calculate(ability.getLevel()),
                         (int)ballData.maxMoveDistance().calculate(ability.getLevel()),
-                        (int)ballData.maxLifespan().calculate(ability.getLevel())
+                        (int)ballData.maxLifespan().calculate(ability.getLevel()),
+                        projPos
                 );
 
-                projectile.setPos(projPos);
                 projectile.accelerationPower = 0;
                 projectile.shootFromRotation(dragon, dragon.getXRot(), dragon.getYRot(), 1.0F, speed.calculate(ability.getLevel()), i * projectileSpread.calculate(ability.getLevel()));
                 dragon.level().addFreshEntity(projectile);

@@ -108,6 +108,28 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
         this.accelerationPower = 0;
     }
 
+    public GenericBallEntity(
+            ResourceLocation name,
+            ProjectileData.GenericBallResource location,
+            Optional<ParticleOptions> trailParticle,
+            Level level,
+            EntityDimensions dimensions,
+            Optional<EntityPredicate> canHitPredicate,
+            List<ProjectileTargeting> tickingEffects,
+            List<ProjectileTargeting> commonHitEffects,
+            List<ProjectileEntityEffect> entityHitEffects,
+            List<ProjectileBlockEffect> blockHitEffects,
+            List<ProjectileTargeting> onDestroyEffects,
+            int projectileLevel,
+            int maxLingeringTicks,
+            int maxMoveDistance,
+            int maxLifespan,
+            Vec3 position) {
+        this(name, location, trailParticle, level, dimensions, canHitPredicate, tickingEffects, commonHitEffects, entityHitEffects, blockHitEffects, onDestroyEffects, projectileLevel, maxLingeringTicks, maxMoveDistance, maxLifespan);
+        this.setPos(position.x, position.y, position.z);
+        this.reapplyPosition();
+    }
+
     public void setFromData(
             ResourceLocation name,
             ProjectileData.GenericBallResource location,

@@ -36,6 +36,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -79,6 +80,23 @@ public class GenericArrowEntity extends AbstractArrow {
         this.blockHitEffects = blockHitEffects;
         this.projectileLevel = projectileLevel;
         this.setPierceLevel((byte)piercingLevel);
+    }
+
+    public GenericArrowEntity(
+            ResourceLocation name,
+            ResourceLocation location,
+            Optional<EntityPredicate> canHitPredicate,
+            List<ProjectileTargeting> tickingEffects,
+            List<ProjectileTargeting> commonHitEffects,
+            List<ProjectileEntityEffect> entityHitEffects,
+            List<ProjectileBlockEffect> blockHitEffects,
+            Level level,
+            int projectileLevel,
+            int piercingLevel,
+            Vec3 position) {
+        this(name, location, canHitPredicate, tickingEffects, commonHitEffects, entityHitEffects, blockHitEffects, level, projectileLevel, piercingLevel);
+        this.setPos(position.x, position.y, position.z);
+        this.reapplyPosition();
     }
 
     public GenericArrowEntity(EntityType<? extends AbstractArrow> type, Level level) {
