@@ -41,7 +41,8 @@ public record ProjectileEffect(
                 // Copied from AbstractArrow.java constructor
                 Vec3 launchPos = new Vec3(dragon.getX(), dragon.getEyeY() - 0.1F, dragon.getZ());
                 GenericArrowEntity arrow = new GenericArrowEntity(
-                        arrowData.resource().get(ability.getLevel()),
+                        projectileData.name(),
+                        arrowData.texture().get(ability.getLevel()),
                         projectileData.canHitPredicate(),
                         projectileData.tickingEffects(),
                         projectileData.commonHitEffects(),
@@ -72,6 +73,7 @@ public record ProjectileEffect(
                 }
 
                 GenericBallEntity projectile = new GenericBallEntity(
+                        projectileData.name(),
                         ballData.ballResources(),
                         ballData.trailParticle(),
                         dragon.serverLevel(),

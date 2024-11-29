@@ -18,6 +18,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.RegistryFixedCodec;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -28,6 +29,7 @@ import java.util.Optional;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public record ProjectileData(
+        ResourceLocation name,
         Either<GenericBallData, GenericArrowData> specificProjectileData,
         Optional<EntityPredicate> canHitPredicate,
         List<ProjectileTargeting> tickingEffects,
@@ -35,9 +37,9 @@ public record ProjectileData(
         List<ProjectileEntityEffect> entityHitEffects,
         List<ProjectileBlockEffect> blockHitEffects) {
 
-    public record GenericArrowData(LevelBasedResource resource, LevelBasedValue piercingLevel) {
+    public record GenericArrowData(LevelBasedResource texture, LevelBasedValue piercingLevel) {
         public static final Codec<GenericArrowData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                LevelBasedResource.CODEC.fieldOf("resource").forGetter(GenericArrowData::resource),
+                LevelBasedResource.CODEC.fieldOf("texture").forGetter(GenericArrowData::texture),
                 LevelBasedValue.CODEC.optionalFieldOf("piercing_level", LevelBasedValue.constant(0)).forGetter(GenericArrowData::piercingLevel)
         ).apply(instance, GenericArrowData::new));
     }
@@ -73,6 +75,7 @@ public record ProjectileData(
     public static final ResourceKey<Registry<ProjectileData>> REGISTRY = ResourceKey.createRegistryKey(DragonSurvival.res("projectile_data"));
 
     public static final Codec<ProjectileData> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            ResourceLocation.CODEC.fieldOf("name").forGetter(ProjectileData::name),
             Codec.either(GenericBallData.CODEC, GenericArrowData.CODEC).fieldOf("specific_projectile_data").forGetter(ProjectileData::specificProjectileData),
             EntityPredicate.CODEC.optionalFieldOf("can_hit_predicate").forGetter(ProjectileData::canHitPredicate),
             ProjectileTargeting.CODEC.listOf().fieldOf("ticking_effects").forGetter(ProjectileData::tickingEffects),

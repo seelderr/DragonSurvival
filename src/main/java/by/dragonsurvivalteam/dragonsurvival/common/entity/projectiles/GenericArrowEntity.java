@@ -44,6 +44,7 @@ import javax.annotation.Nullable;
 
 public class GenericArrowEntity extends AbstractArrow {
     private int projectileLevel;
+    public static final EntityDataAccessor<String> NAME = SynchedEntityData.defineId(GenericArrowEntity.class, EntityDataSerializers.STRING);
     public static final EntityDataAccessor<String> RES_LOCATION = SynchedEntityData.defineId(GenericArrowEntity.class, EntityDataSerializers.STRING);
     private Optional<EntityPredicate> canHitPredicate;
     private List<ProjectileTargeting> tickingEffects;
@@ -58,6 +59,7 @@ public class GenericArrowEntity extends AbstractArrow {
     @Nullable private Entity lastDeflectedBy;
 
     public GenericArrowEntity(
+            ResourceLocation name,
             ResourceLocation location,
             Optional<EntityPredicate> canHitPredicate,
             List<ProjectileTargeting> tickingEffects,
@@ -68,6 +70,7 @@ public class GenericArrowEntity extends AbstractArrow {
             int projectileLevel,
             int piercingLevel) {
         super(DSEntities.GENERIC_ARROW_ENTITY.get(), level);
+        this.setName(name);
         this.setResourceLocation(location);
         this.canHitPredicate = canHitPredicate;
         this.tickingEffects = tickingEffects;
@@ -89,7 +92,8 @@ public class GenericArrowEntity extends AbstractArrow {
     }
 
     private record GenericArrowEntityInstance(
-            ResourceLocation location,
+            ResourceLocation name,
+            ResourceLocation texture,
             Optional<EntityPredicate> canHitPredicate,
             List<ProjectileTargeting> tickingEffects,
             List<ProjectileTargeting> commonHitEffects,
@@ -100,7 +104,8 @@ public class GenericArrowEntity extends AbstractArrow {
     {
         public static final Codec<GenericArrowEntityInstance> CODEC = RecordCodecBuilder.create(
                 instance -> instance.group(
-                        ResourceLocation.CODEC.fieldOf("location").forGetter(GenericArrowEntityInstance::location),
+                        ResourceLocation.CODEC.fieldOf("name").forGetter(GenericArrowEntityInstance::name),
+                        ResourceLocation.CODEC.fieldOf("texture").forGetter(GenericArrowEntityInstance::texture),
                         EntityPredicate.CODEC.optionalFieldOf("can_hit_predicate").forGetter(GenericArrowEntityInstance::canHitPredicate),
                         ProjectileTargeting.CODEC.listOf().fieldOf("ticking_effects").forGetter(GenericArrowEntityInstance::tickingEffects),
                         ProjectileTargeting.CODEC.listOf().fieldOf("common_hit_effects").forGetter(GenericArrowEntityInstance::commonHitEffects),
@@ -112,7 +117,8 @@ public class GenericArrowEntity extends AbstractArrow {
         );
 
         public void load(GenericArrowEntity entity) {
-            entity.setResourceLocation(location);
+            entity.setName(name);
+            entity.setResourceLocation(texture);
             entity.canHitPredicate = canHitPredicate;
             entity.tickingEffects = tickingEffects;
             entity.commonHitEffects = commonHitEffects;
@@ -124,6 +130,7 @@ public class GenericArrowEntity extends AbstractArrow {
 
         public static GenericArrowEntityInstance fromEntity(GenericArrowEntity entity) {
             return new GenericArrowEntityInstance(
+                    ResourceLocation.read(entity.entityData.get(NAME)).getOrThrow(),
                     entity.getResourceLocation(),
                     entity.canHitPredicate,
                     entity.tickingEffects,
@@ -134,6 +141,10 @@ public class GenericArrowEntity extends AbstractArrow {
                     entity.getPierceLevel()
             );
         }
+    }
+
+    private void setName(ResourceLocation name) {
+        this.entityData.set(NAME, name.toString());
     }
 
     @Override
@@ -170,12 +181,17 @@ public class GenericArrowEntity extends AbstractArrow {
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder pBuilder) {
         super.defineSynchedData(pBuilder);
+        pBuilder.define(NAME, ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "generic_arrow").toString());
         pBuilder.define(RES_LOCATION,  ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "generic_arrow").toString());
     }
 
     @Override
     protected @NotNull Component getTypeName() {
-        return Component.translatable(getResourceLocation().getNamespace() + Translation.Type.PROJECTILE.suffix + "." + getResourceLocation().getPath());
+        Optional<ResourceLocation> name = ResourceLocation.read(entityData.get(NAME)).result();
+        if(name.isEmpty()) {
+            return super.getTypeName();
+        }
+        return Component.translatable(name.get().getNamespace() + Translation.Type.PROJECTILE.suffix + "." + name.get().getPath());
     }
 
     @Override

@@ -2,6 +2,7 @@
   "block_hit_effects": [],
   "common_hit_effects": [],
   "entity_hit_effects": [],
+  "name": "dragonsurvival:ball_lightning",
   "specific_projectile_data": {
     "ball_resources": {
       "resource": {

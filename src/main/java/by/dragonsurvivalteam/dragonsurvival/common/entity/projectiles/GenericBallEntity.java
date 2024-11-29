@@ -44,6 +44,7 @@ import java.util.Optional;
 public class GenericBallEntity extends AbstractHurtingProjectile implements GeoEntity {
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
     public static final EntityDataAccessor<Vector3f> DELTA_MOVEMENT = SynchedEntityData.defineId(GenericBallEntity.class, EntityDataSerializers.VECTOR3);
+    public static final EntityDataAccessor<String> NAME = SynchedEntityData.defineId(GenericBallEntity.class, EntityDataSerializers.STRING);
     public static final EntityDataAccessor<String> TEXTURE_LOCATION = SynchedEntityData.defineId(GenericBallEntity.class, EntityDataSerializers.STRING);
     public static final EntityDataAccessor<String> ANIM_LOCATION = SynchedEntityData.defineId(GenericBallEntity.class, EntityDataSerializers.STRING);
     public static final EntityDataAccessor<String> GEO_LOCATION = SynchedEntityData.defineId(GenericBallEntity.class, EntityDataSerializers.STRING);
@@ -69,6 +70,7 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
     private int lifespan;
 
     public GenericBallEntity(
+            ResourceLocation name,
             ProjectileData.GenericBallResource location,
             Optional<ParticleOptions> trailParticle,
             Level level,
@@ -84,6 +86,7 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
             int maxMoveDistance,
             int maxLifespan) {
         super(DSEntities.GENERIC_BALL_ENTITY.get(), level);
+        setName(name);
         setResourceLocations(location);
         setDimensionWidth(dimensions.width());
         setDimensionHeight(dimensions.height());
@@ -106,9 +109,9 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
     }
 
     public void setFromData(
+            ResourceLocation name,
             ProjectileData.GenericBallResource location,
             Optional<ParticleOptions> trailParticle,
-            Level level,
             EntityDimensions dimensions,
             Optional<EntityPredicate> canHitPredicate,
             List<ProjectileTargeting> tickingEffects,
@@ -123,6 +126,7 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
             int lifespan,
             float moveDistance,
             int lingerTicks) {
+        setName(name);
         setResourceLocations(location);
         setDimensionWidth(dimensions.width());
         setDimensionHeight(dimensions.height());
@@ -206,9 +210,9 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
 
         public void load(GenericBallEntity entity) {
             entity.setFromData(
+                    ResourceLocation.read(entity.entityData.get(NAME)).getOrThrow(),
                     location,
                     trailParticle,
-                    entity.level(),
                     EntityDimensions.scalable((float) dimensions.x(), (float) dimensions.y()),
                     canHitPredicate,
                     tickingEffects,
@@ -306,6 +310,10 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
         return ResourceLocation.read(this.entityData.get(GEO_LOCATION)).getOrThrow();
     }
 
+    public void setName(ResourceLocation name) {
+        this.entityData.set(NAME, name.toString());
+    }
+
     private void setResourceLocations(ProjectileData.GenericBallResource location) {
         this.resources = location;
         String texture = location.resource().get(projectileLevel).toString();
@@ -339,13 +347,12 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
 
     @Override
     protected @NotNull Component getTypeName() {
-        if(resources == null) {
+        Optional<ResourceLocation> name = ResourceLocation.read(entityData.get(NAME)).result();
+        if(name.isEmpty()) {
             return super.getTypeName();
         }
 
-        // TODO :: maybe it needs 1 key that define just the name - don't think they'll provide multiple translations that change per level
-        ResourceLocation texture = resources.resource().get(projectileLevel);
-        return Component.translatable(Translation.Type.PROJECTILE.wrap(texture.getNamespace(), texture.getPath()));
+        return Component.translatable(Translation.Type.PROJECTILE.wrap(name.get().getNamespace(), name.get().getPath()));
     }
 
     @Override
@@ -376,6 +383,7 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder pBuilder) {
         super.defineSynchedData(pBuilder);
         pBuilder.define(DELTA_MOVEMENT, new Vector3f(0, 0, 0));
+        pBuilder.define(NAME, ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "generic_ball").toString());
         pBuilder.define(TEXTURE_LOCATION, ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "generic_ball").toString());
         pBuilder.define(ANIM_LOCATION, ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "generic_ball").toString());
         pBuilder.define(GEO_LOCATION, ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "generic_ball").toString());

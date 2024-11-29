@@ -43,6 +43,7 @@ public class Projectiles {
 
     public static void registerProjectiles(final BootstrapContext<ProjectileData> context) {
         context.register(FIREBALL, new ProjectileData(
+                FIREBALL.location(),
                 Either.left(
                         new ProjectileData.GenericBallData(
                                 new ProjectileData.GenericBallResource(new LevelBasedResource(List.of(new LevelBasedResource.TextureEntry(FIREBALL.location(), 1)))),
@@ -82,6 +83,7 @@ public class Projectiles {
         );
 
         context.register(SPIKE, new ProjectileData(
+                SPIKE.location(),
                 Either.right(
                         new ProjectileData.GenericArrowData(
                                 new LevelBasedResource(List.of(new LevelBasedResource.TextureEntry(SPIKE.location(), 1))),
@@ -99,6 +101,7 @@ public class Projectiles {
         ));
 
         context.register(BALL_LIGHTNING, new ProjectileData(
+                BALL_LIGHTNING.location(),
                 Either.left(
                         new ProjectileData.GenericBallData(
                                 new ProjectileData.GenericBallResource(new LevelBasedResource(List.of(new LevelBasedResource.TextureEntry(BALL_LIGHTNING.location(), 1)))),

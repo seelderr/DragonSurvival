@@ -12,6 +12,7 @@
       "damage_type": "minecraft:fireball"
     }
   ],
+  "name": "dragonsurvival:fireball",
   "specific_projectile_data": {
     "ball_resources": {
       "resource": {

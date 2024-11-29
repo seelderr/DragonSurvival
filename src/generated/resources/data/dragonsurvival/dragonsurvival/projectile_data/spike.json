@@ -12,9 +12,10 @@
       "damage_type": "dragonsurvival:forest_dragon_spike"
     }
   ],
+  "name": "dragonsurvival:spike",
   "specific_projectile_data": {
     "piercing_level": 3.0,
-    "resource": {
+    "texture": {
       "texture_entries": [
         {
           "from_level": 1,
