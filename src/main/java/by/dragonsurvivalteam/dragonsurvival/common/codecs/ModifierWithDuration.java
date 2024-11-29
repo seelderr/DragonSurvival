@@ -47,7 +47,7 @@ public class ModifierWithDuration implements AttributeModifierSupplier {
             Modifier.CODEC.listOf().fieldOf("modifiers").forGetter(ModifierWithDuration::modifiers),
             LevelBasedValue.CODEC.optionalFieldOf("duration", LevelBasedValue.constant(INFINITE_DURATION)).forGetter(ModifierWithDuration::duration),
             Codec.INT.fieldOf("current_duration").forGetter(ModifierWithDuration::currentDuration),
-            Codec.INT.fieldOf("level").forGetter(ModifierWithDuration::appliedAbilityLevel)
+            Codec.INT.fieldOf("applied_ability_level").forGetter(ModifierWithDuration::appliedAbilityLevel)
     ).apply(instance, ModifierWithDuration::new));
 
     private final Map<Holder<Attribute>, List<ResourceLocation>> ids;
