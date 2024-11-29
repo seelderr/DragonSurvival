@@ -19,11 +19,11 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.Nullable;
 
 public class ModifierWithDuration implements AttributeModifierSupplier {
     public static final int INFINITE_DURATION = -1;
@@ -87,6 +87,10 @@ public class ModifierWithDuration implements AttributeModifierSupplier {
     }
 
     public void tick(final LivingEntity entity) {
+        if (currentDuration == INFINITE_DURATION) {
+            return;
+        }
+
         currentDuration--;
 
         if (currentDuration == 0) {
