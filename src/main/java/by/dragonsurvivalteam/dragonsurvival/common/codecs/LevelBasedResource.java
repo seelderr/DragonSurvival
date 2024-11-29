@@ -28,8 +28,8 @@ public record LevelBasedResource(List<TextureEntry> textureEntries) {
             }
         }
 
-        // As long as the ability level is at least 1 this cannot really occur
-        throw new IllegalStateException("Invalid texture definition for [" + this + "]");
+        // Fallback to returning the first entry (this is intended, as it happens for a single tick as the client is receiving projectile data from the server)
+        return textureEntries().getFirst().location();
     }
 
     public record TextureEntry(ResourceLocation location, int fromLevel) implements Comparable<TextureEntry> {
