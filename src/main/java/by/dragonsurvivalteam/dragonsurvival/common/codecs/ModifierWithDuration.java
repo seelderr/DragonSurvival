@@ -108,7 +108,7 @@ public class ModifierWithDuration implements AttributeModifierSupplier {
         currentDuration--;
 
         if (currentDuration == 0) {
-            removeModifiers(entity);
+            entity.getData(DSDataAttachments.MODIFIERS_WITH_DURATION).remove(entity, this);
         }
     }
 
