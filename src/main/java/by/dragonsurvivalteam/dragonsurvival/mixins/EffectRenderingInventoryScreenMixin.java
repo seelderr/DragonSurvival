@@ -11,14 +11,8 @@ import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.MobEffectTextureManager;
-import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffectUtil;
 import net.neoforged.neoforge.client.event.ScreenEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -45,8 +39,7 @@ public class EffectRenderingInventoryScreenMixin {
         return original;
     }
 
-    @Unique
-    private void dragonSurvival$renderAbilityBackgrounds(GuiGraphics guiGraphics, int renderX, int yOffset, Iterable<ModifierWithDuration> modifiers, boolean isSmall) {
+    @Unique private void dragonSurvival$renderAbilityBackgrounds(GuiGraphics guiGraphics, int renderX, int yOffset, Iterable<ModifierWithDuration> modifiers, boolean isSmall) {
         EffectRenderingInventoryScreen self = (EffectRenderingInventoryScreen) (Object) this;
         int topPos = ((AbstractContainerScreenAccessor)self).getTopPos();
 
@@ -61,8 +54,7 @@ public class EffectRenderingInventoryScreenMixin {
         }
     }
 
-    @Unique
-    private void dragonSurvival$renderAbilityIcons(GuiGraphics guiGraphics, int renderX, int yOffset, Iterable<ModifierWithDuration> modifiers, boolean isSmall) {
+    @Unique private void dragonSurvival$renderAbilityIcons(GuiGraphics guiGraphics, int renderX, int yOffset, Iterable<ModifierWithDuration> modifiers, boolean isSmall) {
         EffectRenderingInventoryScreen self = (EffectRenderingInventoryScreen) (Object) this;
         int topPos = ((AbstractContainerScreenAccessor)self).getTopPos();
 
@@ -74,8 +66,7 @@ public class EffectRenderingInventoryScreenMixin {
         }
     }
 
-    @Unique
-    private void dragonSurvival$renderAbilityLabels(GuiGraphics guiGraphics, int renderX, int yOffset, Iterable<ModifierWithDuration> modifiers) {
+    @Unique private void dragonSurvival$renderAbilityLabels(GuiGraphics guiGraphics, int renderX, int yOffset, Iterable<ModifierWithDuration> modifiers) {
         EffectRenderingInventoryScreen self = (EffectRenderingInventoryScreen) (Object) this;
         int topPos = ((AbstractContainerScreenAccessor)self).getTopPos();
 
