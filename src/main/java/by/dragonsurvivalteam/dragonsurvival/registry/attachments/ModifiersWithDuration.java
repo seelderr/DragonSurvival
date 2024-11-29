@@ -5,14 +5,17 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.world.entity.LivingEntity;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.util.INBTSerializable;
+import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.Nullable;
 
-// TODO :: tick on player tick event or sth
+@EventBusSubscriber
 public class ModifiersWithDuration implements INBTSerializable<CompoundTag> {
     public static final String MODIFIERS_WITH_DURATION = "modifiers_with_duration";
 
@@ -60,6 +63,17 @@ public class ModifiersWithDuration implements INBTSerializable<CompoundTag> {
 
         if (!modifiersWithDuration.isEmpty()) {
             this.modifiersWithDuration = modifiersWithDuration;
+        }
+    }
+
+    @SubscribeEvent
+    public static void tickModifiers(final EntityTickEvent.Post event) {
+        if (event.getEntity().level().isClientSide()) {
+            return;
+        }
+
+        if (event.getEntity() instanceof LivingEntity livingEntity) {
+            livingEntity.getData(DSDataAttachments.MODIFIERS_WITH_DURATION).tick(livingEntity);
         }
     }
 }
