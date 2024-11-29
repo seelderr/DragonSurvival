@@ -13,6 +13,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.neoforged.neoforge.client.event.ScreenEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -20,6 +21,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -98,11 +100,13 @@ public class EffectRenderingInventoryScreenMixin {
             notCompact = !event.isCompact();
             offset = event.getHorizontalOffset();
             int yOffset = 33;
-            if (modifiersWithDuration.size() > 5) {
-                yOffset = 132 / (modifiersWithDuration.size() - 1);
+            Collection<MobEffectInstance> mobEffects = Minecraft.getInstance().player.getActiveEffects();
+            int totalElementsToRender = mobEffects.size() + modifiersWithDuration.size();
+            if (totalElementsToRender > 5) {
+                yOffset = 132 / (totalElementsToRender - 1);
             }
 
-            int numRenderedEffectElements = Minecraft.getInstance().player.getActiveEffects().stream().filter(net.neoforged.neoforge.client.ClientHooks::shouldRenderEffect).sorted().collect(java.util.stream.Collectors.toList()).size();
+            int numRenderedEffectElements = mobEffects.stream().filter(net.neoforged.neoforge.client.ClientHooks::shouldRenderEffect).sorted().collect(java.util.stream.Collectors.toList()).size();
             int initialYOffset = yOffset * numRenderedEffectElements;
             this.dragonSurvival$renderAbilityBackgrounds(guiGraphics, offset, yOffset, initialYOffset, modifiersWithDuration, notCompact);
             this.dragonSurvival$renderAbilityIcons(guiGraphics, offset, yOffset, initialYOffset, modifiersWithDuration, notCompact);
