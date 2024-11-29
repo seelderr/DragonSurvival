@@ -37,13 +37,17 @@ public interface AttributeModifierSupplier {
     }
 
     default void removeModifiers(final LivingEntity entity) {
-        getStoredIds().forEach((attribute, modifiers) -> {
+        Map<Holder<Attribute>, List<ResourceLocation>> ids = getStoredIds();
+
+        ids.forEach((attribute, modifiers) -> {
             AttributeInstance instance = entity.getAttribute(attribute);
 
             if (instance != null) {
                 modifiers.forEach(instance::removeModifier);
             }
         });
+
+        ids.clear();
     }
 
     /** Intended for usage within descriptions */
