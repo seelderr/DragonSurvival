@@ -19,4 +19,5 @@ public class DSDataAttachments {
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<PenaltySupply>> PENALTY_SUPPLY = DS_ATTACHMENT_TYPES.register("penalty_supply", () -> AttachmentType.serializable(PenaltySupply::new).build());
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<LightningHandler>> LIGHTNING_BOLT_DATA = DS_ATTACHMENT_TYPES.register("lightning_bolt_data", () -> AttachmentType.serializable(LightningHandler::new).build());
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<ModifiersWithDuration>> MODIFIERS_WITH_DURATION = DS_ATTACHMENT_TYPES.register("modifiers_with_duration", () -> AttachmentType.serializable(ModifiersWithDuration::new).build());
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<DamageReductions>> DAMAGE_REDUCTIONS = DS_ATTACHMENT_TYPES.register("damage_reductions", () -> AttachmentType.serializable(DamageReductions::new).build());
 }

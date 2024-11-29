@@ -67,12 +67,12 @@ public interface AttributeModifierSupplier {
         storeId(instance.getAttribute(), attributeModifier.id());
     }
 
-    private void applyModifier(final Modifier modifier, @Nullable final AttributeInstance instance, final String dragonType, int value) {
+    private void applyModifier(final Modifier modifier, @Nullable final AttributeInstance instance, final String dragonType, int level) {
         if (instance == null || modifier.dragonType().isPresent() && !modifier.dragonType().get().equals(dragonType)) {
             return;
         }
 
-        instance.addPermanentModifier(modifier.getModifier(getModifierType(), value));
+        instance.addPermanentModifier(modifier.getModifier(getModifierType(), level));
     }
 
     private void applyModifiers(@Nullable final AttributeInstance instance, final String dragonType, double value) {

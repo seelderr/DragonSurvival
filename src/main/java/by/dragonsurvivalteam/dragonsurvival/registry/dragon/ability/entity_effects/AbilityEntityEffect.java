@@ -40,6 +40,7 @@ public interface AbilityEntityEffect { // TODO :: split into entity and block ef
             event.register(REGISTRY_KEY, DragonSurvival.res("potion"), () -> PotionEffect.CODEC);
             event.register(REGISTRY_KEY, DragonSurvival.res("projectile"), () -> ProjectileEffect.CODEC);
             event.register(REGISTRY_KEY, DragonSurvival.res("summon_entity"), () -> SummonEntityEffect.CODEC);
+            event.register(REGISTRY_KEY, DragonSurvival.res("damage_reduction"), () -> DamageReductionEffect.CODEC);
         }
     }
 }
