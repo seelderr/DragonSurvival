@@ -44,6 +44,10 @@ public record DragonAbility(
         - e.g. dragon changes -> could remove the data attachment (entity.removeData(...))
         - but what if the data is changed and an effect is removed or the id was changed -> there is not really a way to track that, is there?
             (do we need to consider that? or consider it an unsafe / unstable modification?)
+
+        let's say there is a passive ability effect with an area target and infinite duration on application
+        - should said effect only be present when the other entity is within the target area?
+        - would passive abilities always have an infinite duration (while mana is present) for the dragon itself? unsure how this all should work atm
     */
 
     public static final ResourceKey<Registry<DragonAbility>> REGISTRY = ResourceKey.createRegistryKey(DragonSurvival.res("dragon_abilities"));

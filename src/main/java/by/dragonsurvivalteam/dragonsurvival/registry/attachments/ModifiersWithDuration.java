@@ -8,12 +8,13 @@ import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.util.INBTSerializable;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.Nullable;
 
 @EventBusSubscriber
 public class ModifiersWithDuration implements INBTSerializable<CompoundTag> {
@@ -50,6 +51,14 @@ public class ModifiersWithDuration implements INBTSerializable<CompoundTag> {
         }
 
         return modifiersWithDuration.contains(modifier);
+    }
+
+    public void removeAll(final LivingEntity entity) {
+        if (modifiersWithDuration == null) {
+            return;
+        }
+
+        modifiersWithDuration.forEach(modifier -> modifier.removeModifiers(entity));
     }
 
     @Override
@@ -91,6 +100,13 @@ public class ModifiersWithDuration implements INBTSerializable<CompoundTag> {
 
         if (event.getEntity() instanceof LivingEntity livingEntity) {
             livingEntity.getExistingData(DSDataAttachments.MODIFIERS_WITH_DURATION).ifPresent(data -> data.tick(livingEntity));
+        }
+    }
+
+    @SubscribeEvent
+    public static void removeModifiers(final PlayerEvent.Clone event) {
+        if (event.isWasDeath()) {
+            event.getOriginal().getExistingData(DSDataAttachments.MODIFIERS_WITH_DURATION).ifPresent(data -> data.removeAll(event.getEntity()));
         }
     }
 }
