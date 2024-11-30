@@ -21,6 +21,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncDeltaMovement;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncFlyingStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.*;
+import by.dragonsurvivalteam.dragonsurvival.network.particle.SyncBreathParticles;
 import by.dragonsurvivalteam.dragonsurvival.network.particle.SyncParticleTrail;
 import by.dragonsurvivalteam.dragonsurvival.network.player.*;
 import by.dragonsurvivalteam.dragonsurvival.network.status.*;
@@ -29,6 +30,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -442,5 +444,19 @@ public class ClientProxy {
                 Vec3 step = target.add(distV.scale(stepSize * i));
                 Minecraft.getInstance().level.addParticle(message.trailParticle(), step.x(), step.y(), step.z(), 0.0, 0.0, 0.0);
             }
+    }
+
+    public static void handleSyncBreathParticles(SyncBreathParticles message) {
+        for (int i = 0; i < message.numParticles(); i++) {
+            Minecraft.getInstance().level.addParticle(message.secondaryParticle(), message.position().x, message.position().y, message.position().z, message.velocity().x, message.velocity().y, message.velocity().z);
+        }
+
+        for (int i = 0; i <  message.numParticles() / 2; i++) {
+            RandomSource rand = Minecraft.getInstance().level.getRandom();
+            double xSpeed = message.velocity().x + message.spread() * (rand.nextFloat() * 2 - 1) * message.velocity().x;
+            double ySpeed = message.velocity().y + message.spread() * (rand.nextFloat() * 2 - 1) * message.velocity().y;
+            double zSpeed = message.velocity().z + message.spread() * (rand.nextFloat() * 2 - 1) * message.velocity().z;
+            Minecraft.getInstance().level.addParticle(message.mainParticle(), message.position().x, message.position().y, message.position().z, xSpeed, ySpeed, zSpeed);
+        }
     }
 }

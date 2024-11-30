@@ -15,6 +15,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncDeltaMovement;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncFlyingStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.*;
+import by.dragonsurvivalteam.dragonsurvival.network.particle.SyncBreathParticles;
 import by.dragonsurvivalteam.dragonsurvival.network.particle.SyncParticleTrail;
 import by.dragonsurvivalteam.dragonsurvival.network.player.*;
 import by.dragonsurvivalteam.dragonsurvival.network.status.*;
@@ -87,5 +88,6 @@ public class NetworkHandler {
         registrar.playBidirectional(SyncDragonClawRender.Data.TYPE, SyncDragonClawRender.Data.STREAM_CODEC, new DirectionalPayloadHandler<>(SyncDragonClawRender::handleClient, SyncDragonClawRender::handleServer));
         registrar.playBidirectional(SyncDragonSkinSettings.TYPE, SyncDragonSkinSettings.STREAM_CODEC, new DirectionalPayloadHandler<>(SyncDragonSkinSettings::handleClient, SyncDragonSkinSettings::handleServer));
         registrar.playToClient(SyncParticleTrail.TYPE, SyncParticleTrail.STREAM_CODEC, SyncParticleTrail::handleClient);
+        registrar.playToClient(SyncBreathParticles.TYPE, SyncBreathParticles.STREAM_CODEC, SyncBreathParticles::handleClient);
     }
 }
