@@ -1,7 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.entity_effects;
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ModifierWithDuration;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.AbilityInfo;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
@@ -22,9 +20,7 @@ public record ModifierEffect(List<ModifierWithDuration> modifiers) implements Ab
     @Override
     public void apply(final ServerPlayer dragon, final DragonAbilityInstance ability, final Entity entity) {
         if (entity instanceof LivingEntity livingEntity) {
-            String dragonType = DragonStateProvider.getOptional(entity).map(DragonStateHandler::getTypeNameLowerCase).orElse(null);
-            int abilityLevel = ability.getLevel();
-            modifiers().forEach(modifier -> modifier.apply(livingEntity, abilityLevel, dragonType));
+            modifiers().forEach(modifier -> modifier.apply(dragon, ability, livingEntity));
         }
     }
 

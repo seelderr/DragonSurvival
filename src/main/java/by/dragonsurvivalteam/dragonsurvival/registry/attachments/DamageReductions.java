@@ -16,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.annotation.Nullable;
 
 // TODO :: make it generic as "Damage Modifier" so penalties can re-use it to increase the damage taken?
@@ -74,6 +75,18 @@ public class DamageReductions implements INBTSerializable<CompoundTag> {
         }
 
         return newDamageAmount;
+    }
+
+    public int size() {
+        if (damageReductions == null) {
+            return 0;
+        }
+
+        return damageReductions.size();
+    }
+
+    public List<DamageReduction> all() {
+        return Objects.requireNonNullElseGet(damageReductions, List::of);
     }
 
     @Override
