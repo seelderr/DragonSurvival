@@ -5,6 +5,7 @@ import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 import net.minecraft.world.level.ClipContext;
@@ -35,7 +36,10 @@ public record SingleTarget(Either<BlockTargeting, EntityTargeting> target, Level
 
             blockTarget.effect().forEach(target -> target.apply(dragon, ability, result.getBlockPos()));
         }).ifRight(entityTarget -> {
-            HitResult result = ProjectileUtil.getHitResultOnViewVector(dragon, entity -> entityTarget.targetConditions().map(conditions -> conditions.matches(dragon.serverLevel(), dragon.position(), entity)).orElse(true), range().calculate(ability.getLevel()));
+            HitResult result = ProjectileUtil.getHitResultOnViewVector(dragon,
+                    entity -> entityTarget.targetConditions().map(conditions ->
+                            conditions.matches(dragon.serverLevel(), dragon.position(), entity)
+                            && (!entityTarget.targetOnlyLiving() || entity instanceof LivingEntity)).orElse(true), range().calculate(ability.getLevel()));
 
             if (result instanceof EntityHitResult entityHitResult) {
                 entityTarget.effect().forEach(target -> target.apply(dragon, ability, entityHitResult.getEntity()));

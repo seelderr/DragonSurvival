@@ -1,10 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.active;
 
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.FireBreathSound;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.common.particles.LargeFireParticleOption;
 import by.dragonsurvivalteam.dragonsurvival.common.particles.SmallFireParticleOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
@@ -19,16 +17,18 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSSounds;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachments;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvents;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.AreaEffectCloud;
@@ -204,11 +204,21 @@ public class NetherBreathAbility extends BreathAbility {
         }
     }
 
+    private static DragonAbilityInstance testInstance;
+
     @Override
     public void onChanneling(Player player, int castDuration) {
         super.onChanneling(player, castDuration);
 
-        if (player.isInWaterRainOrBubble() || player.level().isRainingAt(player.blockPosition())) {
+        if(!player.level().isClientSide)
+        {
+            Holder<by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbility> ability = player.registryAccess().holderOrThrow(by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilities.NETHER_BREATH);
+            if(testInstance == null) {
+                testInstance = new DragonAbilityInstance(ability);
+            }
+            testInstance.apply((ServerPlayer) player);
+        }
+       /* if (player.isInWaterRainOrBubble() || player.level().isRainingAt(player.blockPosition())) {
             if (player.level().isClientSide()) {
                 if (player.tickCount % 10 == 0) {
                     player.playSound(SoundEvents.LAVA_EXTINGUISH, 0.25F, 1F);
@@ -248,7 +258,7 @@ public class NetherBreathAbility extends BreathAbility {
 
         if (player.tickCount % 10 == 0) {
             hitBlocks();
-        }
+        }*/
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -339,6 +349,10 @@ public class NetherBreathAbility extends BreathAbility {
 
     @Override
     public void castComplete(Player player) {
+        if(!player.level().isClientSide) {
+            Holder<by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbility> ability = player.registryAccess().holderOrThrow(by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilities.NETHER_BREATH);
+            testInstance = new DragonAbilityInstance(ability);
+        }
         if (player.level().isClientSide() && FMLEnvironment.dist.isClient()) {
             stopSound();
         }

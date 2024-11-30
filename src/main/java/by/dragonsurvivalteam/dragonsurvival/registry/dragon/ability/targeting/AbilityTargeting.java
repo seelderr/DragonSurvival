@@ -38,10 +38,11 @@ public interface AbilityTargeting {
         ).apply(instance, BlockTargeting::new));
     }
 
-    record EntityTargeting(Optional<EntityPredicate> targetConditions, List<AbilityEntityEffect> effect) {
+    record EntityTargeting(Optional<EntityPredicate> targetConditions, List<AbilityEntityEffect> effect, boolean targetOnlyLiving) {
         public static final Codec<EntityTargeting> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 EntityPredicate.CODEC.optionalFieldOf("target_conditions").forGetter(EntityTargeting::targetConditions),
-                AbilityEntityEffect.CODEC.listOf().fieldOf("entity_effect").forGetter(EntityTargeting::effect)
+                AbilityEntityEffect.CODEC.listOf().fieldOf("entity_effect").forGetter(EntityTargeting::effect),
+                Codec.BOOL.optionalFieldOf("target_only_living", false).forGetter(EntityTargeting::targetOnlyLiving)
         ).apply(instance, EntityTargeting::new));
     }
 

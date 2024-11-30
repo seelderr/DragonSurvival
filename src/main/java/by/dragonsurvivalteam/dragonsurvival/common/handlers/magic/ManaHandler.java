@@ -117,7 +117,7 @@ public class ManaHandler {
     }
 
     public static boolean hasEnoughMana(final Player player, int manaCost) {
-        if (player.hasEffect(DSEffects.SOURCE_OF_MAGIC)) {
+        if (player.hasEffect(DSEffects.SOURCE_OF_MAGIC) || player.isCreative()) {
             return true;
         }
 

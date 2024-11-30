@@ -24,12 +24,16 @@ public class DragonAbilityInstance implements INBTSerializable<CompoundTag> {
     }
 
     public void apply(final ServerPlayer dragon) {
-        if (!isEnabled || cooldown > 0) {
+        if (!isActive()) {
             return;
         }
 
         currentTick++;
         ability.value().effects().forEach(effect -> effect.apply(dragon, this, currentTick));
+    }
+
+    public boolean isActive() {
+        return isEnabled && cooldown <= 0;
     }
 
     // TODO :: called when the pressed key is released (+ can also call this when the ability is disabled (relevant for passive only))

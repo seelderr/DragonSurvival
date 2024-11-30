@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.codecs.ability;
 
+import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ManaHandler;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.AbilityInfo;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.targeting.AbilityTargeting;
@@ -20,20 +21,20 @@ public record EffectContainer(AbilityTargeting effect, LevelBasedValue triggerRa
     // Passive: Triggered per tick
     // Active (simple): Triggered once on key press (trigger_rate is not relevant in this case)
     // Active (channeled): Triggered per tick while key is being held
-    // TODO :: current_tick parameter? for active it's the time the ability was being held and for passive the entity tick count?
     public void apply(final ServerPlayer dragon, final DragonAbilityInstance instance, int currentTick) {
-        // TODO :: check trigger rate -> return if it's not time yet
-        //  what format should trigger_rate be?
-        //  int for 'currentTick % tick_rate == 0?
-
-        AbilityInfo.Type abilityType = instance.getAbility().type();
-
-        if ((abilityType == AbilityInfo.Type.PASSIVE || abilityType == AbilityInfo.Type.ACTIVE_CHANNELED) && manaCost().isPresent() && manaCost().get().type() == ManaCost.Type.TICKING) {
-            // TODO:
-            //  Subtract and check mana
-            //  Force ability into cooldown if no mana is present
+        if(triggerRate.calculate(instance.getLevel()) > 0 && currentTick % triggerRate.calculate(instance.getLevel()) != 0) {
+            return;
         }
 
         effect.apply(dragon, instance);
+
+        AbilityInfo.Type abilityType = instance.getAbility().type();
+        if ((abilityType == AbilityInfo.Type.PASSIVE || abilityType == AbilityInfo.Type.ACTIVE_CHANNELED) && manaCost().isPresent() && manaCost().get().type() == ManaCost.Type.TICKING) {
+            int cost = (int)manaCost.get().manaCost().calculate(instance.getLevel());
+            ManaHandler.consumeMana(dragon, cost);
+            if (!ManaHandler.hasEnoughMana(dragon, cost)) {
+                instance.release();
+            }
+        }
     }
 }

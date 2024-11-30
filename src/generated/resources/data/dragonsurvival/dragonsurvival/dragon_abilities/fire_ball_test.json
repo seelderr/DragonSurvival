@@ -4,7 +4,7 @@
     "cast_time": 1.0,
     "cooldown": 40.0
   },
-  "description": "test description",
+  "description": "test",
   "effects": [
     {
       "effect": {
@@ -17,11 +17,19 @@
               "projectile_data": "dragonsurvival:fireball",
               "speed": 1.0
             }
-          ]
+          ],
+          "target_only_living": true
         }
       },
       "trigger_rate": 1.0
     }
   ],
-  "icon": "dragonsurvival:textures/icons/body_type_central.png"
+  "icon": {
+    "texture_entries": [
+      {
+        "from_level": 1,
+        "texture_resource": "dragonsurvival:textures/icons/body_type_central.png"
+      }
+    ]
+  }
 }

@@ -1,0 +1,108 @@
+{
+  "activation": {
+    "type": "channeled",
+    "cast_time": 1.0,
+    "cooldown": 40.0
+  },
+  "description": "Placeholder description.",
+  "effects": [
+    {
+      "effect": {
+        "type": "dragonsurvival:dragon_breath",
+        "range_multiplier": 1.0,
+        "target": {
+          "entity_effect": [
+            {
+              "type": "dragonsurvival:damage",
+              "amount": {
+                "type": "minecraft:linear",
+                "base": 3.0,
+                "per_level_above_first": 3.0
+              },
+              "damage_type": "dragonsurvival:cave_dragon_breath"
+            },
+            {
+              "type": "dragonsurvival:fire",
+              "fire_ticks": {
+                "type": "minecraft:linear",
+                "base": 100.0,
+                "per_level_above_first": 100.0
+              }
+            },
+            {
+              "type": "dragonsurvival:potion",
+              "amplifier": 0.0,
+              "duration": 200.0,
+              "effects": "dragonsurvival:burn"
+            }
+          ],
+          "target_only_living": true
+        }
+      },
+      "mana_cost": {
+        "type": "ticking",
+        "mana_cost": 5.0
+      },
+      "trigger_rate": 10.0
+    },
+    {
+      "effect": {
+        "type": "dragonsurvival:self",
+        "target": {
+          "entity_effect": [
+            {
+              "type": "dragonsurvival:breath_particles",
+              "main_particle": {
+                "type": "dragonsurvival:fire",
+                "duration": 37.0,
+                "swirls": true
+              },
+              "secondary_particle": {
+                "type": "dragonsurvival:large_fire",
+                "duration": 37.0,
+                "swirls": false
+              },
+              "speed_per_size": 0.02,
+              "spread": 0.2
+            }
+          ],
+          "target_only_living": true
+        }
+      },
+      "trigger_rate": 1.0
+    }
+  ],
+  "icon": {
+    "texture_entries": [
+      {
+        "from_level": 1,
+        "texture_resource": "dragonsurvival:textures/icons/body_type_central.png"
+      }
+    ]
+  },
+  "upgrade": {
+    "type": "passive",
+    "experience_cost": {
+      "type": "minecraft:lookup",
+      "fallback": {
+        "type": "minecraft:linear",
+        "base": 15.0,
+        "per_level_above_first": 15.0
+      },
+      "values": [
+        0.0,
+        10.0,
+        30.0,
+        50.0
+      ]
+    },
+    "maximum_level": 4
+  },
+  "usage_blocked": {
+    "location": {
+      "fluid": {
+        "fluids": "minecraft:water"
+      }
+    }
+  }
+}

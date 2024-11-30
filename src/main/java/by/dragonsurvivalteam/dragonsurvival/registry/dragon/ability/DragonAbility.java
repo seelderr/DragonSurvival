@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.LevelBasedResource;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Activation;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.EffectContainer;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Upgrade;
@@ -12,13 +13,10 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.RegistryFixedCodec;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.registries.DataPackRegistryEvent;
@@ -36,8 +34,8 @@ public record DragonAbility(
         Optional<Upgrade> upgrade,
         Optional<EntityPredicate> usageBlocked,
         List<EffectContainer> effects,
-        ResourceLocation icon,
-        Component description
+        LevelBasedResource icon,
+        String description
 ) {
     /* TODO ::
         when / how do we reset applied modifications?
@@ -57,9 +55,9 @@ public record DragonAbility(
             Upgrade.CODEC.optionalFieldOf("upgrade").forGetter(DragonAbility::upgrade),
             EntityPredicate.CODEC.optionalFieldOf("usage_blocked").forGetter(DragonAbility::usageBlocked), // TODO :: e.g. when the ability is not supposed to be used underwater
             EffectContainer.CODEC.listOf().optionalFieldOf("effects", List.of()).forGetter(DragonAbility::effects),
-            ResourceLocation.CODEC.fieldOf("icon").forGetter(DragonAbility::icon),
+            LevelBasedResource.CODEC.fieldOf("icon").forGetter(DragonAbility::icon),
             // TODO: How do we handle descriptions that are fed various values from the ability itself?
-            ComponentSerialization.CODEC.fieldOf("description").forGetter(DragonAbility::description)
+            Codec.STRING.fieldOf("description").forGetter(DragonAbility::description)
     ).apply(instance, instance.stable(DragonAbility::new)));
 
     public static final Codec<Holder<DragonAbility>> CODEC = RegistryFixedCodec.create(REGISTRY);

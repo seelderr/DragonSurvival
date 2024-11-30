@@ -447,15 +447,20 @@ public class ClientProxy {
     }
 
     public static void handleSyncBreathParticles(SyncBreathParticles message) {
+        Vec3 normalizedVelocity = new Vec3(message.velocity().x, message.velocity().y, message.velocity().z).normalize();
         for (int i = 0; i < message.numParticles(); i++) {
-            Minecraft.getInstance().level.addParticle(message.secondaryParticle(), message.position().x, message.position().y, message.position().z, message.velocity().x, message.velocity().y, message.velocity().z);
+            RandomSource rand = Minecraft.getInstance().level.getRandom();
+            double xSpeed = message.velocity().x + message.spread() / 2 * (rand.nextFloat() * 2 - 1) * Math.sqrt(normalizedVelocity.x * normalizedVelocity.x);
+            double ySpeed = message.velocity().y + message.spread() / 2 * (rand.nextFloat() * 2 - 1) * Math.sqrt(normalizedVelocity.y * normalizedVelocity.y);
+            double zSpeed = message.velocity().z + message.spread() / 2 * (rand.nextFloat() * 2 - 1) * Math.sqrt(normalizedVelocity.z * normalizedVelocity.z);
+            Minecraft.getInstance().level.addParticle(message.secondaryParticle(), message.position().x, message.position().y, message.position().z, xSpeed, ySpeed, zSpeed);
         }
 
         for (int i = 0; i <  message.numParticles() / 2; i++) {
             RandomSource rand = Minecraft.getInstance().level.getRandom();
-            double xSpeed = message.velocity().x + message.spread() * (rand.nextFloat() * 2 - 1) * message.velocity().x;
-            double ySpeed = message.velocity().y + message.spread() * (rand.nextFloat() * 2 - 1) * message.velocity().y;
-            double zSpeed = message.velocity().z + message.spread() * (rand.nextFloat() * 2 - 1) * message.velocity().z;
+            double xSpeed = message.velocity().x + message.spread() * (rand.nextFloat() * 2 - 1) * Math.sqrt(normalizedVelocity.x * normalizedVelocity.x);
+            double ySpeed = message.velocity().y + message.spread() * (rand.nextFloat() * 2 - 1) * Math.sqrt(normalizedVelocity.y * normalizedVelocity.y);
+            double zSpeed = message.velocity().z + message.spread() * (rand.nextFloat() * 2 - 1) * Math.sqrt(normalizedVelocity.z * normalizedVelocity.z);
             Minecraft.getInstance().level.addParticle(message.mainParticle(), message.position().x, message.position().y, message.position().z, xSpeed, ySpeed, zSpeed);
         }
     }
