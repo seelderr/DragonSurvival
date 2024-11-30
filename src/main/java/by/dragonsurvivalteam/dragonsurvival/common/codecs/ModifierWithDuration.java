@@ -6,6 +6,8 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachments;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.ModifiersWithDuration;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.AttributeModifierSupplier;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.ClientEffectProvider;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -14,18 +16,18 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import javax.annotation.Nullable;
+import java.util.*;
+import java.util.function.Function;
 
-public class ModifierWithDuration implements AttributeModifierSupplier {
+public class ModifierWithDuration implements AttributeModifierSupplier, ClientEffectProvider {
     public static final int INFINITE_DURATION = -1;
     public static int NO_LEVEL = -1;
 
@@ -36,6 +38,7 @@ public class ModifierWithDuration implements AttributeModifierSupplier {
     ).apply(instance, ModifierWithDuration::new));
 
     public static final Codec<ModifierWithDuration> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            DIRECT_CODEC.fieldOf("base_data").forGetter(Function.identity()),
             Codec.compoundList(BuiltInRegistries.ATTRIBUTE.holderByNameCodec(), ResourceLocation.CODEC.listOf()).xmap(pairs -> {
                 Map<Holder<Attribute>, List<ResourceLocation>> ids = new HashMap<>();
                 pairs.forEach(pair -> pair.getSecond().forEach(id -> ids.computeIfAbsent(pair.getFirst(), key -> new ArrayList<>()).add(id)));
@@ -45,33 +48,35 @@ public class ModifierWithDuration implements AttributeModifierSupplier {
                 ids.forEach((attribute, value) -> pairs.add(new Pair<>(attribute, value)));
                 return pairs;
             }).fieldOf("ids").forGetter(ModifierWithDuration::ids),
-            ResourceLocation.CODEC.fieldOf("id").forGetter(ModifierWithDuration::id),
-            Modifier.CODEC.listOf().fieldOf("modifiers").forGetter(ModifierWithDuration::modifiers),
-            LevelBasedValue.CODEC.optionalFieldOf("duration", LevelBasedValue.constant(INFINITE_DURATION)).forGetter(ModifierWithDuration::duration),
             Codec.INT.fieldOf("current_duration").forGetter(ModifierWithDuration::currentDuration),
-            Codec.INT.fieldOf("applied_ability_level").forGetter(ModifierWithDuration::appliedAbilityLevel)
+            Codec.INT.fieldOf("applied_ability_level").forGetter(ModifierWithDuration::appliedAbilityLevel),
+            ClientData.CODEC.fieldOf("client_data").forGetter(ModifierWithDuration::clientData)
     ).apply(instance, ModifierWithDuration::new));
 
-    private final Map<Holder<Attribute>, List<ResourceLocation>> ids;
     private final ResourceLocation id;
     private final List<Modifier> modifiers;
     private final LevelBasedValue duration;
 
+    private final Map<Holder<Attribute>, List<ResourceLocation>> ids;
     private int currentDuration;
     private int appliedAbilityLevel = NO_LEVEL;
+    private ClientData clientData = ClientEffectProvider.NONE;
 
     public ModifierWithDuration(final ResourceLocation id, final List<Modifier> modifiers, final LevelBasedValue duration) {
-        this.ids = new HashMap<>();
         this.id = id;
         this.modifiers = modifiers;
         this.duration = duration;
+
+        this.ids = new HashMap<>();
     }
 
-    public ModifierWithDuration(final Map<Holder<Attribute>, List<ResourceLocation>> ids, final ResourceLocation id, final List<Modifier> modifiers, final LevelBasedValue duration, int currentDuration, int appliedAbilityLevel) {
+    public ModifierWithDuration(final ModifierWithDuration baseData, final Map<Holder<Attribute>, List<ResourceLocation>> ids, int currentDuration, int appliedAbilityLevel, final ClientData clientData) {
+        this.id = baseData.id();
+        this.modifiers = baseData.modifiers();
+        this.duration = baseData.duration();
+        this.clientData = baseData.clientData();
+
         this.ids = ids;
-        this.id = id;
-        this.modifiers = modifiers;
-        this.duration = duration;
         this.currentDuration = currentDuration;
         this.appliedAbilityLevel = appliedAbilityLevel;
     }
@@ -84,25 +89,25 @@ public class ModifierWithDuration implements AttributeModifierSupplier {
         return CODEC.parse(NbtOps.INSTANCE, nbt).resultOrPartial(DragonSurvival.LOGGER::error).orElse(null);
     }
 
-    public void apply(final LivingEntity entity, int abilityLevel) {
-        String dragonType = DragonStateProvider.getOptional(entity).map(DragonStateHandler::getTypeNameLowerCase).orElse(null);
-        apply(entity, abilityLevel, dragonType);
-    }
+    public void apply(final ServerPlayer dragon, final DragonAbilityInstance ability, final LivingEntity target) {
+        String dragonType = DragonStateProvider.getOptional(target).map(DragonStateHandler::getTypeNameLowerCase).orElse(null);
+        int abilityLevel = ability.getLevel();
 
-    public void apply(final LivingEntity entity, int abilityLevel, final String dragonType) {
-        ModifiersWithDuration data = entity.getData(DSDataAttachments.MODIFIERS_WITH_DURATION);
+        ModifiersWithDuration data = target.getData(DSDataAttachments.MODIFIERS_WITH_DURATION);
         int newDuration = (int) duration().calculate(abilityLevel);
 
         if (currentDuration == newDuration && appliedAbilityLevel == abilityLevel && data.contains(this)) {
             return;
         }
 
-        data.remove(entity, this);
+        data.remove(target, this);
         currentDuration = newDuration;
         appliedAbilityLevel = abilityLevel;
+        clientData = new ClientData(ability.getAbility().icon(), /* TODO */ Component.empty(), Optional.of(dragon.getUUID()));
         data.add(this);
+        // TODO :: send packet to client
 
-        applyModifiers(entity, dragonType, abilityLevel);
+        applyModifiers(target, dragonType, abilityLevel);
     }
 
     public void tick(final LivingEntity entity) {
@@ -139,6 +144,16 @@ public class ModifierWithDuration implements AttributeModifierSupplier {
 
     public int appliedAbilityLevel() {
         return appliedAbilityLevel;
+    }
+
+    @Override
+    public ClientData clientData() {
+        return clientData;
+    }
+
+    @Override
+    public int getDuration() {
+        return (int) duration().calculate(appliedAbilityLevel());
     }
 
     @Override

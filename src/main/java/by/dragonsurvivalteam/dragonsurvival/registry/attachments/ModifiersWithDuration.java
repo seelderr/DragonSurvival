@@ -14,13 +14,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.annotation.Nullable;
 
 @EventBusSubscriber
 public class ModifiersWithDuration implements INBTSerializable<CompoundTag> {
     public static final String MODIFIERS_WITH_DURATION = "modifiers_with_duration";
 
-    @Nullable public List<ModifierWithDuration> modifiersWithDuration;
+    @Nullable private List<ModifierWithDuration> modifiersWithDuration;
 
     public void tick(final LivingEntity entity) {
         if (modifiersWithDuration != null) {
@@ -59,6 +60,18 @@ public class ModifiersWithDuration implements INBTSerializable<CompoundTag> {
         }
 
         modifiersWithDuration.forEach(modifier -> modifier.removeModifiers(entity));
+    }
+
+    public int size() {
+        if (modifiersWithDuration == null) {
+            return 0;
+        }
+
+        return modifiersWithDuration.size();
+    }
+
+    public List<ModifierWithDuration> all() {
+        return Objects.requireNonNullElseGet(modifiersWithDuration, List::of);
     }
 
     @Override

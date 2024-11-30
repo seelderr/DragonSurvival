@@ -26,6 +26,7 @@ public record SyncBreathParticles(int numParticles, float spread, Vector3f posit
     );
 
     public static void handleClient(final SyncBreathParticles packet, final IPayloadContext context) {
+        // FIXME :: we should try to remove the need of this client proxy - use 'context.player().level().addParticle(...)' in the packet here itself
         context.enqueueWork(() -> ClientProxy.handleSyncBreathParticles(packet));
     }
 

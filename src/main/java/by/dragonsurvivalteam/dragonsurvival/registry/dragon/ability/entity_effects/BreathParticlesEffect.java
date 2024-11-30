@@ -27,7 +27,9 @@ public record BreathParticlesEffect(float spread, float speedPerSize, ParticleOp
     // TODO: Some hardcoded constants + scaling with size from the old breath ability. Not sure how to describe these constants for the codec yet.
     @Override
     public void apply(ServerPlayer dragon, DragonAbilityInstance ability, Entity entity) {
-        if(dragon != entity) {
+        // TODO :: add direction parameter (LOOKING for looking_angle / otherwise the Direction.* values)
+        //  'forward' should then be renamed to 'direction' or sth.
+        if(dragon != entity) { // FIXME :: remove (and make sure to use the entity here instead of the dragon parameter)
             throw new IllegalArgumentException("Target entity must be the dragon that cast the ability for BreathParticlesEffect!");
         }
 
@@ -51,6 +53,10 @@ public record BreathParticlesEffect(float spread, float speedPerSize, ParticleOp
             Vec3 forward = lookAngle.scale(1.0F);
             position = eyePos.add(forward).add(0F, -0.1F - 0.2F * (handler.getSize() / 30F), 0F);
         }
+
+        // TODO :: if entity is not a dragon have some other way of setting the position, particle count
+        //  add an optional size parameter - if none is set the dragon size is used or 20 if the entity is not a dragon
+        //  (20 was used as some default player size before iirc)
 
         // Copied from BreathAbility.calculateNumberOfParticles (Wanted to avoid using the ability class as we will eventually delete it)
         int numParticles = (int) Math.max(Math.min(100, handler.getSize() * 0.6), 12);
