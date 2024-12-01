@@ -4,6 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.ClawInventoryData;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -24,9 +25,9 @@ public class SyncDragonClawRender implements IMessage<SyncDragonClawRender.Data>
     public static void handleServer(final SyncDragonClawRender.Data message, final IPayloadContext context) {
         if (ServerConfig.syncClawRender) {
             Player sender = context.player();
-            context.enqueueWork(() -> DragonStateProvider.getOptional(sender).ifPresent(handler ->
-                    handler.getClawToolData().shouldRenderClaws = message.state
-            )).thenRun(() -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(sender, message));
+            context.enqueueWork(() ->
+                    ClawInventoryData.getData(sender).shouldRenderClaws = message.state
+            ).thenRun(() -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(sender, message));
         }
     }
 

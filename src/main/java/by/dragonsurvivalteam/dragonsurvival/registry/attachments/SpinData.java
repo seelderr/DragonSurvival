@@ -13,7 +13,7 @@ public class SpinData implements INBTSerializable<CompoundTag> {
     public int spinAttack;
 
     public static SpinData getData(Entity entity) {
-        return entity.getData(DSDataAttachments.DRAGON_SPIN_DATA);
+        return entity.getData(DSDataAttachments.SPIN);
     }
 
     // TODO: ServerConfig.saveAllAbilities made this data not get saved if you weren't a dragon. How to handle this here?

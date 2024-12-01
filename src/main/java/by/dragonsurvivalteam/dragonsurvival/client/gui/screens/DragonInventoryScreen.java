@@ -12,6 +12,7 @@ import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawRender;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawsMenuToggle;
 import by.dragonsurvivalteam.dragonsurvival.network.container.RequestOpenInventory;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.ClawInventoryData;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStage;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.DragonContainer;
@@ -98,9 +99,7 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
     public DragonInventoryScreen(DragonContainer screenContainer, Inventory inv, Component titleIn) {
         super(screenContainer, inv, titleIn);
         player = inv.player;
-
-        DragonStateProvider.getOptional(player).ifPresent(cap -> clawsMenu = cap.getClawToolData().isMenuOpen());
-
+        clawsMenu = ClawInventoryData.getData(player).isMenuOpen();
         imageWidth = 203;
         imageHeight = 166;
     }
@@ -118,7 +117,7 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
 
         leftPos = (width - imageWidth) / 2;
 
-        DragonStateHandler handler = DragonStateProvider.getData(player);
+        ClawInventoryData clawInventory = ClawInventoryData.getData(player);
 
         addRenderableWidget(new TabButton(leftPos, topPos - 28, TabButton.Type.INVENTORY_TAB, this));
         addRenderableWidget(new TabButton(leftPos + 28, topPos - 26, TabButton.Type.ABILITY_TAB, this));
@@ -131,7 +130,7 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
             init();
 
             PacketDistributor.sendToServer(new SyncDragonClawsMenuToggle.Data(clawsMenu));
-            DragonStateProvider.getOptional(player).ifPresent(cap -> cap.getClawToolData().setMenuOpen(clawsMenu));
+            clawInventory.setMenuOpen(clawsMenu);
         }) {
             @Override
             public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
@@ -159,17 +158,16 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
 
         // Button to enable / disable the rendering of claws
         ExtendedButton clawRenderButton = new ExtendedButton(leftPos - 80 + 34, topPos + 140, 9, 9, Component.empty(), p_onPress_1_ -> {
-            boolean claws = !handler.getClawToolData().shouldRenderClaws;
+            boolean claws = !clawInventory.shouldRenderClaws;
 
-            handler.getClawToolData().shouldRenderClaws = claws;
-            ConfigHandler.updateConfigValue("render_dragon_claws", handler.getClawToolData().shouldRenderClaws);
+            clawInventory.shouldRenderClaws = claws;
+            ConfigHandler.updateConfigValue("render_dragon_claws", clawInventory.shouldRenderClaws);
             PacketDistributor.sendToServer(new SyncDragonClawRender.Data(player.getId(), claws));
         }) {
             @Override
             public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-                DragonStateHandler handler = DragonStateProvider.getData(player);
-
-                if (handler.getClawToolData().shouldRenderClaws) {
+                ClawInventoryData clawInventory = ClawInventoryData.getData(player);
+                if (clawInventory.shouldRenderClaws) {
                     guiGraphics.pose().pushPose();
                     guiGraphics.pose().translate(0, 0, 100);
                     guiGraphics.blit(DRAGON_CLAW_CHECKMARK, getX(), getY(), 0, 0, 9, 9, 9, 9);

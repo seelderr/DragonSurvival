@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.ClawInventoryData;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -65,9 +66,7 @@ public class ClawsAndTeethRenderLayer extends GeoRenderLayer<DragonEntity> {
             return;
         }
 
-        DragonStateHandler handler = DragonStateProvider.getData(player);
-
-        if (!handler.getClawToolData().shouldRenderClaws) {
+        if (!ClawInventoryData.getData(player).shouldRenderClaws) {
             return;
         }
 
@@ -108,7 +107,7 @@ public class ClawsAndTeethRenderLayer extends GeoRenderLayer<DragonEntity> {
             return null;
         }
 
-        ItemStack clawItem = handler.getClawToolData().getClawsInventory().getItem(handler.getType().clawTextureSlot);
+        ItemStack clawItem = ClawInventoryData.getData(player).getContainer().getItem(handler.getType().clawTextureSlot);
 
         if (!clawItem.isEmpty()) {
             texturePath = getMaterial(texturePath, clawItem);
@@ -121,7 +120,7 @@ public class ClawsAndTeethRenderLayer extends GeoRenderLayer<DragonEntity> {
 
     public String constructTeethTexture(final Player player) {
         String texturePath = "textures/armor/";
-        ItemStack swordItem = DragonStateProvider.getData(player).getClawToolData().getClawsInventory().getItem(0);
+        ItemStack swordItem = ClawInventoryData.getData(player).getContainer().getItem(0);
 
         if (!swordItem.isEmpty()) {
             texturePath = getMaterial(texturePath, swordItem);

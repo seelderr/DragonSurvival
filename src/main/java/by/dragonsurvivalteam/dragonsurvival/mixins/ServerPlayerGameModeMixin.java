@@ -23,7 +23,7 @@ public class ServerPlayerGameModeMixin {
             DragonStateHandler handler = DragonStateProvider.getData(player);
 
             if (handler.isDragon()) {
-                return handler.canHarvestWithPaw(state);
+                return handler.canHarvestWithPaw(player, state);
             }
         }
 

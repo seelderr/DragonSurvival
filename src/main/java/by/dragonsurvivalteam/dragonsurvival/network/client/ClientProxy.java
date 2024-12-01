@@ -26,6 +26,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.particle.SyncParticleTrail;
 import by.dragonsurvivalteam.dragonsurvival.network.player.*;
 import by.dragonsurvivalteam.dragonsurvival.network.status.*;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.ClawInventoryData;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MovementData;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.SpinData;
 import net.minecraft.client.Minecraft;
@@ -56,7 +57,7 @@ public class ClientProxy {
             Entity entity = player.level().getEntity(message.playerId());
 
             if (entity instanceof Player) {
-                DragonStateProvider.getOptional(entity).ifPresent(handler -> handler.getClawToolData().shouldRenderClaws = message.state());
+                ClawInventoryData.getData(player).shouldRenderClaws = message.state();
             }
         }
     }
@@ -68,10 +69,9 @@ public class ClientProxy {
             Entity entity = player.level().getEntity(message.playerId());
 
             if (entity instanceof Player) {
-                DragonStateProvider.getOptional(entity).ifPresent(handler -> {
-                    handler.getClawToolData().setMenuOpen(message.state());
-                    handler.getClawToolData().deserializeNBT(provider, message.clawInventory());
-                });
+                ClawInventoryData data = ClawInventoryData.getData(player);
+                data.setMenuOpen(message.state());
+                data.deserializeNBT(provider, message.clawInventory());
             }
         }
     }

@@ -29,7 +29,7 @@ public class MovementData {
     public boolean dig = false;
 
     public static MovementData getData(Entity entity) {
-        return entity.getData(DSDataAttachments.DRAGON_MOVEMENT_DATA);
+        return entity.getData(DSDataAttachments.MOVEMENT);
     }
 
     public void setFreeLook(boolean isFreeLook) {

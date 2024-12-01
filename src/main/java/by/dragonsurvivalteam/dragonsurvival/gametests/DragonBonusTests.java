@@ -3,11 +3,12 @@ package by.dragonsurvivalteam.dragonsurvival.gametests;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.ClawInventory;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ClawToolHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.ClawInventoryData;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachments;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.body.DragonBodies;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStages;
 import net.minecraft.core.BlockPos;
@@ -64,6 +65,7 @@ public class DragonBonusTests {
         // Setup
         Player player = TestUtils.createPlayer(helper, GameType.DEFAULT_MODE);
         DragonStateHandler data = DragonStateProvider.getData(player);
+        ClawInventoryData clawInventory = ClawInventoryData.getData(player);
         double defaultSpeed = 1;
 
         BlockState state = TestUtils.setBlock(helper, Blocks.IRON_ORE);
@@ -80,21 +82,21 @@ public class DragonBonusTests {
 
         // Test bonus from dragon level
         TestUtils.setToDragon(helper, player, DragonTypes.CAVE, DragonBodies.center, DragonStages.young);
-        data.getClawToolData().set(ClawInventory.Slot.PICKAXE, ItemStack.EMPTY);
+        clawInventory.set(ClawInventoryData.Slot.PICKAXE, ItemStack.EMPTY);
 
         speed = player.getDigSpeed(state, position);
         double expectedSpeed = defaultSpeed * data.getStage().value().breakSpeedMultiplier();
         helper.assertTrue(speed == expectedSpeed, String.format("Dig speed for [%s] was [%f] - expected [%f]", state, speed, expectedSpeed));
 
         // Test reduction to the bonus when a relevant tool is in the claw inventory
-        data.getClawToolData().set(ClawInventory.Slot.PICKAXE, Items.WOODEN_PICKAXE.getDefaultInstance());
+        clawInventory.set(ClawInventoryData.Slot.PICKAXE, Items.WOODEN_PICKAXE.getDefaultInstance());
         speed = player.getDigSpeed(state, position);
         expectedSpeed = defaultSpeed * ClawToolHandler.getReducedBonus(data.getStage().value().breakSpeedMultiplier());
         helper.assertTrue(speed == expectedSpeed, String.format("Dig speed for [%s] was [%f] - expected [%f]", state, speed, expectedSpeed));
 
         // Test reduction to the bonus when the block is not part of the harvestable blocks for that dragon type
         state = TestUtils.setBlock(helper, Blocks.OAK_WOOD);
-        data.getClawToolData().set(ClawInventory.Slot.PICKAXE, ItemStack.EMPTY);
+        clawInventory.set(ClawInventoryData.Slot.PICKAXE, ItemStack.EMPTY);
         speed = player.getDigSpeed(state, position);
         expectedSpeed = defaultSpeed * ClawToolHandler.getReducedBonus(data.getStage().value().breakSpeedMultiplier());
         helper.assertTrue(speed == expectedSpeed, String.format("Dig speed for [%s] was [%f] - expected [%f]", state, speed, expectedSpeed));

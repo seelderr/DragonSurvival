@@ -1,8 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.server.containers;
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.ClawInventory;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSContainers;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.ClawInventoryData;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.slots.ClawToolSlot;
 import by.dragonsurvivalteam.dragonsurvival.util.ToolUtils;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
@@ -98,12 +97,11 @@ public class DragonContainer extends AbstractContainerMenu {
         }
 
         // Claw tool slots
-        DragonStateProvider.getOptional(player).ifPresent(handler -> {
-            for (int i = 0; i < ClawInventory.Slot.size(); i++) {
-                ClawToolSlot clawToolSlot = new ClawToolSlot(this, handler.getClawToolData().getClawsInventory(), i, -50, 35 + i * 18, i);
-                addSlot(clawToolSlot);
-            }
-        });
+        ClawInventoryData clawInventory = ClawInventoryData.getData(player);
+        for (int i = 0; i < ClawInventoryData.Slot.size(); i++) {
+            ClawToolSlot clawToolSlot = new ClawToolSlot(this, clawInventory.getContainer(), i, -50, 35 + i * 18, i);
+            addSlot(clawToolSlot);
+        }
 
         // Offhand slot
         addSlot(new Slot(inventory, 40, 26, 62));
@@ -124,7 +122,7 @@ public class DragonContainer extends AbstractContainerMenu {
     }
 
     public void update() {
-        DragonStateProvider.getOptional(player).ifPresent(handler -> menuStatus = handler.getClawToolData().isMenuOpen() ? 1 : 0);
+        menuStatus = ClawInventoryData.getData(player).isMenuOpen() ? 1 : 0;
         broadcastChanges();
     }
 

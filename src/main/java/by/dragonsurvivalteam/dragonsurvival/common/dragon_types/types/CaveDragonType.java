@@ -1,7 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.ClawInventory;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonTraitHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
@@ -11,6 +10,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.passive.ContrastShowerAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.ClawInventoryData;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSBlockTags;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
@@ -43,7 +43,7 @@ public class CaveDragonType extends AbstractDragonType {
     public int lavaAirSupply;
 
     public CaveDragonType() {
-        clawTextureSlot = ClawInventory.Slot.PICKAXE.ordinal();
+        clawTextureSlot = ClawInventoryData.Slot.PICKAXE.ordinal();
     }
 
     @Override

@@ -7,6 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.SyncComplete;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.ClawInventoryData;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.SpinData;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.body.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStage;
@@ -23,6 +24,7 @@ import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.selector.EntitySelector;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -118,7 +120,7 @@ public class DragonCommand {
         }
 
         if (dragonType == null && cap.getType() != null) {
-            reInsertClawTools(player, cap);
+            reInsertClawTools(player);
         }
 
         cap.setType(dragonType, player);
@@ -136,9 +138,10 @@ public class DragonCommand {
         return 1;
     }
 
-    public static void reInsertClawTools(Player player, DragonStateHandler dragonStateHandler) {
+    public static void reInsertClawTools(Player player) {
+        SimpleContainer clawsContainer = ClawInventoryData.getData(player).getContainer();
         for (int i = 0; i < 4; i++) {
-            ItemStack stack = dragonStateHandler.getClawToolData().getClawsInventory().getItem(i);
+            ItemStack stack = clawsContainer.getItem(i);
 
             if (player instanceof ServerPlayer serverPlayer) {
                 if (!serverPlayer.addItem(stack)) {
@@ -147,6 +150,6 @@ public class DragonCommand {
             }
         }
 
-        dragonStateHandler.getClawToolData().getClawsInventory().clearContent();
+        clawsContainer.clearContent();
     }
 }

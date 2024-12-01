@@ -24,7 +24,7 @@ public record ProjectileLightningEntityEffect(LightningHandler.Data data) implem
         if(projectile.getOwner() instanceof ServerPlayer serverPlayer) {
             lightningboltentity.setCause(serverPlayer);
         }
-        lightningboltentity.setData(DSDataAttachments.LIGHTNING_BOLT_DATA, LightningHandler.fromData(data));
+        lightningboltentity.setData(DSDataAttachments.LIGHTNING_BOLT, LightningHandler.fromData(data));
         projectile.level().addFreshEntity(lightningboltentity);
     }
 

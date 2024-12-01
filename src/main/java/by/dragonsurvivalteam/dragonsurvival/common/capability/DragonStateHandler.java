@@ -14,6 +14,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncSize;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAdvancementTriggers;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.ClawInventoryData;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.SpinData;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.*;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilities;
@@ -52,7 +53,7 @@ public class DragonStateHandler extends EntityStateHandler {
     public static final int NO_SIZE = -1;
 
     @SuppressWarnings("unchecked")
-    public final Supplier<SubCap>[] caps = new Supplier[]{this::getSkinData, this::getMagicData, this::getEmoteData, this::getClawToolData};
+    public final Supplier<SubCap>[] caps = new Supplier[]{this::getSkinData, this::getMagicData, this::getEmoteData};
 
     public record SavedDragonStage(@Nullable Holder<DragonStage> dragonStage, @Nullable Holder<DragonStage> previousStage, double size) { /* Nothing to do */ }
 
@@ -91,8 +92,6 @@ public class DragonStateHandler extends EntityStateHandler {
 
     /** Last timestamp the server synchronized the player */
     public int lastSync;
-
-    private final ClawInventory clawToolData = new ClawInventory(this);
     private final EmoteCap emoteData = new EmoteCap(this);
     private final MagicCap magicData = new MagicCap(this);
     private final SkinCap skinData = new SkinCap(this);
@@ -320,25 +319,9 @@ public class DragonStateHandler extends EntityStateHandler {
         }
     }
 
-    public boolean hasValidClawTool(final BlockState state) {
-        if (!isDragon()) {
-            return false;
-        }
-
-        for (int i = 0; i < 4; i++) {
-            ItemStack stack = getClawToolData().getClawsInventory().getItem(i);
-
-            if (stack.isCorrectToolForDrops(state) || stack.getDestroySpeed(state) > 1) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     /** Determines if the current dragon type can harvest the supplied block (with or without tools) (configured harvest bonuses are taken into account) */
-    public boolean canHarvestWithPaw(final BlockState state) {
-        if (hasValidClawTool(state)) {
+    public boolean canHarvestWithPaw(final Player player, final BlockState state) {
+        if (isDragon() && ClawInventoryData.getData(player).hasValidClawTool(state)) {
             return true;
         }
 
@@ -425,10 +408,6 @@ public class DragonStateHandler extends EntityStateHandler {
         return hasFlight && areWingsSpread;
     }
 
-    public ClawInventory getClawToolData() {
-        return clawToolData;
-    }
-
     public CompoundTag serializeNBT(HolderLookup.Provider provider, boolean isSavingForSoul) {
         CompoundTag tag = new CompoundTag();
         tag.putString("type", dragonType != null ? dragonType.getTypeName() : "none");
@@ -468,7 +447,7 @@ public class DragonStateHandler extends EntityStateHandler {
 
         for (int i = 0; i < caps.length; i++) {
             if (isSavingForSoul) {
-                if (/* Emote Data */ i == 2 || /* Claw Tool Data */ i == 3) {
+                if (/* Emote Data */ i == 2) {
                     continue;
                 }
             }
@@ -659,7 +638,7 @@ public class DragonStateHandler extends EntityStateHandler {
         }
 
         // Drop everything in your claw slots
-        DragonCommand.reInsertClawTools(player, this);
+        DragonCommand.reInsertClawTools(player);
 
         setType(null);
         setBody(null, player);

@@ -2,9 +2,10 @@ package by.dragonsurvivalteam.dragonsurvival.server.containers.slots;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.ClawInventory;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonPenaltyHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawsMenu;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.ClawInventoryData;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachments;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.DragonContainer;
 import by.dragonsurvivalteam.dragonsurvival.util.ToolUtils;
 import com.mojang.datafixers.util.Pair;
@@ -37,7 +38,7 @@ public class ClawToolSlot extends Slot {
     @Override
     public boolean mayPlace(@NotNull final ItemStack itemStack) {
         if (DragonPenaltyHandler.itemIsBlacklisted(itemStack.getItem())) return false;
-        return switch (ClawInventory.Slot.values()[clawSlot]) {
+        return switch (ClawInventoryData.Slot.values()[clawSlot]) {
             case SWORD -> ToolUtils.isWeapon(itemStack);
             case PICKAXE -> ToolUtils.isPickaxe(itemStack);
             case AXE -> ToolUtils.isAxe(itemStack);
@@ -70,8 +71,8 @@ public class ClawToolSlot extends Slot {
 
     private void syncSlots() {
         if (!dragonContainer.player.level().isClientSide()) {
-            DragonStateHandler handler = DragonStateProvider.getData(dragonContainer.player);
-            PacketDistributor.sendToPlayersTrackingEntityAndSelf(dragonContainer.player, new SyncDragonClawsMenu.Data(dragonContainer.player.getId(), handler.getClawToolData().isMenuOpen(), handler.getClawToolData().serializeNBT(dragonContainer.player.registryAccess())));
+            ClawInventoryData data = ClawInventoryData.getData(dragonContainer.player);
+            PacketDistributor.sendToPlayersTrackingEntityAndSelf(dragonContainer.player, new SyncDragonClawsMenu.Data(dragonContainer.player.getId(), data.isMenuOpen(), data.serializeNBT(dragonContainer.player.registryAccess())));
         }
     }
 }

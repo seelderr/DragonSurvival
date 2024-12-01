@@ -2,7 +2,6 @@ package by.dragonsurvivalteam.dragonsurvival.mixins;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.ClawInventory;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
@@ -10,6 +9,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.MagicHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.CaveDragonConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.DragonBonusConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.ClawInventoryData;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.ToolUtils;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
@@ -52,11 +52,9 @@ public abstract class LivingEntityMixin extends Entity {
     @Redirect(method = "collectEquipmentChanges", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getItemBySlot(Lnet/minecraft/world/entity/EquipmentSlot;)Lnet/minecraft/world/item/ItemStack;"))
     private ItemStack dragonSurvival$grantDragonSwordAttributes(LivingEntity entity, EquipmentSlot slot) {
         if (slot == EquipmentSlot.MAINHAND && (Object) this instanceof Player player) {
-            DragonStateHandler handler = DragonStateProvider.getData(player);
-
-            if (handler.isDragon() && ToolUtils.shouldUseDragonTools(player.getMainHandItem())) {
+            if (DragonStateProvider.isDragon(entity) && ToolUtils.shouldUseDragonTools(player.getMainHandItem())) {
                 // Without this the item in the dragon slot for the sword would not grant any of its attributes
-                ItemStack sword = handler.getClawToolData().getClawsInventory().getItem(ClawInventory.Slot.SWORD.ordinal());
+                ItemStack sword = ClawInventoryData.getData(player).getContainer().getItem(ClawInventoryData.Slot.SWORD.ordinal());
 
                 if (!sword.isEmpty()) {
                     return sword;

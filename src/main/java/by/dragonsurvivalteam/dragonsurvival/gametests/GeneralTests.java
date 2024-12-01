@@ -3,11 +3,11 @@ package by.dragonsurvivalteam.dragonsurvival.gametests;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.ClawInventory;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.ClawInventoryData;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachments;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.body.DragonBodies;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStages;
-import by.dragonsurvivalteam.dragonsurvival.util.ToolUtils;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.InteractionHand;
@@ -27,51 +27,51 @@ public class GeneralTests {
     public static void test_tool_swap(final GameTestHelper helper) {
         Player player = TestUtils.createPlayer(helper, GameType.DEFAULT_MODE);
         TestUtils.setToDragon(helper, player, DragonTypes.CAVE, DragonBodies.center, DragonStages.young);
-        DragonStateHandler data = DragonStateProvider.getData(player);
 
+        ClawInventoryData clawInventory = ClawInventoryData.getData(player);
         ItemStack mainHandItem = Items.APPLE.getDefaultInstance();
         player.setItemInHand(InteractionHand.MAIN_HAND, mainHandItem);
 
         ItemStack clawItem = Items.STONE_PICKAXE.getDefaultInstance();
-        data.getClawToolData().set(ClawInventory.Slot.PICKAXE, clawItem);
+        clawInventory.set(ClawInventoryData.Slot.PICKAXE, clawItem);
         BlockState state = TestUtils.setBlock(helper, Blocks.IRON_ORE);
 
         DragonSurvival.LOGGER.info("Starting first tool swap layer");
-        ToolUtils.swapStart(player, state);
+        clawInventory.swapStart(player, state);
         // Check that:
         // - the main hand item was correctly stored
         // - the item for the pickaxe slot is now in the main hand
         // - the item in the pickaxe slot is empty
         assertMainHandItem(helper, player, clawItem);
         assertStoredItem(helper, player, mainHandItem);
-        assertClawItem(helper, player, ClawInventory.Slot.PICKAXE, ItemStack.EMPTY);
+        assertClawItem(helper, player, ClawInventoryData.Slot.PICKAXE, ItemStack.EMPTY);
 
         DragonSurvival.LOGGER.info("Starting second tool swap layer");
-        ToolUtils.swapStart(player, state);
+        clawInventory.swapStart(player, state);
         assertMainHandItem(helper, player, clawItem);
         assertStoredItem(helper, player, mainHandItem);
-        assertClawItem(helper, player, ClawInventory.Slot.PICKAXE, ItemStack.EMPTY);
+        assertClawItem(helper, player, ClawInventoryData.Slot.PICKAXE, ItemStack.EMPTY);
 
         DragonSurvival.LOGGER.info("Ending second tool swap layer");
-        ToolUtils.swapFinish(player);
+        clawInventory.swapFinish(player);
         // Check that the items are still in their swapped state
         assertMainHandItem(helper, player, clawItem);
         assertStoredItem(helper, player, mainHandItem);
-        assertClawItem(helper, player, ClawInventory.Slot.PICKAXE, ItemStack.EMPTY);
+        assertClawItem(helper, player, ClawInventoryData.Slot.PICKAXE, ItemStack.EMPTY);
 
         DragonSurvival.LOGGER.info("Ending first tool swap layer");
-        ToolUtils.swapFinish(player);
+        clawInventory.swapFinish(player);
         // Check that the items were swapped back to their previous places
         assertMainHandItem(helper, player, mainHandItem);
         assertStoredItem(helper, player, ItemStack.EMPTY);
-        assertClawItem(helper, player, ClawInventory.Slot.PICKAXE, clawItem);
+        assertClawItem(helper, player, ClawInventoryData.Slot.PICKAXE, clawItem);
 
         helper.succeed();
     }
 
-    public static void assertClawItem(final GameTestHelper helper, final Player player, final ClawInventory.Slot slot, final ItemStack item) {
-        DragonStateHandler data = DragonStateProvider.getData(player);
-        ItemStack clawItem = data.getClawToolData().get(slot);
+    public static void assertClawItem(final GameTestHelper helper, final Player player, final ClawInventoryData.Slot slot, final ItemStack item) {
+        ClawInventoryData clawInventory = ClawInventoryData.getData(player);
+        ItemStack clawItem = clawInventory.get(slot);
         helper.assertTrue(clawItem == item, String.format("Claw item for slot [%s] is [%s] - expected [%s]", slot, clawItem, item));
     }
 
@@ -81,11 +81,10 @@ public class GeneralTests {
     }
 
     public static void assertStoredItem(final GameTestHelper helper, final Player player, final ItemStack item) {
-        DragonStateHandler data = DragonStateProvider.getData(player);
-
+        ClawInventoryData clawInventory = ClawInventoryData.getData(player);
         helper.assertTrue(
-                data.storedMainHandTool == item,
-                String.format("Stored item is [%s] - expected [%s]", data.storedMainHandTool, item)
+                clawInventory.storedMainHandTool == item,
+                String.format("Stored item is [%s] - expected [%s]", clawInventory.storedMainHandTool, item)
         );
     }
 }

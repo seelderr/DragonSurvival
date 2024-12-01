@@ -59,7 +59,7 @@ public class LightningHandler implements INBTSerializable<CompoundTag> {
     public static void handleLightningBolt(final EntityStruckByLightningEvent event) {
         LightningBolt bolt = event.getLightning();
         Entity target = event.getEntity();
-        LightningHandler handler = bolt.getData(DSDataAttachments.LIGHTNING_BOLT_DATA);
+        LightningHandler handler = bolt.getData(DSDataAttachments.LIGHTNING_BOLT);
 
         if (handler.ignoresItemsAndExperience) {
             if (target instanceof ItemEntity || target instanceof ExperienceOrb) {

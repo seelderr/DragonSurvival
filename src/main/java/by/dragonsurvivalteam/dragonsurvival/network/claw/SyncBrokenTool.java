@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.network.claw;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.ClawInventoryData;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -30,7 +31,7 @@ public class SyncBrokenTool implements IMessage<SyncBrokenTool.Data> {
                         if (handler.switchedTool || handler.switchedWeapon) {
                             player.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
                         } else {
-                            handler.getClawToolData().getClawsInventory().setItem(message.slot, ItemStack.EMPTY);
+                            ClawInventoryData.getData(player).getContainer().setItem(message.slot, ItemStack.EMPTY);
                         }
                     });
                 }

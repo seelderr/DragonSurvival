@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.network.claw;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.ClawInventoryData;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.DragonContainer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -17,30 +18,24 @@ public class SyncDragonClawsMenuToggle implements IMessage<SyncDragonClawsMenuTo
 
     public static void handleClient(final SyncDragonClawsMenuToggle.Data message, final IPayloadContext context) {
         Player sender = context.player();
-
         context.enqueueWork(() -> {
-            DragonStateProvider.getOptional(sender).ifPresent(handler -> {
-                handler.getClawToolData().setMenuOpen(message.state);
-
-                if (sender.containerMenu instanceof DragonContainer container) {
-                    container.update();
-                }
-            });
+            handleCommon(message, sender);
         });
     }
 
     public static void handleServer(final SyncDragonClawsMenuToggle.Data message, final IPayloadContext context) {
         Player sender = context.player();
-
         context.enqueueWork(() -> {
-            DragonStateProvider.getOptional(sender).ifPresent(handler -> {
-                handler.getClawToolData().setMenuOpen(message.state);
-
-                if (sender.containerMenu instanceof DragonContainer container) {
-                    container.update();
-                }
-            });
+            handleCommon(message, sender);
         });
+    }
+
+    private static void handleCommon(final SyncDragonClawsMenuToggle.Data message, final Player sender) {
+        ClawInventoryData data = ClawInventoryData.getData(sender);
+        data.setMenuOpen(message.state);
+        if(sender.containerMenu instanceof DragonContainer container) {
+            container.update();
+        }
     }
 
     public record Data(boolean state) implements CustomPacketPayload {

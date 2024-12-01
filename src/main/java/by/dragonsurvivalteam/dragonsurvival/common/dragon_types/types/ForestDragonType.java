@@ -1,7 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.ClawInventory;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.ForestDragonConfig;
@@ -9,6 +8,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.passive.LightInDarknessAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonType;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.ClawInventoryData;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSBlockTags;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
@@ -40,7 +40,7 @@ public class ForestDragonType extends AbstractDragonType{
     public int timeInDarkness;
 
     public ForestDragonType() {
-        clawTextureSlot = ClawInventory.Slot.AXE.ordinal();
+        clawTextureSlot = ClawInventoryData.Slot.AXE.ordinal();
     }
 
     @Override

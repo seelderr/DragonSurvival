@@ -892,7 +892,7 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
             minecraft.player.sendSystemMessage(Component.translatable(translationKey));
 
             if (dragonType == null && data.getType() != null) {
-                DragonCommand.reInsertClawTools(minecraft.player, data);
+                DragonCommand.reInsertClawTools(minecraft.player);
             }
 
             data.setType(dragonType, minecraft.player);

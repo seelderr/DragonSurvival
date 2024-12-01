@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins.tool_swap;
 
-import by.dragonsurvivalteam.dragonsurvival.util.ToolUtils;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.ClawInventoryData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.player.LocalPlayer;
@@ -18,7 +18,7 @@ public class MultiPlayerGameModeStartMixin {
         LocalPlayer localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
-            ToolUtils.swapStart(localPlayer, localPlayer.level().getBlockState(blockPosition));
+            ClawInventoryData.getData(localPlayer).swapStart(localPlayer, localPlayer.level().getBlockState(blockPosition));
         }
     }
 }

@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.DragonInventorySc
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawsMenuToggle;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.ClawInventoryData;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.DragonContainer;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
@@ -28,12 +29,9 @@ public class RequestOpenDragonInventory implements IMessage<RequestOpenDragonInv
         DragonInventoryScreen.mouseX = Minecraft.getInstance().mouseHandler.xpos();
         DragonInventoryScreen.mouseY = Minecraft.getInstance().mouseHandler.ypos();
         PacketDistributor.sendToServer(new RequestOpenDragonInventory.Data());
-
-        DragonStateProvider.getOptional(DragonSurvival.PROXY.getLocalPlayer()).ifPresent(cap -> {
-            boolean clawsMenuOpen = cap.getClawToolData().isMenuOpen();
-            PacketDistributor.sendToServer(new SyncDragonClawsMenuToggle.Data(clawsMenuOpen));
-            cap.getClawToolData().setMenuOpen(clawsMenuOpen);
-        });
+        ClawInventoryData data = ClawInventoryData.getData(DragonSurvival.PROXY.getLocalPlayer());
+        PacketDistributor.sendToServer(new SyncDragonClawsMenuToggle.Data(data.isMenuOpen()));
+        data.setMenuOpen(data.isMenuOpen());
     }
 
     public static void handleServer(final RequestOpenDragonInventory.Data message, final IPayloadContext context) {

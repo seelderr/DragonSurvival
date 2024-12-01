@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins.tool_swap;
 
-import by.dragonsurvivalteam.dragonsurvival.util.ToolUtils;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.ClawInventoryData;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachments;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
@@ -17,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class ServerPlayerGameModeEndMixin {
     @Inject(method = "handleBlockBreakAction", at = @At("RETURN"))
     private void finishSwap(final BlockPos blockPosition, final ServerboundPlayerActionPacket.Action action, final Direction face, int maxBuildHeight, int sequence, final CallbackInfo callback) {
-        ToolUtils.swapFinish(player);
+        ClawInventoryData.getData(player).swapFinish(player);
     }
 
     @Shadow

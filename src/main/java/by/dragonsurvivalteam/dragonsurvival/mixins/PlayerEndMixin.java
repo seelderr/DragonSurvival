@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.mixins;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.ClawInventoryData;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -23,17 +24,16 @@ public class PlayerEndMixin {
             return;
         }
 
-        DragonStateHandler handler = DragonStateProvider.getData(player);
-
-        if (handler.switchedWeapon) {
-            ItemStack originalMainHand = handler.storedMainHandWeapon;
+        ClawInventoryData clawInventory = ClawInventoryData.getData(player);
+        if (clawInventory.switchedWeapon) {
+            ItemStack originalMainHand = clawInventory.storedMainHandTool;
             ItemStack originalToolSlot = player.getItemInHand(InteractionHand.MAIN_HAND);
 
             player.setItemInHand(InteractionHand.MAIN_HAND, originalMainHand);
 
-            handler.getClawToolData().getClawsInventory().setItem(0, originalToolSlot);
-            handler.storedMainHandWeapon = ItemStack.EMPTY;
-            handler.switchedWeapon = false;
+            clawInventory.getContainer().setItem(0, originalToolSlot);
+            clawInventory.storedMainHandWeapon = ItemStack.EMPTY;
+            clawInventory.switchedWeapon = false;
         }
     }
 }
