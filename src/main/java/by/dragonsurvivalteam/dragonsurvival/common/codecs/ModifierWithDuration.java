@@ -23,9 +23,9 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
+import javax.annotation.Nullable;
 
 public class ModifierWithDuration implements AttributeModifierSupplier, ClientEffectProvider {
     public static final int INFINITE_DURATION = -1;
@@ -103,7 +103,7 @@ public class ModifierWithDuration implements AttributeModifierSupplier, ClientEf
         data.remove(target, this);
         currentDuration = newDuration;
         appliedAbilityLevel = abilityLevel;
-        clientData = new ClientData(ability.getAbility().icon(), /* TODO */ Component.empty(), Optional.of(dragon.getUUID()));
+        clientData = new ClientData(ability.getAbility().icon().get(abilityLevel), /* TODO */ Component.empty(), Optional.of(dragon.getUUID()));
         data.add(this);
         // TODO :: send packet to client
 
