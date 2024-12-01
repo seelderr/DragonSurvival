@@ -3,7 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.network.player;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
-import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DragonMovementData;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MovementData;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -26,7 +26,7 @@ public class SyncDragonMovement implements IMessage<SyncDragonMovement.Data> {
         Entity entity = context.player();
         context.enqueueWork(() -> {
             if(DragonStateProvider.isDragon(entity)) {
-                DragonMovementData data = DragonMovementData.getData(entity);
+                MovementData data = MovementData.getData(entity);
                 data.setFirstPerson(message.isFirstPerson);
                 data.setBite(message.bite);
                 data.setFreeLook(message.isFreeLook);

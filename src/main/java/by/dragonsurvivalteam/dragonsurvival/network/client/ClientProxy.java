@@ -26,8 +26,8 @@ import by.dragonsurvivalteam.dragonsurvival.network.particle.SyncParticleTrail;
 import by.dragonsurvivalteam.dragonsurvival.network.player.*;
 import by.dragonsurvivalteam.dragonsurvival.network.status.*;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
-import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DragonMovementData;
-import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DragonSpinData;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MovementData;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.SpinData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
@@ -192,10 +192,10 @@ public class ClientProxy {
             Entity entity = localPlayer.level().getEntity(message.playerId());
 
             if(entity != null) {
-                DragonSpinData dragonSpinData = DragonSpinData.getData(entity);
-                dragonSpinData.spinLearned = message.spinLearned();
-                dragonSpinData.spinCooldown = message.spinCooldown();
-                dragonSpinData.spinAttack = message.spinAttack();
+                SpinData spin = SpinData.getData(entity);
+                spinData.spinLearned = message.spinLearned();
+                spinData.spinCooldown = message.spinCooldown();
+                spinData.spinAttack = message.spinAttack();
                 ClientFlightHandler.lastSync = entity.tickCount;
             }
         }
@@ -293,7 +293,7 @@ public class ClientProxy {
             Entity entity = localPlayer.level().getEntity(message.playerId());
 
             if(DragonStateProvider.isDragon(entity)) {
-                DragonMovementData data = DragonMovementData.getData(entity);
+                MovementData data = MovementData.getData(entity);
                 data.setFirstPerson(message.isFirstPerson());
                 data.setBite(message.bite());
                 data.setFreeLook(message.isFreeLook());
@@ -357,7 +357,7 @@ public class ClientProxy {
 
         if (localPlayer != null) {
             Entity entity = localPlayer.level().getEntity(message.playerId());
-            DragonMovementData.getData(entity).dig = message.status();
+            MovementData.getData(entity).dig = message.status();
         }
     }
 

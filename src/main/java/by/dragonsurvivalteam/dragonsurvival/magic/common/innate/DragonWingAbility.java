@@ -4,7 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
-import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DragonSpinData;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.SpinData;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.network.chat.Component;
@@ -35,7 +35,7 @@ public abstract class DragonWingAbility extends InnateDragonAbility {
         DragonStateHandler data = DragonStateProvider.getData(player);
         String spin;
 
-        DragonSpinData spinData = DragonSpinData.getData(player);
+        SpinData spin = SpinData.getData(player);
         // TODO: Something to consider when handling data driven innate descriptions?
         if (DragonUtils.isType(data, DragonTypes.CAVE)) {
             spin = spinData.spinLearned ? LAVA_SPIN : NO_LAVA_SPIN;

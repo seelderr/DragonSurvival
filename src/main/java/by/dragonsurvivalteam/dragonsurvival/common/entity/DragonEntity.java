@@ -13,7 +13,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.ClientConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.AbilityAnimation;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.ISecondAnimation;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DragonMovementData;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MovementData;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStage;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.AnimationUtils;
@@ -168,7 +168,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
             builder = renderAbility(state, currentCast);
         }
 
-        DragonMovementData movementData = DragonMovementData.getData(player);
+        MovementData movement = MovementData.getData(player);
         if (!ClientDragonRenderer.renderItemsInMouth && doesAnimationExist(player, "use_item") && (player.isUsingItem() || (movementData.bite || movementData.dig) && (!player.getMainHandItem().isEmpty() || !player.getOffhandItem().isEmpty()))) {
             // When the player is using an item
             movementData.bite = false;
@@ -348,7 +348,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
         }
 
         final double INPUT_EPSILON = 0.0000001D;
-        DragonMovementData movementData = DragonMovementData.getData(player);
+        MovementData movement = MovementData.getData(player);
         Vec2 rawInput = movementData.desiredMoveVec;
         boolean hasMoveInput = rawInput.lengthSquared() > INPUT_EPSILON * INPUT_EPSILON;
 

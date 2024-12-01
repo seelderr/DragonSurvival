@@ -3,7 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.mixins.client;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
-import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DragonMovementData;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MovementData;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
@@ -48,7 +48,7 @@ public abstract class InventoryScreenMixin extends EffectRenderingInventoryScree
         }
 
         if(DragonStateProvider.isDragon(newEntity)) {
-            DragonMovementData movementData = DragonMovementData.getData(newEntity);
+            MovementData movement = MovementData.getData(newEntity);
             double bodyYaw = movementData.bodyYaw;
             double headYaw = movementData.headYaw;
             double headPitch = movementData.headPitch;

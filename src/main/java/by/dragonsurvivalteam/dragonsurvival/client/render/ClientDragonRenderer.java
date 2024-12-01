@@ -21,7 +21,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonMovement;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
-import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DragonMovementData;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MovementData;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStage;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
@@ -231,7 +231,7 @@ public class ClientDragonRenderer {
                     }
                 }
 
-                DragonMovementData movementData = DragonMovementData.getData(player);
+                MovementData movement = MovementData.getData(player);
                 poseStack.mulPose(Axis.YN.rotationDegrees((float) movementData.bodyYaw));
 
                 float scale = Functions.getScale(player, size);
@@ -407,7 +407,7 @@ public class ClientDragonRenderer {
             return;
         }
 
-        DragonMovementData movementData = DragonMovementData.getData(player);
+        MovementData movement = MovementData.getData(player);
         if (keyInputEvent.isAttack() && keyInputEvent.shouldSwingHand() && !movementData.dig) {
             movementData.bite = true;
         }
@@ -417,7 +417,7 @@ public class ClientDragonRenderer {
         if (player == null) return;
 
         if(DragonStateProvider.isDragon(player)) {
-            DragonMovementData movementData = DragonMovementData.getData(player);
+            MovementData movement = MovementData.getData(player);
 
             Vec3 moveVector;
             if (!ServerFlightHandler.isFlying(player)) {
@@ -437,7 +437,7 @@ public class ClientDragonRenderer {
         LocalPlayer player = Minecraft.getInstance().player;
         if(DragonStateProvider.isDragon(player)) {
             Input input = player.input;
-            DragonMovementData md = DragonMovementData.getData(player);
+            MovementData movement = MovementData.getData(player);
             md.setFirstPerson(Minecraft.getInstance().options.getCameraType().isFirstPerson());
             md.setFreeLook(Keybind.FREE_LOOK.isDown());
             md.setDesiredMoveVec(new Vec2(input.leftImpulse, input.forwardImpulse));
@@ -546,7 +546,7 @@ public class ClientDragonRenderer {
         /// Head yaw pitch factor
         static final double HEAD_PITCH_FACTOR = 0.3D;
 
-        public static BodyAngles calculateNext(Player player, DragonMovementData movementData, float realtimeDeltaTick) {
+        public static BodyAngles calculateNext(Player player, MovementData movementData, float realtimeDeltaTick) {
             // Handle headYaw
             float viewYRot = player.getViewYRot(realtimeDeltaTick);
             float viewXRot = player.getViewXRot(realtimeDeltaTick);
@@ -567,7 +567,7 @@ public class ClientDragonRenderer {
         private static double calculateNextBodyYaw(
                 float realtimeDeltaTick,
                 Player player,
-                DragonMovementData movementData,
+                MovementData movementData,
                 Vec3 posDelta,
                 float viewYRot) {
 
@@ -660,7 +660,7 @@ public class ClientDragonRenderer {
 
         private static Tuple<Double, Double> calculateNextHeadAngles(
                 float realtimeDeltaTick,
-                DragonMovementData movementData,
+                MovementData movementData,
                 float viewXRot,
                 float viewYRot) {
             // Yaw is relative to the body

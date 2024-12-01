@@ -7,12 +7,12 @@ import net.neoforged.neoforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnknownNullability;
 
-public class DragonSpinData implements INBTSerializable<CompoundTag> {
+public class SpinData implements INBTSerializable<CompoundTag> {
     public boolean spinLearned;
     public int spinCooldown;
     public int spinAttack;
 
-    public static DragonSpinData getData(Entity entity) {
+    public static SpinData getData(Entity entity) {
         return entity.getData(DSDataAttachments.DRAGON_SPIN_DATA);
     }
 

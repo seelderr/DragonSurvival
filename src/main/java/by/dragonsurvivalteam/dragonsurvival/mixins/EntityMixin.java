@@ -7,7 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.CaveDragonConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.DragonBonusConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachments;
-import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DragonMovementData;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MovementData;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSEntityTypeTags;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
@@ -34,7 +34,7 @@ public abstract class EntityMixin {
         }
 
         if(DragonStateProvider.isDragon(player)) {
-            DragonMovementData movementData = DragonMovementData.getData(player);
+            MovementData movement = MovementData.getData(player);
             Vec3 originalPassPos = player.getPassengerRidingPosition(player);
             double size = DragonStateProvider.getData(passenger).getSize();
             double heightOffset = -0.15 - size * 0.08; // Arbitrarily chosen number
@@ -64,9 +64,9 @@ public abstract class EntityMixin {
             return;
         }
 
-        DragonMovementData vehicleMovement = DragonMovementData.getData(vehicle);
+        MovementData vehicleMovement = MovementData.getData(vehicle);
         if(DragonStateProvider.isDragon(passenger)) {
-            DragonMovementData passengerMovement = DragonMovementData.getData(passenger);
+            MovementData passengerMovement = MovementData.getData(passenger);
             float facing = (float) Mth.wrapDegrees(passenger.getYRot() - vehicleMovement.bodyYawLastFrame);
             float facingClamped = Mth.clamp(facing, -150.0F, 150.0F);
             passenger.yRotO += facingClamped - facing + vehicle.yRotO;

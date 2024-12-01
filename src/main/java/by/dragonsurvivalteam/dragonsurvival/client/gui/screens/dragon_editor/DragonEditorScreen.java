@@ -29,7 +29,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.mixins.client.ScreenAccessor;
 import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncPlayerSkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.SyncComplete;
-import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DragonSpinData;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.SpinData;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.body.DragonBody;
@@ -909,7 +909,7 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
             }
 
             data.setHasFlight(ServerFlightHandler.startWithFlight || ServerConfig.saveGrowthStage && data.hasFlight());
-            DragonSpinData.getData(minecraft.player).spinLearned = ServerConfig.saveGrowthStage && DragonSpinData.getData(minecraft.player).spinLearned;
+            SpinData.getData(minecraft.player).spinLearned = ServerConfig.saveGrowthStage && SpinData.getData(minecraft.player).spinLearned;
 
             HANDLER.getSkinData().skinPreset = save();
             data.getSkinData().renderCustomSkin = ClientDragonRenderer.renderCustomSkin;

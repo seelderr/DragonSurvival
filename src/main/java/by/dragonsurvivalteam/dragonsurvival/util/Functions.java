@@ -2,7 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.util;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DragonMovementData;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MovementData;
 import net.minecraft.nbt.DoubleTag;
 import net.minecraft.nbt.FloatTag;
 import net.minecraft.nbt.ListTag;
@@ -260,7 +260,7 @@ public class Functions {
         if (entity instanceof Player player) {
             if(DragonStateProvider.isDragon(entity)) {
                 DragonStateHandler handler = DragonStateProvider.getData(player);
-                DragonMovementData movementData = DragonMovementData.getData(entity);
+                MovementData movement = MovementData.getData(entity);
                 float angle = -(float) movementData.bodyYaw * ((float) Math.PI / 180F);
                 float x = Mth.sin(angle);
                 float z = Mth.cos(angle);

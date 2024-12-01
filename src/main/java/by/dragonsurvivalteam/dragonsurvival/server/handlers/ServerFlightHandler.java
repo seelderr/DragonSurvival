@@ -12,7 +12,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncFlyingStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
-import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DragonSpinData;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.SpinData;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
@@ -263,7 +263,7 @@ public class ServerFlightHandler {
         }
 
         // TODO: Some strange choices on what is run clientside here. Are we sure this is safe?
-        DragonSpinData spinData = DragonSpinData.getData(player);
+        SpinData spin = SpinData.getData(player);
         if (!player.level().isClientSide()) {
             if(spinData.spinAttack > 0) {
                 if (!isFlying(player) && !canSwimSpin(player)) {
@@ -316,7 +316,7 @@ public class ServerFlightHandler {
     }
 
     public static boolean isSpin(Player entity) {
-        DragonSpinData spinData = DragonSpinData.getData(entity);
+        SpinData spin = SpinData.getData(entity);
         if (isFlying(entity) || canSwimSpin(entity)) {
             return spinData.spinAttack > 0;
         }

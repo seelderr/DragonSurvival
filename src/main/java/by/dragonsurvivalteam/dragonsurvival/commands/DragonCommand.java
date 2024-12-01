@@ -7,7 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.SyncComplete;
-import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DragonSpinData;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.SpinData;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.body.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStage;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStages;
@@ -126,7 +126,7 @@ public class DragonCommand {
         cap.setSize(player, dragonStage, dragonStage != null ? dragonStage.value().sizeRange().min() : DragonStateHandler.NO_SIZE);
 
         cap.setHasFlight(flight);
-        DragonSpinData spinData = DragonSpinData.getData(player);
+        SpinData spin = SpinData.getData(player);
         spinData.spinLearned = flight;
         cap.setPassengerId(-1);
         cap.isGrowing = true;

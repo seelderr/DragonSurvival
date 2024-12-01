@@ -20,6 +20,6 @@ public class DSDataAttachments {
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<LightningHandler>> LIGHTNING_BOLT_DATA = DS_ATTACHMENT_TYPES.register("lightning_bolt_data", () -> AttachmentType.serializable(LightningHandler::new).build());
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<ModifiersWithDuration>> MODIFIERS_WITH_DURATION = DS_ATTACHMENT_TYPES.register("modifiers_with_duration", () -> AttachmentType.serializable(ModifiersWithDuration::new).build());
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<DamageReductions>> DAMAGE_REDUCTIONS = DS_ATTACHMENT_TYPES.register("damage_reductions", () -> AttachmentType.serializable(DamageReductions::new).build());
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<DragonMovementData>> DRAGON_MOVEMENT_DATA = DS_ATTACHMENT_TYPES.register("movement_data", () -> AttachmentType.builder(DragonMovementData::new).build());
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<DragonSpinData>> DRAGON_SPIN_DATA = DS_ATTACHMENT_TYPES.register("spin_data", () -> AttachmentType.serializable(DragonSpinData::new).copyOnDeath().build());
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<MovementData>> DRAGON_MOVEMENT_DATA = DS_ATTACHMENT_TYPES.register("movement_data", () -> AttachmentType.builder(MovementData::new).build());
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<SpinData>> DRAGON_SPIN_DATA = DS_ATTACHMENT_TYPES.register("spin_data", () -> AttachmentType.serializable(SpinData::new).copyOnDeath().build());
 }

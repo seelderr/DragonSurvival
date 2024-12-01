@@ -14,7 +14,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncSize;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAdvancementTriggers;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers;
-import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DragonSpinData;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.SpinData;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.*;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbility;
@@ -666,7 +666,7 @@ public class DragonStateHandler extends EntityStateHandler {
         setSize(player, null, NO_SIZE);
 
         if (!ServerConfig.saveAllAbilities) {
-            DragonSpinData.getData(player).spinLearned = false;
+            SpinData.getData(player).spinLearned = false;
             this.setHasFlight(false);
         }
 

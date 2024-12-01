@@ -5,7 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncTreasureRestStatus;
-import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DragonMovementData;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MovementData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
@@ -35,7 +35,7 @@ public class DragonTreasureHandler {
             DragonStateHandler handler = DragonStateProvider.getData(player);
 
             if (handler.treasureResting) {
-                if (player.isCrouching() || !(player.getBlockStateOn().getBlock() instanceof TreasureBlock) || DragonMovementData.getData(player).bite) {
+                if (player.isCrouching() || !(player.getBlockStateOn().getBlock() instanceof TreasureBlock) || MovementData.getData(player).bite) {
                     handler.treasureResting = false;
                     PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncTreasureRestStatus.Data(player.getId(), false));
                     return;

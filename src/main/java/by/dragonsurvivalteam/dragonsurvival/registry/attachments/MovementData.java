@@ -4,7 +4,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 
-public class DragonMovementData  {
+public class MovementData {
     public double headYaw = 0;
     public double headPitch = 0;
     public double bodyYaw = 0;
@@ -28,7 +28,7 @@ public class DragonMovementData  {
     public boolean bite = false;
     public boolean dig = false;
 
-    public static DragonMovementData getData(Entity entity) {
+    public static MovementData getData(Entity entity) {
         return entity.getData(DSDataAttachments.DRAGON_MOVEMENT_DATA);
     }
 
