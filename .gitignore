@@ -34,3 +34,6 @@ node_modules/.bin/cdl
 /node_modules/
 /mcmodsrepo/
 runs/
+
+# generated resources cache
+src/generated/resources/.cache
