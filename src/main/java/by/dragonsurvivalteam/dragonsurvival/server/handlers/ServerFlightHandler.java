@@ -265,10 +265,10 @@ public class ServerFlightHandler {
         // TODO: Some strange choices on what is run clientside here. Are we sure this is safe?
         SpinData spin = SpinData.getData(player);
         if (!player.level().isClientSide()) {
-            if(spinData.spinAttack > 0) {
+            if(spin.spinAttack > 0) {
                 if (!isFlying(player) && !canSwimSpin(player)) {
-                    spinData.spinAttack = 0;
-                    PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncSpinStatus.Data(player.getId(), spinData.spinAttack, spinData.spinCooldown, spinData.spinLearned));
+                    spin.spinAttack = 0;
+                    PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncSpinStatus.Data(player.getId(), spin.spinAttack, spin.spinCooldown, spin.spinLearned));
                 }
             }
         }
@@ -304,21 +304,21 @@ public class ServerFlightHandler {
                 player.attack(target);
             }
 
-            spinData.spinAttack--;
+            spin.spinAttack--;
 
             if (!player.level().isClientSide()) {
-                PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncSpinStatus.Data(player.getId(), spinData.spinAttack, spinData.spinCooldown, spinData.spinLearned));
+                PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncSpinStatus.Data(player.getId(), spin.spinAttack, spin.spinCooldown, spin.spinLearned));
             }
-        } else if (spinData.spinCooldown > 0 && !player.level().isClientSide()) {
-            spinData.spinCooldown--;
-            PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncSpinStatus.Data(player.getId(), spinData.spinAttack, spinData.spinCooldown, spinData.spinLearned));
+        } else if (spin.spinCooldown > 0 && !player.level().isClientSide()) {
+            spin.spinCooldown--;
+            PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncSpinStatus.Data(player.getId(), spin.spinAttack, spin.spinCooldown, spin.spinLearned));
         }
     }
 
     public static boolean isSpin(Player entity) {
         SpinData spin = SpinData.getData(entity);
         if (isFlying(entity) || canSwimSpin(entity)) {
-            return spinData.spinAttack > 0;
+            return spin.spinAttack > 0;
         }
 
         return false;

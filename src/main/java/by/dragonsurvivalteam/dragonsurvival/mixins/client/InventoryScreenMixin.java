@@ -49,17 +49,17 @@ public abstract class InventoryScreenMixin extends EffectRenderingInventoryScree
 
         if(DragonStateProvider.isDragon(newEntity)) {
             MovementData movement = MovementData.getData(newEntity);
-            double bodyYaw = movementData.bodyYaw;
-            double headYaw = movementData.headYaw;
-            double headPitch = movementData.headPitch;
-            Vec3 deltaMovement = movementData.deltaMovement;
-            Vec3 deltaMovementLastFrame = movementData.deltaMovementLastFrame;
+            double bodyYaw = movement.bodyYaw;
+            double headYaw = movement.headYaw;
+            double headPitch = movement.headPitch;
+            Vec3 deltaMovement = movement.deltaMovement;
+            Vec3 deltaMovementLastFrame = movement.deltaMovementLastFrame;
 
-            movementData.bodyYaw = newEntity.yBodyRot;
-            movementData.headYaw = -Math.toDegrees(dragon_survival$storedXAngle);
-            movementData.headPitch = -Math.toDegrees(dragon_survival$storedYAngle);
-            movementData.deltaMovement = Vec3.ZERO;
-            movementData.deltaMovementLastFrame = Vec3.ZERO;
+            movement.bodyYaw = newEntity.yBodyRot;
+            movement.headYaw = -Math.toDegrees(dragon_survival$storedXAngle);
+            movement.headPitch = -Math.toDegrees(dragon_survival$storedYAngle);
+            movement.deltaMovement = Vec3.ZERO;
+            movement.deltaMovementLastFrame = Vec3.ZERO;
 
             ClientDragonRenderer.isOverridingMovementData = true;
             RenderSystem.runAsFancy(runnable);
@@ -68,11 +68,11 @@ public abstract class InventoryScreenMixin extends EffectRenderingInventoryScree
             dragon_survival$storedXAngle = 0;
             dragon_survival$storedYAngle = 0;
 
-            movementData.bodyYaw = bodyYaw;
-            movementData.headYaw = headYaw;
-            movementData.headPitch = headPitch;
-            movementData.deltaMovement = deltaMovement;
-            movementData.deltaMovementLastFrame = deltaMovementLastFrame;
+            movement.bodyYaw = bodyYaw;
+            movement.headYaw = headYaw;
+            movement.headPitch = headPitch;
+            movement.deltaMovement = deltaMovement;
+            movement.deltaMovementLastFrame = deltaMovementLastFrame;
         } else {
             RenderSystem.runAsFancy(runnable);
         }

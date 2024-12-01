@@ -194,12 +194,12 @@ public class ClientFlightHandler {
         }
 
         SpinData spin = SpinData.getData(player);
-        if (spinData.spinLearned && spinData.spinCooldown > 0) {
+        if (spin.spinLearned && spin.spinCooldown > 0) {
             if (event.getName() == VanillaGuiLayers.AIR_LEVEL) {
                 Window window = Minecraft.getInstance().getWindow();
 
                 int cooldown = ServerFlightHandler.flightSpinCooldown * 20;
-                float cooldownProgress = ((float) cooldown - (float) spinData.spinCooldown) / (float) cooldown;
+                float cooldownProgress = ((float) cooldown - (float) spin.spinCooldown) / (float) cooldown;
 
                 int x = window.getGuiScaledWidth() / 2 - 66 / 2;
                 int y = window.getGuiScaledHeight() - 96;
@@ -219,7 +219,7 @@ public class ClientFlightHandler {
         Player player = event.getEntity();
         SpinData spin = SpinData.getData(player);
 
-        if (!DragonStateProvider.isDragon(player) || spinData.spinAttack <= 0) {
+        if (!DragonStateProvider.isDragon(player) || spin.spinAttack <= 0) {
             return;
         }
 
@@ -495,18 +495,18 @@ public class ClientFlightHandler {
     private static void doSpin(LocalPlayer player, DragonStateHandler handler) {
         if (ServerFlightHandler.isSpin(player)) return;
         SpinData spin = SpinData.getData(player);
-        if (spinData.spinCooldown > 0) return;
-        if (!spinData.spinLearned) return;
+        if (spin.spinCooldown > 0) return;
+        if (!spin.spinLearned) return;
 
         if (ServerFlightHandler.isFlying(player) || ServerFlightHandler.canSwimSpin(player)) {
-            spinData.spinAttack = ServerFlightHandler.SPIN_DURATION;
-            spinData.spinCooldown = ServerFlightHandler.flightSpinCooldown * 20;
+            spin.spinAttack = ServerFlightHandler.SPIN_DURATION;
+            spin.spinCooldown = ServerFlightHandler.flightSpinCooldown * 20;
             PacketDistributor.sendToServer(
                     new SyncSpinStatus.Data(
                             player.getId(),
-                            spinData.spinAttack,
-                            spinData.spinCooldown,
-                            spinData.spinLearned
+                            spin.spinAttack,
+                            spin.spinCooldown,
+                            spin.spinLearned
                     )
             );
         }

@@ -24,8 +24,8 @@ public class MiningTickHandler {
                     boolean isMining = interactionManager.isDestroyingBlock && player.swinging;
 
                     MovementData movement = MovementData.getData(player);
-                    if (isMining != movementData.dig) {
-                        movementData.dig = isMining;
+                    if (isMining != movement.dig) {
+                        movement.dig = isMining;
                         PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncDiggingStatus.Data(player.getId(), isMining));
                     }
 

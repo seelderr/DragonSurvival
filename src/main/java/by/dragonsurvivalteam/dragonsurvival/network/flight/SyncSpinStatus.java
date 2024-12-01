@@ -23,9 +23,9 @@ public class SyncSpinStatus implements IMessage<SyncSpinStatus.Data> {
         Player sender = context.player();
         context.enqueueWork(() -> {
                 SpinData spin = SpinData.getData(sender);
-                spinData.spinLearned = message.spinLearned();
-                spinData.spinCooldown = message.spinCooldown();
-                spinData.spinAttack = message.spinAttack();
+                spin.spinLearned = message.spinLearned();
+                spin.spinCooldown = message.spinCooldown();
+                spin.spinAttack = message.spinAttack();
         }).thenRun(() -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(sender, message));
     }
 

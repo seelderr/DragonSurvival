@@ -26,8 +26,8 @@ public class SpinGrantItem extends TooltipItem {
         if (handler.isDragon()) {
             if (!world.isClientSide()) {
                 SpinData spin = SpinData.getData(player);
-                spinData.spinLearned = !spinData.spinLearned;
-                PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncSpinStatus.Data(player.getId(), spinData.spinAttack, spinData.spinCooldown, spinData.spinLearned));
+                spin.spinLearned = !spin.spinLearned;
+                PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncSpinStatus.Data(player.getId(), spin.spinAttack, spin.spinCooldown, spin.spinLearned));
 
                 if (!player.isCreative()) {
                     player.getItemInHand(hand).shrink(1);

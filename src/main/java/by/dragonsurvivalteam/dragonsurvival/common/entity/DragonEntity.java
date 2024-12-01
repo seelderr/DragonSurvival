@@ -169,14 +169,14 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
         }
 
         MovementData movement = MovementData.getData(player);
-        if (!ClientDragonRenderer.renderItemsInMouth && doesAnimationExist(player, "use_item") && (player.isUsingItem() || (movementData.bite || movementData.dig) && (!player.getMainHandItem().isEmpty() || !player.getOffhandItem().isEmpty()))) {
+        if (!ClientDragonRenderer.renderItemsInMouth && doesAnimationExist(player, "use_item") && (player.isUsingItem() || (movement.bite || movement.dig) && (!player.getMainHandItem().isEmpty() || !player.getOffhandItem().isEmpty()))) {
             // When the player is using an item
-            movementData.bite = false;
+            movement.bite = false;
             return state.setAndContinue(AnimationUtils.createAnimation(builder, USE_ITEM));
         } else if (!ClientDragonRenderer.renderItemsInMouth && doesAnimationExist(player, "eat_item_right") && player.isUsingItem() && DragonFoodHandler.isEdible(player.getMainHandItem(), handler.getType()) || animationTimer.getDuration("eat_item_right") > 0) {
             // When the player is eating the main hand item
             if (animationTimer.getDuration("eat_item_right") <= 0) {
-                movementData.bite = false;
+                movement.bite = false;
                 animationTimer.putAnimation("eat_item_right", 0.32 * 20);
             }
 
@@ -184,30 +184,30 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
         } else if (!ClientDragonRenderer.renderItemsInMouth && doesAnimationExist(player, "eat_item_left") && player.isUsingItem() && DragonFoodHandler.isEdible(player.getMainHandItem(), handler.getType()) || animationTimer.getDuration("eat_item_right") > 0) {
             // When the player is eating the offhand item
             if (animationTimer.getDuration("eat_item_left") <= 0) {
-                movementData.bite = false;
+                movement.bite = false;
                 animationTimer.putAnimation("eat_item_left", 0.32 * 20);
             }
 
             return state.setAndContinue(AnimationUtils.createAnimation(builder, EAT_ITEM_LEFT));
-        } else if (!ClientDragonRenderer.renderItemsInMouth && doesAnimationExist(player, "use_item_right") && !player.getMainHandItem().isEmpty() && movementData.bite && player.getMainArm() == HumanoidArm.RIGHT || animationTimer.getDuration("use_item_right") > 0) {
+        } else if (!ClientDragonRenderer.renderItemsInMouth && doesAnimationExist(player, "use_item_right") && !player.getMainHandItem().isEmpty() && movement.bite && player.getMainArm() == HumanoidArm.RIGHT || animationTimer.getDuration("use_item_right") > 0) {
             // When the player is using the main hand item
             if (animationTimer.getDuration("use_item_right") <= 0) {
-                movementData.bite = false;
+                movement.bite = false;
                 animationTimer.putAnimation("use_item_right", 0.32 * 20);
             }
 
             return state.setAndContinue(AnimationUtils.createAnimation(builder, USE_ITEM_RIGHT));
-        } else if (!ClientDragonRenderer.renderItemsInMouth && doesAnimationExist(player, "use_item_left") && !player.getOffhandItem().isEmpty() && movementData.bite && player.getMainArm() == HumanoidArm.LEFT || animationTimer.getDuration("use_item_left") > 0) {
+        } else if (!ClientDragonRenderer.renderItemsInMouth && doesAnimationExist(player, "use_item_left") && !player.getOffhandItem().isEmpty() && movement.bite && player.getMainArm() == HumanoidArm.LEFT || animationTimer.getDuration("use_item_left") > 0) {
             // When the player is using the offhand item
             if (animationTimer.getDuration("use_item_left") <= 0) {
-                movementData.bite = false;
+                movement.bite = false;
                 animationTimer.putAnimation("use_item_left", 0.32 * 20);
             }
 
             return state.setAndContinue(AnimationUtils.createAnimation(builder, USE_ITEM_LEFT));
-        } else if (movementData.bite && !movementData.dig || animationTimer.getDuration("bite") > 0) {
+        } else if (movement.bite && !movement.dig || animationTimer.getDuration("bite") > 0) {
             if (animationTimer.getDuration("bite") <= 0) {
-                movementData.bite = false;
+                movement.bite = false;
                 animationTimer.putAnimation("bite", 0.44 * 20);
             }
 
@@ -349,7 +349,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
 
         final double INPUT_EPSILON = 0.0000001D;
         MovementData movement = MovementData.getData(player);
-        Vec2 rawInput = movementData.desiredMoveVec;
+        Vec2 rawInput = movement.desiredMoveVec;
         boolean hasMoveInput = rawInput.lengthSquared() > INPUT_EPSILON * INPUT_EPSILON;
 
         // TODO: The transition length of animations doesn't work correctly when the framerate varies too much from 60 FPS
@@ -451,7 +451,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
                 baseSpeed = DEFAULT_SNEAK_SPEED;
                 state.setAnimation(AnimationUtils.createAnimation(builder, SNEAK_WALK));
                 animationController.transitionLength(5);
-            } else if (movementData.dig) {
+            } else if (movement.dig) {
                 state.setAnimation(AnimationUtils.createAnimation(builder, DIG_SNEAK));
                 animationController.transitionLength(5);
             } else {
@@ -467,7 +467,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
             useDynamicScaling = true;
             state.setAnimation(AnimationUtils.createAnimation(builder, WALK));
             animationController.transitionLength(2);
-        } else if (movementData.dig) {
+        } else if (movement.dig) {
             state.setAnimation(AnimationUtils.createAnimation(builder, DIG));
             animationController.transitionLength(6);
         } else {

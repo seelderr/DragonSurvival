@@ -127,7 +127,7 @@ public class DragonCommand {
 
         cap.setHasFlight(flight);
         SpinData spin = SpinData.getData(player);
-        spinData.spinLearned = flight;
+        spin.spinLearned = flight;
         cap.setPassengerId(-1);
         cap.isGrowing = true;
 

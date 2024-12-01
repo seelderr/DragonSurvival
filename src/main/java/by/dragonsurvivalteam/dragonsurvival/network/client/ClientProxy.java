@@ -193,9 +193,9 @@ public class ClientProxy {
 
             if(entity != null) {
                 SpinData spin = SpinData.getData(entity);
-                spinData.spinLearned = message.spinLearned();
-                spinData.spinCooldown = message.spinCooldown();
-                spinData.spinAttack = message.spinAttack();
+                spin.spinLearned = message.spinLearned();
+                spin.spinCooldown = message.spinCooldown();
+                spin.spinAttack = message.spinAttack();
                 ClientFlightHandler.lastSync = entity.tickCount;
             }
         }

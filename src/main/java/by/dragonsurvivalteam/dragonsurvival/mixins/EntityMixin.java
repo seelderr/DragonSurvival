@@ -41,8 +41,8 @@ public abstract class EntityMixin {
 
             Vec3 offsetFromBb = new Vec3(0, heightOffset, -1.4 * player.getBbWidth());
             Vec3 offsetFromCenter = originalPassPos.subtract(player.position());
-            offsetFromCenter = offsetFromCenter.xRot((float) Math.toRadians(movementData.prevXRot * 1.5)).zRot(-(float) Math.toRadians(movementData.prevZRot * 90));
-            Vec3 totalOffset = offsetFromCenter.add(offsetFromBb).yRot(-(float) Math.toRadians(movementData.bodyYawLastFrame));
+            offsetFromCenter = offsetFromCenter.xRot((float) Math.toRadians(movement.prevXRot * 1.5)).zRot(-(float) Math.toRadians(movement.prevZRot * 90));
+            Vec3 totalOffset = offsetFromCenter.add(offsetFromBb).yRot(-(float) Math.toRadians(movement.bodyYawLastFrame));
             Vec3 passPos = player.position().add(totalOffset);
 
             move.accept(passenger, passPos.x(), passPos.y(), passPos.z());

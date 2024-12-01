@@ -232,7 +232,7 @@ public class ClientDragonRenderer {
                 }
 
                 MovementData movement = MovementData.getData(player);
-                poseStack.mulPose(Axis.YN.rotationDegrees((float) movementData.bodyYaw));
+                poseStack.mulPose(Axis.YN.rotationDegrees((float) movement.bodyYaw));
 
                 float scale = Functions.getScale(player, size);
                 poseStack.scale(scale, scale, scale);
@@ -273,7 +273,7 @@ public class ClientDragonRenderer {
                     playerAsDragon.prevXRot = Mth.lerp(0.1F, playerAsDragon.prevXRot, upRot);
                     playerAsDragon.prevXRot = Mth.clamp(playerAsDragon.prevXRot, -80, 80);
 
-                    movementData.prevXRot = playerAsDragon.prevXRot;
+                    movement.prevXRot = playerAsDragon.prevXRot;
 
                     if (Float.isNaN(playerAsDragon.prevXRot)) {
                         playerAsDragon.prevXRot = upRot;
@@ -348,13 +348,13 @@ public class ClientDragonRenderer {
                         playerAsDragon.prevZRot = Mth.lerp(ROLL_VEL_LERP_FACTOR, playerAsDragon.prevZRot, targetRollDeg);
                     }
 
-                    movementData.prevXRot = playerAsDragon.prevXRot;
-                    movementData.prevZRot = playerAsDragon.prevZRot;
+                    movement.prevXRot = playerAsDragon.prevXRot;
+                    movement.prevZRot = playerAsDragon.prevZRot;
 
                     poseStack.mulPose(Axis.ZP.rotation(playerAsDragon.prevZRot));
                 } else {
-                    movementData.prevZRot = 0;
-                    movementData.prevXRot = 0;
+                    movement.prevZRot = 0;
+                    movement.prevXRot = 0;
                 }
                 if (player != minecraft.player || !Minecraft.getInstance().options.getCameraType().isFirstPerson() || !isPlayerGliding || renderFirstPersonFlight) {
                     dragonRenderer.render(playerAsDragon, yaw, partialRenderTick, poseStack, renderTypeBuffer, eventLight);
@@ -367,9 +367,9 @@ public class ClientDragonRenderer {
                         poseStack.mulPose(Axis.XN.rotationDegrees(180));
                         double height = 1.3 * scale;
                         double forward = 0.3 * scale;
-                        float parrotHeadYaw = Mth.clamp(-1 * ((float) movementData.bodyYaw - (float) movementData.headYaw), -75, 75);
+                        float parrotHeadYaw = Mth.clamp(-1 * ((float) movement.bodyYaw - (float) movement.headYaw), -75, 75);
                         poseStack.translate(0, -height, -forward);
-                        renderLayer.render(poseStack, renderTypeBuffer, eventLight, player, 0, 0, partialRenderTick, (float) player.tickCount + partialRenderTick, parrotHeadYaw, (float) movementData.headPitch);
+                        renderLayer.render(poseStack, renderTypeBuffer, eventLight, player, 0, 0, partialRenderTick, (float) player.tickCount + partialRenderTick, parrotHeadYaw, (float) movement.headPitch);
                         poseStack.translate(0, height, forward);
                         poseStack.mulPose(Axis.XN.rotationDegrees(-180));
                         poseStack.scale(scale, scale, scale);
@@ -408,8 +408,8 @@ public class ClientDragonRenderer {
         }
 
         MovementData movement = MovementData.getData(player);
-        if (keyInputEvent.isAttack() && keyInputEvent.shouldSwingHand() && !movementData.dig) {
-            movementData.bite = true;
+        if (keyInputEvent.isAttack() && keyInputEvent.shouldSwingHand() && !movement.dig) {
+            movement.bite = true;
         }
     }
 
@@ -427,8 +427,8 @@ public class ClientDragonRenderer {
             }
 
             // Get new body yaw & head angles
-            var newAngles = BodyAngles.calculateNext(player, movementData, realtimeDeltaTick);
-            movementData.set(newAngles.bodyYaw, newAngles.headYaw, newAngles.headPitch, moveVector);
+            var newAngles = BodyAngles.calculateNext(player, movement, realtimeDeltaTick);
+            movement.set(newAngles.bodyYaw, newAngles.headYaw, newAngles.headPitch, moveVector);
         }
     }
 
@@ -438,9 +438,9 @@ public class ClientDragonRenderer {
         if(DragonStateProvider.isDragon(player)) {
             Input input = player.input;
             MovementData movement = MovementData.getData(player);
-            md.setFirstPerson(Minecraft.getInstance().options.getCameraType().isFirstPerson());
-            md.setFreeLook(Keybind.FREE_LOOK.isDown());
-            md.setDesiredMoveVec(new Vec2(input.leftImpulse, input.forwardImpulse));
+            movement.setFirstPerson(Minecraft.getInstance().options.getCameraType().isFirstPerson());
+            movement.setFreeLook(Keybind.FREE_LOOK.isDown());
+            movement.setDesiredMoveVec(new Vec2(input.leftImpulse, input.forwardImpulse));
             if (player.isPassenger()) {
                 // Prevent animation jank while we are riding an entity
                 PacketDistributor.sendToServer(new SyncDeltaMovement.Data(player.getId(), 0, 0, 0));
@@ -451,11 +451,11 @@ public class ClientDragonRenderer {
             PacketDistributor.sendToServer(
                     new SyncDragonMovement.Data(
                             player.getId(),
-                            md.isFirstPerson,
-                            md.bite,
-                            md.isFreeLook,
-                            md.desiredMoveVec.x,
-                            md.desiredMoveVec.y
+                            movement.isFirstPerson,
+                            movement.bite,
+                            movement.isFreeLook,
+                            movement.desiredMoveVec.x,
+                            movement.desiredMoveVec.y
                     )
             );
         }
@@ -546,7 +546,7 @@ public class ClientDragonRenderer {
         /// Head yaw pitch factor
         static final double HEAD_PITCH_FACTOR = 0.3D;
 
-        public static BodyAngles calculateNext(Player player, MovementData movementData, float realtimeDeltaTick) {
+        public static BodyAngles calculateNext(Player player, MovementData movement, float realtimeDeltaTick) {
             // Handle headYaw
             float viewYRot = player.getViewYRot(realtimeDeltaTick);
             float viewXRot = player.getViewXRot(realtimeDeltaTick);
@@ -555,10 +555,10 @@ public class ClientDragonRenderer {
             // Get pos delta since last tick - not scaled by realtimeDeltaTick
             var posDelta = new Vec3(player.getX() - player.xo, player.getY() - player.yo, player.getZ() - player.zo);
 
-            var headAngles = calculateNextHeadAngles(realtimeDeltaTick, movementData, viewXRot, viewYRot);
+            var headAngles = calculateNextHeadAngles(realtimeDeltaTick, movement, viewXRot, viewYRot);
 
             return new BodyAngles(
-                    calculateNextBodyYaw(realtimeDeltaTick, player, movementData, posDelta, viewYRot),
+                    calculateNextBodyYaw(realtimeDeltaTick, player, movement, posDelta, viewYRot),
                     headAngles.getA(),
                     headAngles.getB()
             );
@@ -567,18 +567,18 @@ public class ClientDragonRenderer {
         private static double calculateNextBodyYaw(
                 float realtimeDeltaTick,
                 Player player,
-                MovementData movementData,
+                MovementData movement,
                 Vec3 posDelta,
                 float viewYRot) {
 
             // Handle bodyYaw
-            double bodyYaw = movementData.bodyYaw;
-            boolean isFreeLook = movementData.isFreeLook;
-            boolean wasFreeLook = movementData.wasFreeLook; // TODO: what's this for?
-            boolean isFirstPerson = movementData.isFirstPerson;
+            double bodyYaw = movement.bodyYaw;
+            boolean isFreeLook = movement.isFreeLook;
+            boolean wasFreeLook = movement.wasFreeLook; // TODO: what's this for?
+            boolean isFirstPerson = movement.isFirstPerson;
             boolean hasPosDelta = posDelta.horizontalDistanceSqr() > MOVE_DELTA_EPSILON * MOVE_DELTA_EPSILON;
 
-            var rawInput = movementData.desiredMoveVec;
+            var rawInput = movement.desiredMoveVec;
             var hasMoveInput = rawInput.lengthSquared() > INPUT_EPSILON * INPUT_EPSILON;
             boolean isInputBack = rawInput.y < 0;
 
@@ -660,17 +660,17 @@ public class ClientDragonRenderer {
 
         private static Tuple<Double, Double> calculateNextHeadAngles(
                 float realtimeDeltaTick,
-                MovementData movementData,
+                MovementData movement,
                 float viewXRot,
                 float viewYRot) {
             // Yaw is relative to the body
             double headYawTarget = Functions.angleDifference(
                     viewYRot,
-                    movementData.bodyYaw
+                    movement.bodyYaw
             );
             double headYaw = Functions.lerpAngleAwayFrom(
                     realtimeDeltaTick * HEAD_YAW_FACTOR,
-                    movementData.headYaw,
+                    movement.headYaw,
                     headYawTarget,
                     180
             );
@@ -678,7 +678,7 @@ public class ClientDragonRenderer {
             // Pitch is also technically relative, since the body doesn't have pitch
             double headPitch = Mth.lerp(
                     realtimeDeltaTick * HEAD_PITCH_FACTOR,
-                    movementData.headPitch,
+                    movement.headPitch,
                     viewXRot
             );
 

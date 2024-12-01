@@ -261,7 +261,7 @@ public class Functions {
             if(DragonStateProvider.isDragon(entity)) {
                 DragonStateHandler handler = DragonStateProvider.getData(player);
                 MovementData movement = MovementData.getData(entity);
-                float angle = -(float) movementData.bodyYaw * ((float) Math.PI / 180F);
+                float angle = -(float) movement.bodyYaw * ((float) Math.PI / 180F);
                 float x = Mth.sin(angle);
                 float z = Mth.cos(angle);
                 float scale = getScale(player, handler.getSize());

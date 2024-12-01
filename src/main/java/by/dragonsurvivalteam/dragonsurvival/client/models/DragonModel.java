@@ -69,8 +69,8 @@ public class DragonModel extends GeoModel<DragonEntity> {
         float partialDeltaTick = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false);
         MovementData movement = MovementData.getData(player);
 
-        MathParser.setVariable("query.head_yaw", () -> md.headYaw);
-        MathParser.setVariable("query.head_pitch", () -> md.headPitch);
+        MathParser.setVariable("query.head_yaw", () -> movement.headYaw);
+        MathParser.setVariable("query.head_pitch", () -> movement.headPitch);
 
         double gravity = player.getAttributeValue(Attributes.GRAVITY);
         MathParser.setVariable("query.gravity", () -> gravity);
@@ -81,15 +81,15 @@ public class DragonModel extends GeoModel<DragonEntity> {
         double headPitchAvg;
         double verticalVelocityAvg;
         if (!ClientDragonRenderer.isOverridingMovementData) {
-            double bodyYawChange = Functions.angleDifference(md.bodyYaw, md.bodyYawLastFrame) / deltaTick * DELTA_YAW_PITCH_FACTOR;
-            double headYawChange = Functions.angleDifference(md.headYaw, md.headYawLastFrame) / deltaTick * DELTA_YAW_PITCH_FACTOR;
-            double headPitchChange = Functions.angleDifference(md.headPitch, md.headPitchLastFrame) / deltaTick * DELTA_YAW_PITCH_FACTOR;
+            double bodyYawChange = Functions.angleDifference(movement.bodyYaw, movement.bodyYawLastFrame) / deltaTick * DELTA_YAW_PITCH_FACTOR;
+            double headYawChange = Functions.angleDifference(movement.headYaw, movement.headYawLastFrame) / deltaTick * DELTA_YAW_PITCH_FACTOR;
+            double headPitchChange = Functions.angleDifference(movement.headPitch, movement.headPitchLastFrame) / deltaTick * DELTA_YAW_PITCH_FACTOR;
 
-            double verticalVelocity = Mth.lerp(partialDeltaTick, md.deltaMovementLastFrame.y, md.deltaMovement.y) * DELTA_MOVEMENT_FACTOR;
+            double verticalVelocity = Mth.lerp(partialDeltaTick, movement.deltaMovementLastFrame.y, movement.deltaMovement.y) * DELTA_MOVEMENT_FACTOR;
             // Factor in the vertical angle of the dragon so that the vertical velocity is scaled down when the dragon is looking up or down
             // Ideally, we would just use more precise data (factor in the full rotation of the player in our animations)
             // but this works pretty well in most situations the player will encounter
-            verticalVelocity *= 1 - Mth.abs(Mth.clampedMap(md.prevXRot, -90, 90, -1, 1));
+            verticalVelocity *= 1 - Mth.abs(Mth.clampedMap(movement.prevXRot, -90, 90, -1, 1));
 
             float deltaTickFor60FPS = AnimationUtils.getDeltaTickFor60FPS();
             // Accumulate them in the history
