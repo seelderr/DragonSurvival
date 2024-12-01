@@ -8,8 +8,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.HunterHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.items.growth.StarHeartItem;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.mixins.PlayerEndMixin;
-import by.dragonsurvivalteam.dragonsurvival.mixins.PlayerStartMixin;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncSize;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAdvancementTriggers;
@@ -35,7 +33,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.fml.loading.FMLEnvironment;
@@ -67,10 +64,6 @@ public class DragonStateHandler extends EntityStateHandler {
 
     public boolean isGrowing = true;
     public StarHeartItem.State starHeartState = StarHeartItem.State.INACTIVE;
-
-    public boolean treasureResting;
-    public int treasureRestTimer;
-    public int treasureSleepTimer;
 
     public int altarCooldown;
     public boolean hasUsedAltar;
@@ -416,9 +409,6 @@ public class DragonStateHandler extends EntityStateHandler {
             tag.putInt(STAR_HEART_STATE, starHeartState.ordinal());
 
             tag.putBoolean("isFlying", isWingsSpread());
-
-            tag.putBoolean("resting", treasureResting);
-            tag.putInt("restingTimer", treasureRestTimer);
         }
 
         if (isDragon() || ServerConfig.saveAllAbilities) {
@@ -530,9 +520,6 @@ public class DragonStateHandler extends EntityStateHandler {
             setDestructionEnabled(tag.getBoolean("destructionEnabled"));
             isGrowing = !tag.contains(IS_GROWING) || tag.getBoolean(IS_GROWING);
             starHeartState = StarHeartItem.State.values()[tag.getInt(STAR_HEART_STATE)];
-
-            treasureResting = tag.getBoolean("resting");
-            treasureRestTimer = tag.getInt("restingTimer");
         }
 
         if (isDragon() || ServerConfig.saveAllAbilities) {

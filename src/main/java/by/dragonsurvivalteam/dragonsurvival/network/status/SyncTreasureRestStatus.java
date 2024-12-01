@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.network.status;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.TreasureRestData;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -21,23 +22,22 @@ public class SyncTreasureRestStatus implements IMessage<SyncTreasureRestStatus.D
 
     public static void handleServer(Data message, IPayloadContext context) {
         context.enqueueWork(() -> {
-            DragonStateProvider.getOptional(context.player()).ifPresent(handler -> {
-                if (handler.isDragon()) {
-                    boolean update = false;
+            TreasureRestData data = TreasureRestData.getData(context.player());
+            if(DragonStateProvider.isDragon(context.player())) {
+                boolean update = false;
 
-                    if (message.state() != handler.treasureResting) {
-                        handler.treasureRestTimer = 0;
-                        handler.treasureSleepTimer = 0;
-                        update = true;
-                    }
-
-                    handler.treasureResting = message.state();
-
-                    if (update) {
-                        ((ServerLevel) context.player().level()).updateSleepingPlayerList();
-                    }
+                if (message.state() != data.treasureResting) {
+                    data.treasureRestTimer = 0;
+                    data.treasureSleepTimer = 0;
+                    update = true;
                 }
-            });
+
+                data.treasureResting = message.state();
+
+                if (update) {
+                    ((ServerLevel) context.player().level()).updateSleepingPlayerList();
+                }
+            }
         }).thenRun(() -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(context.player(), message));
     }
 

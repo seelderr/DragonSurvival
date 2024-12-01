@@ -29,6 +29,7 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.ClawInventoryData;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MovementData;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.SpinData;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.TreasureRestData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
@@ -415,14 +416,13 @@ public class ClientProxy {
             Entity entity = localPlayer.level().getEntity(message.playerId());
 
             if (entity instanceof Player player) {
-                DragonStateProvider.getOptional(player).ifPresent(handler -> {
-                    if (message.state() != handler.treasureResting) {
-                        handler.treasureRestTimer = 0;
-                        handler.treasureSleepTimer = 0;
-                    }
+                TreasureRestData data = TreasureRestData.getData(player);
+                if (message.state() != data.treasureResting) {
+                    data.treasureRestTimer = 0;
+                    data.treasureSleepTimer = 0;
+                }
 
-                    handler.treasureResting = message.state();
-                });
+                data.treasureResting = message.state();
             }
         }
     }

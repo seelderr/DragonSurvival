@@ -1,10 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.client.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncTreasureRestStatus;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MovementData;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.TreasureRestData;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
@@ -32,14 +31,13 @@ public class DragonTreasureHandler {
             return;
         }
 
-        DragonStateHandler handler = DragonStateProvider.getData(player);
-
-        if (handler.treasureResting) {
+        TreasureRestData data = TreasureRestData.getData(player);
+        if (data.treasureResting) {
             Vec3 velocity = player.getDeltaMovement();
 
             // Stop the process of resting if the player is moving too much or starts to mine sth.
             if (Math.abs(velocity.horizontalDistance()) > 0.05 || MovementData.getData(player).dig) {
-                handler.treasureResting = false;
+                data.treasureResting = false;
                 PacketDistributor.sendToServer(new SyncTreasureRestStatus.Data(player.getId(), false));
             }
         }
@@ -53,7 +51,7 @@ public class DragonTreasureHandler {
             return;
         }
 
-        DragonStateHandler data = DragonStateProvider.getData(player);
+        TreasureRestData data = TreasureRestData.getData(player);
         Window window = Minecraft.getInstance().getWindow();
 
         float sunAngle = player.level().getSunAngle(1);

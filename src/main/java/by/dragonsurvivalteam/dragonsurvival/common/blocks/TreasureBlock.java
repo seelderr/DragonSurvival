@@ -1,9 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.common.blocks;
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.particles.TreasureParticleOption;
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncTreasureRestStatus;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.TreasureRestData;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
@@ -78,11 +78,11 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
     @Override
     public @NotNull InteractionResult useWithoutItem(BlockState blockState, @NotNull Level world, @NotNull BlockPos blockPos, Player player, @NotNull BlockHitResult blockHitResult) {
         if (player.getBlockStateOn().getBlock() == blockState.getBlock()) {
-            DragonStateHandler handler = DragonStateProvider.getData(player);
+            TreasureRestData data = TreasureRestData.getData(player);
 
-            if (!handler.treasureResting) {
+            if (!data.treasureResting) {
                 if (world.isClientSide()) {
-                    handler.treasureResting = true;
+                    data.treasureResting = true;
                     PacketDistributor.sendToServer(new SyncTreasureRestStatus.Data(player.getId(), true));
                 }
 

@@ -6,6 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.TreasureRestData;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
@@ -75,11 +76,10 @@ public abstract class PlayerMixin extends LivingEntity {
     /** Allow treasure blocks to trigger sleep logic */
     @Inject(method = "isSleepingLongEnough", at = @At("HEAD"), cancellable = true)
     public void dragonSurvival$isSleepingLongEnough(CallbackInfoReturnable<Boolean> callback) {
-        DragonStateProvider.getOptional(this).ifPresent(handler -> {
-            if (handler.isDragon() && handler.treasureResting && handler.treasureSleepTimer >= 100) {
-                callback.setReturnValue(true);
-            }
-        });
+        TreasureRestData data = TreasureRestData.getData((Player) (Object) this);
+        if (DragonStateProvider.isDragon((Player)(Object)(this)) && data.treasureResting && data.treasureSleepTimer >= 100) {
+            callback.setReturnValue(true);
+        }
     }
 
     /** Make sure to consider the actual dragon hitbox when doing checks like these */

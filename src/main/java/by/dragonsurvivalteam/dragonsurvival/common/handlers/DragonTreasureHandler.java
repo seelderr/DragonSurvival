@@ -1,11 +1,11 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.TreasureBlock;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncTreasureRestStatus;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MovementData;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.TreasureRestData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
@@ -32,16 +32,16 @@ public class DragonTreasureHandler {
         Player player = event.getEntity();
 
         if (DragonStateProvider.isDragon(player)) {
-            DragonStateHandler handler = DragonStateProvider.getData(player);
+            TreasureRestData data = TreasureRestData.getData(player);
 
-            if (handler.treasureResting) {
+            if (data.treasureResting) {
                 if (player.isCrouching() || !(player.getBlockStateOn().getBlock() instanceof TreasureBlock) || MovementData.getData(player).bite) {
-                    handler.treasureResting = false;
+                    data.treasureResting = false;
                     PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncTreasureRestStatus.Data(player.getId(), false));
                     return;
                 }
 
-                handler.treasureSleepTimer++;
+                data.treasureSleepTimer++;
 
                 if (ServerConfig.treasureHealthRegen) {
                     int horizontalRange = 16;
@@ -67,14 +67,14 @@ public class DragonTreasureHandler {
                     int totalTime = ServerConfig.treasureRegenTicks;
                     int restTimer = totalTime - ServerConfig.treasureRegenTicksReduce * treasureNearby;
 
-                    if (handler.treasureRestTimer >= restTimer) {
-                        handler.treasureRestTimer = 0;
+                    if (data.treasureRestTimer >= restTimer) {
+                        data.treasureRestTimer = 0;
 
                         if (player.getHealth() < player.getMaxHealth() + 1) {
                             player.heal(1);
                         }
                     } else {
-                        handler.treasureRestTimer++;
+                        data.treasureRestTimer++;
                     }
                 }
             }
@@ -86,14 +86,12 @@ public class DragonTreasureHandler {
         LivingEntity entity = event.getEntity();
 
         if (entity instanceof Player player) {
-
             if (!player.level().isClientSide()) {
-                DragonStateProvider.getOptional(player).ifPresent(cap -> {
-                    if (cap.treasureResting) {
-                        cap.treasureResting = false;
-                        PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncTreasureRestStatus.Data(player.getId(), false));
-                    }
-                });
+                TreasureRestData data = TreasureRestData.getData(player);
+                if (data.treasureResting) {
+                    data.treasureResting = false;
+                    PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncTreasureRestStatus.Data(player.getId(), false));
+                }
             }
         }
     }

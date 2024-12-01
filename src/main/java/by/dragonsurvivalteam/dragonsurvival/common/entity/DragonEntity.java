@@ -14,6 +14,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.AbilityAnimation;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.ISecondAnimation;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MovementData;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.TreasureRestData;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStage;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.AnimationUtils;
@@ -313,6 +314,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
 
         AnimationController<DragonEntity> animationController = state.getController();
         DragonStateHandler handler = DragonStateProvider.getData(player);
+        TreasureRestData treasureRest = TreasureRestData.getData(player);
 
         if (handler.refreshBody) {
             animationController.forceAnimationReset();
@@ -355,7 +357,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
         // TODO: The transition length of animations doesn't work correctly when the framerate varies too much from 60 FPS
         if (handler.getMagicData().onMagicSource) {
             return state.setAndContinue(AnimationUtils.createAnimation(builder, SIT_ON_MAGIC_SOURCE));
-        } else if (player.isSleeping() || handler.treasureResting) {
+        } else if (player.isSleeping() || treasureRest.treasureResting) {
             return state.setAndContinue(AnimationUtils.createAnimation(builder, SLEEP));
         } else if (player.isPassenger()) {
             return state.setAndContinue(AnimationUtils.createAnimation(builder, SIT));
