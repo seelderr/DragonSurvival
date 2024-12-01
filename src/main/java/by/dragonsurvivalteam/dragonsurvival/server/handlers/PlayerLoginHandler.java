@@ -11,6 +11,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.CaveDragonConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.container.OpenDragonAltar;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.SyncComplete;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.AltarData;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.body.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.server.level.ServerPlayer;
@@ -108,7 +109,7 @@ public class PlayerLoginHandler {
             return;
         }
 
-        DragonStateHandler data = DragonStateProvider.getData(serverPlayer);
+        AltarData data = AltarData.getData(serverPlayer);
 
         if (data.altarCooldown > 0) {
             data.altarCooldown--;

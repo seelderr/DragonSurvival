@@ -8,6 +8,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.util.TextRenderUtil;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.AltarData;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.body.DragonBody;
@@ -76,7 +77,7 @@ public class DragonAltarScreen extends Screen {
         super.onClose();
         LocalPlayer player = Minecraft.getInstance().player;
         //noinspection DataFlowIssue -> player should not be null
-        DragonStateHandler data = DragonStateProvider.getData(player);
+        AltarData data = AltarData.getData(player);
         data.isInAltar = false;
 
         if (data.hasUsedAltar) {

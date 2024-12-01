@@ -4,6 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.container.OpenDragonAltar;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.AltarData;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.core.BlockPos;
@@ -65,18 +66,18 @@ public class DragonAltarBlock extends Block {
 
     @Override
     public @NotNull InteractionResult useWithoutItem(@NotNull BlockState pState, @NotNull Level pLevel, @NotNull BlockPos pPos, @NotNull Player player, @NotNull BlockHitResult pHitResult) {
-        DragonStateHandler handler = DragonStateProvider.getData(player);
+        AltarData data = AltarData.getData(player);
 
         if (!pLevel.isClientSide()) {
-            if (ServerConfig.altarUsageCooldown > 0 && handler.altarCooldown > 0) {
-                Functions.Time time = Functions.Time.fromTicks(handler.altarCooldown);
+            if (ServerConfig.altarUsageCooldown > 0 && data.altarCooldown > 0) {
+                Functions.Time time = Functions.Time.fromTicks(data.altarCooldown);
                 player.sendSystemMessage(Component.translatable(ALTAR_COOLDOWN, time.format()));
                 return InteractionResult.FAIL;
             } else {
                 PacketDistributor.sendToPlayer((ServerPlayer) player, OpenDragonAltar.INSTANCE);
-                handler.altarCooldown = Functions.secondsToTicks(ServerConfig.altarUsageCooldown);
-                handler.hasUsedAltar = true;
-                handler.isInAltar = true;
+                data.altarCooldown = Functions.secondsToTicks(ServerConfig.altarUsageCooldown);
+                data.hasUsedAltar = true;
+                data.isInAltar = true;
                 return InteractionResult.CONSUME;
             }
         }

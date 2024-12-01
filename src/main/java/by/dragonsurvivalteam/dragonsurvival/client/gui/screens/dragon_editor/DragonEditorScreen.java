@@ -28,7 +28,9 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonT
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.mixins.client.ScreenAccessor;
 import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncPlayerSkinPreset;
+import by.dragonsurvivalteam.dragonsurvival.network.status.SyncAltarCooldown;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.SyncComplete;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.AltarData;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.SpinData;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
@@ -914,9 +916,12 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
             HANDLER.getSkinData().skinPreset = save();
             data.getSkinData().renderCustomSkin = ClientDragonRenderer.renderCustomSkin;
 
-            data.altarCooldown = Functions.secondsToTicks(ServerConfig.altarUsageCooldown);
-            data.hasUsedAltar = true;
+            AltarData altarData = AltarData.getData(minecraft.player);
+            altarData.altarCooldown = Functions.secondsToTicks(ServerConfig.altarUsageCooldown);
+            altarData.hasUsedAltar = true;
+            altarData.isInAltar = false;
 
+            PacketDistributor.sendToServer(new SyncAltarCooldown.Data(minecraft.player.getId(), altarData.altarCooldown));
             PacketDistributor.sendToServer(new SyncComplete.Data(minecraft.player.getId(), data.serializeNBT(minecraft.player.registryAccess())));
         } else {
             PacketDistributor.sendToServer(new SyncPlayerSkinPreset.Data(minecraft.player.getId(), save().serializeNBT(minecraft.player.registryAccess())));

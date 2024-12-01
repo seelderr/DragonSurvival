@@ -8,6 +8,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.network.container.RequestOpenDragonInventory;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.AltarData;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -88,17 +89,12 @@ public class InventoryScreenHandler {
     @SubscribeEvent
     public static void hideOrShowAltarButton(ScreenEvent.Render.Pre renderEvent) {
         Screen screen = renderEvent.getScreen();
-        if (screen instanceof InventoryScreen inventoryScreen) {
+        if (screen instanceof InventoryScreen) {
             Player player = Minecraft.getInstance().player;
-            DragonStateProvider.getOptional(player).ifPresentOrElse(cap -> {
-                if (altarOpenButton != null) {
-                    altarOpenButton.visible = !cap.hasUsedAltar;
-                }
-            }, () -> {
-                if (altarOpenButton != null) {
-                    altarOpenButton.visible = true;
-                }
-            });
+            AltarData data = AltarData.getData(player);
+            if (altarOpenButton == null) {
+                altarOpenButton.visible = !data.hasUsedAltar;
+            }
         }
     }
 

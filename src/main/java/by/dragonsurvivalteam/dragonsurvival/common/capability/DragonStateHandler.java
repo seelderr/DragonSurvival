@@ -12,6 +12,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncSize;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAdvancementTriggers;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.AltarData;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.ClawInventoryData;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.SpinData;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.*;
@@ -65,9 +66,6 @@ public class DragonStateHandler extends EntityStateHandler {
     public boolean isGrowing = true;
     public StarHeartItem.State starHeartState = StarHeartItem.State.INACTIVE;
 
-    public int altarCooldown;
-    public boolean hasUsedAltar;
-    public boolean isInAltar;
     public boolean refreshBody;
 
     /** Last timestamp the server synchronized the player */
@@ -432,9 +430,6 @@ public class DragonStateHandler extends EntityStateHandler {
             tag.put("cap_" + i, caps[i].get().serializeNBT(provider));
         }
 
-        tag.putInt("altarCooldown", altarCooldown);
-        tag.putBoolean("usedAltar", hasUsedAltar);
-
         tag.put(ENTITY_STATE, super.serializeNBT(provider));
 
         return tag;
@@ -553,9 +548,6 @@ public class DragonStateHandler extends EntityStateHandler {
             }
         }
 
-        altarCooldown = tag.getInt("altarCooldown");
-        hasUsedAltar = tag.getBoolean("usedAltar");
-
         super.deserializeNBT(provider, tag.getCompound(ENTITY_STATE));
 
         if (isDragon()) {
@@ -623,8 +615,9 @@ public class DragonStateHandler extends EntityStateHandler {
             this.setHasFlight(false);
         }
 
-        altarCooldown = Functions.secondsToTicks(ServerConfig.altarUsageCooldown);
-        hasUsedAltar = true;
+        AltarData altarData = AltarData.getData(player);
+        altarData.altarCooldown = Functions.secondsToTicks(ServerConfig.altarUsageCooldown);
+        altarData.hasUsedAltar = true;
     }
 
     // --- Hunter handler --- //

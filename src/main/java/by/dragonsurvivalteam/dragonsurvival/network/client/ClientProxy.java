@@ -26,10 +26,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.particle.SyncParticleTrail;
 import by.dragonsurvivalteam.dragonsurvival.network.player.*;
 import by.dragonsurvivalteam.dragonsurvival.network.status.*;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
-import by.dragonsurvivalteam.dragonsurvival.registry.attachments.ClawInventoryData;
-import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MovementData;
-import by.dragonsurvivalteam.dragonsurvival.registry.attachments.SpinData;
-import by.dragonsurvivalteam.dragonsurvival.registry.attachments.TreasureRestData;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
@@ -388,8 +385,10 @@ public class ClientProxy {
             Entity entity = localPlayer.level().getEntity(message.playerId());
 
             if (entity instanceof Player player) {
-                DragonStateHandler dragonStateHandler = DragonStateProvider.getData(player);
-                dragonStateHandler.altarCooldown = message.cooldown();
+                AltarData data = AltarData.getData(player);
+                data.altarCooldown = message.cooldown();
+                data.hasUsedAltar = true;
+                data.isInAltar = false;
             }
         }
     }
