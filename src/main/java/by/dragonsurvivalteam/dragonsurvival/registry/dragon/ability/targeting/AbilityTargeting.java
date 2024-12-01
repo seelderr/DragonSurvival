@@ -38,6 +38,7 @@ public interface AbilityTargeting {
         ).apply(instance, BlockTargeting::new));
     }
 
+    // FIXME :: remove boolean, add sub-predicate (also add other predicates for easy checks like 'instanceof enemy', friendly (same team, tamed pets etc.) and so on)
     record EntityTargeting(Optional<EntityPredicate> targetConditions, List<AbilityEntityEffect> effect, boolean targetOnlyLiving) {
         public static final Codec<EntityTargeting> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 EntityPredicate.CODEC.optionalFieldOf("target_conditions").forGetter(EntityTargeting::targetConditions),
