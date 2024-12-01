@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.network.player;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DragonMovementData;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -18,18 +19,19 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 public class SyncDragonMovement implements IMessage<SyncDragonMovement.Data> {
 
     public static void handleClient(final Data message, final IPayloadContext context) {
-        context.enqueueWork(() -> ClientProxy.handlePacketSyncCapabilityMovement(message));
+        context.enqueueWork(() -> ClientProxy.handleSyncDragonMovement(message));
     }
 
     public static void handleServer(final Data message, final IPayloadContext context) {
         Entity entity = context.player();
         context.enqueueWork(() -> {
-            DragonStateProvider.getOptional(entity).ifPresent(handler -> {
-                handler.setFirstPerson(message.isFirstPerson);
-                handler.setBite(message.bite);
-                handler.setFreeLook(message.isFreeLook);
-                handler.setDesiredMoveVec(new Vec2(message.desiredMoveVecX, message.desiredMoveVecY));
-            });
+            if(DragonStateProvider.isDragon(entity)) {
+                DragonMovementData data = DragonMovementData.getData(entity);
+                data.setFirstPerson(message.isFirstPerson);
+                data.setBite(message.bite);
+                data.setFreeLook(message.isFreeLook);
+                data.setDesiredMoveVec(new Vec2(message.desiredMoveVecX, message.desiredMoveVecY));
+            }
         }).thenRun(() -> PacketDistributor.sendToPlayersTrackingEntity(entity, message));
     }
 

@@ -2,7 +2,6 @@ package by.dragonsurvivalteam.dragonsurvival.common.capability;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.commands.DragonCommand;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.objects.DragonMovementData;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.*;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
@@ -15,6 +14,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncSize;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAdvancementTriggers;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DragonSpinData;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.*;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbility;
@@ -36,7 +36,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -93,7 +92,6 @@ public class DragonStateHandler extends EntityStateHandler {
     /** Last timestamp the server synchronized the player */
     public int lastSync;
 
-    private final DragonMovementData movementData = new DragonMovementData();
     private final ClawInventory clawToolData = new ClawInventory(this);
     private final EmoteCap emoteData = new EmoteCap(this);
     private final MagicCap magicData = new MagicCap(this);
@@ -117,35 +115,6 @@ public class DragonStateHandler extends EntityStateHandler {
 
     // Needed to calculate collision damage correctly when flying. See ServerFlightHandler.
     public Vec3 preCollisionDeltaMovement = Vec3.ZERO;
-
-    public void setFreeLook(boolean isFreeLook) {
-        movementData.wasFreeLook = movementData.isFreeLook;
-        movementData.isFreeLook = isFreeLook;
-    }
-
-    public void setFirstPerson(boolean isFirstPerson) {
-        movementData.isFirstPerson = isFirstPerson;
-    }
-
-    public void setBite(boolean bite) {
-        movementData.bite = bite;
-    }
-
-    public void setDesiredMoveVec(Vec2 desiredMoveVec) {
-        movementData.desiredMoveVec = desiredMoveVec;
-    }
-
-    public void setMovementData(double bodyYaw, double headYaw, double headPitch, Vec3 deltaMovement) {
-        movementData.headYawLastFrame = movementData.headYaw;
-        movementData.bodyYawLastFrame = movementData.bodyYaw;
-        movementData.headPitchLastFrame = movementData.headPitch;
-        movementData.deltaMovementLastFrame = movementData.deltaMovement;
-
-        movementData.bodyYaw = bodyYaw;
-        movementData.headYaw = headYaw;
-        movementData.headPitch = headPitch;
-        movementData.deltaMovement = deltaMovement;
-    }
 
     /** Sets the size and retains the current stage */
     public void setClientSize(double size) {
@@ -424,10 +393,6 @@ public class DragonStateHandler extends EntityStateHandler {
         return magicData;
     }
 
-    public DragonMovementData getMovementData() {
-        return movementData;
-    }
-
     public double getSize() {
         return size;
     }
@@ -479,15 +444,6 @@ public class DragonStateHandler extends EntityStateHandler {
             abilityToLevelMap.forEach((ability, level) -> abilityLevels.putInt(Objects.requireNonNull(ability.getKey()).location().toString(), level));
             tag.put("abilityLevels", abilityLevels);
 
-            //Rendering
-            DragonMovementData movementData = getMovementData();
-            tag.putBoolean("bite", movementData.bite);
-            tag.putBoolean("dig", movementData.dig);
-
-            //Spin attack
-            tag.putInt("spinCooldown", movementData.spinCooldown);
-            tag.putInt("spinAttack", movementData.spinAttack);
-
             tag.putDouble("size", getSize());
             tag.putBoolean("destructionEnabled", getDestructionEnabled());
             tag.putBoolean(IS_GROWING, isGrowing);
@@ -500,7 +456,6 @@ public class DragonStateHandler extends EntityStateHandler {
         }
 
         if (isDragon() || ServerConfig.saveAllAbilities) {
-            tag.putBoolean("spinLearned", getMovementData().spinLearned);
             tag.putBoolean("hasWings", hasFlight());
         }
 
@@ -600,16 +555,7 @@ public class DragonStateHandler extends EntityStateHandler {
                 dragonBody = DragonBody.random(provider);
             }
 
-            setBite(tag.getBoolean("bite"));
-            getMovementData().headYawLastFrame = getMovementData().headYaw;
-            getMovementData().bodyYawLastFrame = getMovementData().bodyYaw;
-            getMovementData().headPitchLastFrame = getMovementData().headPitch;
-            getMovementData().dig = tag.getBoolean("dig");
-
             setWingsSpread(tag.getBoolean("isFlying"));
-
-            getMovementData().spinCooldown = tag.getInt("spinCooldown");
-            getMovementData().spinAttack = tag.getInt("spinAttack");
 
             // Make sure a stage is set if the player was deserialized as a dragon
             // It could be missing here if the NBT is loaded from an old save
@@ -624,7 +570,8 @@ public class DragonStateHandler extends EntityStateHandler {
         }
 
         if (isDragon() || ServerConfig.saveAllAbilities) {
-            getMovementData().spinLearned = tag.getBoolean("spinLearned");
+            // TODO: How do we replicate this behavior in DragonSpinData?
+            //getMovementData().spinLearned = tag.getBoolean("spinLearned");
             setHasFlight(tag.getBoolean("hasWings"));
         }
 
@@ -719,7 +666,7 @@ public class DragonStateHandler extends EntityStateHandler {
         setSize(player, null, NO_SIZE);
 
         if (!ServerConfig.saveAllAbilities) {
-            this.getMovementData().spinLearned = false;
+            DragonSpinData.getData(player).spinLearned = false;
             this.setHasFlight(false);
         }
 

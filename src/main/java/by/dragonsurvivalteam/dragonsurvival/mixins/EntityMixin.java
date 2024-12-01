@@ -1,13 +1,13 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.objects.DragonMovementData;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.HunterHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.CaveDragonConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.DragonBonusConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachments;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DragonMovementData;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSEntityTypeTags;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
@@ -33,12 +33,8 @@ public abstract class EntityMixin {
             return;
         }
 
-        DragonStateProvider.getOptional(player).ifPresent(handler -> {
-            if (!handler.isDragon()) {
-                return;
-            }
-
-            DragonMovementData movementData = handler.getMovementData();
+        if(DragonStateProvider.isDragon(player)) {
+            DragonMovementData movementData = DragonMovementData.getData(player);
             Vec3 originalPassPos = player.getPassengerRidingPosition(player);
             double size = DragonStateProvider.getData(passenger).getSize();
             double heightOffset = -0.15 - size * 0.08; // Arbitrarily chosen number
@@ -53,7 +49,7 @@ public abstract class EntityMixin {
             player.onPassengerTurned(passenger);
 
             callback.cancel();
-        });
+        }
     }
 
     /** Correctly rotate the passenger when riding a dragon */
@@ -64,32 +60,27 @@ public abstract class EntityMixin {
             return;
         }
 
-        DragonStateProvider.getOptional(vehicle).ifPresent(vehicleHandler -> {
-            if (!vehicleHandler.isDragon()) {
-                return;
-            }
+        if (!DragonStateProvider.isDragon(vehicle)) {
+            return;
+        }
 
-            DragonStateProvider.getOptional(passenger).ifPresent(passengerHandler -> {
-                DragonMovementData vehicleMovement = vehicleHandler.getMovementData();
-
-                if (passengerHandler.isDragon()) {
-                    DragonMovementData passengerMovement = passengerHandler.getMovementData();
-                    float facing = (float) Mth.wrapDegrees(passenger.getYRot() - vehicleMovement.bodyYawLastFrame);
-                    float facingClamped = Mth.clamp(facing, -150.0F, 150.0F);
-                    passenger.yRotO += facingClamped - facing + vehicle.yRotO;
-                    passengerMovement.bodyYaw = vehicleMovement.bodyYawLastFrame;
-                    passengerMovement.headYaw = -facing;
-                    passenger.setYRot((float) (passenger.getYRot() + facingClamped - facing + (vehicleMovement.bodyYawLastFrame - vehicleMovement.bodyYaw)));
-                } else {
-                    float facing = (float) Mth.wrapDegrees(passenger.getYRot() - vehicleMovement.bodyYawLastFrame);
-                    float facingClamped = Mth.clamp(facing, -120.0F, 120.0F);
-                    passenger.yRotO += facingClamped - facing + vehicle.yRotO;
-                    passenger.setYBodyRot((float) (passenger.getYRot() + facingClamped - facing + (vehicleMovement.bodyYawLastFrame - vehicleMovement.bodyYaw)));
-                    passenger.setYRot((float) (passenger.getYRot() + facingClamped - facing + (vehicleMovement.bodyYawLastFrame - vehicleMovement.bodyYaw)));
-                    passenger.setYHeadRot(passenger.getYRot());
-                }
-            });
-        });
+        DragonMovementData vehicleMovement = DragonMovementData.getData(vehicle);
+        if(DragonStateProvider.isDragon(passenger)) {
+            DragonMovementData passengerMovement = DragonMovementData.getData(passenger);
+            float facing = (float) Mth.wrapDegrees(passenger.getYRot() - vehicleMovement.bodyYawLastFrame);
+            float facingClamped = Mth.clamp(facing, -150.0F, 150.0F);
+            passenger.yRotO += facingClamped - facing + vehicle.yRotO;
+            passengerMovement.bodyYaw = vehicleMovement.bodyYawLastFrame;
+            passengerMovement.headYaw = -facing;
+            passenger.setYRot((float) (passenger.getYRot() + facingClamped - facing + (vehicleMovement.bodyYawLastFrame - vehicleMovement.bodyYaw)));
+        } else {
+            float facing = (float) Mth.wrapDegrees(passenger.getYRot() - vehicleMovement.bodyYawLastFrame);
+            float facingClamped = Mth.clamp(facing, -120.0F, 120.0F);
+            passenger.yRotO += facingClamped - facing + vehicle.yRotO;
+            passenger.setYBodyRot((float) (passenger.getYRot() + facingClamped - facing + (vehicleMovement.bodyYawLastFrame - vehicleMovement.bodyYaw)));
+            passenger.setYRot((float) (passenger.getYRot() + facingClamped - facing + (vehicleMovement.bodyYawLastFrame - vehicleMovement.bodyYaw)));
+            passenger.setYHeadRot(passenger.getYRot());
+        }
     }
 
     /** Don't show fire animation (when burning) when being a cave dragon when rendered in the inventory */

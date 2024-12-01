@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.mixins.client;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DragonMovementData;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
@@ -46,36 +47,35 @@ public abstract class InventoryScreenMixin extends EffectRenderingInventoryScree
             newEntity = entity;
         }
 
-        DragonStateProvider.getOptional(newEntity).ifPresentOrElse(cap -> {
-            if (cap.isDragon()) {
-                double bodyYaw = cap.getMovementData().bodyYaw;
-                double headYaw = cap.getMovementData().headYaw;
-                double headPitch = cap.getMovementData().headPitch;
-                Vec3 deltaMovement = cap.getMovementData().deltaMovement;
-                Vec3 deltaMovementLastFrame = cap.getMovementData().deltaMovementLastFrame;
+        if(DragonStateProvider.isDragon(newEntity)) {
+            DragonMovementData movementData = DragonMovementData.getData(newEntity);
+            double bodyYaw = movementData.bodyYaw;
+            double headYaw = movementData.headYaw;
+            double headPitch = movementData.headPitch;
+            Vec3 deltaMovement = movementData.deltaMovement;
+            Vec3 deltaMovementLastFrame = movementData.deltaMovementLastFrame;
 
-                cap.getMovementData().bodyYaw = newEntity.yBodyRot;
-                cap.getMovementData().headYaw = -Math.toDegrees(dragon_survival$storedXAngle);
-                cap.getMovementData().headPitch = -Math.toDegrees(dragon_survival$storedYAngle);
-                cap.getMovementData().deltaMovement = Vec3.ZERO;
-                cap.getMovementData().deltaMovementLastFrame = Vec3.ZERO;
+            movementData.bodyYaw = newEntity.yBodyRot;
+            movementData.headYaw = -Math.toDegrees(dragon_survival$storedXAngle);
+            movementData.headPitch = -Math.toDegrees(dragon_survival$storedYAngle);
+            movementData.deltaMovement = Vec3.ZERO;
+            movementData.deltaMovementLastFrame = Vec3.ZERO;
 
-                ClientDragonRenderer.isOverridingMovementData = true;
-                RenderSystem.runAsFancy(runnable);
-                ClientDragonRenderer.isOverridingMovementData = false;
+            ClientDragonRenderer.isOverridingMovementData = true;
+            RenderSystem.runAsFancy(runnable);
+            ClientDragonRenderer.isOverridingMovementData = false;
 
-                dragon_survival$storedXAngle = 0;
-                dragon_survival$storedYAngle = 0;
+            dragon_survival$storedXAngle = 0;
+            dragon_survival$storedYAngle = 0;
 
-                cap.getMovementData().bodyYaw = bodyYaw;
-                cap.getMovementData().headYaw = headYaw;
-                cap.getMovementData().headPitch = headPitch;
-                cap.getMovementData().deltaMovement = deltaMovement;
-                cap.getMovementData().deltaMovementLastFrame = deltaMovementLastFrame;
-            } else {
-                RenderSystem.runAsFancy(runnable);
-            }
-        }, () -> RenderSystem.runAsFancy(runnable));
+            movementData.bodyYaw = bodyYaw;
+            movementData.headYaw = headYaw;
+            movementData.headPitch = headPitch;
+            movementData.deltaMovement = deltaMovement;
+            movementData.deltaMovementLastFrame = deltaMovementLastFrame;
+        } else {
+            RenderSystem.runAsFancy(runnable);
+        }
     }
 
     // If we are a dragon, we don't want to angle the entire entity when rendering it with a follows mouse command (like vanilla does).

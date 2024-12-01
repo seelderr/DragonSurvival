@@ -9,6 +9,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.status.SyncMagicSourceStatus
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSParticles;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DragonMovementData;
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.SourceOfMagicPlaceholder;
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.SourceOfMagicTileEntity;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
@@ -131,7 +132,7 @@ public class SourceOfMagicHandler {
             if (handler.getMagicData().onMagicSource) {
                 Vec3 velocity = player.getDeltaMovement();
                 float groundSpeed = Mth.sqrt((float) (velocity.x * velocity.x + velocity.z * velocity.z));
-                if (Math.abs(groundSpeed) > 0.05 || handler.getMovementData().dig || player.isCrouching() && handler.getMagicData().magicSourceTimer > 40) {
+                if (Math.abs(groundSpeed) > 0.05 || DragonMovementData.getData(player).dig || player.isCrouching() && handler.getMagicData().magicSourceTimer > 40) {
                     cancelSourceOfMagicClient(player);
                 }
             }

@@ -4,6 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncTreasureRestStatus;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DragonMovementData;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
@@ -37,7 +38,7 @@ public class DragonTreasureHandler {
             Vec3 velocity = player.getDeltaMovement();
 
             // Stop the process of resting if the player is moving too much or starts to mine sth.
-            if (Math.abs(velocity.horizontalDistance()) > 0.05 || handler.getMovementData().dig) {
+            if (Math.abs(velocity.horizontalDistance()) > 0.05 || DragonMovementData.getData(player).dig) {
                 handler.treasureResting = false;
                 PacketDistributor.sendToServer(new SyncTreasureRestStatus.Data(player.getId(), false));
             }

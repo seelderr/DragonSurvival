@@ -26,6 +26,8 @@ import by.dragonsurvivalteam.dragonsurvival.network.particle.SyncParticleTrail;
 import by.dragonsurvivalteam.dragonsurvival.network.player.*;
 import by.dragonsurvivalteam.dragonsurvival.network.status.*;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DragonMovementData;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DragonSpinData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
@@ -189,14 +191,12 @@ public class ClientProxy {
         if (localPlayer != null) {
             Entity entity = localPlayer.level().getEntity(message.playerId());
 
-            if (entity instanceof Player player) {
-                DragonStateProvider.getOptional(player).ifPresent(dragonStateHandler -> {
-                    dragonStateHandler.getMovementData().spinAttack = message.spinAttack();
-                    dragonStateHandler.getMovementData().spinCooldown = message.spinCooldown();
-                    dragonStateHandler.getMovementData().spinLearned = message.spinLearned();
-                });
-
-                ClientFlightHandler.lastSync = player.tickCount;
+            if(entity != null) {
+                DragonSpinData dragonSpinData = DragonSpinData.getData(entity);
+                dragonSpinData.spinLearned = message.spinLearned();
+                dragonSpinData.spinCooldown = message.spinCooldown();
+                dragonSpinData.spinAttack = message.spinAttack();
+                ClientFlightHandler.lastSync = entity.tickCount;
             }
         }
     }
@@ -286,19 +286,18 @@ public class ClientProxy {
         }
     }
 
-    public static void handlePacketSyncCapabilityMovement(final SyncDragonMovement.Data message) {
+    public static void handleSyncDragonMovement(final SyncDragonMovement.Data message) {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
             Entity entity = localPlayer.level().getEntity(message.playerId());
 
-            if (entity instanceof Player player) {
-                DragonStateProvider.getOptional(player).ifPresent(handler -> {
-                    handler.setBite(message.bite());
-                    handler.setFirstPerson(message.isFirstPerson());
-                    handler.setFreeLook(message.isFreeLook());
-                    handler.setDesiredMoveVec(new Vec2(message.desiredMoveVecX(), message.desiredMoveVecY()));
-                });
+            if(DragonStateProvider.isDragon(entity)) {
+                DragonMovementData data = DragonMovementData.getData(entity);
+                data.setFirstPerson(message.isFirstPerson());
+                data.setBite(message.bite());
+                data.setFreeLook(message.isFreeLook());
+                data.setDesiredMoveVec(new Vec2(message.desiredMoveVecX(), message.desiredMoveVecY()));
             }
         }
     }
@@ -358,10 +357,7 @@ public class ClientProxy {
 
         if (localPlayer != null) {
             Entity entity = localPlayer.level().getEntity(message.playerId());
-
-            if (entity instanceof Player player) {
-                DragonStateProvider.getOptional(player).ifPresent(handler -> handler.getMovementData().dig = message.status());
-            }
+            DragonMovementData.getData(entity).dig = message.status();
         }
     }
 

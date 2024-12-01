@@ -5,7 +5,6 @@ import by.dragonsurvivalteam.dragonsurvival.client.models.DragonModel;
 import by.dragonsurvivalteam.dragonsurvival.client.skins.DragonSkins;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.objects.DragonMovementData;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
@@ -22,6 +21,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonMovement;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DragonMovementData;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStage;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
@@ -231,7 +231,8 @@ public class ClientDragonRenderer {
                     }
                 }
 
-                poseStack.mulPose(Axis.YN.rotationDegrees((float) handler.getMovementData().bodyYaw));
+                DragonMovementData movementData = DragonMovementData.getData(player);
+                poseStack.mulPose(Axis.YN.rotationDegrees((float) movementData.bodyYaw));
 
                 float scale = Functions.getScale(player, size);
                 poseStack.scale(scale, scale, scale);
@@ -272,7 +273,7 @@ public class ClientDragonRenderer {
                     playerAsDragon.prevXRot = Mth.lerp(0.1F, playerAsDragon.prevXRot, upRot);
                     playerAsDragon.prevXRot = Mth.clamp(playerAsDragon.prevXRot, -80, 80);
 
-                    handler.getMovementData().prevXRot = playerAsDragon.prevXRot;
+                    movementData.prevXRot = playerAsDragon.prevXRot;
 
                     if (Float.isNaN(playerAsDragon.prevXRot)) {
                         playerAsDragon.prevXRot = upRot;
@@ -347,13 +348,13 @@ public class ClientDragonRenderer {
                         playerAsDragon.prevZRot = Mth.lerp(ROLL_VEL_LERP_FACTOR, playerAsDragon.prevZRot, targetRollDeg);
                     }
 
-                    handler.getMovementData().prevXRot = playerAsDragon.prevXRot;
-                    handler.getMovementData().prevZRot = playerAsDragon.prevZRot;
+                    movementData.prevXRot = playerAsDragon.prevXRot;
+                    movementData.prevZRot = playerAsDragon.prevZRot;
 
                     poseStack.mulPose(Axis.ZP.rotation(playerAsDragon.prevZRot));
                 } else {
-                    handler.getMovementData().prevZRot = 0;
-                    handler.getMovementData().prevXRot = 0;
+                    movementData.prevZRot = 0;
+                    movementData.prevXRot = 0;
                 }
                 if (player != minecraft.player || !Minecraft.getInstance().options.getCameraType().isFirstPerson() || !isPlayerGliding || renderFirstPersonFlight) {
                     dragonRenderer.render(playerAsDragon, yaw, partialRenderTick, poseStack, renderTypeBuffer, eventLight);
@@ -366,9 +367,9 @@ public class ClientDragonRenderer {
                         poseStack.mulPose(Axis.XN.rotationDegrees(180));
                         double height = 1.3 * scale;
                         double forward = 0.3 * scale;
-                        float parrotHeadYaw = Mth.clamp(-1 * ((float) handler.getMovementData().bodyYaw - (float) handler.getMovementData().headYaw), -75, 75);
+                        float parrotHeadYaw = Mth.clamp(-1 * ((float) movementData.bodyYaw - (float) movementData.headYaw), -75, 75);
                         poseStack.translate(0, -height, -forward);
-                        renderLayer.render(poseStack, renderTypeBuffer, eventLight, player, 0, 0, partialRenderTick, (float) player.tickCount + partialRenderTick, parrotHeadYaw, (float) handler.getMovementData().headPitch);
+                        renderLayer.render(poseStack, renderTypeBuffer, eventLight, player, 0, 0, partialRenderTick, (float) player.tickCount + partialRenderTick, parrotHeadYaw, (float) movementData.headPitch);
                         poseStack.translate(0, height, forward);
                         poseStack.mulPose(Axis.XN.rotationDegrees(-180));
                         poseStack.scale(scale, scale, scale);
@@ -402,25 +403,21 @@ public class ClientDragonRenderer {
     @SubscribeEvent
     public static void spin(InputEvent.InteractionKeyMappingTriggered keyInputEvent) {
         LocalPlayer player = Minecraft.getInstance().player;
-        if (player == null) {
+        if (!DragonStateProvider.isDragon(player)) {
             return;
         }
 
-        DragonStateHandler handler = DragonStateProvider.getData(player);
-        if (!handler.isDragon()) {
-            return;
-        }
-
-        if (keyInputEvent.isAttack() && keyInputEvent.shouldSwingHand() && !handler.getMovementData().dig) {
-            handler.getMovementData().bite = true;
+        DragonMovementData movementData = DragonMovementData.getData(player);
+        if (keyInputEvent.isAttack() && keyInputEvent.shouldSwingHand() && !movementData.dig) {
+            movementData.bite = true;
         }
     }
 
     public static void setDragonMovementData(Player player, float realtimeDeltaTick) {
         if (player == null) return;
 
-        DragonStateProvider.getOptional(player).ifPresent(playerStateHandler -> {
-            if (!playerStateHandler.isDragon()) return;
+        if(DragonStateProvider.isDragon(player)) {
+            DragonMovementData movementData = DragonMovementData.getData(player);
 
             Vec3 moveVector;
             if (!ServerFlightHandler.isFlying(player)) {
@@ -430,43 +427,37 @@ public class ClientDragonRenderer {
             }
 
             // Get new body yaw & head angles
-            var newAngles = BodyAngles.calculateNext(player, playerStateHandler, realtimeDeltaTick);
-
-            // Update the movement data
-            playerStateHandler.setMovementData(newAngles.bodyYaw, newAngles.headYaw, newAngles.headPitch, moveVector);
-        });
+            var newAngles = BodyAngles.calculateNext(player, movementData, realtimeDeltaTick);
+            movementData.set(newAngles.bodyYaw, newAngles.headYaw, newAngles.headPitch, moveVector);
+        }
     }
 
     @SubscribeEvent
     public static void updateFirstPersonDataAndSendMovementData(ClientTickEvent.Pre event) {
         LocalPlayer player = Minecraft.getInstance().player;
-        if (player != null) {
-            DragonStateProvider.getOptional(player).ifPresent(playerStateHandler -> {
-                if (playerStateHandler.isDragon()) {
-                    Input input = player.input;
-                    playerStateHandler.setFirstPerson(Minecraft.getInstance().options.getCameraType().isFirstPerson());
-                    playerStateHandler.setFreeLook(Keybind.FREE_LOOK.isDown());
-                    playerStateHandler.setDesiredMoveVec(new Vec2(input.leftImpulse, input.forwardImpulse));
-                    if (player.isPassenger()) {
-                        // Prevent animation jank while we are riding an entity
-                        PacketDistributor.sendToServer(new SyncDeltaMovement.Data(player.getId(), 0, 0, 0));
-                    } else {
-                        PacketDistributor.sendToServer(new SyncDeltaMovement.Data(player.getId(), player.getDeltaMovement().x, player.getDeltaMovement().y, player.getDeltaMovement().z));
-                    }
+        if(DragonStateProvider.isDragon(player)) {
+            Input input = player.input;
+            DragonMovementData md = DragonMovementData.getData(player);
+            md.setFirstPerson(Minecraft.getInstance().options.getCameraType().isFirstPerson());
+            md.setFreeLook(Keybind.FREE_LOOK.isDown());
+            md.setDesiredMoveVec(new Vec2(input.leftImpulse, input.forwardImpulse));
+            if (player.isPassenger()) {
+                // Prevent animation jank while we are riding an entity
+                PacketDistributor.sendToServer(new SyncDeltaMovement.Data(player.getId(), 0, 0, 0));
+            } else {
+                PacketDistributor.sendToServer(new SyncDeltaMovement.Data(player.getId(), player.getDeltaMovement().x, player.getDeltaMovement().y, player.getDeltaMovement().z));
+            }
 
-                    DragonMovementData md = playerStateHandler.getMovementData();
-                    PacketDistributor.sendToServer(
-                            new SyncDragonMovement.Data(
-                                    player.getId(),
-                                    md.isFirstPerson,
-                                    md.bite,
-                                    md.isFreeLook,
-                                    md.desiredMoveVec.x,
-                                    md.desiredMoveVec.y
-                            )
-                    );
-                }
-            });
+            PacketDistributor.sendToServer(
+                    new SyncDragonMovement.Data(
+                            player.getId(),
+                            md.isFirstPerson,
+                            md.bite,
+                            md.isFreeLook,
+                            md.desiredMoveVec.x,
+                            md.desiredMoveVec.y
+                    )
+            );
         }
     }
 
@@ -555,13 +546,12 @@ public class ClientDragonRenderer {
         /// Head yaw pitch factor
         static final double HEAD_PITCH_FACTOR = 0.3D;
 
-        public static BodyAngles calculateNext(Player player, DragonStateHandler dragonStateHandler, float realtimeDeltaTick) {
+        public static BodyAngles calculateNext(Player player, DragonMovementData movementData, float realtimeDeltaTick) {
             // Handle headYaw
             float viewYRot = player.getViewYRot(realtimeDeltaTick);
             float viewXRot = player.getViewXRot(realtimeDeltaTick);
-            // Head yaw is relative to body
-            DragonMovementData movementData = dragonStateHandler.getMovementData();
 
+            // Head yaw is relative to body
             // Get pos delta since last tick - not scaled by realtimeDeltaTick
             var posDelta = new Vec3(player.getX() - player.xo, player.getY() - player.yo, player.getZ() - player.zo);
 

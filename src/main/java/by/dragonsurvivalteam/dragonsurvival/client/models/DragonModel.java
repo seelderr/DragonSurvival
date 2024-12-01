@@ -6,9 +6,9 @@ import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.Dr
 import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.objects.DragonMovementData;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.config.ClientConfig;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DragonMovementData;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.body.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStage;
 import by.dragonsurvivalteam.dragonsurvival.util.AnimationUtils;
@@ -67,8 +67,7 @@ public class DragonModel extends GeoModel<DragonEntity> {
 
         float deltaTick = Minecraft.getInstance().getTimer().getRealtimeDeltaTicks();
         float partialDeltaTick = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false);
-        DragonStateHandler handler = DragonStateProvider.getData(player);
-        DragonMovementData md = handler.getMovementData();
+        DragonMovementData md = DragonMovementData.getData(player);
 
         MathParser.setVariable("query.head_yaw", () -> md.headYaw);
         MathParser.setVariable("query.head_pitch", () -> md.headPitch);

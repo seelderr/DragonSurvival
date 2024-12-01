@@ -1,8 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.network.flight;
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DragonSpinData;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -22,11 +22,10 @@ public class SyncSpinStatus implements IMessage<SyncSpinStatus.Data> {
     public static void handleServer(final SyncSpinStatus.Data message, final IPayloadContext context) {
         Player sender = context.player();
         context.enqueueWork(() -> {
-            DragonStateProvider.getOptional(sender).ifPresent(handler -> {
-                handler.getMovementData().spinAttack = message.spinAttack;
-                handler.getMovementData().spinCooldown = message.spinCooldown;
-                handler.getMovementData().spinLearned = message.spinLearned;
-            });
+                DragonSpinData dragonSpinData = DragonSpinData.getData(sender);
+                dragonSpinData.spinLearned = message.spinLearned();
+                dragonSpinData.spinCooldown = message.spinCooldown();
+                dragonSpinData.spinAttack = message.spinAttack();
         }).thenRun(() -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(sender, message));
     }
 
