@@ -57,19 +57,6 @@ public class DragonStateHandler extends EntityStateHandler {
 
     public record SavedDragonStage(@Nullable Holder<DragonStage> dragonStage, @Nullable Holder<DragonStage> previousStage, double size) { /* Nothing to do */ }
 
-    // --- Tool swap --- //
-
-    /** Used in {@link PlayerStartMixin} and {@link PlayerEndMixin} */
-    public ItemStack storedMainHandWeapon = ItemStack.EMPTY;
-    public boolean switchedWeapon;
-
-    public ItemStack storedMainHandTool = ItemStack.EMPTY;
-    public boolean switchedTool;
-    public int switchedToolSlot = -1;
-
-    /** To track the state if a tool swap is triggered within a tool swap (should only swap back if the last tool swap finishes) */
-    public int toolSwapLayer;
-
     // --- Other --- //
 
     /** Translucent rendering in the inventory screen leads to issues (invisible model) */

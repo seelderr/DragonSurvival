@@ -228,11 +228,11 @@ public class ClawToolHandler {
             } else {
                 if (!player.level().isClientSide()) {
                     DragonStateHandler handler = DragonStateProvider.getData(player);
-                    by.dragonsurvivalteam.dragonsurvival.registry.attachments.ClawInventoryData toolSwap = ClawInventoryData.getData(player);
-                    if (toolSwap.switchedTool || toolSwap.switchedWeapon) {
+                    ClawInventoryData clawInventory = ClawInventoryData.getData(player);
+                    if (clawInventory.switchedTool || clawInventory.switchedWeapon) {
                         player.level().playSound(null, player.blockPosition(), SoundEvents.ITEM_BREAK, SoundSource.PLAYERS, 1, 1);
                         player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
-                        PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncBrokenTool.Data(player.getId(), handler.switchedTool ? handler.switchedToolSlot : ClawInventoryData.Slot.SWORD.ordinal()));
+                        PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncBrokenTool.Data(player.getId(), clawInventory.switchedTool ? clawInventory.switchedToolSlot : ClawInventoryData.Slot.SWORD.ordinal()));
                     }
                 }
             }
@@ -249,7 +249,7 @@ public class ClawToolHandler {
         ItemStack mainStack = player.getMainHandItem();
         DragonStateHandler handler = DragonStateProvider.getData(player);
 
-        if (!handler.switchedTool && !ToolUtils.shouldUseDragonTools(mainStack)) {
+        if (!ClawInventoryData.getData(player).switchedTool && !ToolUtils.shouldUseDragonTools(mainStack)) {
             // Bonus does not apply to held tools
             return;
         }

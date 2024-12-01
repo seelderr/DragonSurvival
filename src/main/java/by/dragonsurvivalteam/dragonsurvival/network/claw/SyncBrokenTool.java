@@ -27,13 +27,12 @@ public class SyncBrokenTool implements IMessage<SyncBrokenTool.Data> {
                 Entity entity = player.level().getEntity(message.playerId);
 
                 if (entity instanceof Player) {
-                    DragonStateProvider.getOptional(entity).ifPresent(handler -> {
-                        if (handler.switchedTool || handler.switchedWeapon) {
-                            player.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
-                        } else {
-                            ClawInventoryData.getData(player).getContainer().setItem(message.slot, ItemStack.EMPTY);
-                        }
-                    });
+                    ClawInventoryData data = ClawInventoryData.getData((Player) entity);
+                    if (data.switchedTool || data.switchedWeapon) {
+                        player.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
+                    } else {
+                        data.getContainer().setItem(message.slot, ItemStack.EMPTY);
+                    }
                 }
             }
         });
