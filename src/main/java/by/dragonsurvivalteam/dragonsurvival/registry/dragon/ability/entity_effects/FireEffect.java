@@ -20,7 +20,7 @@ public record FireEffect(LevelBasedValue fireTicks) implements AbilityEntityEffe
             return;
         }
 
-        entity.setRemainingFireTicks((int)fireTicks.calculate(ability.getLevel()));
+        entity.igniteForTicks((int)fireTicks.calculate(ability.getLevel()));
     }
 
     @Override

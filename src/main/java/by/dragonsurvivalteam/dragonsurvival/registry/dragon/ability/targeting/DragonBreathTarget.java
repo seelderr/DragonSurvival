@@ -37,8 +37,7 @@ public record DragonBreathTarget(Either<BlockTargeting, EntityTargeting> target,
 
             dragon.serverLevel().getEntities(EntityTypeTest.forClass(Entity.class), breathArea,
                     entity -> entityTarget.targetConditions().map(conditions -> conditions.matches(dragon.serverLevel(), dragon.position(), entity)
-                    && (!entityTarget.targetOnlyLiving() || entity instanceof LivingEntity)
-                    && !entity.is(dragon)).orElse(true)
+                    && (!entityTarget.targetOnlyLiving() || entity instanceof LivingEntity)).orElse(true) && !entity.is(dragon)
             ).forEach(entity -> entityTarget.effect().forEach(target -> target.apply(dragon, ability, entity)));
         });
     }
