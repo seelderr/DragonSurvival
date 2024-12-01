@@ -22,5 +22,5 @@ public class DSDataAttachments {
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<DamageReductions>> DAMAGE_REDUCTIONS = DS_ATTACHMENT_TYPES.register("damage_reductions", () -> AttachmentType.serializable(DamageReductions::new).build());
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<MovementData>> MOVEMENT = DS_ATTACHMENT_TYPES.register("movement_data", () -> AttachmentType.builder(MovementData::new).build());
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<SpinData>> SPIN = DS_ATTACHMENT_TYPES.register("spin_data", () -> AttachmentType.serializable(SpinData::new).copyOnDeath().build());
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<ClawInventoryData>> CLAW_INVENTORY = DS_ATTACHMENT_TYPES.register("claw_inventory_data", () -> AttachmentType.builder(ClawInventoryData::new).build());
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<ClawInventoryData>> CLAW_INVENTORY = DS_ATTACHMENT_TYPES.register("claw_inventory_data", () -> AttachmentType.serializable(ClawInventoryData::new).build());
 }
