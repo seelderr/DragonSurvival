@@ -2,14 +2,13 @@ package by.dragonsurvivalteam.dragonsurvival.mixins;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.MagicHandler;
-import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.CaveDragonConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.DragonBonusConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.ClawInventoryData;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.ToolUtils;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
@@ -165,7 +164,8 @@ public abstract class LivingEntityMixin extends Entity {
             return;
         }
 
-        boolean isInLava = DragonBonusConfig.bonusesEnabled && CaveDragonConfig.caveLavaSwimming && DragonUtils.isType(data, DragonTypes.CAVE) && isInLava();
+        // FIXME
+        boolean isInLava = DragonBonusConfig.bonusesEnabled && /*CaveDragonConfig.caveLavaSwimming &&*/ DragonUtils.isType(data, DragonTypes.CAVE) && isInLava();
 
         if (!isInLava && !isInWater() || !player.isAffectedByFluids() || player.canStandOnFluid(fluidState)) {
             return;

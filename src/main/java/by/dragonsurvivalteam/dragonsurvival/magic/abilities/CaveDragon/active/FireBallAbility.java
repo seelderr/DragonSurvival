@@ -1,29 +1,5 @@
-package by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.active;
+/*package by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.active;
 
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
-import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
-import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
-import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChargeCastAbility;
-import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
-import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilities;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
-import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-import net.minecraft.core.Holder;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
-
-import java.util.ArrayList;
-import java.util.Locale;
-
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 @Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = "■ Ranged attack: shoots out a fireball that §cexplodes§r and sets the area on fire.")
 @Translation(type = Translation.Type.ABILITY, comments = "Fireball")
@@ -182,6 +158,6 @@ public class FireBallAbility extends ChargeCastAbility {
         entity.accelerationPower = 0;
         entity.shootFromRotation(player, player.getXRot(), player.getYRot(), 1.0F, speed, 0);
         player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.FIRECHARGE_USE, entity.getSoundSource(), 1.0F, 2.0F);
-        player.level().addFreshEntity(entity);*/
+        player.level().addFreshEntity(entity);
     }
-}
+}*/

@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.common.codecs;
 
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.items.growth.StarHeartItem;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.body.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStage;
 import net.minecraft.advancements.critereon.ContextAwarePredicate;
@@ -25,7 +25,7 @@ public class Condition {
 
     // --- Builder --- //
 
-    public static EntityPredicate.Builder dragonType(final AbstractDragonType type) {
+    public static EntityPredicate.Builder dragonType(final Holder<DragonType> type) {
         return EntityPredicate.Builder.entity().subPredicate(DragonPredicate.Builder.dragon().type(type).build());
     }
 

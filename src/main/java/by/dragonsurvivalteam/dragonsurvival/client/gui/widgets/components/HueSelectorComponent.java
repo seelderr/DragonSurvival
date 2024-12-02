@@ -59,7 +59,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 
         settingsSupplier = () -> screen.preset.get(Objects.requireNonNull(screen.dragonStage.getKey())).get().layerSettings.get(layer).get();
         LayerSettings settings = settingsSupplier.get();
-        DragonPart dragonPart = DragonEditorHandler.getDragonPart(layer, settings.selectedSkin, DragonEditorScreen.HANDLER.getType());
+        DragonPart dragonPart = DragonEditorHandler.getDragonPart(layer, settings.selectedSkin, DragonEditorScreen.HANDLER.getType().getKey());
 
         glowing = new ExtendedCheckbox(x + 3, y, 20, 20, 20, Component.translatable(LangKey.GUI_GLOWING), settings.glowing, action -> { /* Nothing to do */ }) {
             final Function<Boolean, Boolean> setGlowingAction = value -> {

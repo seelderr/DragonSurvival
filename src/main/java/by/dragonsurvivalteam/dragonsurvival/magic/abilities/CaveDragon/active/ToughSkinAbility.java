@@ -1,27 +1,5 @@
-package by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.active;
+/*package by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.active;
 
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
-import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
-import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
-import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.active.AoeBuffAbility;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSParticles;
-import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
-import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
-import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.effect.MobEffectInstance;
-
-import java.util.ArrayList;
-import java.util.Locale;
-
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 @Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = "Grants additional armor points to all entities in an area around the dragon.")
 @Translation(type = Translation.Type.ABILITY, comments = "Sturdy Skin") // TODO :: strong leather, tough skin or sturdy skin?
@@ -173,4 +151,4 @@ public class ToughSkinAbility extends AoeBuffAbility {
     public boolean isDisabled() {
         return super.isDisabled() || !toughSkinEnabled;
     }
-}
+}*/

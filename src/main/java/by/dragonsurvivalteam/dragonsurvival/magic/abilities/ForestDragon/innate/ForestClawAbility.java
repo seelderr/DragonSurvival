@@ -1,13 +1,5 @@
-package by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.innate;
+/*package by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.innate;
 
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.innate.DragonClawsAbility;
-import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
-import net.minecraft.resources.ResourceLocation;
-
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 @Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = {
         "■ Forest dragons §2can§r deal increased damage, and may chop down trees without tools. They grow stronger with age.\n",
@@ -39,4 +31,4 @@ public class ForestClawAbility extends DragonClawsAbility {
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_claws_and_teeth_7.png")
         };
     }
-}
+}*/

@@ -9,8 +9,8 @@ import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.La
 import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.body.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStage;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
@@ -55,17 +55,17 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 public class DragonEditorHandler {
     private static ShaderInstance skinGenerationShader;
 
-    private static @Nullable ResourceLocation getDragonPartLocation(final EnumSkinLayer layer, final String partKey, final AbstractDragonType type) {
+    private static @Nullable ResourceLocation getDragonPartLocation(final EnumSkinLayer layer, final String partKey, final ResourceKey<DragonType> type) {
         if (Objects.equals(layer.name, "Extra") && layer != EnumSkinLayer.EXTRA) {
             return getDragonPartLocation(EnumSkinLayer.EXTRA, partKey, type);
         }
 
         if (layer == EnumSkinLayer.BASE && partKey.equalsIgnoreCase(DefaultPartLoader.NO_PART)) {
             // Without a base the dragon will be invisible
-            return ResourceLocation.parse(DragonPartLoader.DRAGON_PARTS.get(type.getTypeNameLowerCase()).get(layer).getFirst().texture());
+            return ResourceLocation.parse(DragonPartLoader.DRAGON_PARTS.get(type).get(layer).getFirst().texture());
         }
 
-        List<DragonPart> parts = DragonPartLoader.DRAGON_PARTS.get(type.getTypeNameLowerCase()).get(layer);
+        List<DragonPart> parts = DragonPartLoader.DRAGON_PARTS.get(type).get(layer);
 
         for (DragonPart part : parts) {
             if (Objects.equals(part.key(), partKey)) {
@@ -76,17 +76,17 @@ public class DragonEditorHandler {
         return null;
     }
 
-    public static @Nullable DragonPart getDragonPart(final EnumSkinLayer layer, final String partKey, final AbstractDragonType type) {
+    public static @Nullable DragonPart getDragonPart(final EnumSkinLayer layer, final String partKey, final ResourceKey<DragonType> type) {
         if (Objects.equals(layer.name, "Extra") && layer != EnumSkinLayer.EXTRA) {
             return getDragonPart(EnumSkinLayer.EXTRA, partKey, type);
         }
 
         if (layer == EnumSkinLayer.BASE && partKey.equalsIgnoreCase(DefaultPartLoader.NO_PART)) {
             // Without a base the dragon will be invisible
-            return DragonPartLoader.DRAGON_PARTS.get(type.getTypeNameLowerCase()).get(layer).getFirst();
+            return DragonPartLoader.DRAGON_PARTS.get(type).get(layer).getFirst();
         }
 
-        List<DragonPart> parts = DragonPartLoader.DRAGON_PARTS.get(type.getTypeNameLowerCase()).get(layer);
+        List<DragonPart> parts = DragonPartLoader.DRAGON_PARTS.get(type).get(layer);
 
         for (DragonPart part : parts) {
             if (Objects.equals(part.key(), partKey)) {
@@ -97,13 +97,13 @@ public class DragonEditorHandler {
         return null;
     }
 
-    public static ArrayList<String> getDragonPartKeys(final AbstractDragonType type, final Holder<DragonBody> body, final EnumSkinLayer layer) {
+    public static ArrayList<String> getDragonPartKeys(final Holder<DragonType> type, final Holder<DragonBody> body, final EnumSkinLayer layer) {
         if (Objects.equals(layer.name, "Extra") && layer != EnumSkinLayer.EXTRA) {
             return getDragonPartKeys(type, body, EnumSkinLayer.EXTRA);
         }
 
         ArrayList<String> keys = new ArrayList<>();
-        List<DragonPart> parts = DragonPartLoader.DRAGON_PARTS.get(type.getTypeNameLowerCase()).get(layer);
+        List<DragonPart> parts = DragonPartLoader.DRAGON_PARTS.get(type.getKey()).get(layer);
 
         for (DragonPart part : parts) {
             if (part.bodies() == null || part.bodies().contains(Objects.requireNonNull(body.getKey()).location().toString())) {
@@ -115,7 +115,7 @@ public class DragonEditorHandler {
     }
 
     public static ArrayList<String> getDragonPartKeys(final Player player, final EnumSkinLayer layer) {
-        return getDragonPartKeys(DragonUtils.getType(player), DragonUtils.getBody(player), layer);
+        return getDragonPartKeys(DragonStateProvider.getData(player).getType(), DragonUtils.getBody(player), layer);
     }
 
     public static CompletableFuture<List<Pair<NativeImage, ResourceLocation>>> generateSkinTextures(final DragonEntity dragon) {
@@ -164,14 +164,14 @@ public class DragonEditorHandler {
             String selectedSkin = settings.selectedSkin;
 
             if (selectedSkin != null) {
-                DragonPart skinTexture = getDragonPart(layer, selectedSkin, handler.getType());
+                DragonPart skinTexture = getDragonPart(layer, selectedSkin, handler.getType().getKey());
 
                 if (skinTexture != null) {
                     float hueVal = settings.hue - skinTexture.averageHue();
                     float satVal = settings.saturation;
                     float brightVal = settings.brightness;
 
-                    ResourceLocation location = getDragonPartLocation(layer, selectedSkin, handler.getType());
+                    ResourceLocation location = getDragonPartLocation(layer, selectedSkin, handler.getType().getKey());
                     AbstractTexture texture = Minecraft.getInstance().getTextureManager().getTexture(location);
 
                     if (settings.glowing) {
@@ -250,14 +250,14 @@ public class DragonEditorHandler {
             String selectedSkin = settings.selectedSkin;
 
             if (selectedSkin != null) {
-                DragonPart skinTexture = getDragonPart(layer, selectedSkin, handler.getType());
+                DragonPart skinTexture = getDragonPart(layer, selectedSkin, handler.getType().getKey());
 
                 if (skinTexture != null) {
                     float hue = settings.hue - skinTexture.averageHue();
                     float saturation = settings.saturation;
                     float brightness = settings.brightness;
 
-                    ResourceLocation textureLocation = getDragonPartLocation(layer, selectedSkin, handler.getType());
+                    ResourceLocation textureLocation = getDragonPartLocation(layer, selectedSkin, handler.getType().getKey());
                     NativeImage skinImage = RenderingUtils.getImageFromResource(textureLocation);
 
                     for (int x = 0; x < skinImage.getWidth(); x++) {

@@ -1,13 +1,11 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.CaveDragonConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.DragonBonusConfig;
-import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.ForestDragonConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncPlayerJump;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachments;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.DamageTypeTags;
@@ -33,7 +31,8 @@ public class DragonBonusHandler {
         LivingEntity living = event.getEntity();
         DamageSource damageSource = event.getSource();
 
-        DragonStateProvider.getOptional(living).ifPresent(handler -> {
+        // FIXME
+        /*DragonStateProvider.getOptional(living).ifPresent(handler -> {
             if (handler.isDragon()) {
                 if (DragonBonusConfig.bonusesEnabled) {
                     if (CaveDragonConfig.caveFireImmunity && DragonUtils.isType(handler, DragonTypes.CAVE) && damageSource.is(DamageTypeTags.IS_FIRE)) {
@@ -53,7 +52,7 @@ public class DragonBonusHandler {
                     }
                 }
             }
-        });
+        });*/
     }
 
     @SubscribeEvent
@@ -65,11 +64,11 @@ public class DragonBonusHandler {
         if (event.getSound() != null) {
             boolean isRelevant = event.getSound().value().getLocation().getPath().contains(".step");
 
-            if (isRelevant && DragonBonusConfig.bonusesEnabled && CaveDragonConfig.caveLavaSwimming) {
+            /*if (isRelevant && DragonBonusConfig.bonusesEnabled && CaveDragonConfig.caveLavaSwimming) {
                 if (DragonUtils.isType(player, DragonTypes.CAVE) && DragonSizeHandler.getOverridePose(player) == Pose.SWIMMING) {
                     event.setCanceled(true);
                 }
-            }
+            }*/
         }
     }
 

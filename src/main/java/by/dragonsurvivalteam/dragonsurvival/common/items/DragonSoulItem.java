@@ -2,11 +2,6 @@ package by.dragonsurvivalteam.dragonsurvival.common.items;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.CaveDragonType;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.ForestDragonType;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonType;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAdvancementTriggers;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSSounds;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
@@ -80,6 +75,8 @@ public class DragonSoulItem extends Item {
     }
 
     private static int getCustomModelData(CompoundTag tag) {
+        // FIXME
+        /*
         AbstractDragonType dragonType = DragonTypes.newDragonTypeInstance(tag.getString("type"));
 
         if (dragonType == null) {
@@ -91,7 +88,9 @@ public class DragonSoulItem extends Item {
             case CaveDragonType ignored -> 2;
             case SeaDragonType ignored -> 3;
             default -> 0;
-        };
+        };*/
+
+        return 0;
     }
 
     @Override
@@ -136,7 +135,8 @@ public class DragonSoulItem extends Item {
             }
 
             // If we transformed into a dragon, spawn particles based off of the dragon's type
-            if (handler.isDragon()) {
+            // FIXME: Need to fit this in data somewhere
+            /*if (handler.isDragon()) {
                 switch (handler.getType()) {
                     case ForestDragonType ignored -> {
                         for (int i = 0; i < 30; i++) {
@@ -155,7 +155,7 @@ public class DragonSoulItem extends Item {
                     }
                     default -> throw new IllegalStateException("Invalid dragon type: [" + handler.getType() + "]");
                 }
-            }
+            }*/
 
             return stack;
         }
@@ -178,7 +178,8 @@ public class DragonSoulItem extends Item {
     public void appendHoverText(@NotNull ItemStack stack, @NotNull TooltipContext context, @NotNull List<Component> tooltips, @NotNull TooltipFlag flag) {
         super.appendHoverText(stack, context, tooltips, flag);
 
-        if (stack.has(DataComponents.CUSTOM_DATA)) {
+        // FIXME
+        /*if (stack.has(DataComponents.CUSTOM_DATA)) {
             //noinspection DataFlowIssue, deprecation -> tag isn't modified, no need to create a copy
             CompoundTag tag = stack.get(DataComponents.CUSTOM_DATA).getUnsafe();
             tooltips.add(Component.translatable(DESCRIPTION));
@@ -205,7 +206,7 @@ public class DragonSoulItem extends Item {
             }
         } else {
             tooltips.add(Component.translatable(IS_EMPTY));
-        }
+        }*/
     }
 
     public static String getType(final ItemStack soul) {
@@ -223,7 +224,8 @@ public class DragonSoulItem extends Item {
     public void onUseTick(@NotNull final Level level, @NotNull final LivingEntity livingEntity, @NotNull final ItemStack soul, int remainingUseDuration) {
         super.onUseTick(level, livingEntity, soul, remainingUseDuration);
 
-        if (!(livingEntity instanceof Player player)) {
+        // FIXME
+       /* if (!(livingEntity instanceof Player player)) {
             return;
         }
 
@@ -243,7 +245,7 @@ public class DragonSoulItem extends Item {
 
         if (sound != null) {
             livingEntity.playSound(sound, (float) (0.3 + 0.3F * livingEntity.getRandom().nextInt(2)), livingEntity.getRandom().nextFloat() - livingEntity.getRandom().nextFloat() * 0.2F + 1.0F);
-        }
+        }*/
     }
 
     @Override
@@ -253,7 +255,8 @@ public class DragonSoulItem extends Item {
 
     @Override
     public @NotNull String getDescriptionId(@NotNull ItemStack stack) {
-        if (stack.has(DataComponents.CUSTOM_DATA)) {
+        // FIXME
+        /*if (stack.has(DataComponents.CUSTOM_DATA)) {
             AbstractDragonType dragonType = DragonTypes.newDragonTypeInstance(stack.get(DataComponents.CUSTOM_DATA).copyTag().getString("type"));
 
             switch (dragonType.toString()) {
@@ -272,6 +275,7 @@ public class DragonSoulItem extends Item {
             }
         } else {
             return EMPTY_DRAGON_SOUL;
-        }
+        }*/
+        return EMPTY_DRAGON_SOUL;
     }
 }

@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStage;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import net.minecraft.core.HolderLookup;
@@ -26,10 +26,10 @@ public class SkinPreset implements INBTSerializable<CompoundTag> {
     }
 
     public void initDefaults(final DragonStateHandler handler) {
-        initDefaults(handler.getType());
+        initDefaults(handler.getType().getKey());
     }
 
-    public void initDefaults(final AbstractDragonType type) {
+    public void initDefaults(final ResourceKey<DragonType> type) {
         if (type == null) {
             return;
         }

@@ -1,14 +1,15 @@
 package by.dragonsurvivalteam.dragonsurvival.client.handlers.magic;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.particles.LargeLightningParticleOption;
 import by.dragonsurvivalteam.dragonsurvival.common.particles.SmallFireParticleOption;
 import by.dragonsurvivalteam.dragonsurvival.common.particles.SmallPoisonParticleOption;
 import by.dragonsurvivalteam.dragonsurvival.config.ClientConfig;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChargeCastAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MagicData;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
@@ -28,28 +29,25 @@ public class ClientMagicHandler {
     public static void onFovEvent(ComputeFovModifierEvent event) {
         Player player = event.getPlayer();
 
-        DragonStateProvider.getOptional(player).ifPresent(cap -> {
-            if (Arrays.stream(cap.getEmoteData().currentEmotes).anyMatch(Objects::nonNull) && DragonStateProvider.isDragon(player)) {
-                event.setNewFovModifier(1f);
-                return;
+        DragonStateHandler handler = DragonStateProvider.getData(player);
+        if (Arrays.stream(handler.getEmoteData().currentEmotes).anyMatch(Objects::nonNull) && DragonStateProvider.isDragon(player)) {
+            event.setNewFovModifier(1f);
+            return;
+        }
+
+        DragonAbilityInstance ability = MagicData.getData(player).getCurrentlyCasting();
+
+        if (ability.getCurrentCastTime() > 0) {
+            double perc = Math.min(ability.getCurrentCastTime() / (float) ability.getCastTime(), 1) / 4;
+            double c4 = 2 * Math.PI / 3;
+
+            if (perc != 0 && perc != 1) {
+                perc = Math.pow(2, -10 * perc) * Math.sin((perc * 10 - 0.75) * c4) + 1;
             }
 
-            ActiveDragonAbility ability = cap.getMagicData().getCurrentlyCasting();
-
-            if (ability instanceof ChargeCastAbility chargeCastAbility) {
-                if (chargeCastAbility.getCastTime() > 0) {
-                    double perc = Math.min(chargeCastAbility.getCastTime() / (float) chargeCastAbility.getSkillCastingTime(), 1) / 4;
-                    double c4 = 2 * Math.PI / 3;
-
-                    if (perc != 0 && perc != 1) {
-                        perc = Math.pow(2, -10 * perc) * Math.sin((perc * 10 - 0.75) * c4) + 1;
-                    }
-
-                    float newFov = (float) Mth.clamp(perc, 1.0F, 1.0F);
-                    event.setNewFovModifier(newFov);
-                }
-            }
-        });
+            float newFov = (float) Mth.clamp(perc, 1.0F, 1.0F);
+            event.setNewFovModifier(newFov);
+        }
     }
 
     @SubscribeEvent

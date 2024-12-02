@@ -1,13 +1,5 @@
-package by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.innate;
+/*package by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.innate;
 
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.innate.InnateDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
-import net.minecraft.resources.ResourceLocation;
-
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 @Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = {
         "■ Forest dragons have a diamond skeleton, and are composed mostly of predatory plants. Their diet includes raw meat and sweet berries, and most animals fear them.\n",
@@ -35,4 +27,4 @@ public class ForestDragonInfoAbility extends InnateDragonAbility {
     public int getSortOrder() {
         return 3;
     }
-}
+}*/

@@ -3,10 +3,8 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.PlusMinusButton;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncSkillLevelChangeCost;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -24,7 +22,7 @@ public class IncreaseLevelButton extends PlusMinusButton {
 
     public int upgradeCost;
 
-    private PassiveDragonAbility ability;
+    private DragonAbilityInstance ability;
     private final int slot;
 
     public IncreaseLevelButton(int x, int y, int slot) {
@@ -34,7 +32,8 @@ public class IncreaseLevelButton extends PlusMinusButton {
 
     @Override
     public void onPress() {
-        LocalPlayer player = Objects.requireNonNull(Minecraft.getInstance().player);
+        // FIXME
+        /*LocalPlayer player = Objects.requireNonNull(Minecraft.getInstance().player);
         DragonStateHandler data = DragonStateProvider.getData(player);
 
         ability = data.getMagicData().getPassiveAbilityFromSlot(slot);
@@ -46,14 +45,14 @@ public class IncreaseLevelButton extends PlusMinusButton {
                 PacketDistributor.sendToServer(new SyncSkillLevelChangeCost(ability.getName(), newLevel, 1));
                 DragonAbilities.setAbilityLevel(player, ability.getClass(), newLevel);
             }
-        }
+        }*/
     }
 
     @Override
     public void renderWidget(@NotNull final GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         super.renderWidget(graphics, mouseX, mouseY, partialTick);
-
-        if (isHovered()) {
+        // FIXME
+        /*if (isHovered()) {
             //noinspection DataFlowIssue -> player is present
             DragonStateHandler data = DragonStateProvider.getData(Minecraft.getInstance().player);
             ability = data.getMagicData().getPassiveAbilityFromSlot(slot);
@@ -73,6 +72,6 @@ public class IncreaseLevelButton extends PlusMinusButton {
             } else {
                 upgradeCost = 0;
             }
-        }
+        }*/
     }
 }

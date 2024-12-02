@@ -5,15 +5,12 @@ import by.dragonsurvivalteam.dragonsurvival.client.models.DragonModel;
 import by.dragonsurvivalteam.dragonsurvival.client.skins.DragonSkins;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ClientConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
-import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.mixins.client.EntityRendererAccessor;
 import by.dragonsurvivalteam.dragonsurvival.mixins.client.LivingRendererAccessor;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncDeltaMovement;
@@ -23,6 +20,9 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MovementData;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonTypes;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.targeting.DragonBreathTarget;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStage;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
@@ -133,13 +133,13 @@ public class ClientDragonRenderer {
             poseStack.translate(-camera.x(), -camera.y(), -camera.z());
 
             int range = (int) localPlayer.getAttributeValue(DSAttributes.DRAGON_BREATH_RANGE);
-            AbstractDragonType dragonType = handler.getType();
+            Holder<DragonType> dragonType = handler.getType();
 
             int red = DragonUtils.isType(dragonType, DragonTypes.CAVE) ? 1 : 0;
             int green = DragonUtils.isType(dragonType, DragonTypes.FOREST) ? 1 : 0;
             int blue = DragonUtils.isType(dragonType, DragonTypes.SEA) ? 1 : 0;
 
-            LevelRenderer.renderLineBox(poseStack, buffer, DragonAbilities.calculateBreathArea(localPlayer, handler, range), red, green, blue, 1);
+            LevelRenderer.renderLineBox(poseStack, buffer, DragonBreathTarget.calculateBreathArea(localPlayer, handler.getSize(), range), red, green, blue, 1);
 
             /* Draw the area which will affect blocks
             Pair<BlockPos, Direction> data = DragonAbilities.breathStartPosition(localPlayer, red == 1 ? new NetherBreathAbility() : green == 1 ? new ForestBreathAbility() : new StormBreathAbility(), range);

@@ -1,16 +1,5 @@
-package by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.innate;
+/*package by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.innate;
 
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.CaveDragonConfig;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.innate.InnateDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 @Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = {
         "■ Cave dragons take §cdamage from water§r, snow, rain and other liquids due to their fiery nature.\n",
@@ -67,4 +56,4 @@ public class HotBloodAbility extends InnateDragonAbility {
     public int getSortOrder() {
         return 4;
     }
-}
+}*/

@@ -1,21 +1,16 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.ToolTipHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
-import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.CaveDragonConfig;
-import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.ForestDragonConfig;
-import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.SeaDragonConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.types.FoodConfigCollector;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSItemTags;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
+import net.minecraft.core.Holder;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
@@ -56,9 +51,9 @@ public class DragonFoodHandler {
 
         // No need to keep them in-memory (they are rebuilt in 'ConfigHandler#handleConfigChange')
         // Currently this method is only called on the server thread meaning there should be no issues
-        CaveDragonConfig.caveDragonFoods.clear();
-        SeaDragonConfig.seaDragonFoods.clear();
-        ForestDragonConfig.validFood.clear();
+        //CaveDragonConfig.caveDragonFoods.clear();
+        //SeaDragonConfig.seaDragonFoods.clear();
+        //ForestDragonConfig.validFood.clear();
 
         // Clear tooltip maps
         // TODO :: rebuild them here as well?
@@ -69,9 +64,11 @@ public class DragonFoodHandler {
 
     private static ConcurrentHashMap<String, Map<Item, FoodProperties>> buildDragonFoodMap() {
         ConcurrentHashMap<String, Map<Item, FoodProperties>> foodMap = new ConcurrentHashMap<>();
-        merge(foodMap, CaveDragonConfig.caveDragonFoods, DragonTypes.CAVE.getTypeName());
+        // FIXME
+        /*merge(foodMap, CaveDragonConfig.caveDragonFoods, DragonTypes.CAVE.getTypeName());
         merge(foodMap, SeaDragonConfig.seaDragonFoods, DragonTypes.SEA.getTypeName());
         merge(foodMap, ForestDragonConfig.validFood, DragonTypes.FOREST.getTypeName());
+        return foodMap;*/
         return foodMap;
     }
 
@@ -131,12 +128,14 @@ public class DragonFoodHandler {
         return builder.build();
     }
 
-    public static List<Item> getEdibleFoods(final AbstractDragonType type) {
-        if (type == null) {
+    public static List<Item> getEdibleFoods(final Holder<DragonType> type) {
+        //if (type == null) {
             return List.of();
-        }
+        //}
 
-        if (DragonUtils.isType(type, DragonTypes.FOREST) && !FOREST_DRAGON_FOOD.isEmpty()) {
+        // TODO
+
+        /*if (DragonUtils.isType(type, DragonTypes.FOREST) && !FOREST_DRAGON_FOOD.isEmpty()) {
             return FOREST_DRAGON_FOOD;
         } else if (DragonUtils.isType(type, DragonTypes.SEA) && !SEA_DRAGON_FOOD.isEmpty()) {
             return SEA_DRAGON_FOOD;
@@ -172,11 +171,12 @@ public class DragonFoodHandler {
             SEA_DRAGON_FOOD = foods;
         }
 
-        return foods;
+        return foods;*/
     }
 
-    public static @Nullable FoodProperties getDragonFoodProperties(final ItemStack stack, final AbstractDragonType type) {
-        FoodProperties properties = DRAGON_FOODS.get(type.getTypeName()).get(stack.getItem());
+    public static @Nullable FoodProperties getDragonFoodProperties(final ItemStack stack, final Holder<DragonType> type) {
+        // TODO
+        /*FoodProperties properties = DRAGON_FOODS.get(type.getTypeName()).get(stack.getItem());
 
         if (properties != null) {
             return properties;
@@ -189,13 +189,14 @@ public class DragonFoodHandler {
             } else {
                 return baseProperties;
             }
-        }
+        }*/
 
         return null;
     }
 
-    public static @Nullable FoodProperties getDragonFoodProperties(final Item item, final AbstractDragonType type) {
-        FoodProperties properties = DRAGON_FOODS.get(type.getTypeName()).get(item);
+    public static @Nullable FoodProperties getDragonFoodProperties(final Item item, final Holder<DragonType> type) {
+        // TODO
+        /*FoodProperties properties = DRAGON_FOODS.get(type.getTypeName()).get(item);
 
         if (properties != null) {
             return properties;
@@ -210,15 +211,18 @@ public class DragonFoodHandler {
             }
         }
 
-        return null;
+        return null;*/
+        return item.getFoodProperties(new ItemStack(item), null);
     }
 
-    public static boolean isEdible(final ItemStack stack, final AbstractDragonType type) {
-        if (requireDragonFood && type != null && DRAGON_FOODS.get(type.getTypeName()).containsKey(stack.getItem())) {
+    public static boolean isEdible(final ItemStack stack, final Holder<DragonType> type) {
+        // TODO
+        return true;
+        /*if (requireDragonFood && type != null && DRAGON_FOODS.get(type.getTypeName()).containsKey(stack.getItem())) {
             return true;
         }
 
-        return stack.getFoodProperties(null) != null;
+        return stack.getFoodProperties(null) != null;*/
     }
 
     public static int getUseDuration(final ItemStack stack, final Player entity) {

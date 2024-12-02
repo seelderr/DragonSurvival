@@ -2,8 +2,8 @@ package by.dragonsurvivalteam.dragonsurvival.common.codecs;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.items.growth.StarHeartItem;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.body.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStage;
 import com.mojang.serialization.Codec;
@@ -24,14 +24,14 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 
 public record DragonPredicate(
-        Optional<String> dragonType,
+        Optional<HolderSet<DragonType>> dragonType,
         Optional<DragonStagePredicate> dragonStage,
         Optional<HolderSet<DragonBody>> dragonBody,
         Optional<MinMaxBounds.Doubles> size,
         Optional<StarHeartItem.State> starHeartState
 ) implements EntitySubPredicate {
     public static final MapCodec<DragonPredicate> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-            Codec.STRING.optionalFieldOf("dragon_type").forGetter(DragonPredicate::dragonType),
+            RegistryCodecs.homogeneousList(DragonType.REGISTRY).optionalFieldOf("dragon_type").forGetter(DragonPredicate::dragonType),
             DragonStagePredicate.CODEC.optionalFieldOf("dragon_stage").forGetter(DragonPredicate::dragonStage),
             RegistryCodecs.homogeneousList(DragonBody.REGISTRY).optionalFieldOf("dragon_body").forGetter(DragonPredicate::dragonBody),
             MinMaxBounds.Doubles.CODEC.optionalFieldOf("size").forGetter(DragonPredicate::size),
@@ -81,7 +81,7 @@ public record DragonPredicate(
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType") // ignore
     public static class Builder {
-        private Optional<String> dragonType = Optional.empty();
+        private Optional<HolderSet<DragonType>> dragonType = Optional.empty();
         private Optional<DragonStagePredicate> dragonStage = Optional.empty();
         private Optional<HolderSet<DragonBody>> dragonBody = Optional.empty();
         private Optional<MinMaxBounds.Doubles> size = Optional.empty();
@@ -91,8 +91,8 @@ public record DragonPredicate(
             return new DragonPredicate.Builder();
         }
 
-        public DragonPredicate.Builder type(final AbstractDragonType dragonType) {
-            this.dragonType = Optional.of(dragonType.getTypeNameLowerCase());
+        public DragonPredicate.Builder type(final Holder<DragonType> dragonType) {
+            this.dragonType = Optional.of(HolderSet.direct(dragonType));
             return this;
         }
 

@@ -2,10 +2,8 @@ package by.dragonsurvivalteam.dragonsurvival.registry;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.effects.ModifiableMobEffect;
-import by.dragonsurvivalteam.dragonsurvival.common.effects.Stress;
 import by.dragonsurvivalteam.dragonsurvival.common.effects.TradeEffect;
 import by.dragonsurvivalteam.dragonsurvival.common.effects.WingDisablingEffect;
-import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.active.ToughSkinAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -23,9 +21,9 @@ import static by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers.TOUGH_SK
 public class DSEffects { // TODO :: add descriptions for the missing N/A marked effects
     public static final DeferredRegister<MobEffect> DS_MOB_EFFECTS = DeferredRegister.create(BuiltInRegistries.MOB_EFFECT, MODID);
 
-    @Translation(type = Translation.Type.EFFECT, comments = "Stress")
+    /*@Translation(type = Translation.Type.EFFECT, comments = "Stress")
     @Translation(type = Translation.Type.EFFECT_DESCRIPTION, comments = "Applied to forest dragons who remain too long in the dark. Instantly removes all saturation, and quickly depletes hunger.")
-    public static Holder<MobEffect> STRESS = DS_MOB_EFFECTS.register("stress", () -> new Stress(0xf4a2e8));
+    public static Holder<MobEffect> STRESS = DS_MOB_EFFECTS.register("stress", () -> new Stress(0xf4a2e8));*/
 
     /** Some effects are handled in {@link by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonBonusHandler} and {@link by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientFlightHandler} */
     @Translation(type = Translation.Type.EFFECT, comments = "Trapped")
@@ -104,12 +102,13 @@ public class DSEffects { // TODO :: add descriptions for the missing N/A marked 
     @Translation(type = Translation.Type.EFFECT_DESCRIPTION, comments = "Forest dragons produce this poisonous gas. Plants will grow when exposed to their breath, while most other things will have their life drained.")
     public static Holder<MobEffect> DRAIN = DS_MOB_EFFECTS.register("drain", () -> new ModifiableMobEffect(MobEffectCategory.HARMFUL, 0x0, false));
 
-    @Translation(type = Translation.Type.EFFECT, comments = "Strong Leather")
+    // FIXME
+    /*@Translation(type = Translation.Type.EFFECT, comments = "Strong Leather")
     @Translation(type = Translation.Type.EFFECT_DESCRIPTION, comments = "Grants additional armor points to all entities in an area around the dragon.")
     public static Holder<MobEffect> STRONG_LEATHER = DS_MOB_EFFECTS.register("strong_leather",
             () -> new ModifiableMobEffect(MobEffectCategory.BENEFICIAL, 0x0, false)
                     .addAttributeModifier(Attributes.ARMOR, TOUGH_SKIN, ToughSkinAbility.toughSkinArmorValue, Operation.ADD_VALUE)
-    );
+    );*/
 
     @Translation(type = Translation.Type.EFFECT, comments = "Blood Siphon")
     @Translation(type = Translation.Type.EFFECT_DESCRIPTION, comments = "N/A") // TODO

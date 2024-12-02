@@ -29,7 +29,7 @@ public interface AttributeModifierSupplier {
         }));
     }
 
-    default void applyModifiers(final LivingEntity entity, final String dragonType, double level) {
+    default void applyModifiers(final LivingEntity entity, final Holder<DragonType> dragonType, double level) {
         modifiers().forEach(modifier -> {
             AttributeInstance instance = entity.getAttribute(modifier.attribute());
             applyModifier(modifier, instance, dragonType, level);
@@ -51,14 +51,14 @@ public interface AttributeModifierSupplier {
     }
 
     /** Intended for usage within descriptions */
-    default double getAttributeValue(final String dragonType, double value, final Holder<Attribute> attribute) {
+    default double getAttributeValue(final Holder<DragonType> dragonType, double value, final Holder<Attribute> attribute) {
         AttributeInstance instance = new AttributeInstance(attribute, ignored -> { /* Nothing to do */ });
         applyModifiers(instance, dragonType, value);
         return instance.getValue();
     }
 
-    private void applyModifier(final Modifier modifier, @Nullable final AttributeInstance instance, final String dragonType, double level) {
-        if (instance == null || modifier.dragonType().isPresent() && !modifier.dragonType().get().equals(dragonType)) {
+    private void applyModifier(final Modifier modifier, @Nullable final AttributeInstance instance, final Holder<DragonType> dragonType, double level) {
+        if (instance == null || modifier.dragonType().isPresent() && !dragonType.is(modifier.dragonType().get())) {
             return;
         }
 
@@ -67,15 +67,15 @@ public interface AttributeModifierSupplier {
         storeId(instance.getAttribute(), attributeModifier.id());
     }
 
-    private void applyModifier(final Modifier modifier, @Nullable final AttributeInstance instance, final String dragonType, int level) {
-        if (instance == null || modifier.dragonType().isPresent() && !modifier.dragonType().get().equals(dragonType)) {
+    private void applyModifier(final Modifier modifier, @Nullable final AttributeInstance instance, final Holder<DragonType> dragonType, int level) {
+        if (instance == null || modifier.dragonType().isPresent() && !dragonType.is(modifier.dragonType().get())) {
             return;
         }
 
         instance.addPermanentModifier(modifier.getModifier(getModifierType(), level));
     }
 
-    private void applyModifiers(@Nullable final AttributeInstance instance, final String dragonType, double value) {
+    private void applyModifiers(@Nullable final AttributeInstance instance, final Holder<DragonType> dragonType, double value) {
         if (instance == null) {
             return;
         }

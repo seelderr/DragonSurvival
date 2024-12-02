@@ -261,9 +261,10 @@ public class ClawToolHandler {
         double bonus = handler.getStage().value().breakSpeedMultiplier();
         BlockState state = event.getState();
 
-        if (!state.is(handler.getType().harvestableBlocks()) || ClawInventoryData.getData(player).hasValidClawTool(state)) {
+        // FIXME
+        /*if (!state.is(handler.getType().harvestableBlocks()) || ClawInventoryData.getData(player).hasValidClawTool(state)) {
             bonus = getReducedBonus(bonus);
-        }
+        }*/
 
         event.setNewSpeed((float) (event.getNewSpeed() * bonus));
     }

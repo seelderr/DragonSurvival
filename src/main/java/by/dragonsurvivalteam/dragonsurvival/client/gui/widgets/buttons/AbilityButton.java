@@ -1,22 +1,11 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons;
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.MagicCap;
-import by.dragonsurvivalteam.dragonsurvival.magic.MagicDragonRender;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncMagicCap;
-import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.Minecraft;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbility;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.FormattedText;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.FormattedCharSequence;
-import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -65,21 +54,22 @@ public class AbilityButton extends Button {
     public void onClick(double pMouseX, double pMouseY) {
         super.onClick(pMouseX, pMouseY);
 
-        if (skillType == 0) {
+        // FIXME
+        /*if (skillType == 0) {
             screen.renderables.forEach(s -> {
                 if (s instanceof AbilityButton btn) {
                     if (btn != this && btn.skillType == 0 && btn.dragging) {
-                        MagicCap cap = DragonStateProvider.getData(Minecraft.getInstance().player).getMagicData();
+                        MagicData data = MagicData.getData(Minecraft.getInstance().player);
                         btn.onRelease(pMouseX, pMouseY);
-                        DragonAbility ab1 = cap.getAbilityFromSlot(btn.slot);
-                        DragonAbility ab2 = cap.getAbilityFromSlot(slot);
+                        DragonAbilityInstance ab1 = data.getAbilityFromSlot(btn.slot);
+                        DragonAbilityInstance ab2 = data.getAbilityFromSlot(slot);
                         cap.activeDragonAbilities.put(slot, ab1.getName());
                         cap.activeDragonAbilities.put(btn.slot, ab2.getName());
                         PacketDistributor.sendToServer(new SyncMagicCap.Data(Minecraft.getInstance().player.getId(), cap.serializeNBT(Minecraft.getInstance().player.registryAccess())));
                     }
                 }
             });
-        }
+        }*/
     }
 
     @Override
@@ -93,7 +83,8 @@ public class AbilityButton extends Button {
 
     @Override
     public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        DragonStateProvider.getOptional(Minecraft.getInstance().player).ifPresent(cap -> {
+        // FIXME
+        /*DragonStateProvider.getOptional(Minecraft.getInstance().player).ifPresent(cap -> {
             DragonAbility ab =
                     skillType == 0 ? cap.getMagicData().getAbilityFromSlot(slot) :
                             skillType == 1 ? cap.getMagicData().getPassiveAbilityFromSlot(slot) :
@@ -146,6 +137,6 @@ public class AbilityButton extends Button {
                 MagicDragonRender.drawAbilityHover(guiGraphics, getX() + width, yPos, ability);
                 guiGraphics.pose().popPose();
             }
-        }
+        }*/
     }
 }

@@ -1,4 +1,4 @@
-package by.dragonsurvivalteam.dragonsurvival.magic.common;
+package by.dragonsurvivalteam.dragonsurvival.client;
 
 public class AbilityAnimation {
     public String animationKey;

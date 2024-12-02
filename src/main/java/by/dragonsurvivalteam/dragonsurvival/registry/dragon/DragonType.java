@@ -1,8 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.dragon;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.MiscCodecs;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.MiscDragonTextures;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.*;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.body.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.penalty.DragonPenalty;
@@ -30,8 +29,10 @@ public record DragonType(
         HolderSet<DragonBody> bodies,
         HolderSet<DragonAbility> abilities,
         List<Holder<DragonPenalty>> penalties,
+        List<Modifier> modifiers,
+        List<FoodModifier> foodData,
         MiscDragonTextures miscResources
-) {
+) implements AttributeModifierSupplier {
     public static final ResourceKey<Registry<DragonType>> REGISTRY = ResourceKey.createRegistryKey(DragonSurvival.res("dragon_types"));
 
     public static final Codec<DragonType> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
@@ -41,6 +42,8 @@ public record DragonType(
             RegistryCodecs.homogeneousList(DragonBody.REGISTRY).optionalFieldOf("bodies", HolderSet.empty()).forGetter(DragonType::bodies),
             MiscCodecs.dragonAbilityCodec().optionalFieldOf("abilities", HolderSet.empty()).forGetter(DragonType::abilities),
             DragonPenalty.CODEC.listOf().optionalFieldOf("penalties", List.of()).forGetter(DragonType::penalties),
+            Modifier.CODEC.listOf().optionalFieldOf("modifiers", List.of()).forGetter(DragonType::modifiers),
+            FoodModifier.CODEC.listOf().optionalFieldOf("food_data", List.of()).forGetter(DragonType::foodData),
             MiscDragonTextures.CODEC.fieldOf("misc_resources").forGetter(DragonType::miscResources)
     ).apply(instance, instance.stable(DragonType::new)));
 
@@ -50,5 +53,15 @@ public record DragonType(
     @SubscribeEvent
     public static void register(final DataPackRegistryEvent.NewRegistry event) {
         event.dataPackRegistry(REGISTRY, DIRECT_CODEC, DIRECT_CODEC);
+    }
+
+    @Override
+    public List<Modifier> modifiers() {
+        return modifiers;
+    }
+
+    @Override
+    public ModifierType getModifierType() {
+        return ModifierType.DRAGON_TYPE;
     }
 }

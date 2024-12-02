@@ -1,24 +1,5 @@
-package by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active;
+/*package by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active;
 
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
-import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
-import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.active.AoeBuffAbility;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSParticles;
-import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
-import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.effect.MobEffectInstance;
-
-import java.util.ArrayList;
-
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 @Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = {
         "■ AOE Buff: multiplies the amount of §2experience§r gained from monsters up to a limit.\n",
@@ -130,8 +111,8 @@ public class RevealingTheSoulAbility extends AoeBuffAbility {
 
     @Override
     public MobEffectInstance getEffect() {
-        return new MobEffectInstance(DSEffects.REVEALING_THE_SOUL, Functions.secondsToTicks(revealingTheSoulDuration), /* TODO :: scale with level? */ 0, false, false);
-    }
+        return new MobEffectInstance(DSEffects.REVEALING_THE_SOUL, Functions.secondsToTicks(revealingTheSoulDuration), /* TODO :: scale with level? */ /*0, false, false);*/
+    /*}
 
     @Override
     public int getSkillCastingTime() {
@@ -150,4 +131,4 @@ public class RevealingTheSoulAbility extends AoeBuffAbility {
     public boolean isDisabled() {
         return super.isDisabled() || !revealingTheSoul;
     }
-}
+}*/

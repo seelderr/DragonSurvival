@@ -1,15 +1,5 @@
-package by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.passive;
+/*package by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.passive;
 
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
-import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.AthleticsAbility;
-import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
-import net.minecraft.resources.ResourceLocation;
-
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 @Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = {
         "■ Standing on wooden or grassy blocks will give you §2Speed %s§r\n",
@@ -65,4 +55,4 @@ public class ForestAthleticsAbility extends AthleticsAbility {
     public boolean isDisabled() {
         return super.isDisabled() || !ForestAthleticsAbility.forestAthletics;
     }
-}
+}*/

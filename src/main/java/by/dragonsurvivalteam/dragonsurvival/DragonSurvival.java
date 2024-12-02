@@ -1,8 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival;
 
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
-import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.registry.*;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachments;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.loot.AddTableLootExtendedLootModifier;
@@ -47,10 +45,8 @@ public class DragonSurvival {
     public DragonSurvival(IEventBus bus, ModContainer container) {
         PROXY = FMLLoader.getDist().isClient() ? new ClientProxy() : new ServerProxy();
 
-        DragonTypes.registerTypes();
 
         ConfigHandler.initConfig();
-        DragonAbilities.initAbilities();
 
         bus.addListener(this::addPackFinders);
 

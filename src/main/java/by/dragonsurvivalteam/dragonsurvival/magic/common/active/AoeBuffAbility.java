@@ -1,21 +1,5 @@
-package by.dragonsurvivalteam.dragonsurvival.magic.common.active;
+/*package by.dragonsurvivalteam.dragonsurvival.magic.common.active;
 
-import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.AbilityAnimation;
-import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
-import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.Mth;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 
 public abstract class AoeBuffAbility extends ChargeCastAbility {
     @Override
@@ -85,4 +69,4 @@ public abstract class AoeBuffAbility extends ChargeCastAbility {
     public AbilityAnimation getStoppingAnimation() {
         return new AbilityAnimation("mass_buff", 0.56 * 20, true, true);
     }
-}
+}*/

@@ -1,59 +1,5 @@
-package by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active;
+/*package by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active;
 
-import by.dragonsurvivalteam.dragonsurvival.client.sounds.StormBreathSound;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.common.particles.LargeLightningParticleOption;
-import by.dragonsurvivalteam.dragonsurvival.common.particles.SmallLightningParticleOption;
-import by.dragonsurvivalteam.dragonsurvival.config.obj.*;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.active.BreathAbility;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSSounds;
-import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachments;
-import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
-import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
-import by.dragonsurvivalteam.dragonsurvival.util.TargetingFunctions;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.sounds.SimpleSoundInstance;
-import net.minecraft.client.resources.sounds.SoundInstance;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.FluidTags;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.AreaEffectCloud;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LightningBolt;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.monster.Creeper;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.alchemy.PotionContents;
-import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.level.ClipContext.Fluid;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.fml.loading.FMLEnvironment;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSPotions.STORM_BREATH;
 
 @Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = {
         "■ Elemental breath: a stream of sparks. Targets become §c«Electrified»§r and deal electric damage to everything nearby.\n",
@@ -198,7 +144,7 @@ public class StormBreathAbility extends BreathAbility {
 
         for (LivingEntity target : secondaryTargets) {
             if (player != null) {
-                TargetingFunctions.attackTargets(player, eTarget -> eTarget.hurt(player.damageSources()/* TODO 1.20 :: Unsure */.mobProjectile(source, player), (float) damage), target);
+                TargetingFunctions.attackTargets(player, eTarget -> eTarget.hurt(player.damageSources()/* TODO 1.20 :: Unsure *//*.mobProjectile(source, player), (float) damage), target);
             } else {
                 target.hurt(target.damageSources().mobAttack(source), (float) damage);
             }
@@ -482,4 +428,4 @@ public class StormBreathAbility extends BreathAbility {
     public boolean requiresStationaryCasting() {
         return false;
     }
-}
+}*/

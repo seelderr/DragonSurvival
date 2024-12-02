@@ -3,12 +3,8 @@ package by.dragonsurvivalteam.dragonsurvival.common.capability;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.commands.DragonCommand;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.EmoteCap;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.MagicCap;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.SkinCap;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.SubCap;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.HunterHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.items.growth.StarHeartItem;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
@@ -20,21 +16,18 @@ import by.dragonsurvivalteam.dragonsurvival.registry.attachments.ClawInventoryDa
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachments;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.SpinData;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilities;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.body.DragonBodies;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.body.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStage;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStages;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import by.dragonsurvivalteam.dragonsurvival.util.ToolUtils;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import net.minecraft.ResourceLocationException;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -44,9 +37,7 @@ import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 import javax.annotation.Nullable;
@@ -55,7 +46,7 @@ public class DragonStateHandler extends EntityStateHandler {
     public static final int NO_SIZE = -1;
 
     @SuppressWarnings("unchecked")
-    public final Supplier<SubCap>[] caps = new Supplier[]{this::getSkinData, this::getMagicData, this::getEmoteData};
+    public final Supplier<SubCap>[] caps = new Supplier[]{this::getSkinData, this::getEmoteData};
 
     public record SavedDragonStage(@Nullable Holder<DragonStage> dragonStage, @Nullable Holder<DragonStage> previousStage, double size) { /* Nothing to do */ }
 
@@ -75,15 +66,10 @@ public class DragonStateHandler extends EntityStateHandler {
     /** Last timestamp the server synchronized the player */
     public int lastSync;
     private final EmoteCap emoteData = new EmoteCap(this);
-    private final MagicCap magicData = new MagicCap(this);
     private final SkinCap skinData = new SkinCap(this);
-    private final Map<String, SavedDragonStage> savedDragonStages = new ConcurrentHashMap<>();
+    private final Map<ResourceKey<DragonType>, SavedDragonStage> savedDragonStages = new ConcurrentHashMap<>();
 
-    // TODO: Will replace dragonType fully as I work and test stuff, but for now keep the old one around so the game launches
-    private AbstractDragonType dragonType;
-
-    Object2IntOpenHashMap<Holder<DragonAbility>> abilityToLevelMap = new Object2IntOpenHashMap<>();
-    private Holder<DragonType> realDragonType;
+    private Holder<DragonType> dragonType;
     private Holder<DragonBody> dragonBody;
     private Holder<DragonStage> dragonStage;
     public Holder<DragonStage> previousStage;
@@ -153,7 +139,7 @@ public class DragonStateHandler extends EntityStateHandler {
             DSAdvancementTriggers.BE_DRAGON.get().trigger(serverPlayer);
             serverPlayer.refreshDimensions();
 
-            setSavedDragonStage(dragonType.getTypeNameLowerCase(), new SavedDragonStage(dragonStage, previousStage, size));
+            setSavedDragonStage(dragonType.getKey(), new SavedDragonStage(dragonStage, previousStage, size));
             DSModifiers.updateSizeModifiers(player, this);
         }
     }
@@ -192,11 +178,11 @@ public class DragonStateHandler extends EntityStateHandler {
         this.size = this.dragonStage.value().getBoundedSize(newSize);
     }
 
-    public @Nullable SavedDragonStage getSavedDragonStage(final String dragonType) {
+    public @Nullable SavedDragonStage getSavedDragonStage(final ResourceKey<DragonType> dragonType) {
         return savedDragonStages.get(dragonType);
     }
 
-    private void setSavedDragonStage(final String dragonType, final SavedDragonStage savedDragonStage) {
+    private void setSavedDragonStage(final ResourceKey<DragonType> dragonType, final SavedDragonStage savedDragonStage) {
         if (savedDragonStage == null) {
             savedDragonStages.remove(dragonType);
             return;
@@ -209,12 +195,12 @@ public class DragonStateHandler extends EntityStateHandler {
         savedDragonStages.put(dragonType, savedDragonStage);
     }
 
-    private void setSavedDragonStage(final String dragonType) {
+    private void setSavedDragonStage(final ResourceKey<DragonType> dragonType) {
         setSavedDragonStage(dragonType, new SavedDragonStage(dragonStage, previousStage, size));
     }
 
     // TODO :: use optional for these?
-    public AbstractDragonType getType() {
+    public Holder<DragonType> getType() {
         return dragonType;
     }
 
@@ -223,60 +209,26 @@ public class DragonStateHandler extends EntityStateHandler {
     }
 
     public Holder<DragonType> getDragonType() {
-        return realDragonType;
+        return dragonType;
     }
 
     public Holder<DragonBody> getBody() {
         return dragonBody;
     }
 
-    public String getTypeName() {
-        if (dragonType == null) {
-            return "human";
-        }
-
-        return dragonType.getTypeName();
-    }
-
-    public String getTypeNameLowerCase() {
-        if (dragonType == null) {
-            return "human";
-        }
-
-        return dragonType.getTypeNameLowerCase();
-    }
-
-    public String getSubtypeName() {
-        if (dragonType == null) {
-            return "human";
-        }
-
-        return dragonType.getSubtypeName();
-    }
-
-    public void setType(final AbstractDragonType type, Player player) {
-        AbstractDragonType oldType = dragonType;
+    public void setType(final Holder<DragonType> type, Player player) {
+        Holder<DragonType> oldType = dragonType;
         setType(type);
 
-        if (!DragonUtils.isType(oldType, dragonType)) {
+        if (!oldType.is(type.getKey())) {
             DSModifiers.updateTypeModifiers(player, this);
-            skinData.skinPreset.initDefaults(dragonType);
+            skinData.skinPreset.initDefaults(dragonType.getKey());
         }
     }
 
-    /** Only used for rendering related code - to properly set the type (and update modifiers) use {@link DragonStateHandler#setType(AbstractDragonType, Player)} */
-    public void setType(final AbstractDragonType type) {
-        if (type == null) {
-            dragonType = null;
-            return;
-        }
-
-        if (DragonUtils.isType(dragonType, type)) {
-            return;
-        }
-
-        getMagicData().initAbilities(type);
-        dragonType = DragonTypes.newDragonTypeInstance(type.getSubtypeName());
+    /** Only used for rendering related code - to properly set the type (and update modifiers) use {@link DragonStateHandler#setType(Holder, Player)} */
+    public void setType(final Holder<DragonType> type) {
+        dragonType = type;
     }
 
     public void setBody(final Holder<DragonBody> body, Player player) {
@@ -331,9 +283,10 @@ public class DragonStateHandler extends EntityStateHandler {
 
         int harvestLevel = 0;
 
-        if (state == null || state.is(getType().harvestableBlocks())) {
+        // TODO
+        /*if (state == null || state.is(getType().harvestableBlocks())) {
             harvestLevel = getStage().value().harvestLevelBonus();
-        }
+        }*/
 
         if (state != null) {
             harvestLevel += player.getExistingData(DSDataAttachments.HARVEST_BONUSES).map(data -> data.get(state)).orElse(0);
@@ -356,10 +309,6 @@ public class DragonStateHandler extends EntityStateHandler {
 
     public void setHasFlight(boolean hasFlight) {
         this.hasFlight = hasFlight;
-    }
-
-    public MagicCap getMagicData() {
-        return magicData;
     }
 
     public double getSize() {
@@ -396,19 +345,11 @@ public class DragonStateHandler extends EntityStateHandler {
 
     public CompoundTag serializeNBT(HolderLookup.Provider provider, boolean isSavingForSoul) {
         CompoundTag tag = new CompoundTag();
-        tag.putString("type", dragonType != null ? dragonType.getTypeName() : "none");
-        tag.putString("subtype", dragonType != null ? dragonType.getSubtypeName() : "none");
         tag.putString(DRAGON_BODY, dragonBody != null ? Objects.requireNonNull(dragonBody.getKey()).location().toString() : "none");
         tag.putString(DRAGON_STAGE, dragonStage != null ? Objects.requireNonNull(dragonStage.getKey()).location().toString() : "none");
-        tag.putString(DRAGON_TYPE, realDragonType != null ? Objects.requireNonNull(realDragonType.getKey()).location().toString() : "none");
+        tag.putString(DRAGON_TYPE, dragonType != null ? Objects.requireNonNull(dragonType.getKey()).location().toString() : "none");
 
         if (isDragon()) {
-            tag.put("typeData", dragonType.writeNBT());
-
-            CompoundTag abilityLevels = new CompoundTag();
-            abilityToLevelMap.forEach((ability, level) -> abilityLevels.putInt(Objects.requireNonNull(ability.getKey()).location().toString(), level));
-            tag.put("abilityLevels", abilityLevels);
-
             tag.putDouble("size", getSize());
             tag.putBoolean("destructionEnabled", getDestructionEnabled());
             tag.putBoolean(IS_GROWING, isGrowing);
@@ -423,14 +364,19 @@ public class DragonStateHandler extends EntityStateHandler {
 
         if (isSavingForSoul && getType() != null) {
             // Only store the size of the dragon the player is currently in if we are saving for the soul
-            storeSavedStage(getType().getTypeNameLowerCase(), tag);
+            storeSavedStage(provider, getStage(), tag);
         } else if (!isSavingForSoul) {
-            DragonTypes.getTypes().forEach(dragonType -> storeSavedStage(dragonType, tag));
+            for (ResourceKey<DragonType> type : ResourceHelper.keys(provider, DragonType.REGISTRY)) {
+                DragonStateHandler.SavedDragonStage savedStage = getSavedDragonStage(type);
+                if(savedStage != null) {
+                    storeSavedStage(provider, savedStage.dragonStage, tag);
+                }
+            }
         }
 
         for (int i = 0; i < caps.length; i++) {
             if (isSavingForSoul) {
-                if (/* Emote Data */ i == 2) {
+                if (/* Emote Data */ i == 1) {
                     continue;
                 }
             }
@@ -449,30 +395,11 @@ public class DragonStateHandler extends EntityStateHandler {
     }
 
     public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag, boolean isLoadingForSoul) { // TODO :: make a different method for soul
-        if (tag.getAllKeys().contains("subtype")) {
-            dragonType = DragonTypes.newDragonTypeInstance(tag.getString("subtype"));
-        } else {
-            dragonType = DragonTypes.newDragonTypeInstance(tag.getString("type"));
-        }
-
-        if (dragonType != null && tag.contains("typeData")) {
-            dragonType.readNBT(tag.getCompound("typeData"));
-        }
-
-        CompoundTag abilityLevels = tag.getCompound("abilityLevels");
-        abilityToLevelMap.clear();
-
-        for (String key : abilityLevels.getAllKeys()) {
-            provider.holder(DragonAbilities.key(ResourceLocation.parse(key)))
-                    .ifPresentOrElse(ability -> abilityToLevelMap.put(ability, abilityLevels.getInt(key)),
-                            () -> DragonSurvival.LOGGER.warn("Cannot set ability [{}] while deserializing NBT of [{}] due to the ability not existing", key, tag));
-        }
-
         String storedDragonType = tag.getString(DRAGON_TYPE);
 
         if(!storedDragonType.isEmpty()) {
             provider.holder(by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonTypes.key(ResourceLocation.parse(storedDragonType)))
-                    .ifPresentOrElse(realDragonType -> this.realDragonType = realDragonType,
+                    .ifPresentOrElse(realDragonType -> this.dragonType = realDragonType,
                             () -> DragonSurvival.LOGGER.warn("Cannot set dragon type [{}] while deserializing NBT of [{}] due to the dragon type not existing", storedDragonType, tag));
         }
 
@@ -488,24 +415,25 @@ public class DragonStateHandler extends EntityStateHandler {
         double size = tag.getDouble(SIZE);
         Holder<DragonStage> dragonStage = null;
 
-        String storedDragonStage = tag.getString(DRAGON_STAGE);
-
-        if (!storedDragonStage.isEmpty()) {
-            Holder<DragonStage> loadedDragonStage = loadStage(provider, storedDragonStage);
-
-            if (loadedDragonStage != null) {
-                dragonStage = loadedDragonStage;
-            } else if (size != NO_SIZE) {
+        var loadedDragonStageKey = ResourceKey.codec(DragonStage.REGISTRY).parse(provider.createSerializationContext(NbtOps.INSTANCE), tag.get(DRAGON_STAGE));
+        if(loadedDragonStageKey.isSuccess()) {
+            var loadedDragonStage = provider.lookup(DragonStage.REGISTRY).get().get(loadedDragonStageKey.getOrThrow());
+            if(loadedDragonStage.isPresent()) {
+                dragonStage = loadedDragonStage.get();
+            } else if(size != NO_SIZE) {
                 dragonStage = DragonStage.get(provider, size);
-                DragonSurvival.LOGGER.warn("Cannot set dragon stage [{}] while deserializing NBT of [{}] due to the dragon stage not existing - setting [{}] as fallback", storedDragonStage, tag, dragonStage);
+                DragonSurvival.LOGGER.warn("Cannot set dragon stage [{}] while deserializing NBT of [{}] due to the dragon stage not existing - setting [{}] as fallback", tag.get(DRAGON_STAGE), tag, dragonStage);
             }
         }
 
-        String storedPreviousDragonStage = tag.getString(PREVIOUS_DRAGON_STAGE);
-
-        if (!storedPreviousDragonStage.isEmpty()) {
-            // This is not interesting enough to the user to log a warning
-            provider.holder(DragonStages.key(ResourceLocation.parse(storedPreviousDragonStage))).ifPresent(previousStage -> this.previousStage = previousStage);
+        var loadedPreviousDragonStageKey = ResourceKey.codec(DragonStage.REGISTRY).parse(provider.createSerializationContext(NbtOps.INSTANCE), tag.get(PREVIOUS_DRAGON_STAGE));
+        if(loadedPreviousDragonStageKey.isSuccess()) {
+            var loadedPreviousDragonStage = provider.lookup(DragonStage.REGISTRY).get().get(loadedPreviousDragonStageKey.getOrThrow());
+            if(loadedPreviousDragonStage.isPresent()) {
+                this.previousStage = loadedPreviousDragonStage.get();
+            } else {
+                DragonSurvival.LOGGER.warn("Cannot set previous dragon stage [{}] while deserializing NBT of [{}] due to the previous dragon stage not existing", tag.get(PREVIOUS_DRAGON_STAGE), tag);
+            }
         }
 
         if (dragonType != null) {
@@ -533,9 +461,11 @@ public class DragonStateHandler extends EntityStateHandler {
 
         if (isLoadingForSoul && getType() != null) {
             // Only load the size of the dragon the player is currently in if we are loading for the soul
-            setSavedDragonStage(getTypeNameLowerCase(), loadSavedStage(provider, getTypeNameLowerCase(), tag));
+            setSavedDragonStage(dragonType.getKey(), loadSavedStage(provider, dragonType.getKey(), tag));
         } else if (!isLoadingForSoul) {
-            DragonTypes.getTypes().forEach(dragonType -> setSavedDragonStage(dragonType, loadSavedStage(provider, dragonType, tag)));
+            for (ResourceKey<DragonType> type : ResourceHelper.keys(provider, DragonType.REGISTRY)) {
+                setSavedDragonStage(type, loadSavedStage(provider, type, tag));
+            }
         }
 
         for (int i = 0; i < caps.length; i++) {
@@ -564,39 +494,30 @@ public class DragonStateHandler extends EntityStateHandler {
         }
     }
 
-    private @Nullable SavedDragonStage loadSavedStage(@Nullable final HolderLookup.Provider provider, final String dragonType, final CompoundTag tag) {
-        CompoundTag compound = tag.getCompound(dragonType + SAVED_STAGE_SUFFIX);
+    private @Nullable SavedDragonStage loadSavedStage(final HolderLookup.Provider provider, final ResourceKey<DragonType> dragonType, final CompoundTag tag) {
+        CompoundTag compound = tag.getCompound(dragonType.toString() + SAVED_STAGE_SUFFIX);
 
         if (compound.isEmpty()) {
             return null;
         }
 
-        Holder<DragonStage> dragonStage = loadStage(provider, compound.getString(DRAGON_STAGE));
-        Holder<DragonStage> previousDragonStage = loadStage(provider, compound.getString(PREVIOUS_DRAGON_STAGE));
+        Holder<DragonStage> dragonStage = provider.lookup(DragonStage.REGISTRY).get().getOrThrow(ResourceKey.codec(DragonStage.REGISTRY).parse(provider.createSerializationContext(NbtOps.INSTANCE), tag.get(DRAGON_STAGE)).getOrThrow());
+        Holder<DragonStage> previousDragonStage = provider.lookup(DragonStage.REGISTRY).get().getOrThrow(ResourceKey.codec(DragonStage.REGISTRY).parse(provider.createSerializationContext(NbtOps.INSTANCE), tag.get(PREVIOUS_DRAGON_STAGE)).getOrThrow());
         double size = compound.getDouble(SIZE);
 
         return new SavedDragonStage(dragonStage, previousDragonStage, size);
     }
 
-    private void storeSavedStage(final String dragonType, final CompoundTag tag) {
-        SavedDragonStage savedDragonStage = savedDragonStages.get(dragonType);
+    private void storeSavedStage(final HolderLookup.Provider provider, final Holder<DragonStage> dragonStage, final CompoundTag tag) {
+        SavedDragonStage savedDragonStage = savedDragonStages.get(dragonType.getKey());
 
         if (savedDragonStage != null) {
             CompoundTag savedStageTag = new CompoundTag();
-            savedStageTag.putString(DRAGON_STAGE, dragonType);
-            savedStageTag.putString(PREVIOUS_DRAGON_STAGE, dragonType);
+            savedStageTag.put(DRAGON_STAGE, ResourceKey.codec(DragonStage.REGISTRY).encodeStart(provider.createSerializationContext(NbtOps.INSTANCE), dragonStage.getKey()).getOrThrow());
+            savedStageTag.put(PREVIOUS_DRAGON_STAGE, ResourceKey.codec(DragonStage.REGISTRY).encodeStart(provider.createSerializationContext(NbtOps.INSTANCE), dragonStage.getKey()).getOrThrow());
             savedStageTag.putDouble(SIZE, size);
 
-            tag.put(dragonType + SAVED_STAGE_SUFFIX, savedStageTag);
-        }
-    }
-
-    private @Nullable Holder<DragonStage> loadStage(@Nullable final HolderLookup.Provider provider, final String dragonStage) {
-        try {
-            ResourceLocation location = ResourceLocation.parse(dragonStage);
-            return ResourceHelper.get(provider, DragonStages.key(location), DragonStage.REGISTRY).orElse(null);
-        } catch (ResourceLocationException ignored) {
-            return null;
+            tag.put(dragonType.getKey().toString() + SAVED_STAGE_SUFFIX, savedStageTag);
         }
     }
 
@@ -608,7 +529,7 @@ public class DragonStateHandler extends EntityStateHandler {
     public void revertToHumanForm(Player player, boolean isRevertingFromSoul) {
         // Don't set the saved dragon size if we are reverting from a soul, as we already are storing the size of the dragon in the soul
         if (ServerConfig.saveGrowthStage && !isRevertingFromSoul) {
-            this.setSavedDragonStage(this.getTypeName());
+            this.setSavedDragonStage(dragonType.getKey());
         }
 
         // Drop everything in your claw slots
@@ -631,11 +552,14 @@ public class DragonStateHandler extends EntityStateHandler {
     // --- Hunter handler --- //
 
     public void modifyHunterStacks(int modification) {
-        hunterStacks = Math.clamp(hunterStacks + modification, 0, HunterHandler.MAX_HUNTER_STACKS);
+        // FIXME
+        //hunterStacks = Math.clamp(hunterStacks + modification, 0, HunterHandler.MAX_HUNTER_STACKS);
     }
 
     public boolean hasMaxHunterStacks() {
-        return hunterStacks == HunterHandler.MAX_HUNTER_STACKS;
+        // FIXME
+        return false;
+        //return hunterStacks == HunterHandler.MAX_HUNTER_STACKS;
     }
 
     public boolean hasHunterStacks() {
@@ -648,6 +572,14 @@ public class DragonStateHandler extends EntityStateHandler {
 
     public int getHunterStacks() {
         return hunterStacks;
+    }
+
+    public String getTypeNameLowerCase() {
+        return dragonType.getRegisteredName();
+    }
+
+    public ResourceLocation getFoodIcons() {
+        return dragonType.value().miscResources().foodSprites();
     }
 
     public static final String DRAGON_TYPE = "dragon_type";

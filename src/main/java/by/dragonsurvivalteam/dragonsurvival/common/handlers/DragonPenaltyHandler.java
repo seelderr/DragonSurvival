@@ -1,20 +1,11 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.CaveDragonType;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.ForestDragonType;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonType;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.CaveDragonConfig;
-import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.ForestDragonConfig;
-import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.SeaDragonConfig;
-import by.dragonsurvivalteam.dragonsurvival.config.types.ItemHurtConfig;
-import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonType;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSItemTags;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.PotionUtils;
 import net.minecraft.world.damagesource.DamageSource;
@@ -25,9 +16,7 @@ import net.minecraft.world.inventory.ArmorSlot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.PotionItem;
 import net.minecraft.world.item.alchemy.Potion;
-import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -36,7 +25,6 @@ import net.neoforged.neoforge.event.ItemStackedOnOtherEvent;
 import net.neoforged.neoforge.event.entity.ProjectileImpactEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.List;
 import java.util.Optional;
@@ -47,7 +35,7 @@ import static by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigH
 public class DragonPenaltyHandler {
     @SubscribeEvent
     public static void hitByWaterPotion(ProjectileImpactEvent potionEvent) {
-        if (!ServerConfig.penaltiesEnabled || CaveDragonConfig.caveSplashDamage == 0.0) {
+        if (!ServerConfig.penaltiesEnabled /*|| CaveDragonConfig.caveSplashDamage == 0.0*/) {
             return;
         }
 
@@ -75,7 +63,8 @@ public class DragonPenaltyHandler {
                         if(dragonStateHandler.getType() == null || !DragonUtils.isType(dragonStateHandler, DragonTypes.CAVE)){
                             return;
                         }
-                        player.hurt(new DamageSource(DSDamageTypes.get(player.level(), DSDamageTypes.WATER_BURN)), CaveDragonConfig.caveSplashDamage.floatValue());
+                        // FIXME
+                        player.hurt(new DamageSource(DSDamageTypes.get(player.level(), DSDamageTypes.WATER_BURN)), 0/*CaveDragonConfig.caveSplashDamage.floatValue()*/);
                     }
                 });
             }
@@ -84,7 +73,8 @@ public class DragonPenaltyHandler {
 
     @SubscribeEvent
     public static void consumeHurtfulItem(LivingEntityUseItemEvent.Finish destroyItemEvent) {
-        if (!ServerConfig.penaltiesEnabled || !(destroyItemEvent.getEntity() instanceof Player player)) {
+        // FIXME
+        /*if (!ServerConfig.penaltiesEnabled || !(destroyItemEvent.getEntity() instanceof Player player)) {
             return;
         }
 
@@ -111,12 +101,13 @@ public class DragonPenaltyHandler {
                 player.hurt(player.damageSources().generic(), damage);
                 return;
             }
-        }
+        }*/
     }
 
     @SubscribeEvent
     public static void onWaterConsumed(LivingEntityUseItemEvent.Finish destroyItemEvent) {
-        if (!ServerConfig.penaltiesEnabled || SeaDragonConfig.seaTicksWithoutWater == 0) {
+        // FIXME
+        /*if (!ServerConfig.penaltiesEnabled || SeaDragonConfig.seaTicksWithoutWater == 0) {
             return;
         }
 
@@ -139,7 +130,7 @@ public class DragonPenaltyHandler {
                     PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncDragonType.Data(player.getId(), seaDragonType.writeNBT()));
                 }
             }
-        });
+        });*/
     }
 
     public static boolean itemIsBlacklisted(Item item) {

@@ -3,6 +3,8 @@ package by.dragonsurvivalteam.dragonsurvival.registry.attachments;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ModifierWithDuration;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -49,7 +51,7 @@ public class ModifiersWithDuration implements INBTSerializable<CompoundTag> {
 
         modifiersWithDuration.put(modifier.baseData().id(), modifier);
 
-        String dragonType = DragonStateProvider.getOptional(target).map(DragonStateHandler::getTypeNameLowerCase).orElse(null);
+        Holder<DragonType> dragonType = DragonStateProvider.getOptional(target).map(DragonStateHandler::getDragonType).orElse(null);
         modifier.applyModifiers(target, dragonType, modifier.appliedAbilityLevel());
     }
 

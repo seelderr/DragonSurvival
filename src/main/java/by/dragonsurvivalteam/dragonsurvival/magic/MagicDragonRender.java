@@ -1,10 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.magic;
 
-import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.innate.InnateDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -41,8 +38,9 @@ public class MagicDragonRender {
 
     private static final ResourceLocation BARS = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/widget_bars.png");
 
-    public static void drawAbilityHover(@NotNull final GuiGraphics guiGraphics, int x, int y, final DragonAbility ability) {
-        int colorXPos = ability instanceof ActiveDragonAbility ? 0 : ability instanceof InnateDragonAbility ? 20 : 0;
+    public static void drawAbilityHover(@NotNull final GuiGraphics guiGraphics, int x, int y, final DragonAbilityInstance ability) {
+        // FIXME
+        /*int colorXPos = ability instanceof ActiveDragonAbility ? 0 : ability instanceof InnateDragonAbility ? 20 : 0;
         int colorYPos = ability instanceof ActiveDragonAbility ? 20 : 0;
 
         FormattedText desc = ability.getDescription();
@@ -118,6 +116,6 @@ public class MagicDragonRender {
             RenderSystem.enableBlend();
             guiGraphics.blit(INVALID_ICON, x + 5, y + 5, 0, 0, 16, 16, 16, 16);
             RenderSystem.disableBlend();
-        }
+        }*/
     }
 }

@@ -3,16 +3,13 @@ package by.dragonsurvivalteam.dragonsurvival.network.client;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.DragonAltarScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientFlightHandler;
-import by.dragonsurvivalteam.dragonsurvival.client.handlers.magic.ClientCastingHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEditorRegistry;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SavedSkinPresets;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawRender;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawsMenu;
 import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncDragonSkinSettings;
@@ -27,6 +24,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.player.*;
 import by.dragonsurvivalteam.dragonsurvival.network.status.*;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.*;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
@@ -96,11 +94,11 @@ public class ClientProxy {
         SavedSkinPresets savedCustomizations = DragonEditorRegistry.getSavedCustomizations(localPlayer.registryAccess());
 
         if (savedCustomizations != null) {
-            AbstractDragonType type = data.getType();
+            Holder<DragonType> type = data.getType();
 
             //noinspection DataFlowIssue -> level and key are present
-            int selectedSaveSlot = savedCustomizations.current.getOrDefault(type.getTypeNameLowerCase(), new HashMap<>()).getOrDefault(data.getStage().getKey().location().toString(), 0);
-            SkinPreset preset = savedCustomizations.skinPresets.getOrDefault(type.getTypeNameLowerCase(), new HashMap<>()).getOrDefault(selectedSaveSlot, new SkinPreset());
+            int selectedSaveSlot = savedCustomizations.current.getOrDefault(type.getKey(), new HashMap<>()).getOrDefault(data.getStage().getKey().location().toString(), 0);
+            SkinPreset preset = savedCustomizations.skinPresets.getOrDefault(type.getKey(), new HashMap<>()).getOrDefault(selectedSaveSlot, new SkinPreset());
             PacketDistributor.sendToServer(new SyncPlayerSkinPreset.Data(localPlayer.getId(), preset.serializeNBT(localPlayer.registryAccess())));
         } else {
             PacketDistributor.sendToServer(new SyncPlayerSkinPreset.Data(localPlayer.getId(), new SkinPreset().serializeNBT(localPlayer.registryAccess())));
@@ -118,12 +116,12 @@ public class ClientProxy {
         SavedSkinPresets savedCustomizations = DragonEditorRegistry.getSavedCustomizations(sender.registryAccess());
 
         if (savedCustomizations != null) {
-            AbstractDragonType type = data.getType();
+            Holder<DragonType> type = data.getType();
 
             if (type != null) {
                 //noinspection DataFlowIssue -> level and key are present
-                int selectedSaveSlot = savedCustomizations.current.getOrDefault(type.getTypeNameLowerCase(), new HashMap<>()).getOrDefault(data.getStage().getKey().location().toString(), 0);
-                SkinPreset preset = savedCustomizations.skinPresets.getOrDefault(type.getTypeNameLowerCase(), new HashMap<>()).getOrDefault(selectedSaveSlot, new SkinPreset());
+                int selectedSaveSlot = savedCustomizations.current.getOrDefault(type.getKey(), new HashMap<>()).getOrDefault(data.getStage().getKey().location().toString(), 0);
+                SkinPreset preset = savedCustomizations.skinPresets.getOrDefault(type.getKey(), new HashMap<>()).getOrDefault(selectedSaveSlot, new SkinPreset());
                 context.reply(new SyncPlayerSkinPreset.Data(sender.getId(), preset.serializeNBT(sender.registryAccess())));
             }
         } else {
@@ -196,7 +194,8 @@ public class ClientProxy {
         }
     }
 
-    public static void handleSyncAbilityCasting(final SyncAbilityCasting.Data message) {
+    // FIXME: I'm pretty sure this is done entirely differently
+    /*public static void handleSyncAbilityCasting(final SyncAbilityCasting.Data message) {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
@@ -221,7 +220,7 @@ public class ClientProxy {
                 });
             }
         }
-    }
+    }*/
 
     public static void handleSyncMagicCap(final SyncMagicCap.Data message, HolderLookup.Provider provider) {
         Player localPlayer = Minecraft.getInstance().player;
@@ -230,7 +229,8 @@ public class ClientProxy {
             Entity entity = localPlayer.level().getEntity(message.playerId());
 
             if (entity instanceof Player player) {
-                DragonStateProvider.getOptional(player).ifPresent(handler -> handler.getMagicData().deserializeNBT(provider, message.nbt()));
+                MagicData magicData = MagicData.getData(player);
+                magicData.deserializeNBT(provider, message.nbt());
             }
         }
     }
@@ -242,11 +242,10 @@ public class ClientProxy {
             Entity entity = localPlayer.level().getEntity(message.playerid());
 
             if (entity instanceof Player player) {
-                DragonStateProvider.getOptional(player).ifPresent(handler -> {
-                    handler.getMagicData().setCurrentMana(message.currentMana());
-                    handler.getMagicData().setSelectedAbilitySlot(message.selectedSlot());
-                    handler.getMagicData().setRenderAbilities(message.renderHotbar());
-                });
+                MagicData magicData = MagicData.getData(player);
+                magicData.setCurrentMana(message.currentMana());
+                magicData.setSelectedAbilitySlot(message.selectedSlot());
+                magicData.setRenderAbilities(message.renderHotbar());
             }
         }
     }
@@ -309,7 +308,8 @@ public class ClientProxy {
         }
     }
 
-    public static void handleSyncDragonTypeData(final SyncDragonType.Data message) {
+    // TODO: Don't think this is needed anymore (we need something new for penalty data sync maybe?
+    /*public static void handleSyncDragonTypeData(final SyncDragonType.Data message) {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
@@ -323,7 +323,7 @@ public class ClientProxy {
                 });
             }
         }
-    }
+    }*/
 
     public static void handleSyncGrowthState(final SyncGrowthState.Data message) {
         Player localPlayer = Minecraft.getInstance().player;
@@ -390,7 +390,8 @@ public class ClientProxy {
         }
     }
 
-    public static void handleSyncMagicSourceStatus(final SyncMagicSourceStatus.Data message) {
+    // TODO: Don't think this is needed anymore
+    /*public static void handleSyncMagicSourceStatus(final SyncMagicSourceStatus.Data message) {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
@@ -403,7 +404,7 @@ public class ClientProxy {
                 });
             }
         }
-    }
+    }*/
 
     public static void handleSyncTreasureRestStatus(final SyncTreasureRestStatus.Data message) {
         Player localPlayer = Minecraft.getInstance().player;

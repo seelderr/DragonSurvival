@@ -73,13 +73,14 @@ public class DSItemTags extends ItemTagsProvider {
                 .addTag(ItemTags.SWORDS)
                 .addTag(Tags.Items.MELEE_WEAPON_TOOLS);
 
-        tag(CHARRED_FOOD)
-                .add(DSItems.CHARGED_COAL.value())
-                .add(DSItems.CHARGED_SOUP.value())
-                .add(DSItems.CHARRED_MEAT.value())
-                .add(DSItems.CHARRED_MUSHROOM.value())
-                .add(DSItems.CHARRED_SEAFOOD.value())
-                .add(DSItems.CHARRED_VEGETABLE.value());
+        // FIXME
+//        tag(CHARRED_FOOD)
+//                .add(DSItems.CHARGED_COAL.value())
+//                .add(DSItems.CHARGED_SOUP.value())
+//                .add(DSItems.CHARRED_MEAT.value())
+//                .add(DSItems.CHARRED_MUSHROOM.value())
+//                .add(DSItems.CHARRED_SEAFOOD.value())
+//                .add(DSItems.CHARRED_VEGETABLE.value());
 
         tag(COLD_ITEMS)
                 .add(Items.SNOWBALL)

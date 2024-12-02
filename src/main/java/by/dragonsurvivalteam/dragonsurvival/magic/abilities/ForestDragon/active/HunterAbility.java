@@ -1,29 +1,5 @@
-package by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.active;
+/*package by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.active;
 
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
-import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
-import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
-import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.AbilityAnimation;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChargeCastAbility;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
-import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
-import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
-import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.player.Player;
-
-import java.util.ArrayList;
-import java.util.Locale;
-
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 @Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = {
         "■ Personal buff: Activates the §2Hunter§r effect, which allows you to become invisible in tall grass and increases your movement speed. Your first melee strike will remove this effect and cause a critical hit with a §c%s§r damage bonus.\n",
@@ -70,8 +46,8 @@ public class HunterAbility extends ChargeCastAbility {
     public static Boolean translucentItemsFirstPerson = true;
 
     @Translation(key = "hunter_fix_translucency", type = Translation.Type.CONFIGURATION, comments = "This enables the shader features of fabulous mode which are needed for translucency to work correctly")
-    @ConfigOption(side = ConfigSide.CLIENT, category = {"forest_dragon", "magic", "abilities", "active", "hunter"}, key = "hunter_fix_translucency", /* Otherwise might crash */ requiresRestart = true)
-    public static Boolean fixTranslucency = true;
+    @ConfigOption(side = ConfigSide.CLIENT, category = {"forest_dragon", "magic", "abilities", "active", "hunter"}, key = "hunter_fix_translucency", /* Otherwise might crash */ /*requiresRestart = true)
+    /*public static Boolean fixTranslucency = true;
 
     private static final Integer[] REQUIRED_LEVELS = new Integer[]{0, 25, 35, 55};
 
@@ -204,4 +180,4 @@ public class HunterAbility extends ChargeCastAbility {
     public boolean isDisabled() {
         return super.isDisabled() || !hunterEnabled;
     }
-}
+}*/

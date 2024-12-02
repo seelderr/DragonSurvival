@@ -1,20 +1,5 @@
-package by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.passive;
+/*package by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.passive;
 
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
-import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
-import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
-import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-
-import java.util.ArrayList;
-
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 @Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = {
         "■ Your target has a %s%% chance to receive the §c«Burned»§r effect from your attacks.\n",
@@ -90,4 +75,4 @@ public class BurnAbility extends PassiveDragonAbility {
     public boolean isDisabled() {
         return super.isDisabled() || !burn;
     }
-}
+}*/

@@ -2,11 +2,8 @@ package by.dragonsurvivalteam.dragonsurvival.client.handlers.magic;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.MagicCap;
 import by.dragonsurvivalteam.dragonsurvival.config.ClientConfig;
 import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncAbilityCasting;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncDragonAbilitySlot;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
@@ -45,7 +42,8 @@ public class ClientCastingHandler {
         if (player.isSpectator() || !DragonStateProvider.isDragon(player))
             return;
 
-        DragonStateHandler dragonStateHandler = DragonStateProvider.getData(player);
+        // FIXME
+        /*DragonStateHandler dragonStateHandler = DragonStateProvider.getData(player);
         MagicCap magicData = dragonStateHandler.getMagicData();
 
         // TODO: all of this needs a rework, the current code just the original updated to fit the new Keybinds
@@ -166,6 +164,6 @@ public class ClientCastingHandler {
                 status = CastingStatus.Idle;
                 castStartTime = -1;
             }
-        }
+        }*/
     }
 }

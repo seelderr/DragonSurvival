@@ -4,15 +4,12 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.AbilityScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.SkillProgressButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.CaveDragonType;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.ForestDragonType;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.ChatFormatting;
@@ -84,7 +81,8 @@ public class ToolTipHandler {
             Item item = tooltipEvent.getItemStack().getItem();
             List<Component> toolTip = tooltipEvent.getToolTip();
 
-            if (DragonFoodHandler.getEdibleFoods(DragonTypes.FOREST).contains(item)) {
+            // FIXME
+           /* if (DragonFoodHandler.getEdibleFoods(DragonTypes.FOREST).contains(item)) {
                 toolTip.add(createFoodTooltip(item, DragonTypes.FOREST));
             }
 
@@ -94,23 +92,25 @@ public class ToolTipHandler {
 
             if (DragonFoodHandler.getEdibleFoods(DragonTypes.SEA).contains(item)) {
                 toolTip.add(createFoodTooltip(item, DragonTypes.SEA));
-            }
+            }*/
         }
     }
 
-    private static MutableComponent createFoodTooltip(final Item item, final AbstractDragonType type) {
-        String translationKey = switch (type) {
+    private static MutableComponent createFoodTooltip(final Item item, final ResourceKey<DragonType> type) {
+        // FIXME
+        /*String translationKey = switch (type) {
             case CaveDragonType ignored -> CAVE_DRAGON_FOOD;
             case SeaDragonType ignored -> SEA_DRAGON_FOOD;
             case ForestDragonType ignored -> FOREST_DRAGON_FOOD;
             default -> throw new IllegalArgumentException("Invalid dragon type [" + type + "]");
-        };
+        };*/
 
-        return Component.translatable(translationKey).append(getFoodTooltipData(item, type));
+        return Component.literal("MISSING");
+        //return Component.translatable(translationKey).append(getFoodTooltipData(item, type));
     }
 
     /** Returns a tooltip component in the format of '1.0 nutrition_icon / 0.5 saturation_icon' (color and icon depend on the dragon type) */
-    public static MutableComponent getFoodTooltipData(final Item item, final AbstractDragonType type) {
+    public static MutableComponent getFoodTooltipData(final Item item, final Holder<DragonType> type) {
         if (type == null) {
             return Component.empty();
         }
@@ -119,7 +119,8 @@ public class ToolTipHandler {
         String saturationIcon;
         ChatFormatting color;
 
-        switch (type) {
+        // FIXME
+        /*switch (type) {
             case ForestDragonType ignored -> {
                 nutritionIcon = "\uEA01";
                 saturationIcon = "\uEA04";
@@ -136,7 +137,11 @@ public class ToolTipHandler {
                 color = ChatFormatting.DARK_AQUA;
             }
             default -> throw new IllegalArgumentException("Invalid dragon type [" + type + "]");
-        }
+        }*/
+
+        nutritionIcon = "\uEA02";
+        saturationIcon = "\uEA05";
+        color = ChatFormatting.RED;
 
         FoodProperties properties = DragonFoodHandler.getDragonFoodProperties(item, type);
 
@@ -288,9 +293,10 @@ public class ToolTipHandler {
         boolean isAbilityScreen = Minecraft.getInstance().screen instanceof AbilityScreen;
         ItemStack stack = event.getItemStack();
 
-        boolean isSeaFood = dragonFoodTooltips && !stack.isEmpty() && DragonFoodHandler.getEdibleFoods(DragonTypes.SEA).contains(stack.getItem());
-        boolean isForestFood = dragonFoodTooltips && !stack.isEmpty() && DragonFoodHandler.getEdibleFoods(DragonTypes.FOREST).contains(stack.getItem());
-        boolean isCaveFood = dragonFoodTooltips && !stack.isEmpty() && DragonFoodHandler.getEdibleFoods(DragonTypes.CAVE).contains(stack.getItem());
+        // FIXME
+        boolean isSeaFood = false;//dragonFoodTooltips && !stack.isEmpty() && DragonFoodHandler.getEdibleFoods(DragonTypes.SEA).contains(stack.getItem());
+        boolean isForestFood = false;//dragonFoodTooltips && !stack.isEmpty() && DragonFoodHandler.getEdibleFoods(DragonTypes.FOREST).contains(stack.getItem());
+        boolean isCaveFood = false;//dragonFoodTooltips && !stack.isEmpty() && DragonFoodHandler.getEdibleFoods(DragonTypes.CAVE).contains(stack.getItem());
 
         boolean isDragonFood = isSeaFood || isForestFood || isCaveFood;
         boolean isSkillProgressButtonHovered = false;
@@ -311,7 +317,7 @@ public class ToolTipHandler {
             event.setBorderStart(top);
             event.setBorderEnd(bottom);
         } else if (isAbilityScreen || isDragonFood) {
-            AbstractDragonType type = DragonUtils.getType(DragonSurvival.PROXY.getLocalPlayer());
+            Holder<DragonType> type = DragonUtils.getType(DragonSurvival.PROXY.getLocalPlayer());
             Color topColor = null;
             Color bottomColor = null;
 

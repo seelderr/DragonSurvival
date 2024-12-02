@@ -1,17 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.hud;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.CaveDragonType;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.ForestDragonType;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonType;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.CaveDragonConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.DragonBonusConfig;
-import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.ForestDragonConfig;
-import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.SeaDragonConfig;
-import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
-import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.passive.LightInDarknessAbility;
-import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.passive.WaterAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -21,8 +12,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-
-import java.util.Optional;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
@@ -38,7 +27,8 @@ public class DragonPenaltyHUD {
 
         int rightHeight;
 
-        if (handler.getType() instanceof SeaDragonType seaDragonType) {
+        // TODO: SupplyTrigger handling
+        /*if (handler.getType() instanceof SeaDragonType seaDragonType) {
             if (seaDragonType.timeWithoutWater > 0 && ServerConfig.penaltiesEnabled && SeaDragonConfig.seaTicksWithoutWater != 0) {
                 RenderSystem.enableBlend();
 
@@ -136,6 +126,6 @@ public class DragonPenaltyHUD {
 
                 RenderSystem.disableBlend();
             }
-        }
+        }*/
     }
 }

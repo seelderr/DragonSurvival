@@ -3,9 +3,10 @@ package by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.EnumSkinLayer;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.loader.DefaultPartLoader;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.loader.DragonPartLoader;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.common.util.INBTSerializable;
 import net.neoforged.neoforge.common.util.Lazy;
@@ -26,14 +27,14 @@ public class DragonStageCustomization implements INBTSerializable<CompoundTag> {
     public boolean wings = true;
     public boolean defaultSkin;
 
-    public DragonStageCustomization(final ResourceLocation dragonStage, final AbstractDragonType type) {
+    public DragonStageCustomization(final ResourceLocation dragonStage, final ResourceKey<DragonType> type) {
         this();
 
         for (EnumSkinLayer layer : EnumSkinLayer.values()) {
             // Convert the numbered 'EXTRA' layer to the generic 'EXTRA' layer
             EnumSkinLayer actualLayer = EnumSkinLayer.valueOf(layer.getNameUpperCase());
 
-            Map<EnumSkinLayer, List<DragonPart>> partMap = DragonPartLoader.DRAGON_PARTS.get(type.getTypeNameLowerCase());
+            Map<EnumSkinLayer, List<DragonPart>> partMap = DragonPartLoader.DRAGON_PARTS.get(type);
             List<DragonPart> parts = partMap.get(actualLayer);
 
             String partKey = DefaultPartLoader.getDefaultPartKey(type, dragonStage, layer);

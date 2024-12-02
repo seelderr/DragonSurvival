@@ -4,10 +4,8 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.AbilityScreen;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -29,7 +27,7 @@ public class SkillProgressButton extends Button {
 
     private final int slot;
     private final AbilityScreen screen;
-    private ActiveDragonAbility buttonAbility;
+    private DragonAbilityInstance buttonAbility;
 
     public SkillProgressButton(int x, int y, int slot, AbilityScreen screen) {
         super(x, y, 16, 16, Component.empty(), button -> {}, DEFAULT_NARRATION);
@@ -39,7 +37,8 @@ public class SkillProgressButton extends Button {
 
     @Override
     public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        ResourceLocation texture = buttonAbility != null ? buttonAbility.getIcon() : BLANK_TEXTURE;
+        // FIXME
+        /*ResourceLocation texture = buttonAbility != null ? buttonAbility.getIcon() : BLANK_TEXTURE;
 
         if (screen.unlockableAbilities.size() > slot) {
             ActiveDragonAbility ability1 = screen.unlockableAbilities.get(slot);
@@ -88,6 +87,6 @@ public class SkillProgressButton extends Button {
                     guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, description, mouseX, mouseY);
                 }
             }
-        }
+        }*/
     }
 }

@@ -54,7 +54,7 @@ public class ColorSelectorButton extends ExtendedButton {
             screen.renderables.removeIf(s -> s == renderButton);
         }
 
-        DragonPart part = DragonEditorHandler.getDragonPart(layer, screen.preset.get(screen.dragonStage.getKey()).get().layerSettings.get(layer).get().selectedSkin, DragonEditorScreen.HANDLER.getType());
+        DragonPart part = DragonEditorHandler.getDragonPart(layer, screen.preset.get(screen.dragonStage.getKey()).get().layerSettings.get(layer).get().selectedSkin, DragonEditorScreen.HANDLER.getType().getKey());
         visible = part != null && part.isColorable();
     }
 
@@ -66,7 +66,7 @@ public class ColorSelectorButton extends ExtendedButton {
     @Override
     public void onPress() {
         if (!toggled) {
-            DragonPart part = DragonEditorHandler.getDragonPart(layer, screen.preset.get(screen.dragonStage.getKey()).get().layerSettings.get(layer).get().selectedSkin, DragonEditorScreen.HANDLER.getType());
+            DragonPart part = DragonEditorHandler.getDragonPart(layer, screen.preset.get(screen.dragonStage.getKey()).get().layerSettings.get(layer).get().selectedSkin, DragonEditorScreen.HANDLER.getType().getKey());
 
             if (part == null) {
                 return;

@@ -45,7 +45,7 @@ public class DSEntities {
                     .updateInterval(10)
                     .build("bolas"));
 
-    @Translation(type = Translation.Type.ENTITY, comments = "Dragon Spike")
+    /*@Translation(type = Translation.Type.ENTITY, comments = "Dragon Spike")
     public static DeferredHolder<EntityType<?>, EntityType<DragonSpikeEntity>> DRAGON_SPIKE = DS_ENTITY_TYPES.register(
             "dragon_spike",
             () -> EntityType.Builder.<DragonSpikeEntity>of(DragonSpikeEntity::new, MobCategory.MISC)
@@ -61,16 +61,16 @@ public class DSEntities {
                     .sized(1F, 1F)
                     .clientTrackingRange(4)
                     .updateInterval(1)
-                    .build("ball_lightning"));
+                    .build("ball_lightning"));*/
 
-    @Translation(type = Translation.Type.ENTITY, comments = "Fireball")
+    /*@Translation(type = Translation.Type.ENTITY, comments = "Fireball")
     public static DeferredHolder<EntityType<?>, EntityType<FireBallEntity>> FIREBALL = DS_ENTITY_TYPES.register(
             "fireball",
             () -> EntityType.Builder.<FireBallEntity>of(FireBallEntity::new, MobCategory.MISC)
                     .sized(1F, 1F)
                     .clientTrackingRange(4)
                     .updateInterval(1)
-                    .build("fireball"));
+                    .build("fireball"));*/
 
     @Translation(type = Translation.Type.ENTITY, comments = "Generic Ball Entity")
     public static DeferredHolder<EntityType<?>, EntityType<GenericBallEntity>> GENERIC_BALL_ENTITY = DS_ENTITY_TYPES.register(

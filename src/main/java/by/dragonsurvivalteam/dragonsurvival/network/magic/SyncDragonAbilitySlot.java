@@ -18,12 +18,13 @@ public class SyncDragonAbilitySlot implements IMessage<SyncDragonAbilitySlot.Dat
         Player sender = context.player();
         context.enqueueWork(() -> {
             DragonStateProvider.getOptional(sender).ifPresent(handler -> {
-                if (handler.getMagicData().getAbilityFromSlot(handler.getMagicData().getSelectedAbilitySlot()) != null) {
+                // FIXME
+                /*if (handler.getMagicData().getAbilityFromSlot(handler.getMagicData().getSelectedAbilitySlot()) != null) {
                     handler.getMagicData().getAbilityFromSlot(handler.getMagicData().getSelectedAbilitySlot()).onKeyReleased(sender);
                 }
 
                 handler.getMagicData().setSelectedAbilitySlot(message.selectedSlot);
-                handler.getMagicData().setRenderAbilities(message.displayHotbar);
+                handler.getMagicData().setRenderAbilities(message.displayHotbar);*/
             });
         });
     }

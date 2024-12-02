@@ -2,8 +2,8 @@ package by.dragonsurvivalteam.dragonsurvival.gametests;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.body.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStage;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
@@ -57,11 +57,11 @@ public class TestUtils {
     }
 
     @SuppressWarnings("DataFlowIssue") // ignore
-    public static void setToDragon(final GameTestHelper helper, final Player player, final AbstractDragonType dragonType, final ResourceKey<DragonBody> dragonBody, final ResourceKey<DragonStage> dragonStage) {
+    public static void setToDragon(final GameTestHelper helper, final Player player, final ResourceKey<DragonType> dragonType, final ResourceKey<DragonBody> dragonBody, final ResourceKey<DragonStage> dragonStage) {
         DragonStateHandler data = DragonStateProvider.getData(player);
 
-        data.setType(dragonType, player);
-        helper.assertTrue(DragonUtils.isType(data, dragonType), String.format("Dragon type was [%s] - expected [%s]", data.getType(), dragonType));
+        data.setType(player.level().registryAccess().registry(DragonType.REGISTRY).get().getHolderOrThrow(dragonType), player);
+        helper.assertTrue(data.getDragonType().is(dragonType), String.format("Dragon type was [%s] - expected [%s]", data.getType().getKey(), dragonType));
 
         Holder<DragonBody> body = player.registryAccess().holderOrThrow(dragonBody);
         data.setBody(body, player);
@@ -84,7 +84,7 @@ public class TestUtils {
         DragonStateHandler data = DragonStateProvider.getData(player);
         data.revertToHumanForm(player, false);
 
-        AbstractDragonType dragonType = data.getType();
+        Holder<DragonType> dragonType = data.getType();
         helper.assertTrue(dragonType == null, String.format("Dragon type was [%s] - expected [null]", dragonType));
 
         Holder<DragonBody> dragonBody = data.getBody();

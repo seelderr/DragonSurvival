@@ -2,10 +2,10 @@ package by.dragonsurvivalteam.dragonsurvival.util;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.body.DragonBody;
-import com.google.common.base.Objects;
 import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -13,11 +13,11 @@ import net.minecraft.world.level.Level;
 import java.util.List;
 
 public class DragonUtils {
-    public static AbstractDragonType getType(Player entity) {
+    public static Holder<DragonType> getType(Player entity) {
         return DragonStateProvider.getData(entity).getType();
     }
 
-    public static AbstractDragonType getType(DragonStateHandler handler) {
+    public static Holder<DragonType> getType(DragonStateHandler handler) {
         return handler.getType();
     }
 
@@ -49,7 +49,19 @@ public class DragonUtils {
         return playerBody.is(typeToCheck);
     }
 
-    public static boolean isType(final Entity entity, final AbstractDragonType typeToCheck) {
+    public static boolean isType(final DragonStateHandler handler, final ResourceKey<DragonType> typeToCheck) {
+        return isType(handler.getType().getKey(), typeToCheck);
+    }
+
+    public static boolean isType(final Entity entity, ResourceKey<DragonType> typeToCheck) {
+        if (!(entity instanceof Player player)) {
+            return false;
+        }
+
+        return isType(DragonStateProvider.getData(player).getType().getKey(), typeToCheck);
+    }
+
+    public static boolean isType(final Entity entity, final Holder<DragonType> typeToCheck) {
         if (!(entity instanceof Player player)) {
             return false;
         }
@@ -57,7 +69,7 @@ public class DragonUtils {
         return isType(DragonStateProvider.getData(player), typeToCheck);
     }
 
-    public static boolean isType(final DragonStateHandler data, final AbstractDragonType typeToCheck) {
+    public static boolean isType(final DragonStateHandler data, final Holder<DragonType> typeToCheck) {
         if (data == null) {
             return false;
         }
@@ -65,7 +77,7 @@ public class DragonUtils {
         return isType(data.getType(), typeToCheck);
     }
 
-    public static boolean isType(final AbstractDragonType playerType, final AbstractDragonType typeToCheck) {
+    public static boolean isType(final Holder<DragonType> playerType, final Holder<DragonType> typeToCheck) {
         if (playerType == typeToCheck) {
             return true;
         }
@@ -74,8 +86,27 @@ public class DragonUtils {
             return false;
         }
 
-        // FIXME :: equals checks sub type name - here we explicitly check the "base" type name - could that cause issues somewhere?
-        return Objects.equal(playerType.getTypeName(), typeToCheck.getTypeName());
+        return playerType.is(typeToCheck);
+    }
+
+    public static boolean isType(final Holder<DragonType> playerType, final ResourceKey<DragonType> typeToCheck) {
+        if (playerType == null) {
+            return false;
+        }
+
+        return playerType.getKey().equals(typeToCheck);
+    }
+
+    public static boolean isType(final ResourceKey<DragonType> playerType, final ResourceKey<DragonType> typeToCheck) {
+        if (playerType == typeToCheck) {
+            return true;
+        }
+
+        if (playerType == null || typeToCheck == null) {
+            return false;
+        }
+
+        return playerType.equals(typeToCheck);
     }
 
     public static boolean isNearbyDragonPlayerToEntity(double detectionRadius, Level level, Entity entity) {

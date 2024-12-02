@@ -4,15 +4,10 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.DragonAltarScreen
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.DietComponent;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.CaveDragonType;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.ForestDragonType;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.SyncComplete;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.ChatFormatting;
@@ -20,6 +15,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.MutableComponent;
@@ -40,6 +36,7 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class AltarTypeButton extends Button {
     private static final ResourceLocation BACKGROUND_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/dragon_altar_icons.png");
+    private static final ResourceLocation HUMAN_ALTAR_ICON = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/human_altar_icon.png");
 
     @Translation(type = Translation.Type.MISC, comments = "You have awakened from your sleep, and become a human.")
     private static final String CHOICE_HUMAN = Translation.Type.GUI.wrap("altar.choice.human");
@@ -75,7 +72,7 @@ public class AltarTypeButton extends Button {
     })
     private static final String FOREST_DRAGON = Translation.Type.GUI.wrap("altar.info.forest");
 
-    public AbstractDragonType type;
+    public Holder<DragonType> type;
 
     private final DragonAltarScreen parent;
 
@@ -83,7 +80,7 @@ public class AltarTypeButton extends Button {
     private int scroll;
     private boolean resetScroll;
 
-    public AltarTypeButton(DragonAltarScreen parent, AbstractDragonType type, int x, int y) {
+    public AltarTypeButton(DragonAltarScreen parent, Holder<DragonType> type, int x, int y) {
         super(x, y, 49, 147, Component.empty(), Button::onPress, DEFAULT_NARRATION);
         this.parent = parent;
         this.type = type;
@@ -127,17 +124,18 @@ public class AltarTypeButton extends Button {
 
                 int max = Math.min(foods.size(), scroll + MAX_SHOWN);
 
-                String translationKey = switch (type) {
+                // FIXME
+                /*String translationKey = switch (type) {
                     case ForestDragonType ignored -> FOREST_DRAGON;
                     case CaveDragonType ignored -> CAVE_DRAGON;
                     case SeaDragonType ignored -> SEA_DRAGON;
                     default -> throw new IllegalArgumentException("Invalid dragon type [" + type + "]");
-                };
+                };*/
 
                 // TODO : could append a scroll-icon here?
                 // Using the color codes in the translation doesn't seem to apply the color to the entire text - therefor we create the [shown / max_items] tooltip part here
                 MutableComponent shownFoods = Component.literal(" [" + Math.min(foods.size(), scroll + MAX_SHOWN) + " / " + foods.size() + "]").withStyle(ChatFormatting.DARK_GRAY);
-                components.addFirst(Either.left(Component.translatable(translationKey).append(shownFoods)));
+                components.addFirst(Either.left(Component.translatable(CAVE_DRAGON).append(shownFoods)));
 
                 for (int i = scroll; i < max; i++) {
                     components.add(Either.right(new DietComponent(type, foods.get(i))));
@@ -154,25 +152,19 @@ public class AltarTypeButton extends Button {
 
         RenderSystem.setShaderTexture(0, BACKGROUND_TEXTURE);
 
-        int uOffset = 3;
-
-        if (DragonUtils.isType(type, DragonTypes.CAVE)) {
-            uOffset = 0;
-        } else if (DragonUtils.isType(type, DragonTypes.FOREST)) {
-            uOffset = 1;
-        } else if (DragonUtils.isType(type, DragonTypes.SEA)) {
-            uOffset = 2;
-        }
-
         graphics.fill(getX() - 1, getY() - 1, getX() + width, getY() + height, new Color(0.5f, 0.5f, 0.5f).getRGB());
-        graphics.blit(BACKGROUND_TEXTURE, getX(), getY(), uOffset * 49, isHovered ? 0 : 147, 49, 147, 512, 512);
+        if(type != null) {
+            graphics.blit(type.value().miscResources().altarBanner(), getX(), getY(), 0, isHovered ? 0 : 147, 49, 147, 512, 512);
+        } else {
+            graphics.blit(HUMAN_ALTAR_ICON, getX(), getY(), 0, isHovered ? 0 : 147, 49, 147, 512, 512);
+        }
     }
 
     private boolean isBottomOrTop(double mouseY) {
         return mouseY > getY() + 6 && mouseY < getY() + 26 || mouseY > getY() + 133 && mouseY < getY() + 153;
     }
 
-    private void initiateDragonForm(AbstractDragonType type) {
+    private void initiateDragonForm(Holder<DragonType> type) {
         LocalPlayer player = Minecraft.getInstance().player;
 
         if (player == null) {

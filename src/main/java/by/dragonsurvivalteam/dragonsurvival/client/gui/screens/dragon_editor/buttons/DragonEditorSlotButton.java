@@ -29,8 +29,8 @@ public class DragonEditorSlotButton extends Button {
             int prevSlot = this.screen.selectedSaveSlot;
 
             if (this.screen.dragonType != null) {
-                DragonEditorRegistry.getSavedCustomizations(null).skinPresets.computeIfAbsent(this.screen.dragonType.getTypeNameLowerCase(), key -> new HashMap<>());
-                DragonEditorRegistry.getSavedCustomizations(null).skinPresets.get(this.screen.dragonType.getTypeNameLowerCase()).put(this.screen.selectedSaveSlot, this.screen.preset);
+                DragonEditorRegistry.getSavedCustomizations(null).skinPresets.computeIfAbsent(this.screen.dragonType.getKey(), key -> new HashMap<>());
+                DragonEditorRegistry.getSavedCustomizations(null).skinPresets.get(this.screen.dragonType.getKey()).put(this.screen.selectedSaveSlot, this.screen.preset);
             }
 
             this.screen.selectedSaveSlot = slot;

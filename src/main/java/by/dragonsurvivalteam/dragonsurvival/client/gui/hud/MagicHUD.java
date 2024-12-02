@@ -4,17 +4,13 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.magic.ClientCastingHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.MagicCap;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ManaHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChannelingCastAbility;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChargeCastAbility;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MagicData;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
@@ -81,11 +77,11 @@ public class MagicHUD {
             return false;
         }
 
-        ActiveDragonAbility ability = handler.getMagicData().getAbilityFromSlot(handler.getMagicData().getSelectedAbilitySlot());
+        /*ActiveDragonAbility ability = handler.getMagicData().getAbilityFromSlot(handler.getMagicData().getSelectedAbilitySlot());
 
         if (ability == null || ability.canConsumeMana(localPlayer)) {
             return false;
-        }
+        }*/
 
         Window window = Minecraft.getInstance().getWindow();
         int guiScaledWidth = window.getGuiScaledWidth();
@@ -135,35 +131,38 @@ public class MagicHUD {
         errorMessage = component;
     }
 
-    public static void renderAbilityHUD(final DragonStateHandler handler, final GuiGraphics guiGraphics, int width, int height) {
-        Player localPlayer = Minecraft.getInstance().player;
-
-        if (localPlayer == null || localPlayer.isSpectator()) {
+    public static void renderAbilityHUD(final Player player, final GuiGraphics guiGraphics, int width, int height) {
+        if (player == null || player.isSpectator()) {
             return;
         }
 
         int sizeX = 20;
         int sizeY = 20;
 
-        int i1 = width - sizeX * MagicCap.activeAbilitySlots - 20;
+        // FIXME
+        int i1 = width - sizeX;//width - sizeX * MagicCap.activeAbilitySlots - 20;
         int posX = i1;
         int posY = height - sizeY;
 
         posX += skillbarXOffset;
         posY += skillbarYOffset;
 
-        if (handler.getMagicData().shouldRenderAbilities()) {
+        MagicData magicData = MagicData.getData(player);
+        if (magicData.shouldRenderAbilities()) {
             guiGraphics.blit(VANILLA_WIDGETS, posX, posY - 2, 0, 0, 0, 41, 22, 256, 256);
             guiGraphics.blit(VANILLA_WIDGETS, posX + 41, posY - 2, 0, 141, 0, 41, 22, 256, 256);
 
-            for (int x = 0; x < MagicCap.activeAbilitySlots; x++) {
-                ActiveDragonAbility ability = handler.getMagicData().getAbilityFromSlot(x);
+            //FIXME
+            /*for (int x = 0; x < MagicCap.activeAbilitySlots; x++) {
+                DragonAbilityInstance ability = magicData.getAbilityFromSlot(x);
 
-                if (ability != null && ability.getIcon() != null) {
-                    guiGraphics.blit(ability.getIcon(), posX + x * sizeX + 3, posY + 1, 0, 0, 16, 16, 16, 16);
+                if (ability != null && ability.getAbility().icon() != null) {
+                    guiGraphics.blit(ability.getAbility().icon().get(ability.getLevel()), posX + x * sizeX + 3, posY + 1, 0, 0, 16, 16, 16, 16);
 
-                    if (ability.getSkillCooldown() > 0 && ability.getCurrentCooldown() > 0 && ability.getSkillCooldown() != ability.getCurrentCooldown()) {
-                        float f = Mth.clamp((float) ability.getCurrentCooldown() / (float) ability.getSkillCooldown(), 0, 1);
+                    int skillCooldown = ability.getAbility().getCooldown(ability.getLevel());
+                    int currentCooldown = ability.cooldown;
+                    if (skillCooldown > 0 && currentCooldown > 0 && skillCooldown != currentCooldown) {
+                        float f = Mth.clamp((float) currentCooldown / (float) skillCooldown, 0, 1);
                         int boxX = posX + x * sizeX + 3;
                         int boxY = posY + 1;
                         int offset = 16 - (16 - (int) (f * 16));
@@ -172,14 +171,14 @@ public class MagicHUD {
                         guiGraphics.fill(boxX, boxY, boxX + 16, boxY + offset, fColor);
                     }
                 }
-            }
+            }*/
 
-            guiGraphics.blit(VANILLA_WIDGETS, posX + sizeX * handler.getMagicData().getSelectedAbilitySlot() - 1, posY - 3, 2, 0, 22, 24, 24, 256, 256);
+            guiGraphics.blit(VANILLA_WIDGETS, posX + sizeX * magicData.getSelectedAbilitySlot() - 1, posY - 3, 2, 0, 22, 24, 24, 256, 256);
 
             // Don't render more than two rows (1 icon = 1 mana point)
             // This makes the mana bars also stop just before the emote button when the chat window is open
-            int maxMana = Math.min(20, ManaHandler.getMaxMana(localPlayer));
-            int currentMana = Math.min(maxMana, ManaHandler.getCurrentMana(localPlayer));
+            int maxMana = Math.min(20, ManaHandler.getMaxMana(player));
+            int currentMana = Math.min(maxMana, ManaHandler.getCurrentMana(player));
 
             int manaX = i1;
             int manaY = height - sizeY;
@@ -187,6 +186,7 @@ public class MagicHUD {
             manaX += manabarXOffset;
             manaY += manabarYOffset;
 
+            ResourceLocation manaIcons = DragonStateProvider.getData(player).getType().value().miscResources().manaSprites();
             for (int i = 0; i < 1 + Math.ceil(maxMana / 10.0); i++) {
                 for (int x = 0; x < 10; x++) {
                     int manaSlot = i * 10 + x;
@@ -194,29 +194,25 @@ public class MagicHUD {
                         int xPos;
 
                         if (currentMana <= manaSlot) {
-                            xPos = ManaHandler.isPlayerInGoodConditions(localPlayer) ? 19 : 37;
+                            xPos = ManaHandler.isPlayerInGoodConditions(player) ? 19 : 37;
                         } else {
                             xPos = 0;
                         }
 
                         float rescale = 2.15F;
-                        guiGraphics.blit(handler.getType().getManaIcons(), manaX + x * (int) (18 / rescale), manaY - 12 - i * ((int) (18 / rescale) + 1), xPos / rescale, 0, (int) (18 / rescale), (int) (18 / rescale), (int) (256 / rescale), (int) (256 / rescale));
+                        guiGraphics.blit(manaIcons, manaX + x * (int) (18 / rescale), manaY - 12 - i * ((int) (18 / rescale) + 1), xPos / rescale, 0, (int) (18 / rescale), (int) (18 / rescale), (int) (256 / rescale), (int) (256 / rescale));
                     }
                 }
             }
         }
 
-        ActiveDragonAbility ability = handler.getMagicData().getAbilityFromSlot(handler.getMagicData().getSelectedAbilitySlot());
+        // TODO: Cast bar logic; handle this later
+        /*DragonAbilityInstance ability = magicData.getAbilityFromSlot(magicData.getSelectedAbilitySlot());
 
         int currentCastTime = -1, skillCastTime = -1;
 
-        if (ability instanceof ChargeCastAbility chargeAbility) {
-            currentCastTime = chargeAbility.getCastTime();
-            skillCastTime = chargeAbility.getSkillCastingTime();
-        } else if (ability instanceof ChannelingCastAbility channelAbility) {
-            currentCastTime = channelAbility.getChargeTime();
-            skillCastTime = channelAbility.getSkillChargeTime();
-        }
+        currentCastTime = ability.getCurrentCastTime();
+        skillCastTime = ability.getCastTime();
 
         if (handler.getMagicData().isCasting) {
             if (currentCastTime > 0 && skillCastTime != -1) {
@@ -240,7 +236,7 @@ public class MagicHUD {
 
                 guiGraphics.pose().popPose();
             }
-        }
+        }*/
 
         if (errorTicks > 0) {
             guiGraphics.drawString(Minecraft.getInstance().font, errorMessage.getVisualOrderText(), (int) (width / 2f - Minecraft.getInstance().font.width(errorMessage) / 2f), height - 70, 0);

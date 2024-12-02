@@ -1,5 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity;
 
+import by.dragonsurvivalteam.dragonsurvival.client.AbilityAnimation;
+import by.dragonsurvivalteam.dragonsurvival.client.ISecondAnimation;
 import by.dragonsurvivalteam.dragonsurvival.client.emotes.Emote;
 import by.dragonsurvivalteam.dragonsurvival.client.models.DragonModel;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRenderer;
@@ -10,11 +12,11 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.Em
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ClientConfig;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.AbilityAnimation;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.ISecondAnimation;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MagicData;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MovementData;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.TreasureRestData;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbility;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStage;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.AnimationUtils;
@@ -73,7 +75,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
     public boolean overrideUUIDWithLocalPlayerForTextureFetch = false;
 
     public boolean clearVerticalVelocity = false;
-    ActiveDragonAbility lastCast = null;
+    DragonAbilityInstance lastCast = null;
     public boolean started, ended;
     AnimationTimer animationTimer = new AnimationTimer();
 
@@ -122,8 +124,8 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
             return PlayState.STOP;
         }
 
-        DragonStateHandler handler = DragonStateProvider.getData(player);
-        ActiveDragonAbility currentCast = handler.getMagicData().getCurrentlyCasting();
+        MagicData data = MagicData.getData(player);
+        DragonAbilityInstance currentCast = data.getCurrentlyCasting();
 
         if (currentCast != null) {
             RawAnimation ability = renderAbility(state, currentCast);
@@ -162,9 +164,11 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
         }
 
         DragonStateHandler handler = DragonStateProvider.getData(player);
-        ActiveDragonAbility currentCast = handler.getMagicData().getCurrentlyCasting();
+        MagicData magicData = MagicData.getData(player);
+        DragonAbilityInstance currentCast = magicData.getCurrentlyCasting();
         RawAnimation builder = null;
 
+        // FIXME
         if (currentCast instanceof ISecondAnimation || lastCast instanceof ISecondAnimation) {
             builder = renderAbility(state, currentCast);
         }
@@ -336,7 +340,8 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
         }
 
         Vec3 deltaMovement = player.getDeltaMovement();
-        ActiveDragonAbility currentCast = handler.getMagicData().getCurrentlyCasting();
+        MagicData magicData = MagicData.getData(player);
+        DragonAbilityInstance currentCast = magicData.getCurrentlyCasting();
 
         RawAnimation builder = null;
 
@@ -345,6 +350,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
         neckLocked = false;
         tailLocked = false;
 
+        // FIXME
         if (!(currentCast instanceof ISecondAnimation) && !(lastCast instanceof ISecondAnimation)) {
             builder = renderAbility(state, currentCast);
         }
@@ -355,9 +361,10 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
         boolean hasMoveInput = rawInput.lengthSquared() > INPUT_EPSILON * INPUT_EPSILON;
 
         // TODO: The transition length of animations doesn't work correctly when the framerate varies too much from 60 FPS
-        if (handler.getMagicData().onMagicSource) {
+        // FIXME
+        /*if (magicData.onMagicSource) {
             return state.setAndContinue(AnimationUtils.createAnimation(builder, SIT_ON_MAGIC_SOURCE));
-        } else if (player.isSleeping() || treasureRest.isResting) {
+        } else*/ if (player.isSleeping() || treasureRest.isResting) {
             return state.setAndContinue(AnimationUtils.createAnimation(builder, SLEEP));
         } else if (player.isPassenger()) {
             return state.setAndContinue(AnimationUtils.createAnimation(builder, SIT));
@@ -503,10 +510,11 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
         return (playerId != null ? level().getEntity(playerId).tickCount : globalTickCount) + 200;
     }
 
-    private RawAnimation renderAbility(final AnimationState<DragonEntity> state, final ActiveDragonAbility currentCast) {
+    private RawAnimation renderAbility(final AnimationState<DragonEntity> state, final DragonAbilityInstance currentCast) {
         RawAnimation rawAnimation = null;
 
-        if (currentCast != null && lastCast == null) {
+        // FIXME
+        /*if (currentCast != null && lastCast == null) {
             // Need to animate cast and there was no previous animation
             if (currentCast.getStartingAnimation() != null) {
                 AbilityAnimation animation = currentCast.getStartingAnimation();
@@ -565,7 +573,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
             } else {
                 lastCast = null;
             }
-        }
+        }*/
 
         return rawAnimation;
     }

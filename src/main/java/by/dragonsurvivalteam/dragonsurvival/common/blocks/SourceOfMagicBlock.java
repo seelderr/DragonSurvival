@@ -2,13 +2,13 @@ package by.dragonsurvivalteam.dragonsurvival.common.blocks;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncMagicSourceStatus;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSTileEntities;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.SourceOfMagicPlaceholder;
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.SourceOfMagicTileEntity;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
@@ -258,7 +258,8 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
                 serverPlayer.openMenu((MenuProvider) blockEntity1, packetBuffer -> packetBuffer.writeBlockPos(finalPos));
             }
         } else {
-            if (DragonStateProvider.isDragon(player) && player.getMainHandItem().isEmpty()) {
+            // FIXME :: Magic source handling
+            /*if (DragonStateProvider.isDragon(player) && player.getMainHandItem().isEmpty()) {
                 if (player.getBlockStateOn().getBlock() == state.getBlock()) {
                     DragonStateHandler handler = DragonStateProvider.getData(player);
 
@@ -274,7 +275,7 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
                         }
                     }
                 }
-            }
+            }*/
         }
 
         return InteractionResult.SUCCESS;

@@ -21,10 +21,6 @@ import by.dragonsurvivalteam.dragonsurvival.client.util.TextRenderUtil;
 import by.dragonsurvivalteam.dragonsurvival.commands.DragonCommand;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.CaveDragonType;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.ForestDragonType;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonType;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.mixins.client.ScreenAccessor;
 import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncPlayerSkinPreset;
@@ -34,6 +30,7 @@ import by.dragonsurvivalteam.dragonsurvival.registry.attachments.AltarData;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.SpinData;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.body.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStage;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStages;
@@ -137,7 +134,7 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
     public boolean showUi = true;
 
     /** Dragon type of {@link DragonEditorScreen#HANDLER} */
-    public AbstractDragonType dragonType;
+    public Holder<DragonType> dragonType;
 
     /** Dragon body of {@link DragonEditorScreen#HANDLER} */
     public Holder<DragonBody> dragonBody;
@@ -184,7 +181,7 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
         this.isEditor = true;
     }
 
-    public DragonEditorScreen(Screen source, AbstractDragonType dragonType) {
+    public DragonEditorScreen(Screen source, Holder<DragonType> dragonType) {
         super(Component.translatable(LangKey.GUI_DRAGON_EDITOR));
         this.source = source;
         this.dragonType = dragonType;
@@ -254,7 +251,7 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
         // Make sure that when we change a part, the color is properly updated to the default color of the new part
         LayerSettings settings = preset.get(dragonStage.getKey()).get().layerSettings.get(layer).get();
 
-        DragonPart text = DragonEditorHandler.getDragonPart(layer, settings.selectedSkin, dragonType);
+        DragonPart text = DragonEditorHandler.getDragonPart(layer, settings.selectedSkin, dragonType.getKey());
         if (text != null && !settings.modifiedColor) {
             settings.hue = text.averageHue();
         }
@@ -387,7 +384,7 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
 
         if (showUi) {
             for (ColorSelectorButton colorSelectorButton : colorSelectorButtons.values()) {
-                DragonPart text = DragonEditorHandler.getDragonPart(colorSelectorButton.layer, preset.get(Objects.requireNonNull(dragonStage.getKey())).get().layerSettings.get(colorSelectorButton.layer).get().selectedSkin, HANDLER.getType());
+                DragonPart text = DragonEditorHandler.getDragonPart(colorSelectorButton.layer, preset.get(Objects.requireNonNull(dragonStage.getKey())).get().layerSettings.get(colorSelectorButton.layer).get().selectedSkin, HANDLER.getType().getKey());
                 colorSelectorButton.visible = (text != null && text.isColorable()) && !defaultSkinCheckbox.selected;
             }
         }
@@ -401,15 +398,14 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
 
         SkinPreset newPreset = new SkinPreset();
         newPreset.deserializeNBT(access, preset.serializeNBT(access));
-        String type = dragonType != null ? dragonType.getTypeNameLowerCase() : null;
 
         SavedSkinPresets savedCustomizations = DragonEditorRegistry.getSavedCustomizations(access);
 
-        savedCustomizations.skinPresets.computeIfAbsent(type, key -> new HashMap<>());
-        savedCustomizations.skinPresets.get(type).put(selectedSaveSlot, newPreset);
+        savedCustomizations.skinPresets.computeIfAbsent(dragonType.getKey(), key -> new HashMap<>());
+        savedCustomizations.skinPresets.get(dragonType.getKey()).put(selectedSaveSlot, newPreset);
 
         for (Holder<DragonStage> dragonStage : presetSelections.keySet()) {
-            savedCustomizations.current.get(type).put(Objects.requireNonNull(dragonStage.getKey()).location().toString(), presetSelections.get(dragonStage));
+            savedCustomizations.current.get(dragonType.getKey()).put(Objects.requireNonNull(dragonStage.getKey()).location().toString(), presetSelections.get(dragonStage));
         }
 
         DragonEditorRegistry.save(savedCustomizations);
@@ -438,25 +434,24 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
             return;
         }
 
-        String type = dragonType.getTypeNameLowerCase();
         SavedSkinPresets savedCustomizations = DragonEditorRegistry.getSavedCustomizations(null);
         String stageLocation = Objects.requireNonNull(dragonStage.getKey()).location().toString();
 
-        savedCustomizations.current.computeIfAbsent(type, key -> new HashMap<>());
-        savedCustomizations.current.get(type).putIfAbsent(stageLocation, 0);
+        savedCustomizations.current.computeIfAbsent(dragonType.getKey(), key -> new HashMap<>());
+        savedCustomizations.current.get(dragonType.getKey()).putIfAbsent(stageLocation, 0);
 
-        selectedSaveSlot = savedCustomizations.current.get(type).get(stageLocation);
+        selectedSaveSlot = savedCustomizations.current.get(dragonType.getKey()).get(stageLocation);
 
-        savedCustomizations.skinPresets.computeIfAbsent(type, key -> new HashMap<>());
-        savedCustomizations.skinPresets.get(type).computeIfAbsent(selectedSaveSlot, key -> {
+        savedCustomizations.skinPresets.computeIfAbsent(dragonType.getKey(), key -> new HashMap<>());
+        savedCustomizations.skinPresets.get(dragonType.getKey()).computeIfAbsent(selectedSaveSlot, key -> {
             SkinPreset newPreset = new SkinPreset();
-            newPreset.initDefaults(dragonType);
+            newPreset.initDefaults(dragonType.getKey());
             return newPreset;
         });
 
         // TODO :: there could be a desync between what the player actually has? noticed it with base being no-part here but player having one
         //  (maybe only related to base because it forcefully gets set to a non no-part value)
-        SkinPreset currentPreset = savedCustomizations.skinPresets.get(type).get(selectedSaveSlot);
+        SkinPreset currentPreset = savedCustomizations.skinPresets.get(dragonType.getKey()).get(selectedSaveSlot);
         preset = new SkinPreset();
         preset.deserializeNBT(Objects.requireNonNull(Minecraft.getInstance().player).registryAccess(), currentPreset.serializeNBT(Minecraft.getInstance().player.registryAccess()));
 
@@ -563,7 +558,7 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
                 btn.updateMessage();
 
                 LayerSettings settings = preset.get(dragonStage.getKey()).get().layerSettings.get(layers).get();
-                DragonPart text = DragonEditorHandler.getDragonPart(layers, settings.selectedSkin, dragonType);
+                DragonPart text = DragonEditorHandler.getDragonPart(layers, settings.selectedSkin, dragonType.getKey());
                 if (text != null && !settings.modifiedColor) {
                     settings.hue = text.averageHue();
                 }
@@ -585,7 +580,7 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
                 btn.updateMessage();
 
                 LayerSettings settings = preset.get(dragonStage.getKey()).get().layerSettings.get(layers).get();
-                DragonPart text = DragonEditorHandler.getDragonPart(layers, settings.selectedSkin, dragonType);
+                DragonPart text = DragonEditorHandler.getDragonPart(layers, settings.selectedSkin, dragonType.getKey());
                 if (text != null && !settings.modifiedColor) {
                     settings.hue = text.averageHue();
                 }
@@ -691,7 +686,7 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
             SkinPreset preset = new SkinPreset();
 
             preset.deserializeNBT(access, this.preset.serializeNBT(access));
-            preset.put(dragonStage.getKey(), Lazy.of(() -> new DragonStageCustomization(dragonStage.getKey().location(), dragonType)));
+            preset.put(dragonStage.getKey(), Lazy.of(() -> new DragonStageCustomization(dragonStage.getKey().location(), dragonType.getKey())));
             wingsCheckbox.selected = true;
             actionHistory.add(new EditorAction<>(setSkinPresetAction, preset.serializeNBT(access)));
         }) {
@@ -707,7 +702,7 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
             ArrayList<String> extraKeys = DragonEditorHandler.getDragonPartKeys(FakeClientPlayerUtils.getFakePlayer(0, HANDLER), EnumSkinLayer.EXTRA);
 
             extraKeys.removeIf(partKey -> {
-                DragonPart text = DragonEditorHandler.getDragonPart(EnumSkinLayer.EXTRA, partKey, dragonType);
+                DragonPart text = DragonEditorHandler.getDragonPart(EnumSkinLayer.EXTRA, partKey, dragonType.getKey());
                 if (text == null) {
                     DragonSurvival.LOGGER.error("Key {} not found!", partKey);
                     return true;
@@ -739,7 +734,7 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
 
                     LayerSettings settings = preset.get(dragonStage.getKey()).get().layerSettings.get(layer).get();
                     settings.selectedSkin = key;
-                    DragonPart text = DragonEditorHandler.getDragonPart(layer, key, dragonType);
+                    DragonPart text = DragonEditorHandler.getDragonPart(layer, key, dragonType.getKey());
 
                     if (text != null && text.isHueRandom()) {
                         settings.hue = minecraft.player.getRandom().nextFloat();
@@ -844,8 +839,8 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
             preset = new SkinPreset();
             SavedSkinPresets savedCustomizations = DragonEditorRegistry.getSavedCustomizations(access);
 
-            if (savedCustomizations.skinPresets.containsKey(dragonType.getTypeNameLowerCase())) {
-                preset.deserializeNBT(access, savedCustomizations.skinPresets.get(dragonType.getTypeNameLowerCase()).get(selectedSaveSlot).serializeNBT(access));
+            if (savedCustomizations.skinPresets.containsKey(dragonType.getKey())) {
+                preset.deserializeNBT(access, savedCustomizations.skinPresets.get(dragonType.getKey()).get(selectedSaveSlot).serializeNBT(access));
             }
 
             HANDLER.getSkinData().skinPreset = preset;
@@ -884,14 +879,15 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
         minecraft.player.level().playSound(minecraft.player, minecraft.player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 1, 0.7f);
 
         if (!data.isDragon() || dragonWouldChange(data)) {
-            String translationKey = switch (dragonType) {
+            // FIXME
+            /*String translationKey = switch (dragonType) {
                 case CaveDragonType ignored -> CAVE_DRAGON_CHOICE;
                 case SeaDragonType ignored -> SEA_DRAGON_CHOICE;
                 case ForestDragonType ignored -> FOREST_DRAGON_CHOICE;
                 default -> throw new IllegalStateException("Invalid dragon type [" + dragonType + "]");
-            };
+            };*/
 
-            minecraft.player.sendSystemMessage(Component.translatable(translationKey));
+            minecraft.player.sendSystemMessage(Component.translatable(CAVE_DRAGON_CHOICE));
 
             if (dragonType == null && data.getType() != null) {
                 DragonCommand.reInsertClawTools(minecraft.player);
@@ -900,7 +896,7 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
             data.setType(dragonType, minecraft.player);
             data.setBody(dragonBody, minecraft.player);
 
-            DragonStateHandler.SavedDragonStage savedDragonStage = data.getSavedDragonStage(data.getTypeName());
+            DragonStateHandler.SavedDragonStage savedDragonStage = data.getSavedDragonStage(data.getType().getKey());
 
             if (!ServerConfig.saveGrowthStage || savedDragonStage == null) {
                 Holder<DragonStage> dragonStage = minecraft.player.registryAccess().holderOrThrow(DragonStages.newborn);

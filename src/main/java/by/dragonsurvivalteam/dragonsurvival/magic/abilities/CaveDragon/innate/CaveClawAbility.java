@@ -1,13 +1,5 @@
-package by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.innate;
+/*package by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.innate;
 
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.innate.DragonClawsAbility;
-import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
-import net.minecraft.resources.ResourceLocation;
-
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 @Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = {
         "■ Cave dragons §2can§r deal increased damage, and may mine stone blocks without tools. This ability gets stronger as you grow.\n",
@@ -39,4 +31,4 @@ public class CaveClawAbility extends DragonClawsAbility {
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_claws_and_teeth_7.png")
         };
     }
-}
+}*/

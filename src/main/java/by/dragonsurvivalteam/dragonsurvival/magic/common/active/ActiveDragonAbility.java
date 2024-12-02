@@ -1,23 +1,5 @@
-package by.dragonsurvivalteam.dragonsurvival.magic.common.active;
+/*package by.dragonsurvivalteam.dragonsurvival.magic.common.active;
 
-import by.dragonsurvivalteam.dragonsurvival.client.gui.hud.MagicHUD;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ManaHandler;
-import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.AbilityAnimation;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
-import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
-import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
-import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
-import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-import net.minecraft.ChatFormatting;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.player.Player;
-
-import java.util.ArrayList;
 
 public abstract class ActiveDragonAbility extends DragonAbility {
     @Translation(type = Translation.Type.MISC, comments = "§fNot enough§r §cmana or experience§r!")
@@ -181,4 +163,4 @@ public abstract class ActiveDragonAbility extends DragonAbility {
     public int getCurrentCooldown() {
         return currentCooldown;
     }
-}
+}*/

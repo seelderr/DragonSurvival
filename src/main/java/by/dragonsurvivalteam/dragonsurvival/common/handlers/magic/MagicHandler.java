@@ -1,33 +1,23 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers.magic;
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.MagicCap;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.common.particles.SeaSweepParticleOption;
-import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
-import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.passive.BurnAbility;
-import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.RevealingTheSoulAbility;
-import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.StormBreathAbility;
-import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.passive.SpectralImpactAbility;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEnchantments;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachments;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MagicData;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSDamageTypeTags;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSEffectTags;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.EnchantmentUtils;
-import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.TargetingFunctions;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectCategory;
@@ -52,42 +42,19 @@ import java.util.Optional;
 
 @EventBusSubscriber
 public class MagicHandler {
-    @SubscribeEvent // TODO :: is it needed to set the player here?
-    public static void setPlayerForAbilities(PlayerTickEvent.Pre event) {
-        DragonStateHandler data = DragonStateProvider.getData(event.getEntity());
-
-        if (!data.isDragon()) {
+    @SubscribeEvent
+    public static void magicUpdate(PlayerTickEvent.Post event) {
+        if(!DragonStateProvider.isDragon(event.getEntity()) || !(event.getEntity() instanceof ServerPlayer serverPlayer)) {
             return;
         }
 
-        for (DragonAbility ability : data.getMagicData().abilities.values()) {
-            ability.player = event.getEntity();
-        }
+        MagicData data =  MagicData.getData(event.getEntity());
+        data.tickAbilities(serverPlayer);
     }
 
+    // TODO: Delete this event and move its effects into the MobEffects themselves
     @SubscribeEvent
-    public static void magicUpdate(PlayerTickEvent.Post event) {
-        DragonStateProvider.getOptional(event.getEntity()).ifPresent(data -> {
-            if (!data.isDragon()) {
-                return;
-            }
-
-            if (data.getMagicData().abilities.isEmpty() || data.getMagicData().innateDragonAbilities.isEmpty() || data.getMagicData().activeDragonAbilities.isEmpty()) {
-                data.getMagicData().initAbilities(data.getType());
-            }
-
-            for (int i = 0; i < MagicCap.activeAbilitySlots; i++) {
-                ActiveDragonAbility ability = data.getMagicData().getAbilityFromSlot(i);
-
-                if (ability != null) {
-                    ability.tickCooldown();
-                }
-            }
-        });
-    }
-
-    @SubscribeEvent
-    public static void livingTick(EntityTickEvent.Post event){
+    public static void processTickingMobEffects(EntityTickEvent.Post event){
         if(event.getEntity() instanceof LivingEntity entity) {
             EntityStateHandler data = entity.getData(DSDataAttachments.ENTITY_HANDLER);
 
@@ -117,7 +84,8 @@ public class MagicHandler {
                 if (chargedEffect != null) {
                     Player player = data.lastAfflicted != -1 && entity.level().getEntity(data.lastAfflicted) instanceof Player ? (Player) entity.level().getEntity(data.lastAfflicted) : null;
                     if (!DragonUtils.isType(entity, DragonTypes.SEA)) {
-                        StormBreathAbility.chargedEffectSparkle(player, entity, StormBreathAbility.chargedChainRange, StormBreathAbility.chargedEffectChainCount, (chargedEffect.getAmplifier() + 1) * StormBreathAbility.chargedEffectDamageMultiplier);
+                        // FIXME
+                        //StormBreathAbility.chargedEffectSparkle(player, entity, StormBreathAbility.chargedChainRange, StormBreathAbility.chargedEffectChainCount, (chargedEffect.getAmplifier() + 1) * StormBreathAbility.chargedEffectDamageMultiplier);
                     }
                 }
 
@@ -152,7 +120,8 @@ public class MagicHandler {
 
     @SubscribeEvent
     public static void playerStruckByLightning(EntityStruckByLightningEvent event) {
-        if (event.getEntity() instanceof Player player) {
+        // TODO: I believe we can already do this with our ability system now
+        /*if (event.getEntity() instanceof Player player) {
 
             DragonStateProvider.getOptional(player).ifPresent(cap -> {
                 if (!cap.isDragon()) {
@@ -163,7 +132,7 @@ public class MagicHandler {
                     event.setCanceled(true);
                 }
             });
-        }
+        }*/
     }
 
     public static MobEffectInstance modifyEffect(final Player affected, final MobEffectInstance instance, @Nullable final Entity applier) {
@@ -222,7 +191,8 @@ public class MagicHandler {
             }
         }
 
-        if (event.getSource().is(DSDamageTypeTags.DRAGON_BREATH)) {
+        // TODO: We need an ability that has a chance to passively proc effects on any attack
+        /*if (event.getSource().is(DSDamageTypeTags.DRAGON_BREATH)) {
             return;
         }
 
@@ -256,7 +226,7 @@ public class MagicHandler {
                     }
                 }
             });
-        }
+        }*/
     }
 
     @SubscribeEvent
@@ -267,7 +237,8 @@ public class MagicHandler {
             int droppedExperience = event.getDroppedExperience();
 
             if (player.hasEffect(DSEffects.REVEALING_THE_SOUL)) {
-                droppedExperience += (int) Math.min(RevealingTheSoulAbility.revealingTheSoulMaxEXP, event.getDroppedExperience() * RevealingTheSoulAbility.revealingTheSoulMultiplier);
+                // FIXME
+                //droppedExperience += (int) Math.min(RevealingTheSoulAbility.revealingTheSoulMaxEXP, event.getDroppedExperience() * RevealingTheSoulAbility.revealingTheSoulMultiplier);
             }
 
             event.setDroppedExperience((int) (droppedExperience * player.getAttributeValue(DSAttributes.EXPERIENCE)));

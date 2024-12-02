@@ -1,8 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.network.magic;
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MagicData;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -22,9 +22,8 @@ public class SyncMagicCap implements IMessage<SyncMagicCap.Data> {
     public static void handleServer(final SyncMagicCap.Data message, final IPayloadContext context) {
         Player sender = context.player();
         context.enqueueWork(() -> {
-            DragonStateProvider.getOptional(sender).ifPresent(handler -> {
-                handler.getMagicData().deserializeNBT(context.player().registryAccess(), message.nbt);
-            });
+            MagicData magicData = MagicData.getData(sender);
+            magicData.deserializeNBT(sender.registryAccess(), message.nbt());
         });
     }
 

@@ -3,19 +3,12 @@ package by.dragonsurvivalteam.dragonsurvival.common.handlers.magic;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.TreasureBlock;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.CaveDragonType;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.ForestDragonType;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonType;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.CaveDragonConfig;
-import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.ForestDragonConfig;
-import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.SeaDragonConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.types.BlockStateConfig;
-import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.MagicAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncMagicStats;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MagicData;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSBlockTags;
 import by.dragonsurvivalteam.dragonsurvival.util.ExperienceUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
@@ -51,9 +44,9 @@ public class ManaHandler {
     @SubscribeEvent
     public static void playerTick(PlayerTickEvent.Post event) {
         Player player = event.getEntity();
-        DragonStateHandler data = DragonStateProvider.getData(player);
 
-        if (data.getMagicData().getCurrentlyCasting() != null) {
+        MagicData data = MagicData.getData(player);
+        if (data.getCurrentlyCasting() != null) {
             return;
         }
 
@@ -66,7 +59,7 @@ public class ManaHandler {
         }
 
         if (player.tickCount % Functions.secondsToTicks(timeToRecover) == 0) {
-            if (data.getMagicData().getCurrentMana() < getMaxMana(player)) {
+            if (data.getCurrentMana() < getMaxMana(player)) {
                 replenishMana(player, 1);
             }
         }
@@ -79,7 +72,8 @@ public class ManaHandler {
             return false;
         }
 
-        if (player.hasEffect(DSEffects.SOURCE_OF_MAGIC) || data.getType().isInManaCondition(player)) {
+        // FIXME
+        if (player.hasEffect(DSEffects.SOURCE_OF_MAGIC) /*|| data.isInManaCondition(player)*/) {
             return true;
         }
 
@@ -87,7 +81,8 @@ public class ManaHandler {
         List<BlockStateConfig> conditionalBlocks;
         TagKey<Block> manaBlocks;
 
-        switch (data.getType()) {
+        // FIXME
+        /*switch (data.getType()) {
             case CaveDragonType ignored -> {
                 conditionalBlocks = CaveDragonConfig.caveConditionalManaBlocks;
                 manaBlocks = DSBlockTags.REGENERATES_CAVE_DRAGON_MANA;
@@ -111,7 +106,7 @@ public class ManaHandler {
             if (config.test(state)) {
                 return true;
             }
-        }
+        }*/
 
         return false;
     }
@@ -134,9 +129,6 @@ public class ManaHandler {
         int mana = (int) player.getAttributeValue(DSAttributes.MANA);
         mana += getBonusManaFromExperience(player);
 
-        DragonStateHandler data = DragonStateProvider.getData(player);
-        mana += Math.min(MAX_MANA_FROM_ABILITY, DragonAbilities.getAbility(player, MagicAbility.class, data.getType()).map(MagicAbility::getMana).orElse(0));
-
         return Math.max(0, mana);
     }
 
@@ -145,14 +137,14 @@ public class ManaHandler {
             return;
         }
 
-        DragonStateHandler data = DragonStateProvider.getData(player);
+        MagicData data = MagicData.getData(player);
 
         if (getCurrentMana(player) == getMaxMana(player)) {
             return;
         }
 
-        data.getMagicData().setCurrentMana(data.getMagicData().getCurrentMana() + mana);
-        PacketDistributor.sendToPlayer((ServerPlayer) player, new SyncMagicStats.Data(player.getId(), data.getMagicData().getSelectedAbilitySlot(), data.getMagicData().getCurrentMana(), data.getMagicData().shouldRenderAbilities()));
+        data.setCurrentMana(data.getCurrentMana() + mana);
+        PacketDistributor.sendToPlayer((ServerPlayer) player, new SyncMagicStats.Data(player.getId(), data.getSelectedAbilitySlot(), data.getCurrentMana(), data.shouldRenderAbilities()));
     }
 
     public static void consumeMana(Player player, int manaCost) {
@@ -160,7 +152,6 @@ public class ManaHandler {
             return;
         }
 
-        DragonStateHandler data = DragonStateProvider.getData(player);
         int pureMana = getCurrentMana(player);
 
         if (ServerConfig.consumeExperienceAsMana && player.level().isClientSide()) {
@@ -174,23 +165,24 @@ public class ManaHandler {
             return;
         }
 
+        MagicData magicData = MagicData.getData(serverPlayer);
         if (ServerConfig.consumeExperienceAsMana) {
             if (pureMana < manaCost) {
                 int missingMana = pureMana - manaCost;
                 player.giveExperiencePoints(convertMana(missingMana));
-                data.getMagicData().setCurrentMana(0);
+                magicData.setCurrentMana(0);
             } else {
-                data.getMagicData().setCurrentMana(pureMana - manaCost);
+                magicData.setCurrentMana(pureMana - manaCost);
             }
         } else {
-            data.getMagicData().setCurrentMana(pureMana - manaCost);
+            magicData.setCurrentMana(pureMana - manaCost);
         }
 
-        PacketDistributor.sendToPlayer(serverPlayer, new SyncMagicStats.Data(player.getId(), data.getMagicData().getSelectedAbilitySlot(), data.getMagicData().getCurrentMana(), data.getMagicData().shouldRenderAbilities()));
+        PacketDistributor.sendToPlayer(serverPlayer, new SyncMagicStats.Data(player.getId(), magicData.getSelectedAbilitySlot(), magicData.getCurrentMana(), magicData.shouldRenderAbilities()));
     }
 
     public static int getCurrentMana(Player player) {
-        return Math.min(DragonStateProvider.getData(player).getMagicData().getCurrentMana(), getMaxMana(player));
+        return Math.min(MagicData.getData(player).getCurrentMana(), getMaxMana(player));
     }
 
     public static int getBonusManaFromExperience(final Player player) {

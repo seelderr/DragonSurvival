@@ -4,21 +4,6 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.Condition;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.DragonPredicate;
 import by.dragonsurvivalteam.dragonsurvival.common.criteria.*;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.passive.BurnAbility;
-import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.passive.CaveAthleticsAbility;
-import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.passive.CaveMagicAbility;
-import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.passive.ContrastShowerAbility;
-import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.passive.CliffhangerAbility;
-import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.passive.ForestAthleticsAbility;
-import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.passive.ForestMagicAbility;
-import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.passive.LightInDarknessAbility;
-import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.passive.SeaAthleticsAbility;
-import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.passive.SeaMagicAbility;
-import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.passive.SpectralImpactAbility;
-import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.passive.WaterAbility;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.*;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSItemTags;
@@ -71,6 +56,12 @@ public class DSAdvancements implements AdvancementProvider.AdvancementGenerator 
     private ExistingFileHelper helper;
 
     @Override
+    public void generate(HolderLookup.Provider registries, Consumer<AdvancementHolder> saver, ExistingFileHelper existingFileHelper) {
+
+    }
+
+    //FIXME
+/*    @Override
     public void generate(@NotNull HolderLookup.Provider registries, @NotNull Consumer<AdvancementHolder> saver, @NotNull ExistingFileHelper helper) {
         this.registries = registries;
         this.saver = saver;
@@ -110,7 +101,7 @@ public class DSAdvancements implements AdvancementProvider.AdvancementGenerator 
     private void buildDarkAdvancements(final AdvancementHolder parent) {
         // --- Parent: path_choice --- //
 
-        /* TODO :: previously used the below item stack
+        *//* TODO :: previously used the below item stack
             currently using sth. else because providing support for item stack displays for 1 advancement would be annoying
         "id": "minecraft:player_head",
         "components": {
@@ -118,7 +109,7 @@ public class DSAdvancements implements AdvancementProvider.AdvancementGenerator 
                 "name": "MHF_Villager"
             }
         }
-        */
+        *//*
         AdvancementHolder affectedByHunterOmen = createWithToast(parent, DARK_AFFECTED_BY_HUNTER_OMEN, Items.OMINOUS_BOTTLE, effectWithMinDuration(DSEffects.HUNTER_OMEN, 300), 6);
 
         // --- Parent: dark/affected_by_hunter_omen --- //
@@ -663,5 +654,5 @@ public class DSAdvancements implements AdvancementProvider.AdvancementGenerator 
 
     public Criterion<BeDragonTrigger.Instance> beDragon(final EntityPredicate.Builder builder) {
         return DSAdvancementTriggers.BE_DRAGON.get().createCriterion(new BeDragonTrigger.Instance(Optional.of(EntityPredicate.wrap(builder.build()))));
-    }
+    }*/
 }

@@ -37,7 +37,7 @@ public class FoodBar {
         gui.rightHeight += 10;
         final FoodData food = localPlayer.getFoodData();
 
-        ResourceLocation foodIcons = handler.getType().getFoodIcons();
+        ResourceLocation foodIcons = handler.getFoodIcons();
 
         final boolean hunger = localPlayer.hasEffect(MobEffects.HUNGER);
 

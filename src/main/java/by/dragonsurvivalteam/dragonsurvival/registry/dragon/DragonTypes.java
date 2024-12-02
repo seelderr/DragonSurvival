@@ -20,12 +20,16 @@ public class DragonTypes {
 
     // TODO: Translation key here, also handle translation keys now for this data type
     public static final ResourceKey<DragonType> CAVE = key("cave");
+    public static final ResourceKey<DragonType> FOREST = key("forest");
+    public static final ResourceKey<DragonType> SEA = key("sea");
 
     public static void registerTypes(final BootstrapContext<DragonType> context) {
         context.register(CAVE, new DragonType(
                 HolderSet.empty(),
                 HolderSet.empty(),
                 HolderSet.direct(context.lookup(DragonAbility.REGISTRY).getOrThrow(DragonAbilities.NETHER_BREATH)),
+                List.of(),
+                List.of(),
                 List.of(),
                 new MiscDragonTextures(
                         DragonSurvival.res("food_icons/cave_food_sprites.png"),
@@ -50,6 +54,82 @@ public class DragonTypes {
                                 ),
                                 new GrowthIcon(
                                         DragonSurvival.res("growth/cave/ancient.png"),
+                                        AncientDatapack.ancient
+                                )
+                        ),
+                        new ColorRGBA(16711680),
+                        new ColorRGBA(16711680)
+                )
+        ));
+
+        context.register(SEA, new DragonType(
+                HolderSet.empty(),
+                HolderSet.empty(),
+                HolderSet.direct(context.lookup(DragonAbility.REGISTRY).getOrThrow(DragonAbilities.NETHER_BREATH)),
+                List.of(),
+                List.of(),
+                List.of(),
+                new MiscDragonTextures(
+                        DragonSurvival.res("food_icons/cave_food_sprites.png"),
+                        DragonSurvival.res("mana_icons/cave_mana_sprites.png"),
+                        DragonSurvival.res("dragon_altar/cave_altar_banner.png"),
+                        DragonSurvival.res("source_of_magic/cave_source_of_magic_0.png"),
+                        DragonSurvival.res("source_of_magic/cave_source_of_magic_1.png"),
+                        DragonSurvival.res("casting_bars/cave_cast_bar.png"),
+                        DragonSurvival.res("help_button/cave_help_button.png"),
+                        DragonSurvival.res("growth/circle_cave.png"),
+                        List.of(new GrowthIcon(
+                                        DragonSurvival.res("growth/sea/newborn.png"),
+                                        DragonStages.newborn
+                                ),
+                                new GrowthIcon(
+                                        DragonSurvival.res("growth/sea/young.png"),
+                                        DragonStages.young
+                                ),
+                                new GrowthIcon(
+                                        DragonSurvival.res("growth/sea/adult.png"),
+                                        DragonStages.adult
+                                ),
+                                new GrowthIcon(
+                                        DragonSurvival.res("growth/sea/ancient.png"),
+                                        AncientDatapack.ancient
+                                )
+                        ),
+                        new ColorRGBA(16711680),
+                        new ColorRGBA(16711680)
+                )
+        ));
+
+        context.register(FOREST, new DragonType(
+                HolderSet.empty(),
+                HolderSet.empty(),
+                HolderSet.direct(context.lookup(DragonAbility.REGISTRY).getOrThrow(DragonAbilities.NETHER_BREATH)),
+                List.of(),
+                List.of(),
+                List.of(),
+                new MiscDragonTextures(
+                        DragonSurvival.res("food_icons/cave_food_sprites.png"),
+                        DragonSurvival.res("mana_icons/cave_mana_sprites.png"),
+                        DragonSurvival.res("dragon_altar/cave_altar_banner.png"),
+                        DragonSurvival.res("source_of_magic/cave_source_of_magic_0.png"),
+                        DragonSurvival.res("source_of_magic/cave_source_of_magic_1.png"),
+                        DragonSurvival.res("casting_bars/cave_cast_bar.png"),
+                        DragonSurvival.res("help_button/cave_help_button.png"),
+                        DragonSurvival.res("growth/circle_cave.png"),
+                        List.of(new GrowthIcon(
+                                        DragonSurvival.res("growth/forest/newborn.png"),
+                                        DragonStages.newborn
+                                ),
+                                new GrowthIcon(
+                                        DragonSurvival.res("growth/forest/young.png"),
+                                        DragonStages.young
+                                ),
+                                new GrowthIcon(
+                                        DragonSurvival.res("growth/forest/adult.png"),
+                                        DragonStages.adult
+                                ),
+                                new GrowthIcon(
+                                        DragonSurvival.res("growth/forest/ancient.png"),
                                         AncientDatapack.ancient
                                 )
                         ),

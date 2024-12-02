@@ -1,7 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins.client;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.HunterHandler;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -35,10 +34,11 @@ public abstract class HumanoidArmorLayerMixin {
 
     @ModifyArg(method = "renderArmorPiece(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/entity/EquipmentSlot;ILnet/minecraft/client/model/HumanoidModel;FFFFFF)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/layers/HumanoidArmorLayer;renderModel(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/client/model/Model;ILnet/minecraft/resources/ResourceLocation;)V"), index = 4)
     private int dragonSurvival$modifyAlpha(int color, @Local(argsOnly = true) final LivingEntity entity) {
-        if (entity instanceof Player player && DragonStateProvider.getData(player).hasHunterStacks()) {
-            dragonSurvival$alpha = HunterHandler.calculateAlpha(player);
-            return HunterHandler.applyAlpha(dragonSurvival$alpha, color);
-        }
+        // FIXME
+        //if (entity instanceof Player player && DragonStateProvider.getData(player).hasHunterStacks()) {
+            //dragonSurvival$alpha = HunterHandler.calculateAlpha(player);
+            //return HunterHandler.applyAlpha(dragonSurvival$alpha, color);
+        //}
 
         dragonSurvival$alpha = -1;
         return color;
@@ -70,11 +70,13 @@ public abstract class HumanoidArmorLayerMixin {
 
     @WrapOperation(method = "renderTrim(Lnet/minecraft/core/Holder;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/item/armortrim/ArmorTrim;Lnet/minecraft/client/model/Model;Z)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/model/Model;renderToBuffer(Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;II)V"))
     private void dragonSurvival$renderWithModifiedAlpha(final Model instance, final PoseStack poseStack, final VertexConsumer vertexConsumer, int packedLight, int packedOverlay, final Operation<Void> original) {
-        if (dragonSurvival$alpha != -1 && dragonSurvival$alpha != 1) {
+        // FIXME
+        /*if (dragonSurvival$alpha != -1 && dragonSurvival$alpha != 1) {
             instance.renderToBuffer(poseStack, vertexConsumer, packedLight, packedOverlay, HunterHandler.applyAlpha(dragonSurvival$alpha, -1));
         } else {
             original.call(instance, poseStack, vertexConsumer, packedLight, packedOverlay);
-        }
+        }*/
+        original.call(instance, poseStack, vertexConsumer, packedLight, packedOverlay);
     }
 
     @Unique private static RenderType.CompositeRenderType dragonSurvival$createTranslucentArmorCutoutNoCull(final String name, final ResourceLocation texture, boolean equalDepthTest) {

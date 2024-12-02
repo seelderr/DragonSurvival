@@ -3,8 +3,6 @@ package by.dragonsurvivalteam.dragonsurvival.server.handlers;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
@@ -15,6 +13,8 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.SpinData;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.core.BlockPos;
@@ -154,16 +154,17 @@ public class ServerFlightHandler {
         return dragonStateHandler.hasFlight() && dragonStateHandler.isWingsSpread() && !player.onGround() && !player.isInWater() && !player.isInLava();
     }
 
-    private static Holder<MobEffect> getFlightEffectForType(AbstractDragonType type) {
-        if (DragonUtils.isType(type, DragonTypes.SEA)) {
+    private static Holder<MobEffect> getFlightEffectForType(Holder<DragonType> type) {
+        // FIXME
+       /* if (DragonUtils.isType(type, DragonTypes.SEA)) {
             return DSEffects.SEA_DRAGON_WINGS;
         } else if (DragonUtils.isType(type, DragonTypes.CAVE)) {
             return DSEffects.CAVE_DRAGON_WINGS;
         } else if (DragonUtils.isType(type, DragonTypes.FOREST)) {
             return DSEffects.FOREST_DRAGON_WINGS;
-        }
+        }*/
 
-        return null;
+        return DSEffects.CAVE_DRAGON_WINGS;
     }
 
     private static boolean hasCorrectFlightEffect(Player player) {
@@ -325,6 +326,7 @@ public class ServerFlightHandler {
     }
 
     public static boolean canSwimSpin(Player player){
+        // FIXME :: not data driven
         DragonStateHandler dragonStateHandler = DragonStateProvider.getData(player);
         boolean validSwim = (DragonUtils.isType(dragonStateHandler, DragonTypes.SEA) || DragonUtils.isType(dragonStateHandler, DragonTypes.FOREST)) && player.isInWater() || player.isInLava() && DragonUtils.isType(dragonStateHandler, DragonTypes.CAVE);
         return validSwim && dragonStateHandler.hasFlight() && !player.onGround();

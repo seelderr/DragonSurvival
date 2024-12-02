@@ -44,7 +44,8 @@ public class DragonBodyButton extends Button {
         String iconLocationSuffix;
 
         if (screen instanceof DragonEditorScreen dragonEditorScreen) {
-            iconLocationSuffix = "/" + dragonEditorScreen.dragonType.getTypeNameLowerCase() + ".png";
+            // FIXME :: Does this work?
+            iconLocationSuffix = "/" + dragonEditorScreen.dragonType.getRegisteredName() + ".png";
         } else {
             iconLocationSuffix = "/default.png";
         }

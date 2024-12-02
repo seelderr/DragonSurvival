@@ -3,7 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SavedSkinPresets;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStage;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import by.dragonsurvivalteam.dragonsurvival.util.json.GsonFactory;
@@ -19,7 +19,6 @@ import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 
 import java.io.*;
 import java.util.HashMap;
-import java.util.Locale;
 import javax.annotation.Nullable;
 
 @EventBusSubscriber(value = Dist.CLIENT)
@@ -92,21 +91,20 @@ public class DragonEditorRegistry {
             Gson gson = GsonFactory.newBuilder().setPrettyPrinting().create();
             DragonEditorRegistry.savedCustomizations = new SavedSkinPresets();
 
-            for (String dragonType : DragonTypes.getTypes()) {
-                String typeKey = dragonType.toUpperCase(Locale.ENGLISH);
-                DragonEditorRegistry.savedCustomizations.skinPresets.computeIfAbsent(typeKey, key -> new HashMap<>());
-                DragonEditorRegistry.savedCustomizations.current.computeIfAbsent(typeKey, key -> new HashMap<>());
+            for (ResourceKey<DragonType> dragonType : ResourceHelper.keys(provider, DragonType.REGISTRY)) {
+                DragonEditorRegistry.savedCustomizations.skinPresets.computeIfAbsent(dragonType, key -> new HashMap<>());
+                DragonEditorRegistry.savedCustomizations.current.computeIfAbsent(dragonType, key -> new HashMap<>());
 
                 for (int slot = 0; slot < MAX_SAVE_SLOTS; slot++) {
-                    DragonEditorRegistry.savedCustomizations.skinPresets.get(typeKey).computeIfAbsent(slot, key -> {
+                    DragonEditorRegistry.savedCustomizations.skinPresets.get(dragonType).computeIfAbsent(slot, key -> {
                         SkinPreset preset = new SkinPreset();
-                        preset.initDefaults(DragonTypes.getStatic(typeKey));
+                        preset.initDefaults(dragonType);
                         return preset;
                     });
                 }
 
                 for (ResourceKey<DragonStage> level : ResourceHelper.keys(provider, DragonStage.REGISTRY)) {
-                    DragonEditorRegistry.savedCustomizations.current.get(typeKey).put(level.location().toString(), 0);
+                    DragonEditorRegistry.savedCustomizations.current.get(dragonType).put(level.location().toString(), 0);
                 }
             }
 

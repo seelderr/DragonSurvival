@@ -3,8 +3,6 @@ package by.dragonsurvivalteam.dragonsurvival.common.handlers.magic;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
-import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.active.HunterAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncHunterStacksRemoval;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSBlockTags;
@@ -35,7 +33,8 @@ import software.bernie.geckolib.util.Color;
  */
 @EventBusSubscriber
 public class HunterHandler { // FIXME :: disable shadows in EntityRenderDispatcher#render
-    public static final int MAX_HUNTER_STACKS = Functions.secondsToTicks(2) * HunterAbility.maxLevel();
+    // FIXME
+    public static final int MAX_HUNTER_STACKS = Functions.secondsToTicks(2) /* HunterAbility.maxLevel()*/;
     // Lower values starts to just be invisible (vanilla uses ~0.15)
     public static final float MIN_ALPHA = 0.2f;
 
@@ -51,12 +50,15 @@ public class HunterHandler { // FIXME :: disable shadows in EntityRenderDispatch
         if (hunterEffect != null) {
             int modification;
 
+            // FIXME
             if (/* Below feet*/ isHunterRelevant(player.getBlockStateOn()) || /* Within block */ isHunterRelevant(player.getInBlockState())) {
                 // Gain more stacks per tick per amplifier level (min. of 1 and max. of max. ability level)
-                modification = Math.min(HunterAbility.maxLevel(), 1 + hunterEffect.getAmplifier());
+                //modification = Math.min(HunterAbility.maxLevel(), 1 + hunterEffect.getAmplifier());
+                modification = 1;
             } else {
                 // Per amplifier level lose fewer stacks per tick (min. of 1 and max. of max. ability level)
-                modification = Math.min(HunterAbility.maxLevel() - 1, hunterEffect.getAmplifier()) - HunterAbility.maxLevel();
+                //modification = Math.min(HunterAbility.maxLevel() - 1, hunterEffect.getAmplifier()) - HunterAbility.maxLevel();
+                modification = 1;
             }
 
             data.modifyHunterStacks(modification);
@@ -129,7 +131,8 @@ public class HunterHandler { // FIXME :: disable shadows in EntityRenderDispatch
         }
 
         DragonStateHandler data = DragonStateProvider.getData(event.getEntity());
-        float multiplier = DragonAbilities.getAbility(event.getEntity(), HunterAbility.class, data.getType()).map(HunterAbility::getDamage).orElse(1f + hunterEffect.getAmplifier());
+        // FIXME
+        float multiplier = 0; //DragonAbilities.getAbility(event.getEntity(), HunterAbility.class, data.getType()).map(HunterAbility::getDamage).orElse(1f + hunterEffect.getAmplifier());
 
         if (data.hasMaxHunterStacks()) {
             multiplier += 2f;
@@ -196,7 +199,8 @@ public class HunterHandler { // FIXME :: disable shadows in EntityRenderDispatch
             return 1;
         }
 
-        float min = isLocalPlayer || !HunterAbility.fullyInvisible ? MIN_ALPHA : 0;
+        // FIXME
+        float min = 0;//isLocalPlayer || !HunterAbility.fullyInvisible ? MIN_ALPHA : 0;
         return Math.max(min, 1f - (float) data.getHunterStacks() / HunterHandler.MAX_HUNTER_STACKS);
     }
 

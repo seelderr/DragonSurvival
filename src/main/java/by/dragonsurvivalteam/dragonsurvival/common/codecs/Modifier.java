@@ -1,27 +1,29 @@
 package by.dragonsurvivalteam.dragonsurvival.common.codecs;
 
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 
 import java.util.Optional;
 
-public record Modifier(Holder<Attribute> attribute, LevelBasedValue amount, AttributeModifier.Operation operation, Optional<String> dragonType) {
+public record Modifier(Holder<Attribute> attribute, LevelBasedValue amount, AttributeModifier.Operation operation, Optional<ResourceKey<DragonType>> dragonType) {
     public static final Codec<Modifier> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Attribute.CODEC.fieldOf("attribute").forGetter(Modifier::attribute),
             LevelBasedValue.CODEC.fieldOf("amount").forGetter(Modifier::amount),
             AttributeModifier.Operation.CODEC.fieldOf("operation").forGetter(Modifier::operation),
-            Codec.STRING.optionalFieldOf("dragon_type").forGetter(Modifier::dragonType)
+            ResourceKey.codec(DragonType.REGISTRY).optionalFieldOf("dragon_type").forGetter(Modifier::dragonType)
     ).apply(instance, Modifier::new));
 
     public static Modifier constant(final Holder<Attribute> attribute, float amount, final AttributeModifier.Operation operation) {
         return new Modifier(attribute, LevelBasedValue.constant(amount), operation, Optional.empty());
     }
 
-    public static Modifier constant(final Holder<Attribute> attribute, float amount, final AttributeModifier.Operation operation, final String dragonType) {
+    public static Modifier constant(final Holder<Attribute> attribute, float amount, final AttributeModifier.Operation operation, final ResourceKey<DragonType> dragonType) {
         return new Modifier(attribute, LevelBasedValue.constant(amount), operation, Optional.of(dragonType));
     }
 
@@ -29,7 +31,7 @@ public record Modifier(Holder<Attribute> attribute, LevelBasedValue amount, Attr
         return new Modifier(attribute, LevelBasedValue.perLevel(amount), operation, Optional.empty());
     }
 
-    public static Modifier per(final Holder<Attribute> attribute, float amount, final AttributeModifier.Operation operation, final String dragonType) {
+    public static Modifier per(final Holder<Attribute> attribute, float amount, final AttributeModifier.Operation operation, final ResourceKey<DragonType> dragonType) {
         return new Modifier(attribute, LevelBasedValue.perLevel(amount), operation, Optional.of(dragonType));
     }
 

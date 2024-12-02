@@ -107,7 +107,8 @@ public class ClawsAndTeethRenderLayer extends GeoRenderLayer<DragonEntity> {
             return null;
         }
 
-        ItemStack clawItem = ClawInventoryData.getData(player).getContainer().getItem(handler.getType().clawTextureSlot);
+        // FIXME
+        ItemStack clawItem = ItemStack.EMPTY;//ClawInventoryData.getData(player).getContainer().getItem(handler.getType().clawTextureSlot);
 
         if (!clawItem.isEmpty()) {
             texturePath = getMaterial(texturePath, clawItem);

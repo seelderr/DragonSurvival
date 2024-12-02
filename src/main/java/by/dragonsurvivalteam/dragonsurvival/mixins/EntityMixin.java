@@ -1,14 +1,12 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.HunterHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.CaveDragonConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.DragonBonusConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachments;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MovementData;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSEntityTypeTags;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -127,8 +125,10 @@ public abstract class EntityMixin {
         }
 
         if ((Object) this instanceof Player player && DragonStateProvider.getData(player).hasMaxHunterStacks()) {
+            // FIXME
             // With max. stacks the visibility value is set to 0 anyway so this shouldn't affect actual gameplay features
-            return HunterHandler.calculateAlpha(player) == 0;
+           // return HunterHandler.calculateAlpha(player) == 0;
+            return false;
         }
 
         return false;
@@ -141,7 +141,8 @@ public abstract class EntityMixin {
         }
 
         //noinspection ConstantValue -> the condition is not always false
-        return DragonBonusConfig.bonusesEnabled && CaveDragonConfig.caveFireImmunity && (Object) this instanceof Player player && DragonUtils.isType(player, DragonTypes.CAVE);
+        // FIXME
+        return DragonBonusConfig.bonusesEnabled && /*CaveDragonConfig.caveFireImmunity &&*/ (Object) this instanceof Player player && DragonUtils.isType(player, DragonTypes.CAVE);
     }
 
     @Shadow public abstract double getX();

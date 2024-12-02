@@ -27,4 +27,5 @@ public class DSDataAttachments {
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<ModifiersWithDuration>> MODIFIERS_WITH_DURATION = DS_ATTACHMENT_TYPES.register("modifiers_with_duration", () -> AttachmentType.serializable(ModifiersWithDuration::new).build());
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<DamageModifications>> DAMAGE_MODIFICATIONS = DS_ATTACHMENT_TYPES.register("damage_modifications", () -> AttachmentType.serializable(DamageModifications::new).build());
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<HarvestBonuses>> HARVEST_BONUSES = DS_ATTACHMENT_TYPES.register("harvest_bonuses", () -> AttachmentType.serializable(HarvestBonuses::new).build());
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<MagicData>> MAGIC = DS_ATTACHMENT_TYPES.register("magic_data", () -> AttachmentType.serializable(MagicData::new).copyOnDeath().build());
 }

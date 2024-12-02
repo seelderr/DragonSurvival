@@ -1,15 +1,5 @@
-package by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.passive;
+/*package by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.passive;
 
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
-import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.MagicAbility;
-import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
-import net.minecraft.resources.ResourceLocation;
-
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 @Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = {
         "■ Magic points (Mana) are used for dragon magic. Restores on wet blocks.\n",
@@ -71,4 +61,4 @@ public class SeaMagicAbility extends MagicAbility {
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_magic_20.png")
         };
     }
-}
+}*/

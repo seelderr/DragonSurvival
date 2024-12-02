@@ -14,15 +14,16 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class SyncMagicSourceStatus implements IMessage<SyncMagicSourceStatus.Data> {
+    // FIXME
     public static void handleClient(Data message, IPayloadContext context) {
-        context.enqueueWork(() -> ClientProxy.handleSyncMagicSourceStatus(message));
+        //context.enqueueWork(() -> ClientProxy.handleSyncMagicSourceStatus(message));
     }
 
     public static void handleServer(Data message, IPayloadContext context) {
-        context.enqueueWork(() -> DragonStateProvider.getOptional(context.player()).ifPresent(cap -> {
+        /*context.enqueueWork(() -> DragonStateProvider.getOptional(context.player()).ifPresent(cap -> {
             cap.getMagicData().onMagicSource = message.state;
             cap.getMagicData().magicSourceTimer = message.timer;
-        })).thenRun(() -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(context.player(), message));
+        })).thenRun(() -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(context.player(), message));*/
     }
 
     public record Data(int playerId, boolean state, int timer) implements CustomPacketPayload {

@@ -2,8 +2,6 @@ package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.TickablePassiveAbility;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
@@ -18,7 +16,8 @@ public class DragonTraitHandler {
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent.Post playerTickEvent) {
         Player player = playerTickEvent.getEntity();
-        DragonStateProvider.getOptional(player).ifPresent(dragonStateHandler -> {
+        // FIXME not needed anymore?
+        /*DragonStateProvider.getOptional(player).ifPresent(dragonStateHandler -> {
             if (dragonStateHandler.isDragon()) {
                 for (DragonAbility passiveAbility : dragonStateHandler.getMagicData().abilities.values()) {
                     if (passiveAbility instanceof TickablePassiveAbility tickablePassiveAbility) {
@@ -30,7 +29,7 @@ public class DragonTraitHandler {
 
                 dragonStateHandler.getType().onPlayerUpdate(player, dragonStateHandler);
             }
-        });
+        });*/
     }
 
     @SubscribeEvent
@@ -38,7 +37,8 @@ public class DragonTraitHandler {
         if (event.getEntity() instanceof Player player) {
             DragonStateHandler handler = DragonStateProvider.getData(player);
             if (handler.isDragon()) {
-                handler.getType().onPlayerDeath();
+                // FIXME
+               // handler.getType().onPlayerDeath();
             }
         }
     }

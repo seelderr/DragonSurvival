@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins.client;
 
-import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.active.HunterAbility;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.minecraft.client.Minecraft;
 import org.spongepowered.asm.mixin.Mixin;
@@ -14,6 +13,8 @@ public abstract class MinecraftMixin {
 
     @ModifyReturnValue(method = "useShaderTransparency", at = @At("RETURN"))
     private static boolean dragonSurvival$enableTranslucencyFix(boolean isEnabled) {
-        return isEnabled || (/* Unsure why this check exists in vanilla */ !instance.gameRenderer.isPanoramicMode() && HunterAbility.fixTranslucency);
+        // FIXME
+        return isEnabled;
+        //return isEnabled || (/* Unsure why this check exists in vanilla */ !instance.gameRenderer.isPanoramicMode() && HunterAbility.fixTranslucency);
     }
 }

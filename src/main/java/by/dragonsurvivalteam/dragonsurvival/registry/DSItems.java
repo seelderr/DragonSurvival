@@ -2,16 +2,13 @@ package by.dragonsurvivalteam.dragonsurvival.registry;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.items.*;
 import by.dragonsurvivalteam.dragonsurvival.common.items.armor.DarkDragonArmorItem;
 import by.dragonsurvivalteam.dragonsurvival.common.items.armor.DragonHunterWeapon;
 import by.dragonsurvivalteam.dragonsurvival.common.items.armor.LightDragonArmorItem;
-import by.dragonsurvivalteam.dragonsurvival.common.items.food.ChargedSoupItem;
-import by.dragonsurvivalteam.dragonsurvival.common.items.food.DragonFoodItem;
 import by.dragonsurvivalteam.dragonsurvival.common.items.growth.StarHeartItem;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.util.BlockPosHelper;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import it.unimi.dsi.fastutil.Pair;
@@ -88,7 +85,8 @@ public class DSItems {
 
     // --- Food --- //
 
-    @Translation(type = Translation.Type.ITEM, comments = "Charged Coal")
+    // FIXME
+    /*@Translation(type = Translation.Type.ITEM, comments = "Charged Coal")
     @Translation(type = Translation.Type.DESCRIPTION, comments = "■§7 Removes all effects. Can also be used to smelt a large number of items. More efficient than a block of coal.")
     public static final Holder<Item> CHARGED_COAL = DS_ITEMS.register("charged_coal", () -> new ChargedCoalItem(new Properties(), DragonTypes.CAVE, REMOVE_EFFECTS_CURED_BY_MILK));
 
@@ -211,7 +209,7 @@ public class DSItems {
 
     @Translation(type = Translation.Type.ITEM, comments = "Forest Dragon Treat")
     @Translation(type = Translation.Type.DESCRIPTION, comments = "■§7 Grants infinite mana temporarily.")
-    public static final Holder<Item> FOREST_DRAGON_TREAT = DS_ITEMS.register("forest_dragon_treat", () -> new DragonTreatItem(DragonTypes.FOREST, new Properties()));
+    public static final Holder<Item> FOREST_DRAGON_TREAT = DS_ITEMS.register("forest_dragon_treat", () -> new DragonTreatItem(DragonTypes.FOREST, new Properties()));*/
 
     // --- Armor --- //
 

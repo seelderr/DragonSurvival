@@ -3,14 +3,10 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.screens;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.hud.MagicHUD;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.*;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.MagicCap;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.ExperienceUtils;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -20,13 +16,13 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
@@ -60,11 +56,11 @@ public class AbilityScreen extends Screen {
     private static final float HIGHEST_LEVEL = 55f;
 
     public Screen sourceScreen;
-    public ArrayList<ActiveDragonAbility> unlockableAbilities = new ArrayList<>();
+    //public ArrayList<ActiveDragonAbility> unlockableAbilities = new ArrayList<>();
 
     private int guiLeft;
     private int guiTop;
-    private AbstractDragonType type;
+    private Holder<DragonType> type;
 
     public AbilityScreen(Screen sourceScreen) {
         super(Component.empty().append("AbilityScreen")); // FIXME :: what is this component used for
@@ -143,14 +139,15 @@ public class AbilityScreen extends Screen {
 
         super.render(guiGraphics, mouseX, mouseY, partialTick);
 
-        renderables.forEach(renderable -> {
+        // FIXME
+        /*renderables.forEach(renderable -> {
             if (renderable instanceof AbilityButton babilityButtonn) {
                 if (babilityButtonn.skillType == 0 && babilityButtonn.dragging && babilityButtonn.ability != null) {
                     RenderSystem.setShaderTexture(0, babilityButtonn.ability.getIcon());
                     guiGraphics.blit(babilityButtonn.ability.getIcon(), mouseX, mouseY, 0, 0, 32, 32, 32, 32);
                 }
             }
-        });
+        });*/
     }
 
     @Override
@@ -182,7 +179,8 @@ public class AbilityScreen extends Screen {
             addRenderableWidget(new SkillProgressButton(guiLeft + 10 + (int) (219 / 2F) + i * 23, startY + 8 - 30, 4 + i, this));
         }
 
-        DragonStateProvider.getOptional(Minecraft.getInstance().player).ifPresent(cap -> {
+        // FIXME
+       /* DragonStateProvider.getOptional(Minecraft.getInstance().player).ifPresent(cap -> {
             for (int num = 0; num < MagicCap.activeAbilitySlots; num++) {
                 addRenderableWidget(new AbilityButton((int) (guiLeft + (90 + 20) / 2.0), guiTop + 40 - 25 + num * 35, 0, num, this));
             }
@@ -196,7 +194,7 @@ public class AbilityScreen extends Screen {
             for (int num = 0; num < MagicCap.innateAbilitySlots; num++) {
                 addRenderableWidget(new AbilityButton(guiLeft + (int) (340 / 2F), guiTop + 40 - 25 + num * 35, 2, num, this));
             }
-        });
+        });*/
 
         addRenderableWidget(new HelpButton(startX + 218 / 2 + 3 + 10 - 55, startY + 263 / 2 + 28, 9, 9, HELP_ACTIVE, 0));
         addRenderableWidget(new HelpButton(startX + 218 / 2 + 3 + 10 + 2, startY + 263 / 2 + 28, 9, 9, HELP_PASSIVE, 0));
@@ -206,8 +204,9 @@ public class AbilityScreen extends Screen {
 
     @Override
     public void tick() {
+        // FIXME
         //noinspection DataFlowIssue -> players should be present
-        DragonStateHandler data = DragonStateProvider.getData(minecraft.player);
+        /*DragonStateHandler data = DragonStateProvider.getData(minecraft.player);
         unlockableAbilities.clear();
         type = data.getType();
 
@@ -226,7 +225,7 @@ public class AbilityScreen extends Screen {
         }
 
         // Show abilities with the lowest required experience level first
-        unlockableAbilities.sort(Comparator.comparingInt(ActiveDragonAbility::getCurrentRequiredLevel));
+        unlockableAbilities.sort(Comparator.comparingInt(ActiveDragonAbility::getCurrentRequiredLevel));*/
     }
 
     @Override
