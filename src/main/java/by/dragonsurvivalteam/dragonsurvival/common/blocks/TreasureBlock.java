@@ -80,9 +80,9 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
         if (player.getBlockStateOn().getBlock() == blockState.getBlock()) {
             TreasureRestData data = TreasureRestData.getData(player);
 
-            if (!data.treasureResting) {
+            if (!data.isResting) {
                 if (world.isClientSide()) {
-                    data.treasureResting = true;
+                    data.isResting = true;
                     PacketDistributor.sendToServer(new SyncTreasureRestStatus.Data(player.getId(), true));
                 }
 

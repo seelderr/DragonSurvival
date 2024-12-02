@@ -611,7 +611,7 @@ public class DragonStateHandler extends EntityStateHandler {
         setSize(player, null, NO_SIZE);
 
         if (!ServerConfig.saveAllAbilities) {
-            SpinData.getData(player).spinLearned = false;
+            SpinData.getData(player).hasSpin = false;
             this.setHasFlight(false);
         }
 

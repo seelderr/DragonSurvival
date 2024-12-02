@@ -26,13 +26,13 @@ public class SyncTreasureRestStatus implements IMessage<SyncTreasureRestStatus.D
             if(DragonStateProvider.isDragon(context.player())) {
                 boolean update = false;
 
-                if (message.state() != data.treasureResting) {
-                    data.treasureRestTimer = 0;
-                    data.treasureSleepTimer = 0;
+                if (message.state() != data.isResting) {
+                    data.restingTicks = 0;
+                    data.sleepingTicks = 0;
                     update = true;
                 }
 
-                data.treasureResting = message.state();
+                data.isResting = message.state();
 
                 if (update) {
                     ((ServerLevel) context.player().level()).updateSleepingPlayerList();

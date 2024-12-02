@@ -75,9 +75,11 @@ public abstract class PlayerMixin extends LivingEntity {
 
     /** Allow treasure blocks to trigger sleep logic */
     @Inject(method = "isSleepingLongEnough", at = @At("HEAD"), cancellable = true)
-    public void dragonSurvival$isSleepingLongEnough(CallbackInfoReturnable<Boolean> callback) {
-        TreasureRestData data = TreasureRestData.getData((Player) (Object) this);
-        if (DragonStateProvider.isDragon((Player)(Object)(this)) && data.treasureResting && data.treasureSleepTimer >= 100) {
+    public void dragonSurvival$isSleepingLongEnough(final CallbackInfoReturnable<Boolean> callback) {
+        Player player = (Player) (Object) this;
+        TreasureRestData data = TreasureRestData.getData(player);
+
+        if (DragonStateProvider.isDragon(player) && data.canSleep()) {
             callback.setReturnValue(true);
         }
     }

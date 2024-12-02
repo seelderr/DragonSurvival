@@ -1,7 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.common.blocks;
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.container.OpenDragonAltar;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.AltarData;

@@ -32,8 +32,8 @@ public class MiningTickHandler {
                 }
 
                 TreasureRestData treasureRest = TreasureRestData.getData(player);
-                if (treasureRest.treasureResting && isMining) {
-                    treasureRest.treasureResting = false;
+                if (treasureRest.isResting && isMining) {
+                    treasureRest.isResting = false;
                     PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncTreasureRestStatus.Data(player.getId(), false));
                 }
 

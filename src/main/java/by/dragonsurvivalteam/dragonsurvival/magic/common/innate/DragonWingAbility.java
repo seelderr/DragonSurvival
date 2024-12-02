@@ -38,9 +38,9 @@ public abstract class DragonWingAbility extends InnateDragonAbility {
         SpinData spin = SpinData.getData(player);
         // TODO: Something to consider when handling data driven innate descriptions?
         if (DragonUtils.isType(data, DragonTypes.CAVE)) {
-            spinDescription = spin.spinLearned ? LAVA_SPIN : NO_LAVA_SPIN;
+            spinDescription = spin.hasSpin ? LAVA_SPIN : NO_LAVA_SPIN;
         } else {
-            spinDescription = spin.spinLearned ? WATER_SPIN : NO_WATER_SPIN;
+            spinDescription = spin.hasSpin ? WATER_SPIN : NO_WATER_SPIN;
         }
 
         return Component.translatable(Translation.Type.ABILITY_DESCRIPTION.wrap(getName()), key).append("\n").append(Component.translatable(spinDescription));

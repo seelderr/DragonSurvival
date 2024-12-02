@@ -17,9 +17,9 @@ import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawRender;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawsMenu;
 import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncDragonSkinSettings;
 import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncPlayerSkinPreset;
+import by.dragonsurvivalteam.dragonsurvival.network.flight.SpinStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncDeltaMovement;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncFlyingStatus;
-import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.*;
 import by.dragonsurvivalteam.dragonsurvival.network.particle.SyncBreathParticles;
 import by.dragonsurvivalteam.dragonsurvival.network.particle.SyncParticleTrail;
@@ -43,6 +43,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -183,19 +184,15 @@ public class ClientProxy {
         }
     }
 
-    public static void handleSyncSpinStatus(final SyncSpinStatus.Data message) {
-        Player localPlayer = Minecraft.getInstance().player;
+    public static void handleSyncSpinStatus(final SpinStatus packet) {
+        Player localPlayer = Objects.requireNonNull(Minecraft.getInstance().player);
 
-        if (localPlayer != null) {
-            Entity entity = localPlayer.level().getEntity(message.playerId());
-
-            if(entity != null) {
-                SpinData spin = SpinData.getData(entity);
-                spin.spinLearned = message.spinLearned();
-                spin.spinCooldown = message.spinCooldown();
-                spin.spinAttack = message.spinAttack();
-                ClientFlightHandler.lastSync = entity.tickCount;
-            }
+        if (localPlayer.level().getEntity(packet.playerId()) instanceof Player player) {
+            SpinData spin = SpinData.getData(player);
+            spin.hasSpin = packet.hasSpin();
+            spin.cooldown = packet.cooldown();
+            spin.duration = packet.duration();
+            ClientFlightHandler.lastSync = player.tickCount;
         }
     }
 
@@ -416,12 +413,12 @@ public class ClientProxy {
 
             if (entity instanceof Player player) {
                 TreasureRestData data = TreasureRestData.getData(player);
-                if (message.state() != data.treasureResting) {
-                    data.treasureRestTimer = 0;
-                    data.treasureSleepTimer = 0;
+                if (message.state() != data.isResting) {
+                    data.restingTicks = 0;
+                    data.sleepingTicks = 0;
                 }
 
-                data.treasureResting = message.state();
+                data.isResting = message.state();
             }
         }
     }

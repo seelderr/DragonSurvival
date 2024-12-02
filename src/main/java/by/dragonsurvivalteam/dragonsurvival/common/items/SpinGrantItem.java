@@ -3,7 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.items;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
+import by.dragonsurvivalteam.dragonsurvival.network.flight.SpinStatus;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.SpinData;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
@@ -26,8 +26,8 @@ public class SpinGrantItem extends TooltipItem {
         if (handler.isDragon()) {
             if (!world.isClientSide()) {
                 SpinData spin = SpinData.getData(player);
-                spin.spinLearned = !spin.spinLearned;
-                PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncSpinStatus.Data(player.getId(), spin.spinAttack, spin.spinCooldown, spin.spinLearned));
+                spin.hasSpin = !spin.hasSpin;
+                PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SpinStatus(player.getId(), spin.duration, spin.cooldown, spin.hasSpin));
 
                 if (!player.isCreative()) {
                     player.getItemInHand(hand).shrink(1);

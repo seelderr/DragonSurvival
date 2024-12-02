@@ -5,28 +5,36 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.UnknownNullability;
 
 public class TreasureRestData implements INBTSerializable<CompoundTag> {
-    public boolean treasureResting;
-    public int treasureRestTimer;
-    public int treasureSleepTimer;
+    public static final String IS_RESTING = "is_resting";
+    public static final String RESTING_TICKS = "resting_ticks";
 
-    public static TreasureRestData getData(Player player) {
+    public static final int TICKS_TO_SLEEP = 100;
+
+    public boolean isResting;
+    public int restingTicks;
+    public int sleepingTicks;
+
+    public boolean canSleep() {
+        return isResting && restingTicks >= TICKS_TO_SLEEP;
+    }
+
+    public static TreasureRestData getData(final Player player) {
         return player.getData(DSDataAttachments.TREASURE_REST);
     }
 
     @Override
-    public @UnknownNullability CompoundTag serializeNBT(HolderLookup.@NotNull Provider provider) {
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider) {
         CompoundTag tag = new CompoundTag();
-        tag.putBoolean("resting", treasureResting);
-        tag.putInt("restingTimer", treasureRestTimer);
+        tag.putBoolean(IS_RESTING, isResting);
+        tag.putInt(RESTING_TICKS, restingTicks);
         return tag;
     }
 
     @Override
-    public void deserializeNBT(HolderLookup.@NotNull Provider provider, @NotNull CompoundTag nbt) {
-        treasureResting = nbt.getBoolean("resting");
-        treasureRestTimer = nbt.getInt("restingTimer");
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag tag) {
+        isResting = tag.getBoolean("resting");
+        restingTicks = tag.getInt("restingTimer");
     }
 }

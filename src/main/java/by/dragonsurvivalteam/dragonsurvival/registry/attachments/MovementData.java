@@ -28,10 +28,6 @@ public class MovementData {
     public boolean bite = false;
     public boolean dig = false;
 
-    public static MovementData getData(Entity entity) {
-        return entity.getData(DSDataAttachments.MOVEMENT);
-    }
-
     public void setFreeLook(boolean isFreeLook) {
         this.wasFreeLook = this.isFreeLook;
         this.isFreeLook = isFreeLook;
@@ -59,5 +55,9 @@ public class MovementData {
         this.headYaw = headYaw;
         this.headPitch = headPitch;
         this.deltaMovement = deltaMovement;
+    }
+
+    public static MovementData getData(final Entity entity) {
+        return entity.getData(DSDataAttachments.MOVEMENT);
     }
 }

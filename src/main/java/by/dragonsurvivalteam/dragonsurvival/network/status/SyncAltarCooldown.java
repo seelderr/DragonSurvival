@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.network.status;
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.AltarData;

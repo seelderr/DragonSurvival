@@ -14,33 +14,25 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.util.INBTSerializable;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
 public class ClawInventoryData implements INBTSerializable<CompoundTag> {
+    public static final String IS_MENU_OPEN = "is_menu_open";
+    public static final String SHOULD_RENDER_CLAWS = "should_render_claws";
 
     public enum Slot {
-        SWORD,
-        PICKAXE,
-        AXE,
-        SHOVEL;
+        SWORD, PICKAXE, AXE, SHOVEL;
 
-        /**
-         * Equivalent to the container size
-         */
+        /** Equivalent to the container size */
         public static int size() {
             return values().length;
         }
     }
 
-    public static ClawInventoryData getData(Player player) {
-        return player.getData(DSDataAttachments.CLAW_INVENTORY);
-    }
-
-    private final SimpleContainer clawsInventory = new SimpleContainer(4);
     public boolean shouldRenderClaws = true;
-    private boolean isMenuOpen;
 
     /** Used in {@link PlayerStartMixin} and {@link PlayerEndMixin} */
     public ItemStack storedMainHandWeapon = ItemStack.EMPTY;
@@ -50,8 +42,10 @@ public class ClawInventoryData implements INBTSerializable<CompoundTag> {
     public boolean switchedTool;
     public int switchedToolSlot = -1;
 
+    private final SimpleContainer clawsInventory = new SimpleContainer(4);
+    private boolean isMenuOpen;
     /** To track the state if a tool swap is triggered within a tool swap (should only swap back if the last tool swap finishes) */
-    public int toolSwapLayer;
+    private int toolSwapLayer;
 
     /**
      * Puts the relevant claw tool in the main hand and stores said main hand in the dragon state handler<br>
@@ -82,9 +76,7 @@ public class ClawInventoryData implements INBTSerializable<CompoundTag> {
         toolSwapLayer++;
     }
 
-    /**
-     * Puts the stored main hand back into the main hand and the claw tool into its slot
-     */
+    /** Puts the stored main hand back into the main hand and the claw tool into its slot */
     public void swapFinish(@Nullable final Player player) {
         if (player == null || player.isCreative() || player.isSpectator() || !DragonStateProvider.isDragon(player)) {
             return;
@@ -158,30 +150,46 @@ public class ClawInventoryData implements INBTSerializable<CompoundTag> {
         return false;
     }
 
-    @Override
-    public CompoundTag serializeNBT(HolderLookup.Provider provider) {
-        CompoundTag tag = new CompoundTag();
+    public static ClawInventoryData getData(final Player player) {
+        return player.getData(DSDataAttachments.CLAW_INVENTORY);
+    }
 
-        tag.putBoolean("clawsMenu", isMenuOpen);
+    @Override
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider) {
+        CompoundTag tag = new CompoundTag();
+        tag.putBoolean(IS_MENU_OPEN, isMenuOpen);
+
         for (ClawInventoryData.Slot slot : ClawInventoryData.Slot.values()) {
-            if (clawsInventory.getItem(slot.ordinal()).isEmpty()) continue;
+            if (clawsInventory.getItem(slot.ordinal()).isEmpty()) {
+                continue;
+            }
+
             tag.put(slot.name(), clawsInventory.getItem(slot.ordinal()).save(provider));
         }
-        tag.putBoolean("renderClaws", shouldRenderClaws);
+
+        tag.putBoolean(SHOULD_RENDER_CLAWS, shouldRenderClaws);
 
         return tag;
     }
 
     @Override
-    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
-        setMenuOpen(tag.getBoolean("clawsMenu"));
-        shouldRenderClaws = tag.getBoolean("renderClaws");
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag tag) {
+        setMenuOpen(tag.getBoolean(IS_MENU_OPEN));
+        shouldRenderClaws = tag.getBoolean(SHOULD_RENDER_CLAWS);
 
         for (ClawInventoryData.Slot slot : ClawInventoryData.Slot.values()) {
             CompoundTag slotTag = tag.getCompound(slot.name());
-            if (slotTag.isEmpty()) continue;
+
+            if (slotTag.isEmpty()) {
+                continue;
+            }
+
             Optional<ItemStack> stack = ItemStack.parse(provider, slotTag);
-            if (stack.isEmpty()) continue;
+
+            if (stack.isEmpty()) {
+                continue;
+            }
+
             clawsInventory.setItem(slot.ordinal(), stack.get());
         }
     }
