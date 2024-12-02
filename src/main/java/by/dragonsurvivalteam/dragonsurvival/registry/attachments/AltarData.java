@@ -5,9 +5,11 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.UnknownNullability;
 
 public class AltarData implements INBTSerializable<CompoundTag> {
+    public static final String ALTAR_COOLDOWN = "altar_cooldown";
+    public static final String HAS_USED_ALTAR = "has_used_altar";
+
     public int altarCooldown;
     public boolean hasUsedAltar;
     public boolean isInAltar;
@@ -17,16 +19,16 @@ public class AltarData implements INBTSerializable<CompoundTag> {
     }
 
     @Override
-    public @UnknownNullability CompoundTag serializeNBT(HolderLookup.@NotNull Provider provider) {
-        CompoundTag nbt = new CompoundTag();
-        nbt.putInt("altarCooldown", altarCooldown);
-        nbt.putBoolean("hasUsedAltar", hasUsedAltar);
-        return nbt;
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider) {
+        CompoundTag tag = new CompoundTag();
+        tag.putInt(ALTAR_COOLDOWN, altarCooldown);
+        tag.putBoolean(HAS_USED_ALTAR, hasUsedAltar);
+        return tag;
     }
 
     @Override
-    public void deserializeNBT(HolderLookup.@NotNull Provider provider, @NotNull CompoundTag nbt) {
-        altarCooldown = nbt.getInt("altarCooldown");
-        hasUsedAltar = nbt.getBoolean("hasUsedAltar");
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag tag) {
+        altarCooldown = tag.getInt(ALTAR_COOLDOWN);
+        hasUsedAltar = tag.getBoolean(HAS_USED_ALTAR);
     }
 }

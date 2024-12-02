@@ -34,14 +34,14 @@ public class DragonTreasureHandler {
         if (DragonStateProvider.isDragon(player)) {
             TreasureRestData data = TreasureRestData.getData(player);
 
-            if (data.treasureResting) {
+            if (data.isResting) {
                 if (player.isCrouching() || !(player.getBlockStateOn().getBlock() instanceof TreasureBlock) || MovementData.getData(player).bite) {
-                    data.treasureResting = false;
+                    data.isResting = false;
                     PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncTreasureRestStatus.Data(player.getId(), false));
                     return;
                 }
 
-                data.treasureSleepTimer++;
+                data.sleepingTicks++;
 
                 if (ServerConfig.treasureHealthRegen) {
                     int horizontalRange = 16;
@@ -67,14 +67,14 @@ public class DragonTreasureHandler {
                     int totalTime = ServerConfig.treasureRegenTicks;
                     int restTimer = totalTime - ServerConfig.treasureRegenTicksReduce * treasureNearby;
 
-                    if (data.treasureRestTimer >= restTimer) {
-                        data.treasureRestTimer = 0;
+                    if (data.restingTicks >= restTimer) {
+                        data.restingTicks = 0;
 
                         if (player.getHealth() < player.getMaxHealth() + 1) {
                             player.heal(1);
                         }
                     } else {
-                        data.treasureRestTimer++;
+                        data.restingTicks++;
                     }
                 }
             }
@@ -88,8 +88,8 @@ public class DragonTreasureHandler {
         if (entity instanceof Player player) {
             if (!player.level().isClientSide()) {
                 TreasureRestData data = TreasureRestData.getData(player);
-                if (data.treasureResting) {
-                    data.treasureResting = false;
+                if (data.isResting) {
+                    data.isResting = false;
                     PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncTreasureRestStatus.Data(player.getId(), false));
                 }
             }

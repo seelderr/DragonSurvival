@@ -29,7 +29,7 @@ public class DragonAbilityInstance implements INBTSerializable<CompoundTag> {
         }
 
         currentTick++;
-        ability.value().effects().forEach(effect -> effect.apply(dragon, this, currentTick));
+        ability.value().effects().forEach(effect -> effect.tick(dragon, this, currentTick));
     }
 
     public boolean isActive() {

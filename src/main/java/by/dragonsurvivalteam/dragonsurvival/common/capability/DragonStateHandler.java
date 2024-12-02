@@ -2,7 +2,10 @@ package by.dragonsurvivalteam.dragonsurvival.common.capability;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.commands.DragonCommand;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.*;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.EmoteCap;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.MagicCap;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.SkinCap;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.SubCap;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.HunterHandler;
@@ -14,8 +17,9 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSAdvancementTriggers;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.AltarData;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.ClawInventoryData;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachments;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.SpinData;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.*;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.body.DragonBodies;
@@ -303,16 +307,16 @@ public class DragonStateHandler extends EntityStateHandler {
             return true;
         }
 
-        return canHarvestWithPawNoTools(state);
+        return canHarvestWithPawNoTools(player, state);
     }
 
     /** Determines if the current dragon type can harvest the supplied block without a tool (configured harvest bonuses are taken into account) */
-    public boolean canHarvestWithPawNoTools(final BlockState state) {
+    public boolean canHarvestWithPawNoTools(final Player player, final BlockState state) {
         if (!isDragon()) {
             return false;
         }
 
-        return getDragonHarvestLevel(state) >= ToolUtils.getRequiredHarvestLevel(state);
+        return getDragonHarvestLevel(player, state) >= ToolUtils.getRequiredHarvestLevel(state);
     }
 
     /**
@@ -320,7 +324,7 @@ public class DragonStateHandler extends EntityStateHandler {
      * The unlockable harvest level bonus is only considered if the supplied state is part of {@link AbstractDragonType#harvestableBlocks()} <br>
      * If the supplied state is 'null' then the unlockable bonuses are also considered
      */
-    public int getDragonHarvestLevel(@Nullable final BlockState state) {
+    public int getDragonHarvestLevel(final Player player, @Nullable final BlockState state) {
         if (!isDragon()) {
             return -1;
         }
@@ -329,6 +333,10 @@ public class DragonStateHandler extends EntityStateHandler {
 
         if (state == null || state.is(getType().harvestableBlocks())) {
             harvestLevel = getStage().value().harvestLevelBonus();
+        }
+
+        if (state != null) {
+            harvestLevel += player.getExistingData(DSDataAttachments.HARVEST_BONUSES).map(data -> data.get(state)).orElse(0);
         }
 
         return harvestLevel;
@@ -611,7 +619,7 @@ public class DragonStateHandler extends EntityStateHandler {
         setSize(player, null, NO_SIZE);
 
         if (!ServerConfig.saveAllAbilities) {
-            SpinData.getData(player).spinLearned = false;
+            SpinData.getData(player).hasSpin = false;
             this.setHasFlight(false);
         }
 

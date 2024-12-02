@@ -12,7 +12,8 @@ public record InstantTrigger(int triggerRate) implements PenaltyTrigger {
 
     @Override
     public boolean matches(final Player dragon, final PenaltyInstance instance, boolean conditionMatched) {
-        return false; // TODO
+        // TODO :: check trigger_rate against player tickCount?
+        return conditionMatched;
     }
 
     @Override

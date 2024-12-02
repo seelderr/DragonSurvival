@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 public record ManaCost(Type type, LevelBasedValue manaCost) {
     public static final Codec<ManaCost> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Type.CODEC.fieldOf("type").forGetter(ManaCost::type),
-            LevelBasedValue.CODEC.fieldOf("mana_cost").forGetter(ManaCost::manaCost)
+            LevelBasedValue.CODEC.fieldOf("amount").forGetter(ManaCost::manaCost)
     ).apply(instance, ManaCost::new));
 
     public enum Type implements StringRepresentable {

@@ -32,12 +32,12 @@ public class DragonTreasureHandler {
         }
 
         TreasureRestData data = TreasureRestData.getData(player);
-        if (data.treasureResting) {
+        if (data.isResting) {
             Vec3 velocity = player.getDeltaMovement();
 
             // Stop the process of resting if the player is moving too much or starts to mine sth.
             if (Math.abs(velocity.horizontalDistance()) > 0.05 || MovementData.getData(player).dig) {
-                data.treasureResting = false;
+                data.isResting = false;
                 PacketDistributor.sendToServer(new SyncTreasureRestStatus.Data(player.getId(), false));
             }
         }
@@ -59,7 +59,7 @@ public class DragonTreasureHandler {
         sunAngle = sunAngle + (angleTarget - sunAngle) * 0.2f;
         double sunPosition = Mth.cos(sunAngle);
 
-        if (data.treasureResting && /* moon is at a higher position than the sun */ sunPosition < 0.25 && sleepTimer < 100) {
+        if (data.isResting && /* moon is at a higher position than the sun */ sunPosition < 0.25 && sleepTimer < 100) {
             sleepTimer++;
         } else if (sleepTimer > 0) {
             sleepTimer--;

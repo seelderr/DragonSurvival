@@ -11,9 +11,9 @@ import by.dragonsurvivalteam.dragonsurvival.network.container.RequestOpenInvento
 import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncDragonSkinSettings;
 import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncPlayerSkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.network.emotes.SyncEmote;
+import by.dragonsurvivalteam.dragonsurvival.network.flight.SpinStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncDeltaMovement;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncFlyingStatus;
-import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.*;
 import by.dragonsurvivalteam.dragonsurvival.network.particle.SyncBreathParticles;
 import by.dragonsurvivalteam.dragonsurvival.network.particle.SyncParticleTrail;
@@ -61,7 +61,7 @@ public class NetworkHandler {
         // Flight
         registrar.playBidirectional(SyncFlyingStatus.Data.TYPE, SyncFlyingStatus.Data.STREAM_CODEC, new DirectionalPayloadHandler<>(SyncFlyingStatus::handleClient, SyncFlyingStatus::handleServer));
         registrar.playBidirectional(SyncDeltaMovement.Data.TYPE, SyncDeltaMovement.Data.STREAM_CODEC, new DirectionalPayloadHandler<>(SyncDeltaMovement::handleClient, SyncDeltaMovement::handleServer));
-        registrar.playBidirectional(SyncSpinStatus.Data.TYPE, SyncSpinStatus.Data.STREAM_CODEC, new DirectionalPayloadHandler<>(SyncSpinStatus::handleClient, SyncSpinStatus::handleServer));
+        registrar.playBidirectional(SpinStatus.TYPE, SpinStatus.STREAM_CODEC, new DirectionalPayloadHandler<>(SpinStatus::handleClient, SpinStatus::handleServer));
 
         // Render settings
         registrar.playBidirectional(SyncDragonClawsMenuToggle.Data.TYPE, SyncDragonClawsMenuToggle.Data.STREAM_CODEC, new DirectionalPayloadHandler<>(SyncDragonClawsMenuToggle::handleClient, SyncDragonClawsMenuToggle::handleServer));

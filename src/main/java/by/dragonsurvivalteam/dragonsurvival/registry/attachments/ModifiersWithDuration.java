@@ -1,9 +1,12 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.attachments;
 
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ModifierWithDuration;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -12,46 +15,51 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import javax.annotation.Nullable;
 
 @EventBusSubscriber
 public class ModifiersWithDuration implements INBTSerializable<CompoundTag> {
     public static final String MODIFIERS_WITH_DURATION = "modifiers_with_duration";
 
-    @Nullable private List<ModifierWithDuration> modifiersWithDuration;
+    @Nullable private Map<ResourceLocation, ModifierWithDuration.Instance> modifiersWithDuration;
 
     public void tick(final LivingEntity entity) {
         if (modifiersWithDuration != null) {
-            modifiersWithDuration.forEach(modifier -> modifier.tick(entity));
+            Set<ResourceLocation> finished = new HashSet<>();
+
+            modifiersWithDuration.values().forEach(modifier -> {
+                if (modifier.tick()) {
+                    finished.add(modifier.baseData().id());
+                }
+            });
+
+            finished.forEach(id -> modifiersWithDuration.remove(id));
+
+            if (modifiersWithDuration.isEmpty()) {
+                entity.removeData(DSDataAttachments.MODIFIERS_WITH_DURATION);
+            }
         }
     }
 
-    public void add(final ModifierWithDuration modifier) {
+    public void add(final LivingEntity target, final ModifierWithDuration.Instance modifier) {
         if (modifiersWithDuration == null) {
-            modifiersWithDuration = new ArrayList<>();
+            modifiersWithDuration = new HashMap<>();
         }
 
-        modifiersWithDuration.add(modifier);
+        modifiersWithDuration.put(modifier.baseData().id(), modifier);
+
+        String dragonType = DragonStateProvider.getOptional(target).map(DragonStateHandler::getTypeNameLowerCase).orElse(null);
+        modifier.applyModifiers(target, dragonType, modifier.appliedAbilityLevel());
     }
 
-    public void remove(final LivingEntity entity, final ModifierWithDuration modifier) {
+    public void remove(final LivingEntity entity, final ModifierWithDuration.Instance modifier) {
         if (modifiersWithDuration == null) {
             return;
         }
 
-        modifiersWithDuration.remove(modifier);
+        modifiersWithDuration.remove(modifier.baseData().id());
         modifier.removeModifiers(entity);
-    }
-
-    public boolean contains(final ModifierWithDuration modifier) {
-        if (modifiersWithDuration == null) {
-            return false;
-        }
-
-        return modifiersWithDuration.contains(modifier);
     }
 
     public void removeAll(final LivingEntity entity) {
@@ -59,7 +67,15 @@ public class ModifiersWithDuration implements INBTSerializable<CompoundTag> {
             return;
         }
 
-        modifiersWithDuration.forEach(modifier -> modifier.removeModifiers(entity));
+        modifiersWithDuration.values().forEach(modifier -> remove(entity, modifier));
+    }
+
+    public @Nullable ModifierWithDuration.Instance get(final ModifierWithDuration modification) {
+        if (modifiersWithDuration == null) {
+            return null;
+        }
+
+        return modifiersWithDuration.get(modification.id());
     }
 
     public int size() {
@@ -70,8 +86,12 @@ public class ModifiersWithDuration implements INBTSerializable<CompoundTag> {
         return modifiersWithDuration.size();
     }
 
-    public List<ModifierWithDuration> all() {
-        return Objects.requireNonNullElseGet(modifiersWithDuration, List::of);
+    public Collection<ModifierWithDuration.Instance> all() {
+        if (modifiersWithDuration == null) {
+            return Collections.emptyList();
+        }
+
+        return modifiersWithDuration.values();
     }
 
     @Override
@@ -80,7 +100,7 @@ public class ModifiersWithDuration implements INBTSerializable<CompoundTag> {
         ListTag entries = new ListTag();
 
         if (modifiersWithDuration != null) {
-            modifiersWithDuration.forEach(ModifierWithDuration::save);
+            modifiersWithDuration.values().forEach(ModifierWithDuration.Instance::save);
             tag.put(MODIFIERS_WITH_DURATION, entries);
         }
 
@@ -89,19 +109,21 @@ public class ModifiersWithDuration implements INBTSerializable<CompoundTag> {
 
     @Override
     public void deserializeNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag tag) {
-        ArrayList<ModifierWithDuration> modifiersWithDuration = new ArrayList<>();
+        Map<ResourceLocation, ModifierWithDuration.Instance> modifiers = new HashMap<>();
         ListTag entries = tag.getList(MODIFIERS_WITH_DURATION, ListTag.TAG_COMPOUND);
 
         for (int i = 0; i < entries.size(); i++) {
-            ModifierWithDuration modifier = ModifierWithDuration.load(entries.getCompound(i));
+            ModifierWithDuration.Instance modifier = ModifierWithDuration.Instance.load(entries.getCompound(i));
 
             if (modifier != null) {
-                modifiersWithDuration.add(modifier);
+                modifiers.put(modifier.baseData().id(), modifier);
             }
         }
 
-        if (!modifiersWithDuration.isEmpty()) {
-            this.modifiersWithDuration = modifiersWithDuration;
+        if (!modifiers.isEmpty()) {
+            modifiersWithDuration = modifiers;
+        } else {
+            modifiersWithDuration = null;
         }
     }
 

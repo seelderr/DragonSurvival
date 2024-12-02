@@ -8,8 +8,8 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
+import by.dragonsurvivalteam.dragonsurvival.network.flight.SpinStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncFlyingStatus;
-import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.SpinData;
@@ -265,10 +265,10 @@ public class ServerFlightHandler {
         // TODO: Some strange choices on what is run clientside here. Are we sure this is safe?
         SpinData spin = SpinData.getData(player);
         if (!player.level().isClientSide()) {
-            if(spin.spinAttack > 0) {
+            if(spin.duration > 0) {
                 if (!isFlying(player) && !canSwimSpin(player)) {
-                    spin.spinAttack = 0;
-                    PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncSpinStatus.Data(player.getId(), spin.spinAttack, spin.spinCooldown, spin.spinLearned));
+                    spin.duration = 0;
+                    PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SpinStatus(player.getId(), spin.duration, spin.cooldown, spin.hasSpin));
                 }
             }
         }
@@ -304,21 +304,21 @@ public class ServerFlightHandler {
                 player.attack(target);
             }
 
-            spin.spinAttack--;
+            spin.duration--;
 
             if (!player.level().isClientSide()) {
-                PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncSpinStatus.Data(player.getId(), spin.spinAttack, spin.spinCooldown, spin.spinLearned));
+                PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SpinStatus(player.getId(), spin.duration, spin.cooldown, spin.hasSpin));
             }
-        } else if (spin.spinCooldown > 0 && !player.level().isClientSide()) {
-            spin.spinCooldown--;
-            PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncSpinStatus.Data(player.getId(), spin.spinAttack, spin.spinCooldown, spin.spinLearned));
+        } else if (spin.cooldown > 0 && !player.level().isClientSide()) {
+            spin.cooldown--;
+            PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SpinStatus(player.getId(), spin.duration, spin.cooldown, spin.hasSpin));
         }
     }
 
     public static boolean isSpin(Player entity) {
         SpinData spin = SpinData.getData(entity);
         if (isFlying(entity) || canSwimSpin(entity)) {
-            return spin.spinAttack > 0;
+            return spin.duration > 0;
         }
 
         return false;

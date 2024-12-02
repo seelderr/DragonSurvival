@@ -1,7 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.common_effects;
 
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ModifierType;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.AbilityInfo;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.block_effects.AbilityBlockEffect;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.entity_effects.AbilityEntityEffect;
@@ -29,8 +28,8 @@ import java.util.Optional;
 
 // TODO :: add optional mana cost for keeping the entity?
 // TODO :: add option to add some goals to make sure entities can act as proper summons?
-//   e.g. a target entity goal with switchable modes (on entity right click or sth.) between stuff like aggressive, stay in place, etc.
-@AbilityInfo(compatibleWith = AbilityInfo.Type.ACTIVE_SIMPLE)
+//  e.g. a target entity goal with switchable modes (on entity right click or sth.) between stuff like aggressive, stay in place, etc.
+//  to make it properly compatible with passive it probably needs an instance with a counter of the amount of spawned entities (and the user can define a max. from here)
 public record SummonEntityEffect(HolderSet<EntityType<?>> entities, List<AttributeScale> attributeScales, boolean joinTeam) implements AbilityBlockEffect, AbilityEntityEffect {
     public static final MapCodec<SummonEntityEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                     RegistryCodecs.homogeneousList(Registries.ENTITY_TYPE).fieldOf("entities").forGetter(SummonEntityEffect::entities),

@@ -19,6 +19,7 @@ public record SupplyTrigger(String id, int triggerRate, float maximumSupply, flo
     ).apply(instance, SupplyTrigger::new));
 
     public boolean matches(final Player dragon, final PenaltyInstance instance, boolean conditionMatched) {
+        // TODO :: check trigger_rate against player tickCount?
         PenaltySupply penaltySupply = dragon.getData(DSDataAttachments.PENALTY_SUPPLY);
         penaltySupply.initialize(id(), maximumSupply(), reductionRate(), regenerationRate()); // TODO :: do this somewhere else?
 

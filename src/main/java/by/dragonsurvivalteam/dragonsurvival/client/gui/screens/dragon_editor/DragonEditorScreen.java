@@ -911,7 +911,7 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
             }
 
             data.setHasFlight(ServerFlightHandler.startWithFlight || ServerConfig.saveGrowthStage && data.hasFlight());
-            SpinData.getData(minecraft.player).spinLearned = ServerConfig.saveGrowthStage && SpinData.getData(minecraft.player).spinLearned;
+            SpinData.getData(minecraft.player).hasSpin = ServerConfig.saveGrowthStage && SpinData.getData(minecraft.player).hasSpin;
 
             HANDLER.getSkinData().skinPreset = save();
             data.getSkinData().renderCustomSkin = ClientDragonRenderer.renderCustomSkin;

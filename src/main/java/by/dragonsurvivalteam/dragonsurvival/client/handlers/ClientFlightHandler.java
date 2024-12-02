@@ -9,8 +9,8 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
+import by.dragonsurvivalteam.dragonsurvival.network.flight.SpinStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncFlyingStatus;
-import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.SpinData;
@@ -194,12 +194,12 @@ public class ClientFlightHandler {
         }
 
         SpinData spin = SpinData.getData(player);
-        if (spin.spinLearned && spin.spinCooldown > 0) {
+        if (spin.hasSpin && spin.cooldown > 0) {
             if (event.getName() == VanillaGuiLayers.AIR_LEVEL) {
                 Window window = Minecraft.getInstance().getWindow();
 
                 int cooldown = ServerFlightHandler.flightSpinCooldown * 20;
-                float cooldownProgress = ((float) cooldown - (float) spin.spinCooldown) / (float) cooldown;
+                float cooldownProgress = ((float) cooldown - (float) spin.cooldown) / (float) cooldown;
 
                 int x = window.getGuiScaledWidth() / 2 - 66 / 2;
                 int y = window.getGuiScaledHeight() - 96;
@@ -219,7 +219,7 @@ public class ClientFlightHandler {
         Player player = event.getEntity();
         SpinData spin = SpinData.getData(player);
 
-        if (!DragonStateProvider.isDragon(player) || spin.spinAttack <= 0) {
+        if (!DragonStateProvider.isDragon(player) || spin.duration <= 0) {
             return;
         }
 
@@ -488,27 +488,20 @@ public class ClientFlightHandler {
         lastJumpInputState = isJumping;
 
         while (Keybind.SPIN_ABILITY.consumeClick()) {
-            doSpin(player, handler);
+            doSpin(player);
         }
     }
 
-    private static void doSpin(LocalPlayer player, DragonStateHandler handler) {
+    private static void doSpin(LocalPlayer player) {
         if (ServerFlightHandler.isSpin(player)) return;
         SpinData spin = SpinData.getData(player);
-        if (spin.spinCooldown > 0) return;
-        if (!spin.spinLearned) return;
+        if (spin.cooldown > 0) return;
+        if (!spin.hasSpin) return;
 
         if (ServerFlightHandler.isFlying(player) || ServerFlightHandler.canSwimSpin(player)) {
-            spin.spinAttack = ServerFlightHandler.SPIN_DURATION;
-            spin.spinCooldown = ServerFlightHandler.flightSpinCooldown * 20;
-            PacketDistributor.sendToServer(
-                    new SyncSpinStatus.Data(
-                            player.getId(),
-                            spin.spinAttack,
-                            spin.spinCooldown,
-                            spin.spinLearned
-                    )
-            );
+            spin.duration = ServerFlightHandler.SPIN_DURATION;
+            spin.cooldown = Functions.secondsToTicks(ServerFlightHandler.flightSpinCooldown);
+            PacketDistributor.sendToServer(new SpinStatus(player.getId(), spin.duration, spin.cooldown, spin.hasSpin));
         }
     }
 
