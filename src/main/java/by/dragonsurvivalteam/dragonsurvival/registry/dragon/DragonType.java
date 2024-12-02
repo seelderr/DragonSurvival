@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.registry.dragon;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.MiscCodecs;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.MiscDragonTextures;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.body.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.penalty.DragonPenalty;
@@ -28,7 +29,8 @@ public record DragonType(
         HolderSet<DragonStage> stages,
         HolderSet<DragonBody> bodies,
         HolderSet<DragonAbility> abilities,
-        List<Holder<DragonPenalty>> penalties
+        List<Holder<DragonPenalty>> penalties,
+        MiscDragonTextures miscResources
 ) {
     public static final ResourceKey<Registry<DragonType>> REGISTRY = ResourceKey.createRegistryKey(DragonSurvival.res("dragon_types"));
 
@@ -38,7 +40,8 @@ public record DragonType(
             // No defined bodies means all are applicable
             RegistryCodecs.homogeneousList(DragonBody.REGISTRY).optionalFieldOf("bodies", HolderSet.empty()).forGetter(DragonType::bodies),
             MiscCodecs.dragonAbilityCodec().optionalFieldOf("abilities", HolderSet.empty()).forGetter(DragonType::abilities),
-            DragonPenalty.CODEC.listOf().optionalFieldOf("penalties", List.of()).forGetter(DragonType::penalties)
+            DragonPenalty.CODEC.listOf().optionalFieldOf("penalties", List.of()).forGetter(DragonType::penalties),
+            MiscDragonTextures.CODEC.fieldOf("misc_resources").forGetter(DragonType::miscResources)
     ).apply(instance, instance.stable(DragonType::new)));
 
     public static final Codec<Holder<DragonType>> CODEC = RegistryFixedCodec.create(REGISTRY);
