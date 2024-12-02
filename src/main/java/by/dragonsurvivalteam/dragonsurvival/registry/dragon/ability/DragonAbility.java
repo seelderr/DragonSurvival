@@ -3,7 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.LevelBasedResource;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Activation;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.EffectContainer;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.ActionContainer;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Upgrade;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import com.mojang.serialization.Codec;
@@ -33,7 +33,7 @@ public record DragonAbility(
         Optional<Activation> activation,
         Optional<Upgrade> upgrade,
         Optional<EntityPredicate> usageBlocked,
-        List<EffectContainer> effects,
+        List<ActionContainer> effects,
         LevelBasedResource icon,
         String description
 ) {
@@ -60,7 +60,7 @@ public record DragonAbility(
             Activation.CODEC.optionalFieldOf("activation").forGetter(DragonAbility::activation),
             Upgrade.CODEC.optionalFieldOf("upgrade").forGetter(DragonAbility::upgrade),
             EntityPredicate.CODEC.optionalFieldOf("usage_blocked").forGetter(DragonAbility::usageBlocked), // TODO :: e.g. when the ability is not supposed to be used underwater
-            EffectContainer.CODEC.listOf().optionalFieldOf("effects", List.of()).forGetter(DragonAbility::effects),
+            ActionContainer.CODEC.listOf().optionalFieldOf("actions", List.of()).forGetter(DragonAbility::effects),
             LevelBasedResource.CODEC.fieldOf("icon").forGetter(DragonAbility::icon),
             // TODO: How do we handle descriptions that are fed various values from the ability itself?
             Codec.STRING.fieldOf("description").forGetter(DragonAbility::description)

@@ -7,6 +7,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
 
 import java.util.ArrayList;
@@ -51,7 +52,7 @@ public class MagicData implements INBTSerializable<CompoundTag> {
         return abilities.get(slot);
     }
 
-    public DragonAbilityInstance getCurrentlyCasting() {
+    public @Nullable DragonAbilityInstance getCurrentlyCasting() {
         return isCasting ? getAbilityFromSlot(getSelectedAbilitySlot()) : null;
     }
 

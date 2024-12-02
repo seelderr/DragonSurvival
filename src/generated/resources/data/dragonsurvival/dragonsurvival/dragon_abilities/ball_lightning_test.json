@@ -1,29 +1,29 @@
 {
-  "activation": {
-    "type": "simple",
-    "cast_time": 1.0,
-    "cooldown": 40.0
-  },
-  "description": "test",
-  "effects": [
+  "actions": [
     {
-      "effect": {
-        "type": "dragonsurvival:self",
-        "target": {
+      "target_selection": {
+        "applied_effects": {
           "entity_effect": [
             {
-              "type": "dragonsurvival:projectile",
+              "effect_type": "dragonsurvival:projectile_effect",
               "number_of_projectiles": 1.0,
               "projectile_data": "dragonsurvival:ball_lightning",
               "speed": 1.0
             }
           ],
           "target_only_living": true
-        }
+        },
+        "target_type": "dragonsurvival:self_target"
       },
       "trigger_rate": 1.0
     }
   ],
+  "activation": {
+    "type": "simple",
+    "cast_time": 1.0,
+    "cooldown": 40.0
+  },
+  "description": "test",
   "icon": {
     "texture_entries": [
       {

@@ -63,10 +63,21 @@ public class HelpButton extends ExtendedButton {
         guiGraphics.pose().scale(xSize, ySize, 0);
 
         // FIXME: These UV coordinates will be wrong until we get the final texture
-        if (variation == 0) {
-            guiGraphics.blit(type.value().miscResources().helpButton(), getX(), getY(), 0, 0, 18, 18, 256, 256);
+        ResourceLocation texture;
+        float vOffset = 0;
+
+        if (type != null) {
+            texture = type.value().miscResources().helpButton();
         } else {
-            guiGraphics.blit(type.value().miscResources().helpButton(), getX() - 1, getY() - 1, 18, 0, 22, 22, 256, 256);
+            // Can occur when the altar is entered as a human
+            texture = TEXTURE;
+            vOffset = 4 * size;
+        }
+
+        if (variation == 0) {
+            guiGraphics.blit(texture, getX(), getY(), 0, vOffset, 18, 18, 256, 256);
+        } else {
+            guiGraphics.blit(texture, getX() - 1, getY() - 1, 18, vOffset, 22, 22, 256, 256);
         }
 
         guiGraphics.pose().popPose();

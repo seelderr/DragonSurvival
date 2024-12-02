@@ -1,9 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.loader;
 
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.EnumSkinLayer;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonPart;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonTypes;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import net.minecraft.resources.ResourceKey;
@@ -25,18 +25,15 @@ public class DragonPartLoader extends SimpleJsonResourceReloadListener {
 
     @Override
     protected void apply(final @NotNull Map<ResourceLocation, JsonElement> map, @NotNull final ResourceManager manager, @NotNull final ProfilerFiller profiler) {
-        DRAGON_PARTS.put(DragonTypes.CAVE, new HashMap<>());
-       // DRAGON_PARTS.put(DragonTypes.FOREST.getTypeNameLowerCase(), new HashMap<>());
-        //DRAGON_PARTS.put(DragonTypes.SEA.getTypeNameLowerCase(), new HashMap<>());
-
         map.forEach((location, value) -> value.getAsJsonArray().forEach(element -> {
             // Location path is without the specified directory
+            // The format is expected to be '<dragon_type>/<part>.json'
             String[] elements = location.getPath().split("/");
 
-            String dragonType = elements[0];
+            ResourceKey<DragonType> dragonType = ResourceKey.create(DragonType.REGISTRY, DragonSurvival.location(location.getNamespace(), elements[0]));
             EnumSkinLayer layer = EnumSkinLayer.valueOf(elements[1].toUpperCase(Locale.ENGLISH));
 
-            DRAGON_PARTS.get(dragonType).computeIfAbsent(layer, key -> new ArrayList<>()).add(DragonPart.load(element.getAsJsonObject()));
+            DRAGON_PARTS.computeIfAbsent(dragonType, key -> new HashMap<>()).computeIfAbsent(layer, key -> new ArrayList<>()).add(DragonPart.load(element.getAsJsonObject()));
         }));
     }
 }

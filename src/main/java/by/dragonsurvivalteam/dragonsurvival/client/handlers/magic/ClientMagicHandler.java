@@ -37,7 +37,7 @@ public class ClientMagicHandler {
 
         DragonAbilityInstance ability = MagicData.getData(player).getCurrentlyCasting();
 
-        if (ability.getCurrentCastTime() > 0) {
+        if (ability != null && ability.getCurrentCastTime() > 0) {
             double perc = Math.min(ability.getCurrentCastTime() / (float) ability.getCastTime(), 1) / 4;
             double c4 = 2 * Math.PI / 3;
 

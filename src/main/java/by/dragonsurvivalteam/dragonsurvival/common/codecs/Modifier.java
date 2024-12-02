@@ -5,6 +5,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
@@ -16,7 +17,7 @@ public record Modifier(Holder<Attribute> attribute, LevelBasedValue amount, Attr
             Attribute.CODEC.fieldOf("attribute").forGetter(Modifier::attribute),
             LevelBasedValue.CODEC.fieldOf("amount").forGetter(Modifier::amount),
             AttributeModifier.Operation.CODEC.fieldOf("operation").forGetter(Modifier::operation),
-            ResourceKey.codec(DragonType.REGISTRY).optionalFieldOf("dragon_type").forGetter(Modifier::dragonType)
+            ResourceLocation.CODEC.xmap(location -> ResourceKey.create(DragonType.REGISTRY, location), ResourceKey::location).optionalFieldOf("dragon_type").forGetter(Modifier::dragonType)
     ).apply(instance, Modifier::new));
 
     public static Modifier constant(final Holder<Attribute> attribute, float amount, final AttributeModifier.Operation operation) {

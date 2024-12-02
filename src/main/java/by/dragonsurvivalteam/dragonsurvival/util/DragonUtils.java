@@ -58,7 +58,13 @@ public class DragonUtils {
             return false;
         }
 
-        return isType(DragonStateProvider.getData(player).getType().getKey(), typeToCheck);
+        Holder<DragonType> playerType = DragonStateProvider.getData(player).getType();
+
+        if (playerType == null) {
+            return false;
+        }
+
+        return isType(playerType.getKey(), typeToCheck);
     }
 
     public static boolean isType(final Entity entity, final Holder<DragonType> typeToCheck) {

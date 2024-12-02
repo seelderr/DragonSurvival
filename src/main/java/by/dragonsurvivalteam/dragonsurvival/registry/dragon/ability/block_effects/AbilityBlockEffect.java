@@ -27,7 +27,7 @@ public interface AbilityBlockEffect {
     ResourceKey<Registry<MapCodec<? extends AbilityBlockEffect>>> REGISTRY_KEY = ResourceKey.createRegistryKey(DragonSurvival.res("ability_block_effects"));
     Registry<MapCodec<? extends AbilityBlockEffect>> REGISTRY = new RegistryBuilder<>(REGISTRY_KEY).create();
 
-    Codec<AbilityBlockEffect> CODEC = REGISTRY.byNameCodec().dispatch(AbilityBlockEffect::blockCodec, Function.identity());
+    Codec<AbilityBlockEffect> CODEC = REGISTRY.byNameCodec().dispatch("effect_type", AbilityBlockEffect::blockCodec, Function.identity());
 
     void apply(final ServerPlayer dragon, final DragonAbilityInstance ability, final BlockPos position);
     MapCodec<? extends AbilityBlockEffect> blockCodec();
@@ -40,9 +40,9 @@ public interface AbilityBlockEffect {
     @SubscribeEvent
     static void registerEntries(final RegisterEvent event) {
         if (event.getRegistry() == REGISTRY) {
-            event.register(REGISTRY_KEY, DragonSurvival.res("bonemeal"), () -> BonemealEffect.CODEC);
-            event.register(REGISTRY_KEY, DragonSurvival.res("conversion"), () -> ConversionEffect.CODEC);
-            event.register(REGISTRY_KEY, DragonSurvival.res("summon_entity"), () -> SummonEntityEffect.CODEC);
+            event.register(REGISTRY_KEY, DragonSurvival.res("bonemeal_effect"), () -> BonemealEffect.CODEC);
+            event.register(REGISTRY_KEY, DragonSurvival.res("conversion_effect"), () -> ConversionEffect.CODEC);
+            event.register(REGISTRY_KEY, DragonSurvival.res("summon_entity_effect"), () -> SummonEntityEffect.CODEC);
         }
     }
 }

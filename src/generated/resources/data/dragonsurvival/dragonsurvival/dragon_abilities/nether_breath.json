@@ -1,28 +1,24 @@
 {
-  "activation": {
-    "type": "channeled",
-    "cast_time": 1.0,
-    "cooldown": 40.0
-  },
-  "description": "Placeholder description.",
-  "effects": [
+  "actions": [
     {
-      "effect": {
-        "type": "dragonsurvival:dragon_breath",
-        "range_multiplier": 1.0,
-        "target": {
+      "mana_cost": {
+        "type": "ticking",
+        "amount": 5.0
+      },
+      "target_selection": {
+        "applied_effects": {
           "entity_effect": [
             {
-              "type": "dragonsurvival:damage",
+              "type": "dragonsurvival:cave_dragon_breath",
               "amount": {
                 "type": "minecraft:linear",
                 "base": 3.0,
                 "per_level_above_first": 3.0
               },
-              "damage_type": "dragonsurvival:cave_dragon_breath"
+              "effect_type": "dragonsurvival:damage_effect"
             },
             {
-              "type": "dragonsurvival:fire",
+              "effect_type": "dragonsurvival:fire_effect",
               "fire_ticks": {
                 "type": "minecraft:linear",
                 "base": 100.0,
@@ -30,28 +26,25 @@
               }
             },
             {
-              "type": "dragonsurvival:potion",
               "amplifier": 0.0,
               "duration": 200.0,
+              "effect_type": "dragonsurvival:potion_effect",
               "effects": "dragonsurvival:burn"
             }
           ],
           "target_only_living": true
-        }
-      },
-      "mana_cost": {
-        "type": "ticking",
-        "mana_cost": 5.0
+        },
+        "range_multiplier": 1.0,
+        "target_type": "dragonsurvival:dragon_breath_target"
       },
       "trigger_rate": 10.0
     },
     {
-      "effect": {
-        "type": "dragonsurvival:self",
-        "target": {
+      "target_selection": {
+        "applied_effects": {
           "entity_effect": [
             {
-              "type": "dragonsurvival:breath_particles",
+              "effect_type": "dragonsurvival:breath_particles_effect",
               "main_particle": {
                 "type": "dragonsurvival:fire",
                 "duration": 37.0,
@@ -67,11 +60,18 @@
             }
           ],
           "target_only_living": true
-        }
+        },
+        "target_type": "dragonsurvival:self_target"
       },
       "trigger_rate": 1.0
     }
   ],
+  "activation": {
+    "type": "channeled",
+    "cast_time": 1.0,
+    "cooldown": 40.0
+  },
+  "description": "Placeholder description.",
   "icon": {
     "texture_entries": [
       {

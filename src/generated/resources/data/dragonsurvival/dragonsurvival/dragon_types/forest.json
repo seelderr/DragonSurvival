@@ -1,0 +1,33 @@
+{
+  "abilities": "dragonsurvival:nether_breath",
+  "misc_resources": {
+    "ability_bar": "dragonsurvival:casting_bars/cave_cast_bar.png",
+    "altar_banner": "dragonsurvival:dragon_altar/cave_altar_banner.png",
+    "food_sprites": "dragonsurvival:food_icons/cave_food_sprites.png",
+    "growth_bar_fill": "dragonsurvival:growth/circle_cave.png",
+    "growth_icons": [
+      {
+        "dragon_stage": "dragonsurvival:newborn",
+        "icon": "dragonsurvival:growth/forest/newborn.png"
+      },
+      {
+        "dragon_stage": "dragonsurvival:young",
+        "icon": "dragonsurvival:growth/forest/young.png"
+      },
+      {
+        "dragon_stage": "dragonsurvival:adult",
+        "icon": "dragonsurvival:growth/forest/adult.png"
+      },
+      {
+        "dragon_stage": "dragonsurvival:ancient",
+        "icon": "dragonsurvival:growth/forest/ancient.png"
+      }
+    ],
+    "help_button": "dragonsurvival:help_button/cave_help_button.png",
+    "mana_sprites": "dragonsurvival:mana_icons/cave_mana_sprites.png",
+    "primary_color": "#00FF0000",
+    "secondary_color": "#00FF0000",
+    "source_of_magic_background_active": "dragonsurvival:source_of_magic/cave_source_of_magic_0.png",
+    "source_of_magic_background_passive": "dragonsurvival:source_of_magic/cave_source_of_magic_0.png"
+  }
+}

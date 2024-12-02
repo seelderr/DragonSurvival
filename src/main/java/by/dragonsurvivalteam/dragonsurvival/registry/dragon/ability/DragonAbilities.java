@@ -3,7 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.LevelBasedResource;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Activation;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.EffectContainer;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.ActionContainer;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.ManaCost;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Upgrade;
 import by.dragonsurvivalteam.dragonsurvival.common.particles.LargeFireParticleOption;
@@ -61,7 +61,7 @@ public class DragonAbilities {
                 )),
                 Optional.empty(),
                 Optional.empty(),
-                List.of(new EffectContainer(
+                List.of(new ActionContainer(
                         new SelfTarget(
                                 Either.right(
                                         new AbilityTargeting.EntityTargeting(
@@ -98,7 +98,7 @@ public class DragonAbilities {
                         )),
                         Optional.empty(),
                         Optional.empty(),
-                        List.of(new EffectContainer(
+                        List.of(new ActionContainer(
                                 new SelfTarget(
                                         Either.right(
                                                 new AbilityTargeting.EntityTargeting(
@@ -136,7 +136,7 @@ public class DragonAbilities {
                 )),
                 Optional.empty(),
                 Optional.empty(),
-                List.of(new EffectContainer(
+                List.of(new ActionContainer(
                         new SelfTarget(
                                 Either.right(
                                         new AbilityTargeting.EntityTargeting(
@@ -177,7 +177,7 @@ public class DragonAbilities {
                         LevelBasedValue.lookup(List.of(0.f, 10.f, 30.f, 50.f), LevelBasedValue.perLevel(15))
                 )),
                 Optional.of(EntityPredicate.Builder.entity().located(LocationPredicate.Builder.location().setFluid(FluidPredicate.Builder.fluid().of(Fluids.WATER))).build()),
-                List.of(new EffectContainer(
+                List.of(new ActionContainer(
                             new DragonBreathTarget(
                                 Either.right(
                                         new AbilityTargeting.EntityTargeting(
@@ -209,7 +209,7 @@ public class DragonAbilities {
                                 LevelBasedValue.constant(5)
                             ))
                         ),
-                        new EffectContainer(
+                        new ActionContainer(
                                 new SelfTarget(
                                         Either.right(
                                                 new AbilityTargeting.EntityTargeting(

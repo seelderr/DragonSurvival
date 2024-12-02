@@ -29,7 +29,7 @@ public interface AbilityTargeting {
     ResourceKey<Registry<MapCodec<? extends AbilityTargeting>>> REGISTRY_KEY = ResourceKey.createRegistryKey(DragonSurvival.res("targeting"));
     Registry<MapCodec<? extends AbilityTargeting>> REGISTRY = new RegistryBuilder<>(REGISTRY_KEY).create();
 
-    Codec<AbilityTargeting> CODEC = REGISTRY.byNameCodec().dispatch(AbilityTargeting::codec, Function.identity());
+    Codec<AbilityTargeting> CODEC = REGISTRY.byNameCodec().dispatch("target_type", AbilityTargeting::codec, Function.identity());
 
     record BlockTargeting(Optional<BlockPredicate> targetConditions, List<AbilityBlockEffect> effect) {
         public static final Codec<BlockTargeting> CODEC = RecordCodecBuilder.create(instance -> instance.group(
@@ -48,7 +48,7 @@ public interface AbilityTargeting {
     }
 
     static <T extends AbilityTargeting> Products.P1<RecordCodecBuilder.Mu<T>, Either<BlockTargeting, EntityTargeting>> codecStart(final RecordCodecBuilder.Instance<T> instance) {
-        return instance.group(Codec.either(BlockTargeting.CODEC, EntityTargeting.CODEC).fieldOf("target").forGetter(AbilityTargeting::target));
+        return instance.group(Codec.either(BlockTargeting.CODEC, EntityTargeting.CODEC).fieldOf("applied_effects").forGetter(AbilityTargeting::target));
     }
 
     @SubscribeEvent
@@ -59,10 +59,10 @@ public interface AbilityTargeting {
     @SubscribeEvent
     static void registerEntries(final RegisterEvent event) {
         if (event.getRegistry() == REGISTRY) {
-            event.register(REGISTRY_KEY, DragonSurvival.res("area"), () -> AreaTarget.CODEC);
-            event.register(REGISTRY_KEY, DragonSurvival.res("dragon_breath"), () -> DragonBreathTarget.CODEC);
-            event.register(REGISTRY_KEY, DragonSurvival.res("single"), () -> SingleTarget.CODEC);
-            event.register(REGISTRY_KEY, DragonSurvival.res("self"), () -> SelfTarget.CODEC);
+            event.register(REGISTRY_KEY, DragonSurvival.res("area_target"), () -> AreaTarget.CODEC);
+            event.register(REGISTRY_KEY, DragonSurvival.res("dragon_breath_target"), () -> DragonBreathTarget.CODEC);
+            event.register(REGISTRY_KEY, DragonSurvival.res("single_target"), () -> SingleTarget.CODEC);
+            event.register(REGISTRY_KEY, DragonSurvival.res("self_target"), () -> SelfTarget.CODEC);
         }
     }
 

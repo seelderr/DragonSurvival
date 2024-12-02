@@ -11,12 +11,12 @@ import net.minecraft.world.item.enchantment.LevelBasedValue;
 
 import java.util.Optional;
 
-public record EffectContainer(AbilityTargeting effect, LevelBasedValue triggerRate, Optional<ManaCost> manaCost) {
-    public static Codec<EffectContainer> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            AbilityTargeting.CODEC.fieldOf("effect").forGetter(EffectContainer::effect),
-            LevelBasedValue.CODEC.fieldOf("trigger_rate").forGetter(EffectContainer::triggerRate),
-            ManaCost.CODEC.optionalFieldOf("mana_cost").forGetter(EffectContainer::manaCost)
-    ).apply(instance, EffectContainer::new));
+public record ActionContainer(AbilityTargeting effect, LevelBasedValue triggerRate, Optional<ManaCost> manaCost) {
+    public static Codec<ActionContainer> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            AbilityTargeting.CODEC.fieldOf("target_selection").forGetter(ActionContainer::effect),
+            LevelBasedValue.CODEC.fieldOf("trigger_rate").forGetter(ActionContainer::triggerRate),
+            ManaCost.CODEC.optionalFieldOf("mana_cost").forGetter(ActionContainer::manaCost)
+    ).apply(instance, ActionContainer::new));
 
     // Passive: Triggered per tick
     // Active (simple): Triggered once on key press (trigger_rate is not relevant in this case)
