@@ -37,6 +37,12 @@ public record DragonAbility(
         LevelBasedResource icon,
         String description
 ) {
+    public enum Type {
+        PASSIVE,
+        ACTIVE_SIMPLE,
+        ACTIVE_CHANNELED
+    }
+
     /* TODO ::
         when / how do we reset applied modifications?
         - e.g. dragon changes -> could remove the data attachment (entity.removeData(...))
@@ -66,17 +72,7 @@ public record DragonAbility(
     public static final int MAX_ACTIVE = 4;
     public static final int MAX_PASSIVE = 8;
 
-    public DragonAbility {
-        // Usage as direct field access since that relates to the (invisible) constructor parameters
-        // (Method call would be null at this point in time)
-        Activation.Type type = activation.map(Activation::type).orElse(null);
-
-        effects.forEach(target -> target.effect().target()
-                .ifLeft(block -> block.effect().forEach(effect -> validate(type, effect)))
-                .ifRight(entity -> entity.effect().forEach(effect -> validate(type, effect))));
-    }
-
-    public AbilityInfo.Type type() {
+    public Type type() {
         return getType(activation().map(Activation::type).orElse(null));
     }
 
@@ -128,26 +124,13 @@ public record DragonAbility(
         }
     }
 
-    private void validate(final Activation.Type activationType, final Object effect) {
-        AbilityInfo abilityInfo = effect.getClass().getAnnotation(AbilityInfo.class);
-        AbilityInfo.Type abilityType = getType(activationType);
-
-        for (AbilityInfo.Type type : abilityInfo.compatibleWith()) {
-            if (type == abilityType) {
-                return;
-            }
-        }
-
-        throw new IllegalStateException("Invalid effect [" + effect + "] for the activation type of ability [" + this + "]");
-    }
-
-    private AbilityInfo.Type getType(final Activation.Type activationType) {
+    private Type getType(final Activation.Type activationType) {
         if (activationType == null) {
-            return AbilityInfo.Type.PASSIVE;
+            return Type.PASSIVE;
         } else if (activationType == Activation.Type.SIMPLE) {
-            return AbilityInfo.Type.ACTIVE_SIMPLE;
+            return Type.ACTIVE_SIMPLE;
         }
 
-        return AbilityInfo.Type.ACTIVE_CHANNELED;
+        return Type.ACTIVE_CHANNELED;
     }
 }

@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.block_effects;
 
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.AbilityInfo;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -17,7 +16,6 @@ import net.minecraft.world.level.block.Block;
 import java.util.List;
 import java.util.Optional;
 
-@AbilityInfo(compatibleWith = {AbilityInfo.Type.PASSIVE, AbilityInfo.Type.ACTIVE_SIMPLE, AbilityInfo.Type.ACTIVE_CHANNELED})
 public record ConversionEffect(List<ConversionData> conversionData, LevelBasedValue probability) implements AbilityBlockEffect {
     public static final MapCodec<ConversionEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             ConversionData.CODEC.listOf().fieldOf("conversion_data").forGetter(ConversionEffect::conversionData),

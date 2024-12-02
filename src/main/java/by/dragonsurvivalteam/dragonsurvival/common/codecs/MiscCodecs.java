@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.common.codecs;
 
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.AbilityInfo;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbility;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -29,7 +28,7 @@ public class MiscCodecs {
             int currentPassive = 0;
 
             for (Holder<DragonAbility> ability : abilities) {
-                if (ability.value().type() == AbilityInfo.Type.PASSIVE) {
+                if (ability.value().type() == EffectInfo.Type.PASSIVE) {
                     currentPassive++;
                 } else {
                     currentActive++;

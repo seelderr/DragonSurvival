@@ -15,10 +15,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import javax.annotation.Nullable;
 
 @EventBusSubscriber
@@ -29,7 +26,19 @@ public class ModifiersWithDuration implements INBTSerializable<CompoundTag> {
 
     public void tick(final LivingEntity entity) {
         if (modifiersWithDuration != null) {
-            modifiersWithDuration.values().forEach(modifier -> modifier.tick(entity));
+            Set<ResourceLocation> finished = new HashSet<>();
+
+            modifiersWithDuration.values().forEach(modifier -> {
+                if (modifier.tick()) {
+                    finished.add(modifier.baseData().id());
+                }
+            });
+
+            finished.forEach(id -> modifiersWithDuration.remove(id));
+
+            if (modifiersWithDuration.isEmpty()) {
+                entity.removeData(DSDataAttachments.MODIFIERS_WITH_DURATION);
+            }
         }
     }
 

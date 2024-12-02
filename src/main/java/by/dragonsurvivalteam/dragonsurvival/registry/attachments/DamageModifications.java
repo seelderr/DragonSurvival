@@ -15,10 +15,7 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import javax.annotation.Nullable;
 
 public class DamageModifications implements INBTSerializable<CompoundTag> {
@@ -28,7 +25,19 @@ public class DamageModifications implements INBTSerializable<CompoundTag> {
 
     public void tick(final Entity entity) {
         if (damageModifications != null) {
-            damageModifications.values().forEach(modification -> modification.tick(entity));
+            Set<ResourceLocation> finished = new HashSet<>();
+
+            damageModifications.values().forEach(modifier -> {
+                if (modifier.tick()) {
+                    finished.add(modifier.baseData().id());
+                }
+            });
+
+            finished.forEach(id -> damageModifications.remove(id));
+
+            if (damageModifications.isEmpty()) {
+                entity.removeData(DSDataAttachments.DAMAGE_MODIFICATIONS);
+            }
         }
     }
 

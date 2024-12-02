@@ -80,16 +80,13 @@ public record DamageModification(ResourceLocation id, HolderSet<DamageType> dama
             return CODEC.parse(NbtOps.INSTANCE, nbt).resultOrPartial(DragonSurvival.LOGGER::error).orElse(null);
         }
 
-        public void tick(final Entity entity) {
+        public boolean tick() {
             if (currentDuration == INFINITE_DURATION) {
-                return;
+                return false;
             }
 
             currentDuration--;
-
-            if (currentDuration == 0) {
-                entity.getData(DSDataAttachments.DAMAGE_MODIFICATIONS).remove(entity, baseData());
-            }
+            return currentDuration == 0;
         }
 
         public float calculate(final Holder<DamageType> damageType, float damageAmount) {

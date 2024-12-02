@@ -43,6 +43,7 @@ public interface AbilityEntityEffect { // TODO :: split into entity and block ef
             event.register(REGISTRY_KEY, DragonSurvival.res("damage_modification"), () -> DamageModificationEffect.CODEC);
             event.register(REGISTRY_KEY, DragonSurvival.res("breath_particles"), () -> BreathParticlesEffect.CODEC);
             event.register(REGISTRY_KEY, DragonSurvival.res("fire"), () -> FireEffect.CODEC);
+            event.register(REGISTRY_KEY, DragonSurvival.res("harvest_bonus"), () -> HarvestBonusEffect.CODEC);
         }
     }
 }

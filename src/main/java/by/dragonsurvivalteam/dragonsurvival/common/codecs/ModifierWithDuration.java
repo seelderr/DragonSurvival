@@ -92,16 +92,13 @@ public record ModifierWithDuration(ResourceLocation id, List<Modifier> modifiers
             return CODEC.parse(NbtOps.INSTANCE, nbt).resultOrPartial(DragonSurvival.LOGGER::error).orElse(null);
         }
 
-        public void tick(final LivingEntity entity) {
+        public boolean tick() {
             if (currentDuration == INFINITE_DURATION) {
-                return;
+                return false;
             }
 
             currentDuration--;
-
-            if (currentDuration == 0) {
-                entity.getData(DSDataAttachments.MODIFIERS_WITH_DURATION).remove(entity, this);
-            }
+            return currentDuration == 0;
         }
 
         public ModifierWithDuration baseData() {

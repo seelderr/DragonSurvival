@@ -2,7 +2,6 @@ package by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.entity_effe
 
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.GenericArrowEntity;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.GenericBallEntity;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.AbilityInfo;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.ProjectileData;
 import com.mojang.datafixers.util.Either;
@@ -16,7 +15,6 @@ import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 import net.minecraft.world.phys.Vec3;
 
-@AbilityInfo(compatibleWith = {AbilityInfo.Type.ACTIVE_SIMPLE, AbilityInfo.Type.ACTIVE_CHANNELED})
 public record ProjectileEffect(
         Holder<ProjectileData> projectileData,
         LevelBasedValue numberOfProjectiles,

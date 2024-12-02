@@ -9,6 +9,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.innate.Sea
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -79,13 +80,14 @@ public abstract class DragonClawsAbility extends InnateDragonAbility {
     }
 
     public int getTier() {
-        DragonStateHandler handler = DragonStateProvider.getData(Objects.requireNonNull(DragonSurvival.PROXY.getLocalPlayer()));
+        Player player = Objects.requireNonNull(DragonSurvival.PROXY.getLocalPlayer());
+        DragonStateHandler handler = DragonStateProvider.getData(player);
 
         if (handler.getType() == null) {
             return 0;
         }
 
-        int level = handler.getDragonHarvestLevel(null);
+        int level = handler.getDragonHarvestLevel(player, null);
 
         if (/* Wood */ level == 0) {
             return 1;
