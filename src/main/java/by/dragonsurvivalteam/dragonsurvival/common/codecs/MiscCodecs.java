@@ -19,6 +19,7 @@ public class MiscCodecs {
     public static Codec<HolderSet<DragonAbility>> dragonAbilityCodec() {
         int maximum = DragonAbility.MAX_ACTIVE + DragonAbility.MAX_PASSIVE;
 
+        // TODO :: this doesn't really need to be checked anymore with the current plan to not limit the amount of abilities
         return RegistryCodecs.homogeneousList(DragonAbility.REGISTRY).validate(abilities -> {
             if (abilities.size() > maximum) {
                 return DataResult.error(() -> "Defined [" + abilities.size() + "] abilities - only up to [" + maximum + "] are allowed");
@@ -28,7 +29,7 @@ public class MiscCodecs {
             int currentPassive = 0;
 
             for (Holder<DragonAbility> ability : abilities) {
-                if (ability.value().type() == EffectInfo.Type.PASSIVE) {
+                if (ability.value().type() == DragonAbility.Type.PASSIVE) {
                     currentPassive++;
                 } else {
                     currentActive++;
