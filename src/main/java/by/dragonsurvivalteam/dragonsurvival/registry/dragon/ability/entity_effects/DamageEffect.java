@@ -9,22 +9,18 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 
 @AbilityInfo(compatibleWith = {AbilityInfo.Type.PASSIVE, AbilityInfo.Type.ACTIVE_SIMPLE, AbilityInfo.Type.ACTIVE_CHANNELED})
-public record DamageEffect(Holder<DamageType> damageType, LevelBasedValue amount) implements AbilityEntityEffect {
+public record DamageEffect(Holder<DamageType> type, LevelBasedValue amount) implements AbilityEntityEffect {
     public static final MapCodec<DamageEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-            DamageType.CODEC.fieldOf("damage_type").forGetter(DamageEffect::damageType),
+            DamageType.CODEC.fieldOf("type").forGetter(DamageEffect::type),
             LevelBasedValue.CODEC.fieldOf("amount").forGetter(DamageEffect::amount)
     ).apply(instance, DamageEffect::new));
 
     @Override
     public void apply(final ServerPlayer dragon, final DragonAbilityInstance ability, final Entity entity) {
-        // TODO :: also apply damage to entities (e.g. items, boats or experience)?
-        if (entity instanceof LivingEntity livingEntity) {
-            livingEntity.hurt(new DamageSource(damageType(), dragon), amount().calculate(ability.getLevel()));
-        }
+        entity.hurt(new DamageSource(type(), dragon), amount().calculate(ability.getLevel()));
     }
 
     @Override

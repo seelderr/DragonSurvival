@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins;
 
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachments;
-import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DamageReductions;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DamageModifications;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.ModifiersWithDuration;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.ClientEffectProvider;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
@@ -32,7 +32,7 @@ public class EffectRenderingInventoryScreenMixin {
         int additions = 0;
 
         additions += player.getExistingData(DSDataAttachments.MODIFIERS_WITH_DURATION).map(ModifiersWithDuration::size).orElse(0);
-        additions += player.getExistingData(DSDataAttachments.DAMAGE_REDUCTIONS).map(DamageReductions::size).orElse(0);
+        additions += player.getExistingData(DSDataAttachments.DAMAGE_MODIFICATIONS).map(DamageModifications::size).orElse(0);
 
         return original + additions;
     }
@@ -92,7 +92,7 @@ public class EffectRenderingInventoryScreenMixin {
 
         List<ClientEffectProvider> providers = new ArrayList<>();
         providers.addAll(player.getExistingData(DSDataAttachments.MODIFIERS_WITH_DURATION).map(ModifiersWithDuration::all).orElse(List.of()));
-        providers.addAll(player.getExistingData(DSDataAttachments.DAMAGE_REDUCTIONS).map(DamageReductions::all).orElse(List.of()));
+        providers.addAll(player.getExistingData(DSDataAttachments.DAMAGE_MODIFICATIONS).map(DamageModifications::all).orElse(List.of()));
 
         if (!providers.isEmpty() && width >= 32) {
             boolean isCompact = width < 120;
