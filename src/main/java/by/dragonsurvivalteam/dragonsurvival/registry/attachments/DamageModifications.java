@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.Nullable;
 
-// TODO :: make it generic as "Damage Modifier" so penalties can re-use it to increase the damage taken?
 public class DamageModifications implements INBTSerializable<CompoundTag> {
     public static final String DAMAGE_MODIFICATIONS = "damage_modifications";
 
@@ -31,6 +30,24 @@ public class DamageModifications implements INBTSerializable<CompoundTag> {
         if (damageModifications != null) {
             damageModifications.values().forEach(modification -> modification.tick(entity));
         }
+    }
+
+    public float calculate(final Holder<DamageType> damageType, float damageAmount) {
+        if (damageModifications == null) {
+            return damageAmount;
+        }
+
+        float newDamageAmount = damageAmount;
+
+        for (final DamageModification.Instance modification : damageModifications.values()) {
+            newDamageAmount = modification.calculate(damageType, newDamageAmount);
+
+            if (newDamageAmount == 0) {
+                break;
+            }
+        }
+
+        return newDamageAmount;
     }
 
     public void add(final DamageModification.Instance modification) {
@@ -59,24 +76,6 @@ public class DamageModifications implements INBTSerializable<CompoundTag> {
         }
 
         return damageModifications.get(modification.id());
-    }
-
-    public float calculate(final Holder<DamageType> damageType, float damageAmount) {
-        if (damageModifications == null) {
-            return damageAmount;
-        }
-
-        float newDamageAmount = damageAmount;
-
-        for (final DamageModification.Instance modification : damageModifications.values()) {
-            newDamageAmount = modification.calculate(damageType, newDamageAmount);
-
-            if (newDamageAmount == 0) {
-                break;
-            }
-        }
-
-        return newDamageAmount;
     }
 
     public int size() {

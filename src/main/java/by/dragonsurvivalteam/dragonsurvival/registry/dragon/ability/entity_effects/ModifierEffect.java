@@ -14,7 +14,7 @@ import java.util.List;
 @AbilityInfo(compatibleWith = {AbilityInfo.Type.PASSIVE, AbilityInfo.Type.ACTIVE_SIMPLE})
 public record ModifierEffect(List<ModifierWithDuration> modifiers) implements AbilityEntityEffect {
     public static final MapCodec<ModifierEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-            ModifierWithDuration.DIRECT_CODEC.listOf().fieldOf("modifiers").forGetter(ModifierEffect::modifiers)
+            ModifierWithDuration.CODEC.listOf().fieldOf("modifiers").forGetter(ModifierEffect::modifiers)
     ).apply(instance, ModifierEffect::new));
 
     @Override

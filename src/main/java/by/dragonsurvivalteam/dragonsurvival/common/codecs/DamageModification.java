@@ -49,6 +49,7 @@ public record DamageModification(ResourceLocation id, HolderSet<DamageType> dama
 
         ClientEffectProvider.ClientData clientData = new ClientEffectProvider.ClientData(ability.getAbility().icon().get(abilityLevel), /* TODO */ Component.empty(), Optional.of(dragon.getUUID()));
         data.add(new Instance(this, clientData, abilityLevel, newDuration));
+        // TODO :: send packet to client
     }
 
     public static class Instance implements ClientEffectProvider {
@@ -121,19 +122,6 @@ public record DamageModification(ResourceLocation id, HolderSet<DamageType> dama
         @Override
         public int getDuration() {
             return (int) baseData().duration().calculate(appliedAbilityLevel());
-        }
-
-        @Override
-        public boolean equals(final Object other) {
-            if (this == other) {
-                return true;
-            }
-
-            if (other instanceof Instance otherInstance && baseData().id().equals(otherInstance.baseData().id())) {
-                return true;
-            }
-
-            return super.equals(other);
         }
     }
 }
