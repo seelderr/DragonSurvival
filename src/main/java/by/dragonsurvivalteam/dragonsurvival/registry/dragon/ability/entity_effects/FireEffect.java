@@ -15,12 +15,8 @@ public record FireEffect(LevelBasedValue fireTicks) implements AbilityEntityEffe
     ).apply(instance, FireEffect::new));
 
     @Override
-    public void apply(ServerPlayer dragon, DragonAbilityInstance ability, Entity entity) {
-        if(entity.fireImmune()) {
-            return;
-        }
-
-        entity.igniteForTicks((int)fireTicks.calculate(ability.getLevel()));
+    public void apply(final ServerPlayer dragon, final DragonAbilityInstance ability, final Entity entity) {
+        entity.igniteForTicks((int) fireTicks().calculate(ability.getLevel()));
     }
 
     @Override

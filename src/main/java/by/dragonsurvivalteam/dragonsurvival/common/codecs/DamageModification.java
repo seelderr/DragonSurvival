@@ -52,8 +52,6 @@ public record DamageModification(ResourceLocation id, HolderSet<DamageType> dama
     }
 
     public static class Instance implements ClientEffectProvider {
-        public static int NO_LEVEL = -1;
-
         public static final Codec<Instance> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 DamageModification.CODEC.fieldOf("base_data").forGetter(Instance::baseData),
                 ClientData.CODEC.fieldOf("client_data").forGetter(Instance::clientData),

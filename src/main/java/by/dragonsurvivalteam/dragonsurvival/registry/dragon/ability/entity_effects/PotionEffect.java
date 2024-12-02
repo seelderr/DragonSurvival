@@ -29,8 +29,20 @@ public record PotionEffect(HolderSet<MobEffect> effects, LevelBasedValue amplifi
             int abilityLevel = ability.getLevel();
 
             effects().forEach(effect -> {
+                MobEffectInstance currentInstance = livingEntity.getEffect(effect);
+
+                int duration = (int) duration().calculate(abilityLevel);
+                int amplifier = (int) amplifier().calculate(abilityLevel);
+
+                if (currentInstance != null && (currentInstance.getAmplifier() >= amplifier && currentInstance.getDuration() >= duration)) {
+                    // Don't do anything if the current effect is at least equally strong and has at least the same duration
+                    // For all other cases this new effect will either override the current instance or be added as hidden effect
+                    // (Whose duration etc. will be applied once the stronger (and shorter) effect runs out)
+                    return;
+                }
+
                 if (livingEntity.getRandom().nextDouble() < probability().calculate(abilityLevel)) {
-                    livingEntity.addEffect(new MobEffectInstance(effect, (int) duration().calculate(abilityLevel), (int) amplifier().calculate(abilityLevel)));
+                    livingEntity.addEffect(new MobEffectInstance(effect, duration, amplifier));
                 }
             });
         }
