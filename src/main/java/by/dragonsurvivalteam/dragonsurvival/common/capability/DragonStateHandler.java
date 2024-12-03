@@ -506,7 +506,12 @@ public class DragonStateHandler extends EntityStateHandler {
         }
 
         Holder<DragonStage> dragonStage = provider.lookup(DragonStage.REGISTRY).get().getOrThrow(ResourceKey.codec(DragonStage.REGISTRY).parse(provider.createSerializationContext(NbtOps.INSTANCE), tag.get(DRAGON_STAGE)).getOrThrow());
-        Holder<DragonStage> previousDragonStage = provider.lookup(DragonStage.REGISTRY).get().getOrThrow(ResourceKey.codec(DragonStage.REGISTRY).parse(provider.createSerializationContext(NbtOps.INSTANCE), tag.get(PREVIOUS_DRAGON_STAGE)).getOrThrow());
+        Holder<DragonStage> previousDragonStage;
+        if(tag.contains(PREVIOUS_DRAGON_STAGE)) {
+            previousDragonStage = provider.lookup(DragonStage.REGISTRY).get().getOrThrow(ResourceKey.codec(DragonStage.REGISTRY).parse(provider.createSerializationContext(NbtOps.INSTANCE), tag.get(PREVIOUS_DRAGON_STAGE)).getOrThrow());
+        } else {
+            previousDragonStage = null;
+        }
         double size = compound.getDouble(SIZE);
 
         return new SavedDragonStage(dragonStage, previousDragonStage, size);
