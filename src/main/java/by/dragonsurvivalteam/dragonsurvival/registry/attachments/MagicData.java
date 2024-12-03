@@ -25,6 +25,7 @@ public class MagicData implements INBTSerializable<CompoundTag> {
     private int currentMana = 0;
 
     public boolean isCasting = false;
+    public int abilityBeingCast = -1;
 
     public static MagicData getData(Player player) {
         return player.getData(DSDataAttachments.MAGIC);
@@ -56,14 +57,22 @@ public class MagicData implements INBTSerializable<CompoundTag> {
         if(slot < 0 || slot >= abilities.size()) {
             return null;
         }
-        return abilities.get(slot);
+
+        for(DragonAbilityInstance ability : abilities) {
+            if(ability.getSlot() == slot) {
+                return ability;
+            }
+        }
+
+        return null;
     }
 
     public @Nullable DragonAbilityInstance getCurrentlyCasting() {
         return isCasting ? getAbilityFromSlot(getSelectedAbilitySlot()) : null;
     }
 
-    public void setCurrentlyCasting() {
+    public void setCurrentlyCasting(int slot) {
+        abilityBeingCast = slot;
         isCasting = true;
     }
 

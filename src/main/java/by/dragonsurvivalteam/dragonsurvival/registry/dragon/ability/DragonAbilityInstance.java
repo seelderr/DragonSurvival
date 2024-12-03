@@ -69,6 +69,10 @@ public class DragonAbilityInstance implements INBTSerializable<CompoundTag> {
         isEnabled = false;
     }
 
+    public int getSlot() {
+        return abilitySlot;
+    }
+
     // TODO: These need to be synced in some way for MagicHUD?
     public int getCurrentCastTime() {
         return currentTick;

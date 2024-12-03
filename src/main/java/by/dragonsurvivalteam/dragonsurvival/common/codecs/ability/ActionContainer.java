@@ -38,6 +38,9 @@ public record ActionContainer(AbilityTargeting effect, LevelBasedValue triggerRa
             if (!ManaHandler.hasEnoughMana(dragon, cost)) {
                 instance.release();
             }
+        } else {
+            // We are a simple active ability, just release the ability as we have cast it
+            instance.release();
         }
     }
 }
