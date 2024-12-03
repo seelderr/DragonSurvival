@@ -220,9 +220,13 @@ public class DragonStateHandler extends EntityStateHandler {
         Holder<DragonType> oldType = dragonType;
         setType(type);
 
-        if (!oldType.is(type.getKey())) {
-            DSModifiers.updateTypeModifiers(player, this);
-            skinData.skinPreset.initDefaults(dragonType.getKey());
+        if (type != null) {
+            if (oldType == null || !oldType.is(type.getKey())) {
+                DSModifiers.updateTypeModifiers(player, this);
+                skinData.skinPreset.initDefaults(dragonType.getKey());
+            }
+        } else {
+            DSModifiers.clearModifiers(player);
         }
     }
 
@@ -575,7 +579,7 @@ public class DragonStateHandler extends EntityStateHandler {
     }
 
     public String getTypeNameLowerCase() {
-        return dragonType.getRegisteredName();
+        return ResourceHelper.getNameLowercase(dragonType);
     }
 
     public ResourceLocation getFoodIcons() {

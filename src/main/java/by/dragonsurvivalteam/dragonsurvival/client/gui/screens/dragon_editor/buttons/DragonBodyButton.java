@@ -8,6 +8,7 @@ import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.body.DragonBodies;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.body.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -44,8 +45,7 @@ public class DragonBodyButton extends Button {
         String iconLocationSuffix;
 
         if (screen instanceof DragonEditorScreen dragonEditorScreen) {
-            // FIXME :: Does this work?
-            iconLocationSuffix = "/" + dragonEditorScreen.dragonType.getRegisteredName() + ".png";
+            iconLocationSuffix = "/" + ResourceHelper.getNameLowercase(dragonEditorScreen.dragonType) + ".png";
         } else {
             iconLocationSuffix = "/default.png";
         }

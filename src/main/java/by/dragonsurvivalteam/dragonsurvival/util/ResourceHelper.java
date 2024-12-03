@@ -69,4 +69,10 @@ public class ResourceHelper {
         //noinspection DataFlowIssue -> registry is expected to be present
         return registry.listElementIds().toList();
     }
+
+    public static <T> String getNameLowercase(Holder<T> holder) {
+        String rawPath = holder.getKey().location().getPath();
+        // Get the last part of the path
+        return rawPath.substring(rawPath.lastIndexOf("/") + 1).toLowerCase();
+    }
 }

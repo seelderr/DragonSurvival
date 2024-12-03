@@ -94,6 +94,12 @@ public class DSModifiers {
         // TODO :: determine where it's best to handle max health
     }
 
+    public static void clearModifiers(Player player) {
+        AttributeModifierSupplier.removeModifiers(ModifierType.DRAGON_TYPE, player);
+        AttributeModifierSupplier.removeModifiers(ModifierType.DRAGON_STAGE, player);
+        AttributeModifierSupplier.removeModifiers(ModifierType.DRAGON_BODY, player);
+    }
+
     public static void updateTypeModifiers(Player player, DragonStateHandler handler) {
         if (player == null || player.level().isClientSide()) {
             return;

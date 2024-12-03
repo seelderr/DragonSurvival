@@ -10,10 +10,12 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.AltarData;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.body.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStage;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStages;
+import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
@@ -27,6 +29,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.DyeColor;
@@ -226,11 +229,12 @@ public class DragonAltarScreen extends Screen {
         int guiTop = (height - 190) / 2;
 
         addRenderableWidget(new HelpButton(width / 2, 32 + 5, 16, 16, HELP, 1));
-        // TODO: Just add all defined DragonTypes to this UI
-        addRenderableWidget(new AltarTypeButton(this, Minecraft.getInstance().level.holder(DragonTypes.CAVE).get(), width / 2 - 104, guiTop + 30));
-        //addRenderableWidget(new AltarTypeButton(this, DragonTypes.FOREST, width / 2 - 51, guiTop + 30));
-        //addRenderableWidget(new AltarTypeButton(this, DragonTypes.SEA, width / 2 + 2, guiTop + 30));
-        addRenderableWidget(new AltarTypeButton(this, null, width / 2 + 55, guiTop + 30));
+        int xPos = width / 2 - 104;
+        for (ResourceKey<DragonType> key : ResourceHelper.keys(Minecraft.getInstance().level.registryAccess(), DragonType.REGISTRY)) {
+            addRenderableWidget(new AltarTypeButton(this, Minecraft.getInstance().level.registryAccess().holderOrThrow(key), xPos, guiTop + 30));
+            xPos += 53;
+        }
+        addRenderableWidget(new AltarTypeButton(this, null, xPos, guiTop + 30));
         addRenderableWidget(new ExtendedButton(width / 2 - 75, height - 25, 150, 20, Component.translatable(LangKey.GUI_DRAGON_EDITOR), action -> Minecraft.getInstance().setScreen(new DragonEditorScreen(Minecraft.getInstance().screen))) {
             @Override
             public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
