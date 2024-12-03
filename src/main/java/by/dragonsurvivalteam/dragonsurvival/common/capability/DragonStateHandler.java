@@ -11,10 +11,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncSize;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAdvancementTriggers;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers;
-import by.dragonsurvivalteam.dragonsurvival.registry.attachments.AltarData;
-import by.dragonsurvivalteam.dragonsurvival.registry.attachments.ClawInventoryData;
-import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachments;
-import by.dragonsurvivalteam.dragonsurvival.registry.attachments.SpinData;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.*;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.body.DragonBodies;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.body.DragonBody;
@@ -220,10 +217,12 @@ public class DragonStateHandler extends EntityStateHandler {
         Holder<DragonType> oldType = dragonType;
         setType(type);
 
+        MagicData magicData = MagicData.getData(player);
         if (type != null) {
             if (oldType == null || !oldType.is(type.getKey())) {
                 DSModifiers.updateTypeModifiers(player, this);
                 skinData.skinPreset.initDefaults(dragonType.getKey());
+                magicData.refresh(dragonType);
             }
         } else {
             DSModifiers.clearModifiers(player);

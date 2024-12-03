@@ -17,7 +17,7 @@ import java.util.Arrays;
 
 public class MiscCodecs {
     public static Codec<HolderSet<DragonAbility>> dragonAbilityCodec() {
-        int maximum = DragonAbility.MAX_ACTIVE + DragonAbility.MAX_PASSIVE;
+        int maximum = DragonAbility.MAX_ACTIVE_ON_HOTBAR + DragonAbility.MAX_PASSIVE;
 
         // TODO :: this doesn't really need to be checked anymore with the current plan to not limit the amount of abilities
         return RegistryCodecs.homogeneousList(DragonAbility.REGISTRY).validate(abilities -> {
@@ -36,9 +36,9 @@ public class MiscCodecs {
                 }
             }
 
-            if (currentActive > DragonAbility.MAX_ACTIVE) {
+            if (currentActive > DragonAbility.MAX_ACTIVE_ON_HOTBAR) {
                 int finalCurrentActive = currentActive;
-                return DataResult.error(() -> "Defined [" + finalCurrentActive + "] active abilities - only up to [" + DragonAbility.MAX_ACTIVE + "] are allowed");
+                return DataResult.error(() -> "Defined [" + finalCurrentActive + "] active abilities - only up to [" + DragonAbility.MAX_ACTIVE_ON_HOTBAR + "] are allowed");
             }
 
             if (currentPassive > DragonAbility.MAX_PASSIVE) {

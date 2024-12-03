@@ -14,9 +14,9 @@ public class DragonAbilityInstance implements INBTSerializable<CompoundTag> {
     public static final int MAX_LEVEL = 255;
 
     private Holder<DragonAbility> ability;
-    private int level = 1; // TODO :: remove value
+    private int level;
     private boolean isEnabled = true;
-    private int abilitySlot = 0;
+    private int abilitySlot;
 
     // TODO :: values which will not be saved
     private int currentTick;
@@ -24,8 +24,10 @@ public class DragonAbilityInstance implements INBTSerializable<CompoundTag> {
 
     public DragonAbilityInstance() {}
 
-    public DragonAbilityInstance(final Holder<DragonAbility> ability) {
+    public DragonAbilityInstance(final Holder<DragonAbility> ability, int level, int slot) {
         this.ability = ability;
+        this.level = level;
+        this.abilitySlot = slot;
     }
 
     public void apply(final ServerPlayer dragon) {

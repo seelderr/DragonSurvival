@@ -1,6 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.attachments;
 
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
@@ -12,10 +15,11 @@ import org.jetbrains.annotations.UnknownNullability;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class MagicData implements INBTSerializable<CompoundTag> {
 
-    private List<DragonAbilityInstance> abilities = new ArrayList<>();
+    private final List<DragonAbilityInstance> abilities = new ArrayList<>();
     private boolean renderAbilities = true;
     private int selectedAbilitySlot = 0;
     private int currentMana = 0;
@@ -49,6 +53,9 @@ public class MagicData implements INBTSerializable<CompoundTag> {
     }
 
     public DragonAbilityInstance getAbilityFromSlot(int slot) {
+        if(slot < 0 || slot >= abilities.size()) {
+            return null;
+        }
         return abilities.get(slot);
     }
 
@@ -61,11 +68,34 @@ public class MagicData implements INBTSerializable<CompoundTag> {
     }
 
     public boolean shouldRenderAbilities() {
-        return renderAbilities;
+        // TODO: Bother with this later
+        return true;
     }
 
     public void setRenderAbilities(boolean renderAbilities) {
         this.renderAbilities = renderAbilities;
+    }
+
+    public void reset() {
+        abilities.clear();
+        currentMana = 0;
+        selectedAbilitySlot = 0;
+    }
+
+    public void refresh(Holder<DragonType> type) {
+        abilities.clear();
+        int slot = 0;
+        for (Holder<DragonAbility> ability : type.value().abilities()) {
+            if (ability.value().type() != DragonAbility.Type.PASSIVE) {
+                if (slot < DragonAbility.MAX_ACTIVE_ON_HOTBAR) {
+                    abilities.add(new DragonAbilityInstance(ability, 1, slot++));
+                } else {
+                    abilities.add(new DragonAbilityInstance(ability, 1, -1));
+                }
+            } else {
+                abilities.add(new DragonAbilityInstance(ability, 1, -1));
+            }
+        }
     }
 
     @Override

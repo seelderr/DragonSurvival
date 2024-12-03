@@ -10,6 +10,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MagicData;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.platform.Window;
@@ -139,8 +140,7 @@ public class MagicHUD {
         int sizeX = 20;
         int sizeY = 20;
 
-        // FIXME
-        int i1 = width - sizeX;//width - sizeX * MagicCap.activeAbilitySlots - 20;
+        int i1 = width - sizeX * DragonAbility.MAX_ACTIVE_ON_HOTBAR - 20;
         int posX = i1;
         int posY = height - sizeY;
 
@@ -152,8 +152,7 @@ public class MagicHUD {
             guiGraphics.blit(VANILLA_WIDGETS, posX, posY - 2, 0, 0, 0, 41, 22, 256, 256);
             guiGraphics.blit(VANILLA_WIDGETS, posX + 41, posY - 2, 0, 141, 0, 41, 22, 256, 256);
 
-            //FIXME
-            /*for (int x = 0; x < MagicCap.activeAbilitySlots; x++) {
+            for (int x = 0; x < DragonAbility.MAX_ACTIVE_ON_HOTBAR; x++) {
                 DragonAbilityInstance ability = magicData.getAbilityFromSlot(x);
 
                 if (ability != null && ability.getAbility().icon() != null) {
@@ -171,7 +170,7 @@ public class MagicHUD {
                         guiGraphics.fill(boxX, boxY, boxX + 16, boxY + offset, fColor);
                     }
                 }
-            }*/
+            }
 
             guiGraphics.blit(VANILLA_WIDGETS, posX + sizeX * magicData.getSelectedAbilitySlot() - 1, posY - 3, 2, 0, 22, 24, 24, 256, 256);
 

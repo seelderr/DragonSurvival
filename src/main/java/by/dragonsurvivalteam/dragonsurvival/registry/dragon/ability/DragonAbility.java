@@ -69,7 +69,7 @@ public record DragonAbility(
     public static final Codec<Holder<DragonAbility>> CODEC = RegistryFixedCodec.create(REGISTRY);
     public static final StreamCodec<RegistryFriendlyByteBuf, Holder<DragonAbility>> STREAM_CODEC = ByteBufCodecs.holderRegistry(REGISTRY);
 
-    public static final int MAX_ACTIVE = 4;
+    public static final int MAX_ACTIVE_ON_HOTBAR = 4;
     public static final int MAX_PASSIVE = 8;
 
     public Type type() {
