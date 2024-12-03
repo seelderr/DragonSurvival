@@ -14,6 +14,9 @@ import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
@@ -38,12 +41,12 @@ public interface AbilityTargeting {
         ).apply(instance, BlockTargeting::new));
     }
 
-    // FIXME :: remove boolean, add sub-predicate (also add other predicates for easy checks like 'instanceof enemy', friendly (same team, tamed pets etc.) and so on)
-    record EntityTargeting(Optional<EntityPredicate> targetConditions, List<AbilityEntityEffect> effect, boolean targetOnlyLiving) {
+    record EntityTargeting(Optional<EntityPredicate> targetConditions, List<AbilityEntityEffect> effect, boolean targetFriendly) {
         public static final Codec<EntityTargeting> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 EntityPredicate.CODEC.optionalFieldOf("target_conditions").forGetter(EntityTargeting::targetConditions),
                 AbilityEntityEffect.CODEC.listOf().fieldOf("entity_effect").forGetter(EntityTargeting::effect),
-                Codec.BOOL.optionalFieldOf("target_only_living", false).forGetter(EntityTargeting::targetOnlyLiving)
+                // TODO :: let his be a more complex state? like 'target_any' / 'target_friendly' / 'target_only_friendly' etc.?
+                Codec.BOOL.optionalFieldOf("target_friendly", false).forGetter(EntityTargeting::targetFriendly)
         ).apply(instance, EntityTargeting::new));
     }
 
@@ -59,11 +62,38 @@ public interface AbilityTargeting {
     @SubscribeEvent
     static void registerEntries(final RegisterEvent event) {
         if (event.getRegistry() == REGISTRY) {
-            event.register(REGISTRY_KEY, DragonSurvival.res("area_target"), () -> AreaTarget.CODEC);
-            event.register(REGISTRY_KEY, DragonSurvival.res("dragon_breath_target"), () -> DragonBreathTarget.CODEC);
-            event.register(REGISTRY_KEY, DragonSurvival.res("single_target"), () -> SingleTarget.CODEC);
-            event.register(REGISTRY_KEY, DragonSurvival.res("self_target"), () -> SelfTarget.CODEC);
+            event.register(REGISTRY_KEY, DragonSurvival.res("area"), () -> AreaTarget.CODEC);
+            event.register(REGISTRY_KEY, DragonSurvival.res("dragon_breath"), () -> DragonBreathTarget.CODEC);
+            event.register(REGISTRY_KEY, DragonSurvival.res("looking_at"), () -> LookingAtTarget.CODEC);
+            event.register(REGISTRY_KEY, DragonSurvival.res("self"), () -> SelfTarget.CODEC);
         }
+    }
+
+    @SuppressWarnings("RedundantIfStatement") // ignore for clarity
+    default boolean isEntityRelevant(final ServerPlayer dragon, final EntityTargeting targeting, final Entity entity) {
+        if (dragon == entity) {
+            return false;
+        }
+
+        if (!targeting.targetFriendly() && isFriendly(dragon, entity)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @SuppressWarnings("RedundantIfStatement") // ignore for clarity
+    private boolean isFriendly(final ServerPlayer dragon, final Entity entity) {
+        if (entity instanceof Player otherPlayer && !dragon.canHarmPlayer(otherPlayer)) {
+            return true;
+        }
+
+        if (entity instanceof TamableAnimal tamable && tamable.getOwner() instanceof Player otherPlayer && (dragon == otherPlayer || !dragon.canHarmPlayer(otherPlayer))) {
+            return true;
+        }
+
+        // TODO :: 'canHarmPlayer' returns true if friendly fire is enabled - do we want this behaviour?
+        return false;
     }
 
     void apply(final ServerPlayer dragon, final DragonAbilityInstance ability);

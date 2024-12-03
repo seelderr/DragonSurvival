@@ -2,12 +2,8 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.AbilityScreen;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
-import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
@@ -15,9 +11,6 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 public class SkillProgressButton extends Button {
     @Translation(type = Translation.Type.MISC, comments = "§6■ Requires level:§r %s")

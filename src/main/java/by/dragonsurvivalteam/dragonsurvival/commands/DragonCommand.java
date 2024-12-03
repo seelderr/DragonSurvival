@@ -14,8 +14,6 @@ import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStage;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStages;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
-import com.mojang.brigadier.arguments.StringArgumentType;
-import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.mojang.brigadier.tree.ArgumentCommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.mojang.brigadier.tree.RootCommandNode;
@@ -33,7 +31,6 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Locale;
 
 import static net.minecraft.commands.Commands.argument;
 import static net.minecraft.commands.Commands.literal;

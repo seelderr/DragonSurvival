@@ -2,8 +2,8 @@ package by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.LevelBasedResource;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Activation;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.ActionContainer;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Activation;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Upgrade;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import com.mojang.serialization.Codec;

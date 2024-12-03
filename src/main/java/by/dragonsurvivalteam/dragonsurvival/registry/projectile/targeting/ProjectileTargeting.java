@@ -1,8 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.projectile.targeting;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.RandomPredicate;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.WeatherPredicate;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.predicates.RandomPredicate;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.predicates.WeatherPredicate;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.block_effects.ProjectileBlockEffect;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.entity_effects.ProjectileEntityEffect;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.world_effects.ProjectileWorldEffect;

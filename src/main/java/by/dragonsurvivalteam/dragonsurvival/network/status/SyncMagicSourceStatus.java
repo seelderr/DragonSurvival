@@ -1,14 +1,11 @@
 package by.dragonsurvivalteam.dragonsurvival.network.status;
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
-import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;

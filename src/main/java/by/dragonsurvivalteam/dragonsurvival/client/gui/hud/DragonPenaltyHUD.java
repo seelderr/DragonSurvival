@@ -1,17 +1,11 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.hud;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.DragonBonusConfig;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
-import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 

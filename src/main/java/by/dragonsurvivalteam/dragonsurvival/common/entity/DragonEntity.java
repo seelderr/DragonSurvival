@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity;
 
-import by.dragonsurvivalteam.dragonsurvival.client.AbilityAnimation;
 import by.dragonsurvivalteam.dragonsurvival.client.ISecondAnimation;
 import by.dragonsurvivalteam.dragonsurvival.client.emotes.Emote;
 import by.dragonsurvivalteam.dragonsurvival.client.models.DragonModel;
@@ -15,7 +14,6 @@ import by.dragonsurvivalteam.dragonsurvival.config.ClientConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MagicData;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MovementData;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.TreasureRestData;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStage;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;

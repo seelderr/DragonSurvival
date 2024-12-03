@@ -5,7 +5,6 @@ import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 import net.minecraft.world.level.ClipContext;
@@ -15,9 +14,9 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 
-public record SingleTarget(Either<BlockTargeting, EntityTargeting> target, LevelBasedValue range) implements AbilityTargeting {
-    public static final MapCodec<SingleTarget> CODEC = RecordCodecBuilder.mapCodec(instance -> AbilityTargeting.codecStart(instance)
-            .and(LevelBasedValue.CODEC.fieldOf("range").forGetter(SingleTarget::range)).apply(instance, SingleTarget::new)
+public record LookingAtTarget(Either<BlockTargeting, EntityTargeting> target, LevelBasedValue range) implements AbilityTargeting {
+    public static final MapCodec<LookingAtTarget> CODEC = RecordCodecBuilder.mapCodec(instance -> AbilityTargeting.codecStart(instance)
+            .and(LevelBasedValue.CODEC.fieldOf("range").forGetter(LookingAtTarget::range)).apply(instance, LookingAtTarget::new)
     );
 
     @Override
@@ -37,9 +36,9 @@ public record SingleTarget(Either<BlockTargeting, EntityTargeting> target, Level
             blockTarget.effect().forEach(target -> target.apply(dragon, ability, result.getBlockPos()));
         }).ifRight(entityTarget -> {
             HitResult result = ProjectileUtil.getHitResultOnViewVector(dragon,
-                    entity -> entityTarget.targetConditions().map(conditions ->
-                            conditions.matches(dragon.serverLevel(), dragon.position(), entity)
-                            && (!entityTarget.targetOnlyLiving() || entity instanceof LivingEntity)).orElse(true), range().calculate(ability.getLevel()));
+                    entity -> isEntityRelevant(dragon, entityTarget, entity) && entityTarget.targetConditions().map(conditions -> conditions.matches(dragon.serverLevel(), dragon.position(), entity)).orElse(true),
+                    range().calculate(ability.getLevel())
+            );
 
             if (result instanceof EntityHitResult entityHitResult) {
                 entityTarget.effect().forEach(target -> target.apply(dragon, ability, entityHitResult.getEntity()));

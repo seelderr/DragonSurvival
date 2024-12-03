@@ -40,9 +40,9 @@ public interface AbilityBlockEffect {
     @SubscribeEvent
     static void registerEntries(final RegisterEvent event) {
         if (event.getRegistry() == REGISTRY) {
-            event.register(REGISTRY_KEY, DragonSurvival.res("bonemeal_effect"), () -> BonemealEffect.CODEC);
-            event.register(REGISTRY_KEY, DragonSurvival.res("conversion_effect"), () -> ConversionEffect.CODEC);
-            event.register(REGISTRY_KEY, DragonSurvival.res("summon_entity_effect"), () -> SummonEntityEffect.CODEC);
+            event.register(REGISTRY_KEY, DragonSurvival.res("bonemeal"), () -> BonemealEffect.CODEC);
+            event.register(REGISTRY_KEY, DragonSurvival.res("conversion"), () -> ConversionEffect.CODEC);
+            event.register(REGISTRY_KEY, DragonSurvival.res("summon_entity"), () -> SummonEntityEffect.CODEC);
         }
     }
 }

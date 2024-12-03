@@ -11,7 +11,6 @@ import by.dragonsurvivalteam.dragonsurvival.registry.attachments.AltarData;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.body.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStage;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStages;

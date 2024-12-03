@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers.magic;
 
-import by.dragonsurvivalteam.dragonsurvival.common.blocks.TreasureBlock;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
@@ -9,7 +8,6 @@ import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncMagicStats;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MagicData;
-import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSBlockTags;
 import by.dragonsurvivalteam.dragonsurvival.util.ExperienceUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.server.level.ServerPlayer;

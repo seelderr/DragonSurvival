@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins.client;
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -16,7 +15,6 @@ import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.armortrim.ArmorTrim;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;

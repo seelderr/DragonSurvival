@@ -2,8 +2,8 @@ package by.dragonsurvivalteam.dragonsurvival.registry.projectile;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.LevelBasedResource;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.RandomPredicate;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.WeatherPredicate;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.predicates.RandomPredicate;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.predicates.WeatherPredicate;
 import by.dragonsurvivalteam.dragonsurvival.common.particles.LargeLightningParticleOption;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;

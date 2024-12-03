@@ -1,19 +1,15 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.DragonBonusConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncPlayerJump;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachments;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.Snowball;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;

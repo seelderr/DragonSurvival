@@ -1,54 +1,11 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.datagen.advancements;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.Condition;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.DragonPredicate;
-import by.dragonsurvivalteam.dragonsurvival.common.criteria.*;
-import by.dragonsurvivalteam.dragonsurvival.registry.*;
-import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
-import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSItemTags;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStage;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStages;
-import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.advancements.*;
-import net.minecraft.advancements.critereon.*;
-import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.HolderSet;
-import net.minecraft.core.component.DataComponentPredicate;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.tags.FluidTags;
-import net.minecraft.tags.StructureTags;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.level.ItemLike;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.levelgen.structure.Structure;
-import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.storage.loot.LootContext;
-import net.minecraft.world.level.storage.loot.predicates.*;
-import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.AdvancementProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.function.Consumer;
-
-import static by.dragonsurvivalteam.dragonsurvival.common.codecs.Condition.dragonType;
-import static by.dragonsurvivalteam.dragonsurvival.registry.datagen.advancements.LangKey.*;
 
 public class DSAdvancements implements AdvancementProvider.AdvancementGenerator {
     private HolderLookup.Provider registries;

@@ -2,19 +2,9 @@ package by.dragonsurvivalteam.dragonsurvival.magic;
 
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
-import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.FormattedText;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.FormattedCharSequence;
 import org.jetbrains.annotations.NotNull;
-import software.bernie.geckolib.util.Color;
-
-import java.util.List;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 

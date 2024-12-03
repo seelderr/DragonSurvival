@@ -15,7 +15,6 @@ import org.jetbrains.annotations.UnknownNullability;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class MagicData implements INBTSerializable<CompoundTag> {
 

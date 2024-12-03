@@ -3,7 +3,6 @@ package by.dragonsurvivalteam.dragonsurvival.common.blocks;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.network.status.SyncMagicSourceStatus;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSTileEntities;
@@ -53,7 +52,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.atomic.AtomicBoolean;

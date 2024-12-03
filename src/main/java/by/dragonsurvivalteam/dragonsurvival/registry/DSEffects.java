@@ -16,7 +16,6 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers.SLOW_MOVEMENT;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers.TOUGH_SKIN;
 
 public class DSEffects { // TODO :: add descriptions for the missing N/A marked effects
     public static final DeferredRegister<MobEffect> DS_MOB_EFFECTS = DeferredRegister.create(BuiltInRegistries.MOB_EFFECT, MODID);

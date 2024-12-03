@@ -3,15 +3,12 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.screens;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.hud.MagicHUD;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.*;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.ExperienceUtils;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -22,7 +19,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;

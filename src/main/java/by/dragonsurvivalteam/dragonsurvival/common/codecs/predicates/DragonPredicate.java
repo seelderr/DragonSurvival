@@ -1,4 +1,4 @@
-package by.dragonsurvivalteam.dragonsurvival.common.codecs;
+package by.dragonsurvivalteam.dragonsurvival.common.codecs.predicates;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
@@ -6,7 +6,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.items.growth.StarHeartItem;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.body.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStage;
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.advancements.critereon.EntitySubPredicate;
@@ -27,14 +26,12 @@ public record DragonPredicate(
         Optional<HolderSet<DragonType>> dragonType,
         Optional<DragonStagePredicate> dragonStage,
         Optional<HolderSet<DragonBody>> dragonBody,
-        Optional<MinMaxBounds.Doubles> size,
         Optional<StarHeartItem.State> starHeartState
 ) implements EntitySubPredicate {
     public static final MapCodec<DragonPredicate> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             RegistryCodecs.homogeneousList(DragonType.REGISTRY).optionalFieldOf("dragon_type").forGetter(DragonPredicate::dragonType),
-            DragonStagePredicate.CODEC.optionalFieldOf("dragon_stage").forGetter(DragonPredicate::dragonStage),
+            DragonStagePredicate.CODEC.optionalFieldOf("stage_specific").forGetter(DragonPredicate::dragonStage),
             RegistryCodecs.homogeneousList(DragonBody.REGISTRY).optionalFieldOf("dragon_body").forGetter(DragonPredicate::dragonBody),
-            MinMaxBounds.Doubles.CODEC.optionalFieldOf("size").forGetter(DragonPredicate::size),
             StarHeartItem.State.CODEC.optionalFieldOf("star_heart_state").forGetter(DragonPredicate::starHeartState)
     ).apply(instance, DragonPredicate::new));
 
@@ -51,19 +48,15 @@ public record DragonPredicate(
             return false;
         }
 
-        if (dragonType().isPresent() && !dragonType().get().equals(data.getTypeNameLowerCase())) {
+        if (dragonType().isPresent() && !dragonType().get().contains(data.getType())) {
             return false;
         }
 
-        if (dragonStage().isPresent() && !dragonStage().get().matches(data)) {
+        if (dragonStage().isPresent() && !dragonStage().get().matches(data.getStage(), data.getSize())) {
             return false;
         }
 
         if (dragonBody().isPresent() && !dragonBody().get().contains(data.getBody())) {
-            return false;
-        }
-
-        if (size().isPresent() && !size().get().matches(data.getSize())) {
             return false;
         }
 
@@ -84,7 +77,6 @@ public record DragonPredicate(
         private Optional<HolderSet<DragonType>> dragonType = Optional.empty();
         private Optional<DragonStagePredicate> dragonStage = Optional.empty();
         private Optional<HolderSet<DragonBody>> dragonBody = Optional.empty();
-        private Optional<MinMaxBounds.Doubles> size = Optional.empty();
         private Optional<StarHeartItem.State> starHeartState = Optional.empty();
 
         public static DragonPredicate.Builder dragon() {
@@ -96,33 +88,23 @@ public record DragonPredicate(
             return this;
         }
 
+        public DragonPredicate.Builder stage(final DragonStagePredicate predicate) {
+            this.dragonStage = Optional.of(predicate);
+            return this;
+        }
+
         public DragonPredicate.Builder stage(final Holder<DragonStage> dragonStage) {
-            this.dragonStage = Optional.of(new DragonStagePredicate(Optional.of(dragonStage), Optional.empty()));
+            this.dragonStage = Optional.of(DragonStagePredicate.Builder.start().stage(dragonStage).build());
             return this;
         }
 
         public DragonPredicate.Builder stage(final Holder<DragonStage> dragonStage, final MinMaxBounds.Doubles growthPercentage) {
-            this.dragonStage = Optional.of(new DragonStagePredicate(Optional.of(dragonStage), Optional.of(growthPercentage)));
+            this.dragonStage = Optional.of(DragonStagePredicate.Builder.start().stage(dragonStage).growth(growthPercentage).build());
             return this;
         }
 
         public DragonPredicate.Builder body(final Holder<DragonBody> dragonBody) {
             this.dragonBody = Optional.of(HolderSet.direct(dragonBody));
-            return this;
-        }
-
-        public DragonPredicate.Builder sizeBetween(double min, double max) {
-            this.size = Optional.of(MinMaxBounds.Doubles.between(min, max));
-            return this;
-        }
-
-        public DragonPredicate.Builder sizeAtLeast(double min) {
-            this.size = Optional.of(MinMaxBounds.Doubles.atLeast(min));
-            return this;
-        }
-
-        public DragonPredicate.Builder sizeAtMost(double max) {
-            this.size = Optional.of(MinMaxBounds.Doubles.atLeast(max));
             return this;
         }
 
@@ -132,7 +114,7 @@ public record DragonPredicate(
         }
 
         public DragonPredicate build() {
-            return new DragonPredicate(dragonType, dragonStage, dragonBody, size, starHeartState);
+            return new DragonPredicate(dragonType, dragonStage, dragonBody, starHeartState);
         }
     }
 }

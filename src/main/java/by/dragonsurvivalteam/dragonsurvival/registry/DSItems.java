@@ -1,26 +1,16 @@
 package by.dragonsurvivalteam.dragonsurvival.registry;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.items.*;
 import by.dragonsurvivalteam.dragonsurvival.common.items.armor.DarkDragonArmorItem;
 import by.dragonsurvivalteam.dragonsurvival.common.items.armor.DragonHunterWeapon;
 import by.dragonsurvivalteam.dragonsurvival.common.items.armor.LightDragonArmorItem;
 import by.dragonsurvivalteam.dragonsurvival.common.items.growth.StarHeartItem;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.util.BlockPosHelper;
-import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;

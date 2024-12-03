@@ -1,4 +1,4 @@
-package by.dragonsurvivalteam.dragonsurvival.common.codecs;
+package by.dragonsurvivalteam.dragonsurvival.common.codecs.predicates;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;

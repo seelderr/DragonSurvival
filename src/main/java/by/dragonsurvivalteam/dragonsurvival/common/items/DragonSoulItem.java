@@ -3,18 +3,14 @@ package by.dragonsurvivalteam.dragonsurvival.common.items;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAdvancementTriggers;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSSounds;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStage;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.PlayerLoginHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -30,7 +26,6 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Objects;
 
 public class DragonSoulItem extends Item {
     @Translation(type = Translation.Type.MISC, comments = "Empty Dragon Soul")

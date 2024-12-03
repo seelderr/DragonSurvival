@@ -1,33 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
-import by.dragonsurvivalteam.dragonsurvival.common.blocks.SourceOfMagicBlock;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.network.status.SyncMagicSourceStatus;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSParticles;
-import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MovementData;
-import by.dragonsurvivalteam.dragonsurvival.server.tileentity.SourceOfMagicPlaceholder;
-import by.dragonsurvivalteam.dragonsurvival.server.tileentity.SourceOfMagicTileEntity;
-import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-import net.minecraft.core.BlockPos;
-import net.minecraft.util.Mth;
-import net.minecraft.util.RandomSource;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
-import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
-import net.neoforged.neoforge.event.tick.PlayerTickEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 //@EventBusSubscriber
 public class SourceOfMagicHandler {

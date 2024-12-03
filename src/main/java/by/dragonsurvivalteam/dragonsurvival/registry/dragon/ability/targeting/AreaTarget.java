@@ -7,7 +7,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.phys.AABB;
@@ -29,10 +28,10 @@ public record AreaTarget(Either<BlockTargeting, EntityTargeting> target, LevelBa
                 }
             });
         }).ifRight(entityTarget -> {
-            // ProjectileUtil.getHitResultOnViewVector()
+            // TODO :: add field 'visible' and check using ProjectileUtil.getHitResultOnViewVector()
+            //  maybe need to differentiate between behind blocks and below player (under blocks)?
             dragon.serverLevel().getEntities(EntityTypeTest.forClass(Entity.class), AABB.ofSize(dragon.position(), radius * 2, radius * 2, radius * 2),
-                    entity -> entityTarget.targetConditions().map(conditions -> conditions.matches(dragon.serverLevel(), dragon.position(), entity)
-                            && (!entityTarget.targetOnlyLiving() || entity instanceof LivingEntity)).orElse(true)
+                    entity -> isEntityRelevant(dragon, entityTarget, entity) && entityTarget.targetConditions().map(conditions -> conditions.matches(dragon.serverLevel(), dragon.position(), entity)).orElse(true)
             ).forEach(entity -> entityTarget.effect().forEach(target -> target.apply(dragon, ability, entity)));
         });
     }

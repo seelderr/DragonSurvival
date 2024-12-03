@@ -9,7 +9,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 import net.minecraft.world.level.entity.EntityTypeTest;
@@ -36,9 +35,7 @@ public record DragonBreathTarget(Either<BlockTargeting, EntityTargeting> target,
             AABB breathArea = calculateBreathArea(dragon, DragonStateProvider.getData(dragon).getSize(), rangeMultiplier().calculate(ability.getLevel()));
 
             dragon.serverLevel().getEntities(EntityTypeTest.forClass(Entity.class), breathArea,
-                    entity -> entityTarget.targetConditions().map(conditions -> conditions.matches(dragon.serverLevel(), dragon.position(), entity)
-                            // FIXME :: atm living entity check is only respected when a condition is present
-                    && (!entityTarget.targetOnlyLiving() || entity instanceof LivingEntity)).orElse(true) && !entity.is(dragon)
+                    entity -> isEntityRelevant(dragon, entityTarget, entity) && entityTarget.targetConditions().map(conditions -> conditions.matches(dragon.serverLevel(), dragon.position(), entity)).orElse(true)
             ).forEach(entity -> entityTarget.effect().forEach(target -> target.apply(dragon, ability, entity)));
         });
     }

@@ -8,8 +8,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class AbilityButton extends Button {

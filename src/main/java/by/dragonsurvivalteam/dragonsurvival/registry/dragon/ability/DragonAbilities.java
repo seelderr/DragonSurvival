@@ -1,9 +1,10 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.Condition;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.LevelBasedResource;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Activation;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.ActionContainer;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Activation;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.ManaCost;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Upgrade;
 import by.dragonsurvivalteam.dragonsurvival.common.particles.LargeFireParticleOption;
@@ -65,14 +66,14 @@ public class DragonAbilities {
                         new SelfTarget(
                                 Either.right(
                                         new AbilityTargeting.EntityTargeting(
-                                                Optional.empty(),
+                                                Optional.of(Condition.living()),
                                                 List.of(new ProjectileEffect(
                                                         context.lookup(ProjectileData.REGISTRY).getOrThrow(Projectiles.FIREBALL),
                                                         LevelBasedValue.constant(1),
                                                         LevelBasedValue.constant(0),
                                                         LevelBasedValue.constant(1)
                                                 )),
-                                                true
+                                                false
                                         )
                                 )
                         ),
@@ -102,14 +103,14 @@ public class DragonAbilities {
                                 new SelfTarget(
                                         Either.right(
                                                 new AbilityTargeting.EntityTargeting(
-                                                        Optional.empty(),
+                                                        Optional.of(Condition.living()),
                                                         List.of(new ProjectileEffect(
                                                                 context.lookup(ProjectileData.REGISTRY).getOrThrow(Projectiles.SPIKE),
                                                                 LevelBasedValue.constant(1),
                                                                 LevelBasedValue.constant(0),
                                                                 LevelBasedValue.constant(1)
                                                         )),
-                                                        true
+                                                        false
                                                 )
                                         )
                                 ),
@@ -140,14 +141,14 @@ public class DragonAbilities {
                         new SelfTarget(
                                 Either.right(
                                         new AbilityTargeting.EntityTargeting(
-                                                Optional.empty(),
+                                                Optional.of(Condition.living()),
                                                 List.of(new ProjectileEffect(
                                                         context.lookup(ProjectileData.REGISTRY).getOrThrow(Projectiles.BALL_LIGHTNING),
                                                         LevelBasedValue.constant(1),
                                                         LevelBasedValue.constant(0),
                                                         LevelBasedValue.constant(1)
                                                 )),
-                                                true
+                                                false
                                         )
                                 )
                         ),
@@ -182,7 +183,8 @@ public class DragonAbilities {
                                 Either.right(
                                         new AbilityTargeting.EntityTargeting(
                                                 // TODO: Conditional effect predicated on fire immunity?
-                                                Optional.empty(),
+                                                //  probably not -> entities should handle fire immunity by themselves
+                                                Optional.of(Condition.living()),
                                                 List.of(
                                                         new DamageEffect(
                                                                 context.lookup(Registries.DAMAGE_TYPE).getOrThrow(DSDamageTypes.CAVE_DRAGON_BREATH),
@@ -198,7 +200,7 @@ public class DragonAbilities {
                                                                 LevelBasedValue.constant(1)
                                                         )
                                                 ),
-                                                true
+                                                false
                                         )
                                 ),
                                 LevelBasedValue.constant(1)

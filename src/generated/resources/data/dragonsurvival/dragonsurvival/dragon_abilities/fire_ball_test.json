@@ -5,15 +5,20 @@
         "applied_effects": {
           "entity_effect": [
             {
-              "effect_type": "dragonsurvival:projectile_effect",
+              "effect_type": "dragonsurvival:projectile",
               "number_of_projectiles": 1.0,
               "projectile_data": "dragonsurvival:fireball",
               "speed": 1.0
             }
           ],
-          "target_only_living": true
+          "target_conditions": {
+            "type_specific": {
+              "type": "dragonsurvival:entity_check_predicate",
+              "check_for": "living_entity"
+            }
+          }
         },
-        "target_type": "dragonsurvival:self_target"
+        "target_type": "dragonsurvival:self"
       },
       "trigger_rate": 1.0
     }

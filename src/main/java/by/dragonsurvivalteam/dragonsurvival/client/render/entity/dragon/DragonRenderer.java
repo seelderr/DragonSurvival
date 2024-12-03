@@ -24,7 +24,6 @@ import software.bernie.geckolib.util.Color;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 
 public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
     public ResourceLocation glowTexture = null;

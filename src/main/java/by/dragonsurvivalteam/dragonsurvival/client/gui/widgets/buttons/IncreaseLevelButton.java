@@ -1,20 +1,12 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons;
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.PlusMinusButton;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.network.chat.Component;
-import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Objects;
 
 public class IncreaseLevelButton extends PlusMinusButton {
     @Translation(type = Translation.Type.MISC, comments = "§aUpgrade the skill for§r %s §alevels worth of experience points§r")
