@@ -42,7 +42,6 @@ public class DragonAbilityInstance implements INBTSerializable<CompoundTag> {
 
     public void apply(final Player dragon) {
         cooldown = Math.max(0, getCooldown(dragon) - 1);
-        System.out.println("cooldown: " + cooldown + (dragon.level().isClientSide() ? " (client)" : " (server)"));
         if (!isAvailable()) {
             return;
         }
