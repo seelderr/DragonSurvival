@@ -28,7 +28,6 @@
     "cast_time": 1.0,
     "cooldown": 40.0
   },
-  "description": "dragonsurvival.ability.spike_test.desc",
   "icon": {
     "texture_entries": [
       {

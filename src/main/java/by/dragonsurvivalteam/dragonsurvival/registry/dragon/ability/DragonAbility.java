@@ -21,10 +21,10 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.registries.DataPackRegistryEvent;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
-import javax.annotation.Nullable;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public record DragonAbility(
@@ -34,8 +34,7 @@ public record DragonAbility(
         Optional<Upgrade> upgrade,
         Optional<EntityPredicate> usageBlocked,
         List<ActionContainer> actions,
-        LevelBasedResource icon,
-        String description
+        LevelBasedResource icon
 ) {
     public enum Type {
         PASSIVE,
@@ -61,9 +60,7 @@ public record DragonAbility(
             Upgrade.CODEC.optionalFieldOf("upgrade").forGetter(DragonAbility::upgrade),
             EntityPredicate.CODEC.optionalFieldOf("usage_blocked").forGetter(DragonAbility::usageBlocked), // TODO :: e.g. when the ability is not supposed to be used underwater
             ActionContainer.CODEC.listOf().optionalFieldOf("actions", List.of()).forGetter(DragonAbility::actions),
-            LevelBasedResource.CODEC.fieldOf("icon").forGetter(DragonAbility::icon),
-            // TODO: How do we handle descriptions that are fed various values from the ability itself?
-            Codec.STRING.fieldOf("description").forGetter(DragonAbility::description)
+            LevelBasedResource.CODEC.fieldOf("icon").forGetter(DragonAbility::icon)
     ).apply(instance, instance.stable(DragonAbility::new)));
 
     public static final Codec<Holder<DragonAbility>> CODEC = RegistryFixedCodec.create(REGISTRY);

@@ -40,7 +40,7 @@ public @interface Translation {
         Translation[] value();
     }
 
-    enum Type {
+    enum Type { // TODO :: follow vanilla syntax and always define it as <type>.<namespace>?
         ITEM("item." + DragonSurvival.MODID + ".", ""),
         BLOCK("block." + DragonSurvival.MODID + ".", ""),
         ENTITY("entity." + DragonSurvival.MODID + ".", ""),
@@ -50,22 +50,34 @@ public @interface Translation {
         EFFECT_DESCRIPTION("effect." + DragonSurvival.MODID + ".", ".desc"),
         ENCHANTMENT("enchantment." + DragonSurvival.MODID + ".", ""),
         ENCHANTMENT_DESCRIPTION("enchantment." + DragonSurvival.MODID + ".", ".desc"),
+
         DESCRIPTION(DragonSurvival.MODID + ".description.", ""),
         DESCRIPTION_ADDITION(DragonSurvival.MODID + ".description.addition.", ""),
+
         CONFIGURATION(DragonSurvival.MODID + ".configuration.", ".tooltip"),
-        ABILITY(DragonSurvival.MODID + ".ability.", ""),
-        ABILITY_DESCRIPTION(DragonSurvival.MODID + ".ability.", ".desc"),
+
+        ABILITY("dragon_ability." + DragonSurvival.MODID + ".", ""),
+        ABILITY_DESCRIPTION("dragon_ability." + DragonSurvival.MODID + ".", ".desc"),
+
         PROJECTILE(DragonSurvival.MODID + ".projectile.", ""),
+
         ADVANCEMENT(DragonSurvival.MODID + ".advancement.", ""),
         ADVANCEMENT_DESCRIPTION(DragonSurvival.MODID + ".advancement.", ".desc"),
+
         SKIN_PART(DragonSurvival.MODID + ".skin_part.", ""),
+
         GUI(DragonSurvival.MODID + ".gui.", ""),
+
         KEYBIND(DragonSurvival.MODID + ".keybind.", ""),
+
         EMOTE(DragonSurvival.MODID + ".emote.", ""),
+
         BODY(DragonSurvival.MODID + ".body.", ""),
         BODY_DESCRIPTION(DragonSurvival.MODID + ".body.", ".desc"),
+
         STAGE(DragonSurvival.MODID + ".stage.", ""),
         STAGE_DESCRIPTION(DragonSurvival.MODID + ".stage.", ".desc"),
+
         /** When used on {@link String} and no specified key it's expected that the string contains the translation key */
         MISC("", "");
 

@@ -45,13 +45,14 @@ public class DragonAbilities {
     public static final ResourceKey<DragonAbility> BALL_LIGHTNING = key("ball_lightning_test");
 
     // TODO: How to actually do this in the new system?
-    /*@Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = {
-            "■ Elemental breath: a stream of fire that ignites enemies and blocks. Range depends on age of the dragon.\n",
+    //  have one generic translation part which applies to all abilities (name, cooldown, duration, level)
+    //  people can move them around using the string.format syntax, e.g. -> '%2$' etc. (example for using the second parameter)
+    //  the ability description itself needs to be generic since there is no reasonable way to supply what each effect does etc.
+    @Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = {
+            "■ Elemental breath: a stream of fire that ignites enemies and blocks. Range depends on age of the dragon.",
             "■ Is able to destroy some blocks. Cannot be used under water, and during rain."
-    })*/
-
+    })
     @Translation(type = Translation.Type.ABILITY, comments = "Nether breath")
-    @Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = "Some ability description")
     public static final ResourceKey<DragonAbility> NETHER_BREATH = key("nether_breath");
 
     public static void registerAbilities(final BootstrapContext<DragonAbility> context) {
@@ -87,47 +88,43 @@ public class DragonAbilities {
                                 ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/icons/body_type_central.png"),
                                 1
                         ))
-                ),
-                Translation.Type.ABILITY_DESCRIPTION.wrap(FIRE_BALL_TEST.location().getPath())
                 )
-        );
+        ));
 
         context.register(SPIKE_TEST, new DragonAbility(
-                        Optional.of(new Activation(
-                                Activation.Type.SIMPLE,
-                                Optional.empty(),
-                                Optional.of(LevelBasedValue.constant(1)),
-                                Optional.of(LevelBasedValue.constant((float) Functions.secondsToTicks(2)))
-                        )),
+                Optional.of(new Activation(
+                        Activation.Type.SIMPLE,
                         Optional.empty(),
-                        Optional.empty(),
-                        List.of(new ActionContainer(
-                                new SelfTarget(
-                                        Either.right(
-                                                new AbilityTargeting.EntityTargeting(
-                                                        Optional.of(Condition.living()),
-                                                        List.of(new ProjectileEffect(
-                                                                context.lookup(ProjectileData.REGISTRY).getOrThrow(Projectiles.SPIKE),
-                                                                LevelBasedValue.constant(1),
-                                                                LevelBasedValue.constant(0),
-                                                                LevelBasedValue.constant(1)
-                                                        )),
-                                                        false
-                                                )
+                        Optional.of(LevelBasedValue.constant(1)),
+                        Optional.of(LevelBasedValue.constant((float) Functions.secondsToTicks(2)))
+                )),
+                Optional.empty(),
+                Optional.empty(),
+                List.of(new ActionContainer(
+                        new SelfTarget(
+                                Either.right(
+                                        new AbilityTargeting.EntityTargeting(
+                                                Optional.of(Condition.living()),
+                                                List.of(new ProjectileEffect(
+                                                        context.lookup(ProjectileData.REGISTRY).getOrThrow(Projectiles.SPIKE),
+                                                        LevelBasedValue.constant(1),
+                                                        LevelBasedValue.constant(0),
+                                                        LevelBasedValue.constant(1)
+                                                )),
+                                                false
                                         )
-                                ),
-                                LevelBasedValue.constant(1),
-                                Optional.empty()
-                        )),
-                        new LevelBasedResource(
-                            List.of(new LevelBasedResource.TextureEntry(
+                                )
+                        ),
+                        LevelBasedValue.constant(1),
+                        Optional.empty()
+                )),
+                new LevelBasedResource(
+                        List.of(new LevelBasedResource.TextureEntry(
                                 ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/icons/body_type_central.png"),
                                 1
-                            ))
-                        ),
-                Translation.Type.ABILITY_DESCRIPTION.wrap(SPIKE_TEST.location().getPath())
+                        ))
                 )
-        );
+        ));
 
         context.register(BALL_LIGHTNING, new DragonAbility(
                 Optional.of(new Activation(
@@ -162,10 +159,8 @@ public class DragonAbilities {
                                 ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/icons/body_type_central.png"),
                                 1
                         ))
-                ),
-                Translation.Type.ABILITY_DESCRIPTION.wrap(BALL_LIGHTNING.location().getPath())
                 )
-        );
+        ));
 
         context.register(NETHER_BREATH, new DragonAbility(
                 Optional.of(new Activation(
@@ -215,8 +210,7 @@ public class DragonAbilities {
                         new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/nether_breath_2.png"), 2),
                         new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/nether_breath_3.png"), 3),
                         new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/nether_breath_4.png"), 4)
-                )),
-                Translation.Type.ABILITY_DESCRIPTION.wrap(NETHER_BREATH.location().getPath())
+                ))
         ));
     }
 

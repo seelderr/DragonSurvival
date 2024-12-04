@@ -76,7 +76,6 @@
     "cast_time": 20.0,
     "cooldown": 40.0
   },
-  "description": "dragonsurvival.ability.nether_breath.desc",
   "icon": {
     "texture_entries": [
       {
