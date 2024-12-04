@@ -194,34 +194,6 @@ public class ClientProxy {
         }
     }
 
-    // FIXME: I'm pretty sure this is done entirely differently
-    /*public static void handleSyncAbilityCasting(final SyncAbilityCasting.Data message) {
-        Player localPlayer = Minecraft.getInstance().player;
-
-        if (localPlayer != null) {
-            Entity entity = localPlayer.level().getEntity(message.playerId());
-
-            if (entity instanceof Player player) {
-                DragonStateProvider.getOptional(player).ifPresent(handler -> {
-                    ActiveDragonAbility ability = handler.getMagicData().getAbilityFromSlot(message.abilitySlot());
-                    ability.loadNBT(message.nbt());
-                    handler.getMagicData().isCasting = message.isCasting();
-
-                    if (message.isCasting()) {
-                        ability.onKeyPressed(player, () -> {
-                            if (player.getId() == localPlayer.getId()) {
-                                ClientCastingHandler.hasCast = true;
-                                ClientCastingHandler.status = ClientCastingHandler.CastingStatus.Stop;
-                            }
-                        }, message.castStartTime(), message.clientTime());
-                    } else {
-                        ability.onKeyReleased(player);
-                    }
-                });
-            }
-        }
-    }*/
-
     public static void handleSyncMagicCap(final SyncMagicCap.Data message, HolderLookup.Provider provider) {
         Player localPlayer = Minecraft.getInstance().player;
 
@@ -235,7 +207,7 @@ public class ClientProxy {
         }
     }
 
-    public static void handleSyncMagicstats(final SyncMagicStats.Data message) {
+    public static void handleSyncMagicData(final SyncMagicData.Data message) {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
@@ -243,9 +215,7 @@ public class ClientProxy {
 
             if (entity instanceof Player player) {
                 MagicData magicData = MagicData.getData(player);
-                magicData.setCurrentMana(message.currentMana());
-                magicData.setSelectedAbilitySlot(message.selectedSlot());
-                magicData.setRenderAbilities(message.renderHotbar());
+                magicData.deserializeNBT(player.registryAccess(), message.nbt());
             }
         }
     }

@@ -5,7 +5,9 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,24 +30,51 @@ public class DragonAbilityInstance implements INBTSerializable<CompoundTag> {
         this.ability = ability;
         this.level = level;
         this.abilitySlot = slot;
+        this.isEnabled = ability.value().type() == DragonAbility.Type.PASSIVE;
+    }
+
+    public void applyClient() {
+        cooldown = Math.max(0, cooldown - 1);
     }
 
     public void apply(final ServerPlayer dragon) {
+        cooldown = Math.max(0, cooldown - 1);
         if (!isActive()) {
             return;
         }
 
         currentTick++;
-        ability.value().effects().forEach(effect -> effect.tick(dragon, this, currentTick));
+        if(currentTick >= getCastTime()) {
+            ability.value().effects().forEach(effect -> effect.tick(dragon, this, currentTick));
+        }
+    }
+
+    public ResourceLocation getIcon() {
+        return ability.value().icon().get(level);
+    }
+
+    public boolean isInCooldown() {
+        return cooldown > 0;
     }
 
     public boolean isActive() {
         return isEnabled && cooldown <= 0;
     }
 
+    public void setEnabled(boolean enabled) {
+        isEnabled = enabled;
+    }
+
+    // Used for when a client was denied from casting an ability by the server
+    public void releaseWithoutCooldown() {
+        currentTick = 0;
+        isEnabled = false;
+    }
+
     // TODO :: called when the pressed key is released (+ can also call this when the ability is disabled (relevant for passive only))
     public void release() {
         currentTick = 0;
+        isEnabled = false;
         cooldown = ability.value().getCooldown(level);
     }
 
@@ -94,7 +123,8 @@ public class DragonAbilityInstance implements INBTSerializable<CompoundTag> {
     public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider) {
         CompoundTag tag = new CompoundTag();
         tag.putInt(LEVEL, level);
-        tag.putBoolean(ENABLED, isEnabled);
+        // Actives are never enabled by default
+        tag.putBoolean(ENABLED, ability.value().type() == DragonAbility.Type.PASSIVE && isEnabled);
         tag.put(ABILITY, ResourceKey.codec(DragonAbility.REGISTRY).encodeStart(provider.createSerializationContext(NbtOps.INSTANCE), ability.getKey()).getOrThrow());
         tag.putInt(ABILITY_SLOT, abilitySlot);
         return tag;

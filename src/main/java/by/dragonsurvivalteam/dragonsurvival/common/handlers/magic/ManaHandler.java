@@ -4,7 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.types.BlockStateConfig;
-import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncMagicStats;
+import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncMana;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MagicData;
@@ -142,7 +142,7 @@ public class ManaHandler {
         }
 
         data.setCurrentMana(data.getCurrentMana() + mana);
-        PacketDistributor.sendToPlayer((ServerPlayer) player, new SyncMagicStats.Data(player.getId(), data.getSelectedAbilitySlot(), data.getCurrentMana(), data.shouldRenderAbilities()));
+        PacketDistributor.sendToPlayer((ServerPlayer) player, new SyncMana(player.getId(), data.getCurrentMana()));
     }
 
     public static void consumeMana(Player player, int manaCost) {
@@ -176,7 +176,7 @@ public class ManaHandler {
             magicData.setCurrentMana(pureMana - manaCost);
         }
 
-        PacketDistributor.sendToPlayer(serverPlayer, new SyncMagicStats.Data(player.getId(), magicData.getSelectedAbilitySlot(), magicData.getCurrentMana(), magicData.shouldRenderAbilities()));
+        PacketDistributor.sendToPlayer(serverPlayer, new SyncMana(player.getId(), magicData.getCurrentMana()));
     }
 
     public static int getCurrentMana(Player player) {

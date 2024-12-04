@@ -73,15 +73,31 @@
   ],
   "activation": {
     "type": "channeled",
-    "cast_time": 1.0,
+    "cast_time": 20.0,
     "cooldown": 40.0
   },
   "description": "Placeholder description.",
   "icon": {
     "texture_entries": [
       {
+        "from_level": 0,
+        "texture_resource": "dragonsurvival:textures/skills/cave/nether_breath_0.png"
+      },
+      {
         "from_level": 1,
-        "texture_resource": "dragonsurvival:textures/icons/body_type_central.png"
+        "texture_resource": "dragonsurvival:textures/skills/cave/nether_breath_1.png"
+      },
+      {
+        "from_level": 2,
+        "texture_resource": "dragonsurvival:textures/skills/cave/nether_breath_2.png"
+      },
+      {
+        "from_level": 3,
+        "texture_resource": "dragonsurvival:textures/skills/cave/nether_breath_3.png"
+      },
+      {
+        "from_level": 4,
+        "texture_resource": "dragonsurvival:textures/skills/cave/nether_breath_4.png"
       }
     ]
   },
@@ -102,12 +118,5 @@
       ]
     },
     "maximum_level": 4
-  },
-  "usage_blocked": {
-    "location": {
-      "fluid": {
-        "fluids": "minecraft:water"
-      }
-    }
   }
 }

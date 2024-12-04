@@ -31,7 +31,7 @@ public class MagicHUD {
     public static final ResourceLocation WIDGET_TEXTURES = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/widgets.png");
 
     private static final ResourceLocation VANILLA_WIDGETS = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/pre-1.20.1-widgets.png");
-    private static final ResourceLocation CAST_BARS = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/cast_bars.png");
+    private static final ResourceLocation CAST_BAR_FILL = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/casting_bars/cast_bar_fill.png");
 
     public static final Color COLOR = new Color(243, 48, 59);
 
@@ -205,37 +205,35 @@ public class MagicHUD {
             }
         }
 
-        // TODO: Cast bar logic; handle this later
-        /*DragonAbilityInstance ability = magicData.getAbilityFromSlot(magicData.getSelectedAbilitySlot());
-
-        int currentCastTime = -1, skillCastTime = -1;
-
-        currentCastTime = ability.getCurrentCastTime();
-        skillCastTime = ability.getCastTime();
-
-        if (handler.getMagicData().isCasting) {
-            if (currentCastTime > 0 && skillCastTime != -1) {
+        if (magicData.isCasting()) {
+            DragonAbilityInstance ability = magicData.getAbilityFromSlot(magicData.getSelectedAbilitySlot());
+            float currentCastTime = magicData.getClientCastTimer() - Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false);
+            int skillCastTime = ability.getCastTime();
+            if (skillCastTime > 0) {
                 guiGraphics.pose().pushPose();
                 guiGraphics.pose().scale(0.5F, 0.5F, 0);
 
-                int yPos1 = DragonUtils.isType(handler, DragonTypes.CAVE) ? 0 : DragonUtils.isType(handler, DragonTypes.FOREST) ? 47 : 94;
-                int yPos2 = DragonUtils.isType(handler, DragonTypes.CAVE) ? 142 : DragonUtils.isType(handler, DragonTypes.FOREST) ? 147 : 152;
 
-                float perc = Math.min((float) currentCastTime / (float) skillCastTime, 1);
+                float perc = Math.clamp(1 - currentCastTime / (float) skillCastTime, 0, 1);
 
                 int startX = width / 2 - 49 + castbarXOffset;
                 int startY = height - 96 + castbarYOffset;
 
                 guiGraphics.pose().translate(startX, startY, 0);
 
-                guiGraphics.blit(CAST_BARS, startX, startY, 0, yPos1, 196, 47, 256, 256);
-                guiGraphics.blit(CAST_BARS, startX + 2, startY + 41, 0, yPos2, (int) (191 * perc), 4, 256, 256);
+                DragonStateHandler handler = DragonStateProvider.getData(player);
+                guiGraphics.blit(handler.getDragonType().value().miscResources().castBar(), startX, startY, 0, 0, 196, 47, 196, 47);
+
+                software.bernie.geckolib.util.Color color = new software.bernie.geckolib.util.Color(handler.getType().value().miscResources().primaryColor().rgba());
+                guiGraphics.setColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(), 1F);
+                guiGraphics.blit(CAST_BAR_FILL, startX + 2, startY + 41, 0, 0, (int) (191 * perc), 4, 191, 4);
+                guiGraphics.setColor(1F, 1F, 1F, 1F);
 
                 guiGraphics.blit(ability.getIcon(), startX + 78, startY + 3, 0, 0, 36, 36, 36, 36);
 
                 guiGraphics.pose().popPose();
             }
-        }*/
+        }
 
         if (errorTicks > 0) {
             guiGraphics.drawString(Minecraft.getInstance().font, errorMessage.getVisualOrderText(), (int) (width / 2f - Minecraft.getInstance().font.width(errorMessage) / 2f), height - 70, 0);

@@ -14,6 +14,7 @@ import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.EnchantmentUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.TargetingFunctions;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
@@ -29,6 +30,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.event.entity.EntityStruckByLightningEvent;
 import net.neoforged.neoforge.event.entity.living.LivingExperienceDropEvent;
@@ -50,6 +52,18 @@ public class MagicHandler {
 
         MagicData data =  MagicData.getData(event.getEntity());
         data.tickAbilities(serverPlayer);
+    }
+
+    @SubscribeEvent
+    public static void clientMagicUpdate(ClientTickEvent.Post event) {
+        Player player = Minecraft.getInstance().player;
+
+        if(!DragonStateProvider.isDragon(player)) {
+            return;
+        }
+
+        MagicData data =  MagicData.getData(player);
+        data.tickAbilitiesClient();
     }
 
     // TODO: Delete this event and move its effects into the MobEffects themselves

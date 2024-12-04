@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.common.codecs.ability;
 
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ManaHandler;
+import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncStopCast;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.targeting.AbilityTargeting;
@@ -8,6 +9,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.Optional;
 
@@ -37,10 +39,12 @@ public record ActionContainer(AbilityTargeting effect, LevelBasedValue triggerRa
 
             if (!ManaHandler.hasEnoughMana(dragon, cost)) {
                 instance.release();
+                PacketDistributor.sendToPlayer(dragon, new SyncStopCast(dragon.getId()));
             }
-        } else {
+        } else if (abilityType == DragonAbility.Type.ACTIVE_SIMPLE) {
             // We are a simple active ability, just release the ability as we have cast it
             instance.release();
+            PacketDistributor.sendToPlayer(dragon, new SyncStopCast(dragon.getId()));
         }
     }
 }

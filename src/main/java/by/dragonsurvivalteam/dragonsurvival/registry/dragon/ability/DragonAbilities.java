@@ -169,15 +169,17 @@ public class DragonAbilities {
                 Optional.of(new Activation(
                         Activation.Type.CHANNELED,
                         Optional.empty(),
-                        Optional.of(LevelBasedValue.constant(1)),
-                        Optional.of(LevelBasedValue.constant((float) Functions.secondsToTicks(2)))
+                        Optional.of(LevelBasedValue.constant(Functions.secondsToTicks(1))),
+                        Optional.of(LevelBasedValue.constant(Functions.secondsToTicks(2)))
                 )),
                 Optional.of(new Upgrade(
                         Upgrade.Type.PASSIVE,
                         4,
                         LevelBasedValue.lookup(List.of(0.f, 10.f, 30.f, 50.f), LevelBasedValue.perLevel(15))
                 )),
-                Optional.of(EntityPredicate.Builder.entity().located(LocationPredicate.Builder.location().setFluid(FluidPredicate.Builder.fluid().of(Fluids.WATER))).build()),
+                Optional.empty(),
+                // FIXME We need a way to do an inverse predicate here for this to work (I can get it to force it to only be allowed in water, but not only be allowed NOT in water)
+                /*Optional.of(EntityPredicate.Builder.entity().located(LocationPredicate.Builder.location().setFluid(FluidPredicate.Builder.fluid().of(Fluids.WATER))).build())*/
                 List.of(new ActionContainer(
                             new DragonBreathTarget(
                                 Either.right(
@@ -232,9 +234,26 @@ public class DragonAbilities {
                         )),
                 new LevelBasedResource(
                         List.of(new LevelBasedResource.TextureEntry(
-                                ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/icons/body_type_central.png"),
+                                ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/skills/cave/nether_breath_0.png"),
+                                0
+                        ),
+                        new LevelBasedResource.TextureEntry(
+                                ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/skills/cave/nether_breath_1.png"),
                                 1
-                        ))
+                        ),
+                        new LevelBasedResource.TextureEntry(
+                                ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/skills/cave/nether_breath_2.png"),
+                                2
+                        ),
+                        new LevelBasedResource.TextureEntry(
+                                ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/skills/cave/nether_breath_3.png"),
+                                3
+                        ),
+                        new LevelBasedResource.TextureEntry(
+                                ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/skills/cave/nether_breath_4.png"),
+                                4
+                        )
+                        )
                 ),
                 "Placeholder description."
         ));

@@ -7,6 +7,9 @@ import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.RequestClientData;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAdvancementTriggers;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MagicData;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
+import net.minecraft.core.Holder;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -32,7 +35,12 @@ public class SyncComplete implements IMessage<SyncComplete.Data> {
         if (entity instanceof Player player) {
             context.enqueueWork(() -> {
                 DragonStateHandler handler = DragonStateProvider.getData(player);
+                Holder<DragonType> previousType = handler.getDragonType();
                 handler.deserializeNBT(player.registryAccess(), message.nbt);
+                if (previousType != null && !previousType.is(handler.getType())) {
+                    MagicData magicData = MagicData.getData(player);
+                    magicData.refresh(handler.getType());
+                }
                 DSModifiers.updateAllModifiers(player);
                 player.refreshDimensions();
             });
@@ -74,7 +82,12 @@ public class SyncComplete implements IMessage<SyncComplete.Data> {
         Player player = context.player();
         context.enqueueWork(() -> {
                     DragonStateHandler handler = DragonStateProvider.getData(player);
+                    Holder<DragonType> previousType = handler.getDragonType();
                     handler.deserializeNBT(player.registryAccess(), message.nbt);
+                    if (previousType != null && !previousType.is(handler.getType())) {
+                        MagicData magicData = MagicData.getData(player);
+                        magicData.refresh(handler.getType());
+                    }
                     handleDragonSync(player);
                 })
                 .thenRun(() -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, message))

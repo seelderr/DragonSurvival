@@ -18,7 +18,8 @@ public record LevelBasedResource(List<TextureEntry> textureEntries) {
 
     public LevelBasedResource {
         // Highest 'from_level' is the first element
-        Collections.reverse(textureEntries);
+        // FIXME :: This crashes datagen if we have more than one element
+        //Collections.reverse(textureEntries);
     }
 
     public ResourceLocation get(int abilityLevel) {

@@ -4,8 +4,10 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.container.OpenDragonAltar;
+import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncMagicData;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.SyncComplete;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.AltarData;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MagicData;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.body.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.server.level.ServerPlayer;
@@ -64,6 +66,10 @@ public class PlayerLoginHandler {
     @SubscribeEvent
     public static void onLogin(PlayerEvent.PlayerLoggedInEvent event) {
         syncCompleteSingle(event.getEntity());
+        // Also sync the magic data, since each player needs to know about their own magic data
+        if(!event.getEntity().level().isClientSide()) {
+            PacketDistributor.sendToPlayer((ServerPlayer) event.getEntity(), new SyncMagicData.Data(event.getEntity().getId(), MagicData.getData(event.getEntity()).serializeNBT(event.getEntity().registryAccess())));
+        }
     }
 
     @SubscribeEvent

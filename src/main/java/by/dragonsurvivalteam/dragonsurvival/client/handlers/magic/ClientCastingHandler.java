@@ -1,13 +1,18 @@
 package by.dragonsurvivalteam.dragonsurvival.client.handlers.magic;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.config.ClientConfig;
 import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
+import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncBeginCast;
+import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncStopCast;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MagicData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 @EventBusSubscriber(Dist.CLIENT)
 public class ClientCastingHandler {
@@ -38,20 +43,13 @@ public class ClientCastingHandler {
         if (player.isSpectator() || !DragonStateProvider.isDragon(player))
             return;
 
-        // FIXME
-        /*DragonStateHandler dragonStateHandler = DragonStateProvider.getData(player);
-        MagicCap magicData = dragonStateHandler.getMagicData();
-
-        // TODO: all of this needs a rework, the current code just the original updated to fit the new Keybinds
-        // onKeyReleased gets triggered twice, the code flow isn't fully clear, etc...
-
+        MagicData magicData = MagicData.getData(player);
         // Toggle HUD visibility
         if (Keybind.TOGGLE_ABILITIES.consumeClick()) {
             magicData.setRenderAbilities(!magicData.shouldRenderAbilities());
         }
 
         // Check ability key
-        // TODO: This might incorrectly forget to stop casting if the selected slot gets changed externally
         int lastSelectedSlot = magicData.getSelectedAbilitySlot();
 
         // Check for slot selection
@@ -76,31 +74,13 @@ public class ClientCastingHandler {
         // Was selected slot changed?
         if (selectedSlot != lastSelectedSlot) {
             // Cancel casting if in progress
-            ActiveDragonAbility lastAbility = magicData.getAbilityFromSlot(lastSelectedSlot);
-            if (lastAbility != null && castStartTime != -1 && lastAbility.canCastSkill(player)) {
-                lastAbility.onKeyReleased(player);
-                PacketDistributor.sendToServer(new SyncAbilityCasting.Data(
-                        player.getId(),
-                        false,
-                        lastSelectedSlot,
-                        lastAbility.saveNBT(),
-                        castStartTime,
-                        player.level().getGameTime()));
-                //System.out.println(ability.getName() + " finished casting due to swap.");
+            if (magicData.isCasting()) {
+                magicData.stopCasting();
+                PacketDistributor.sendToServer(new SyncStopCast(player.getId()));
             }
-            hasCast = false;
-            status = CastingStatus.Idle;
-            castStartTime = -1;
 
             // Update slot
             magicData.setSelectedAbilitySlot(selectedSlot);
-            PacketDistributor.sendToServer(
-                    new SyncDragonAbilitySlot.Data(
-                            player.getId(),
-                            selectedSlot,
-                            magicData.shouldRenderAbilities()
-                    )
-            );
         }
 
         boolean isAbilityKeyDown;
@@ -111,55 +91,21 @@ public class ClientCastingHandler {
         }
         // Not holding ability key - return early
         if (!isAbilityKeyDown) {
-            if (status != CastingStatus.Idle) {
-                var ability = magicData.getAbilityFromSlot(selectedSlot);
-                if (ability != null) {
-                    PacketDistributor.sendToServer(new SyncAbilityCasting.Data(player.getId(), false, selectedSlot, ability.saveNBT(), castStartTime, player.level().getGameTime()));
-                    ability.onKeyReleased(player);
-                }
+            if (magicData.isCasting()) {
+                magicData.stopCasting();
+                PacketDistributor.sendToServer(new SyncStopCast(player.getId()));
             }
-            status = CastingStatus.Idle;
-            castStartTime = -1;
-            hasCast = false;
+
+            // Now that the player has released the ability key, we can allow them to attempt to cast again
+            magicData.setCastWasDenied(false);
+
             return;
         }
 
-        // Proceed with casting
-        ActiveDragonAbility ability = magicData.getAbilityFromSlot(selectedSlot);
-        if (ability == null) return;
-
-        boolean canCast = ability.canCastSkill(player);
-        switch (status) {
-            case Idle -> {
-                castStartTime = -1;
-                status = CastingStatus.InProgress;
-
-                if (canCast) {
-                    castStartTime = player.level().getGameTime();
-                    PacketDistributor.sendToServer(new SyncAbilityCasting.Data(player.getId(), true, selectedSlot, ability.saveNBT(), castStartTime, player.level().getGameTime()));
-                }
-            }
-            case InProgress -> {
-                if (canCast) {
-                    if (castStartTime == -1) {
-                        castStartTime = player.level().getGameTime();
-                    }
-                    PacketDistributor.sendToServer(new SyncAbilityCasting.Data(player.getId(), true, selectedSlot, ability.saveNBT(), castStartTime, player.level().getGameTime()));
-                } else {
-                    if (castStartTime != -1) {
-                        PacketDistributor.sendToServer(new SyncAbilityCasting.Data(player.getId(), false, selectedSlot, ability.saveNBT(), castStartTime, player.level().getGameTime()));
-                        ability.onKeyReleased(player);
-                    }
-                    status = CastingStatus.Idle;
-                    castStartTime = -1;
-                }
-            }
-            case Stop -> {
-                PacketDistributor.sendToServer(new SyncAbilityCasting.Data(player.getId(), false, selectedSlot, ability.saveNBT(), castStartTime, player.level().getGameTime()));
-                ability.onKeyReleased(player);
-                status = CastingStatus.Idle;
-                castStartTime = -1;
-            }
-        }*/
+        // Proceed with casting (ignore anything blocking the cast from happening; we'll let the server deny the client later)
+        if(!magicData.isCasting() && magicData.canBeginCast(selectedSlot)) {
+            magicData.setAbilitySlotAndBeginCastClient(selectedSlot);
+            PacketDistributor.sendToServer(new SyncBeginCast.Data(player.getId(), selectedSlot));
+        }
     }
 }

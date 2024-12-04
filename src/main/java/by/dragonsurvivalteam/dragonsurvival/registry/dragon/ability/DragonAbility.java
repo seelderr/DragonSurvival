@@ -81,6 +81,10 @@ public record DragonAbility(
         return activation().map(activation -> activation.cooldown().map(cooldown -> cooldown.calculate(abilityLevel)).orElse(0f)).orElse(0f).intValue();
     }
 
+    public int getChargeTime(int abilityLevel) {
+        return activation().map(activation -> activation.castTime().map(castTime -> castTime.calculate(abilityLevel)).orElse(0f)).orElse(0f).intValue();
+    }
+
     @SubscribeEvent
     public static void register(final DataPackRegistryEvent.NewRegistry event) {
         event.dataPackRegistry(REGISTRY, DIRECT_CODEC, DIRECT_CODEC);
