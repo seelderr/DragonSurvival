@@ -77,7 +77,7 @@ public record SummonEntityEffect(HolderSet<EntityType<?>> entities, List<Attribu
 
                 if (entity != null) {
                     if (entity instanceof LivingEntity livingEntity) {
-                        int abilityLevel = ability.getLevel();
+                        int abilityLevel = ability.level();
                         attributeScales().forEach(attributeScale -> attributeScale.apply(livingEntity, abilityLevel));
                     }
 

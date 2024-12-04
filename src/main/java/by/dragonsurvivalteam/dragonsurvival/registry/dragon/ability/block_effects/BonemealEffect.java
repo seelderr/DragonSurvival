@@ -20,7 +20,7 @@ public record BonemealEffect(LevelBasedValue attempts, LevelBasedValue probabili
         BlockState state = dragon.serverLevel().getBlockState(position);
 
         if (state.getBlock() instanceof BonemealableBlock bonemealableBlock) {
-            int abilityLevel = ability.getLevel();
+            int abilityLevel = ability.level();
             float attempts = attempts().calculate(abilityLevel);
 
             for (int i = 0; i < attempts; i++) {

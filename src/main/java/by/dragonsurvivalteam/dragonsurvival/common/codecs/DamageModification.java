@@ -38,7 +38,7 @@ public record DamageModification(ResourceLocation id, HolderSet<DamageType> dama
         DamageModifications data = entity.getData(DSDataAttachments.DAMAGE_MODIFICATIONS);
         Instance instance = data.get(this);
 
-        int abilityLevel = ability.getLevel();
+        int abilityLevel = ability.level();
         int newDuration = (int) duration().calculate(abilityLevel);
 
         if (instance != null && instance.currentDuration() == newDuration && instance.appliedAbilityLevel() == abilityLevel) {
@@ -47,7 +47,7 @@ public record DamageModification(ResourceLocation id, HolderSet<DamageType> dama
 
         data.remove(entity, this);
 
-        ClientEffectProvider.ClientData clientData = new ClientEffectProvider.ClientData(ability.getAbility().icon().get(abilityLevel), /* TODO */ Component.empty(), Optional.of(dragon.getUUID()));
+        ClientEffectProvider.ClientData clientData = new ClientEffectProvider.ClientData(ability.getIcon(), /* TODO */ Component.empty(), Optional.of(dragon.getUUID()));
         data.add(new Instance(this, clientData, abilityLevel, newDuration));
         // TODO :: send packet to client
     }

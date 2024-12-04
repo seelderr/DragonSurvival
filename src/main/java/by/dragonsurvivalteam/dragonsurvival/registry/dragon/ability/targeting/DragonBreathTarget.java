@@ -24,7 +24,7 @@ public record DragonBreathTarget(Either<BlockTargeting, EntityTargeting> target,
     @Override
     public void apply(final ServerPlayer dragon, final DragonAbilityInstance ability) {
         target().ifLeft(blockTarget -> {
-            AABB breathArea = calculateBreathArea(dragon, DragonStateProvider.getData(dragon).getSize(), rangeMultiplier().calculate(ability.getLevel()));
+            AABB breathArea = calculateBreathArea(dragon, DragonStateProvider.getData(dragon).getSize(), rangeMultiplier().calculate(ability.level()));
 
             BlockPos.betweenClosedStream(breathArea).forEach(position -> {
                 if (blockTarget.targetConditions().isEmpty() || blockTarget.targetConditions().get().matches(dragon.serverLevel(), position)) {
@@ -32,7 +32,7 @@ public record DragonBreathTarget(Either<BlockTargeting, EntityTargeting> target,
                 }
             });
         }).ifRight(entityTarget -> {
-            AABB breathArea = calculateBreathArea(dragon, DragonStateProvider.getData(dragon).getSize(), rangeMultiplier().calculate(ability.getLevel()));
+            AABB breathArea = calculateBreathArea(dragon, DragonStateProvider.getData(dragon).getSize(), rangeMultiplier().calculate(ability.level()));
 
             dragon.serverLevel().getEntities(EntityTypeTest.forClass(Entity.class), breathArea,
                     entity -> isEntityRelevant(dragon, entityTarget, entity) && entityTarget.targetConditions().map(conditions -> conditions.matches(dragon.serverLevel(), dragon.position(), entity)).orElse(true)

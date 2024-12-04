@@ -31,7 +31,7 @@ public record ConversionEffect(List<ConversionData> conversionData, LevelBasedVa
 
     @Override
     public void apply(final ServerPlayer dragon, final DragonAbilityInstance ability, final BlockPos position) {
-        if (dragon.getRandom().nextDouble() < probability().calculate(ability.getLevel())) {
+        if (dragon.getRandom().nextDouble() < probability().calculate(ability.level())) {
             return;
         }
 

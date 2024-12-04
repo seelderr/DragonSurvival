@@ -34,7 +34,7 @@ public record ModifierWithDuration(ResourceLocation id, List<Modifier> modifiers
     ).apply(instance, ModifierWithDuration::new));
 
     public void apply(final ServerPlayer dragon, final DragonAbilityInstance ability, final LivingEntity target) {
-        int abilityLevel = ability.getLevel();
+        int abilityLevel = ability.level();
         int newDuration = (int) duration().calculate(abilityLevel);
 
         ModifiersWithDuration data = target.getData(DSDataAttachments.MODIFIERS_WITH_DURATION);
@@ -48,7 +48,7 @@ public record ModifierWithDuration(ResourceLocation id, List<Modifier> modifiers
             data.remove(target, instance);
         }
 
-        ClientEffectProvider.ClientData clientData = new ClientEffectProvider.ClientData(ability.getAbility().icon().get(abilityLevel), /* TODO */ Component.empty(), Optional.of(dragon.getUUID()));
+        ClientEffectProvider.ClientData clientData = new ClientEffectProvider.ClientData(ability.getIcon(), /* TODO */ Component.empty(), Optional.of(dragon.getUUID()));
         data.add(target, new Instance(this, new HashMap<>(), clientData, abilityLevel, newDuration));
         // TODO :: send packet to client
     }

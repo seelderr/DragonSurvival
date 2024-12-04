@@ -7,6 +7,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
+import net.minecraft.ResourceLocationException;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.core.Holder;
@@ -31,8 +32,21 @@ public class DragonTypeArgument implements ArgumentType<Holder<DragonType>> {
 
     @Override
     public @Nullable Holder<DragonType> parse(final StringReader reader) throws CommandSyntaxException {
-        Optional<Holder.Reference<DragonType>> optional = lookup.get(ResourceKey.create(DragonType.REGISTRY, ResourceLocation.read(reader)));
-        return optional.orElse(null);
+        try {
+            int start = reader.getCursor();
+            ResourceLocation dragonType = ResourceLocation.read(reader);
+            Optional<Holder.Reference<DragonType>> optional = lookup.get(ResourceKey.create(DragonType.REGISTRY, dragonType));
+
+            if (optional.isEmpty()) { // TODO :: do the same (error handling) for stage and body
+                reader.setCursor(start);
+                throw CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownArgument().createWithContext(reader);
+            }
+
+            return optional.get();
+        } catch (ResourceLocationException exception) {
+            // ResourceLocation#read already resets the cursor
+            throw CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownArgument().createWithContext(reader);
+        }
     }
 
     public static Holder<DragonType> get(final CommandContext<?> context) {

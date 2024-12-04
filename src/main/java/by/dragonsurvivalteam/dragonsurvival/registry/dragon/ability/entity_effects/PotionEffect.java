@@ -24,7 +24,7 @@ public record PotionEffect(HolderSet<MobEffect> effects, LevelBasedValue amplifi
     @Override
     public void apply(final ServerPlayer dragon, final DragonAbilityInstance ability, final Entity entity) {
         if (entity instanceof LivingEntity livingEntity) {
-            int abilityLevel = ability.getLevel();
+            int abilityLevel = ability.level();
 
             effects().forEach(effect -> {
                 MobEffectInstance currentInstance = livingEntity.getEffect(effect);

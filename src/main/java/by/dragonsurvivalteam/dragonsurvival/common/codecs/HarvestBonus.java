@@ -36,7 +36,7 @@ public record HarvestBonus(ResourceLocation id, HolderSet<Block> applicableTo, L
     ).apply(instance, HarvestBonus::new));
 
     public void apply(final ServerPlayer dragon, final DragonAbilityInstance ability, final LivingEntity target) {
-        int abilityLevel = ability.getLevel();
+        int abilityLevel = ability.level();
         int newDuration = (int) duration().calculate(abilityLevel);
 
         HarvestBonuses data = target.getData(DSDataAttachments.HARVEST_BONUSES);
@@ -50,7 +50,7 @@ public record HarvestBonus(ResourceLocation id, HolderSet<Block> applicableTo, L
             data.remove(instance);
         }
 
-        ClientEffectProvider.ClientData clientData = new ClientEffectProvider.ClientData(ability.getAbility().icon().get(abilityLevel), /* TODO */ Component.empty(), Optional.of(dragon.getUUID()));
+        ClientEffectProvider.ClientData clientData = new ClientEffectProvider.ClientData(ability.getIcon(), /* TODO */ Component.empty(), Optional.of(dragon.getUUID()));
         data.add(new HarvestBonus.Instance(this, clientData, abilityLevel, newDuration));
         // TODO :: send packet to client
     }

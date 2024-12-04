@@ -28,7 +28,7 @@ public record SyncCooldownState(int playerId, int slot, int cooldown) implements
         context.enqueueWork(() -> {
             if(context.player().level().getEntity(packet.playerId) instanceof Player player) {
                 MagicData magicData = MagicData.getData(player);
-                magicData.setCooldown(packet.slot, packet.cooldown);
+                magicData.setClientCooldown(packet.slot, packet.cooldown);
             }
         });
     }

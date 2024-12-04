@@ -35,32 +35,32 @@ public record ProjectileEffect(
         if(specificData.right().isPresent()) {
             ProjectileData.GenericArrowData arrowData = specificData.right().get();
 
-            for (int i = 0; i < numberOfProjectiles.calculate(ability.getLevel()); i++) {
+            for (int i = 0; i < numberOfProjectiles.calculate(ability.level()); i++) {
                 // Copied from AbstractArrow.java constructor
                 Vec3 launchPos = new Vec3(dragon.getX(), dragon.getEyeY() - 0.1F, dragon.getZ());
                 GenericArrowEntity arrow = new GenericArrowEntity(
                         projectileData.name(),
-                        arrowData.texture().get(ability.getLevel()),
+                        arrowData.texture().get(ability.level()),
                         projectileData.canHitPredicate(),
                         projectileData.tickingEffects(),
                         projectileData.commonHitEffects(),
                         projectileData.entityHitEffects(),
                         projectileData.blockHitEffects(),
                         dragon.serverLevel(),
-                        ability.getLevel(),
-                        (int)arrowData.piercingLevel().calculate(ability.getLevel()),
+                        ability.level(),
+                        (int)arrowData.piercingLevel().calculate(ability.level()),
                         launchPos
                 );
 
                 arrow.setOwner(dragon);
                 arrow.pickup = AbstractArrow.Pickup.DISALLOWED;
-                arrow.shootFromRotation(dragon, dragon.getXRot(), dragon.getYRot(), 0.0F, speed.calculate(ability.getLevel()), i * projectileSpread.calculate(ability.getLevel()));
+                arrow.shootFromRotation(dragon, dragon.getXRot(), dragon.getYRot(), 0.0F, speed.calculate(ability.level()), i * projectileSpread.calculate(ability.level()));
                 dragon.level().addFreshEntity(arrow);
             }
         } else if(specificData.left().isPresent()) {
             ProjectileData.GenericBallData ballData = specificData.left().get();
 
-            for (int i = 0; i < numberOfProjectiles.calculate(ability.getLevel()); i++) {
+            for (int i = 0; i < numberOfProjectiles.calculate(ability.level()); i++) {
                 Vec3 eyePos = dragon.getEyePosition();
                 Vec3 lookAngle = dragon.getLookAngle();
 
@@ -76,22 +76,22 @@ public record ProjectileEffect(
                         ballData.ballResources(),
                         ballData.trailParticle(),
                         dragon.serverLevel(),
-                        EntityDimensions.scalable(ballData.xSize().calculate(ability.getLevel()), ballData.ySize().calculate(ability.getLevel())),
+                        EntityDimensions.scalable(ballData.xSize().calculate(ability.level()), ballData.ySize().calculate(ability.level())),
                         projectileData.canHitPredicate(),
                         projectileData.tickingEffects(),
                         projectileData.commonHitEffects(),
                         projectileData.entityHitEffects(),
                         projectileData.blockHitEffects(),
                         ballData.onDestroyEffects(),
-                        ability.getLevel(),
-                        (int)ballData.maxLingeringTicks().calculate(ability.getLevel()),
-                        (int)ballData.maxMoveDistance().calculate(ability.getLevel()),
-                        (int)ballData.maxLifespan().calculate(ability.getLevel()),
+                        ability.level(),
+                        (int)ballData.maxLingeringTicks().calculate(ability.level()),
+                        (int)ballData.maxMoveDistance().calculate(ability.level()),
+                        (int)ballData.maxLifespan().calculate(ability.level()),
                         projPos
                 );
 
                 projectile.accelerationPower = 0;
-                projectile.shootFromRotation(dragon, dragon.getXRot(), dragon.getYRot(), 1.0F, speed.calculate(ability.getLevel()), i * projectileSpread.calculate(ability.getLevel()));
+                projectile.shootFromRotation(dragon, dragon.getXRot(), dragon.getYRot(), 1.0F, speed.calculate(ability.level()), i * projectileSpread.calculate(ability.level()));
                 dragon.level().addFreshEntity(projectile);
             }
         }

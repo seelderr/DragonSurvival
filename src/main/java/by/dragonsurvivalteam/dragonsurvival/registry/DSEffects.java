@@ -65,6 +65,10 @@ public class DSEffects { // TODO :: add descriptions for the missing N/A marked 
     @Translation(type = Translation.Type.EFFECT_DESCRIPTION, comments = "Gives the dragon infinite mana to use magic.")
     public static Holder<MobEffect> SOURCE_OF_MAGIC = DS_MOB_EFFECTS.register("source_of_magic", () -> new ModifiableMobEffect(MobEffectCategory.BENEFICIAL, 0x0, false));
 
+    @Translation(type = Translation.Type.EFFECT, comments = "Mana Regeneration")
+    @Translation(type = Translation.Type.EFFECT_DESCRIPTION, comments = "Regenerates dragon mana over time.")
+    public static Holder<MobEffect> MANA_REGENERATION = DS_MOB_EFFECTS.register("mana_regeneration", () -> new ModifiableMobEffect(MobEffectCategory.BENEFICIAL, 0x0, false));
+
     @Translation(type = Translation.Type.EFFECT, comments = "Royal Departure")
     @Translation(type = Translation.Type.EFFECT_DESCRIPTION, comments = "N/A") // TODO
     public static Holder<MobEffect> ROYAL_DEPARTURE = DS_MOB_EFFECTS.register("royal_departure", () -> new TradeEffect(MobEffectCategory.HARMFUL, -3407617));

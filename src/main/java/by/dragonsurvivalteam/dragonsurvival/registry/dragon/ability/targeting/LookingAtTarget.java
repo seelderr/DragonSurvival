@@ -23,7 +23,7 @@ public record LookingAtTarget(Either<BlockTargeting, EntityTargeting> target, Le
     public void apply(final ServerPlayer dragon, final DragonAbilityInstance ability) {
         target().ifLeft(blockTarget -> {
             Vec3 viewVector = dragon.getViewVector(0);
-            BlockHitResult result = dragon.serverLevel().clip(new ClipContext(viewVector, viewVector.scale(range().calculate(ability.getLevel())), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, CollisionContext.empty()));
+            BlockHitResult result = dragon.serverLevel().clip(new ClipContext(viewVector, viewVector.scale(range().calculate(ability.level())), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, CollisionContext.empty()));
 
             if (result.getType() == HitResult.Type.MISS) {
                 return;
@@ -37,7 +37,7 @@ public record LookingAtTarget(Either<BlockTargeting, EntityTargeting> target, Le
         }).ifRight(entityTarget -> {
             HitResult result = ProjectileUtil.getHitResultOnViewVector(dragon,
                     entity -> isEntityRelevant(dragon, entityTarget, entity) && entityTarget.targetConditions().map(conditions -> conditions.matches(dragon.serverLevel(), dragon.position(), entity)).orElse(true),
-                    range().calculate(ability.getLevel())
+                    range().calculate(ability.level())
             );
 
             if (result instanceof EntityHitResult entityHitResult) {

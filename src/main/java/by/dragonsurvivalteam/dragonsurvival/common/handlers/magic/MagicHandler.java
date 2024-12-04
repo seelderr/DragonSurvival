@@ -1,24 +1,20 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers.magic;
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEnchantments;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachments;
-import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MagicData;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSDamageTypeTags;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSEffectTags;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.EnchantmentUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.TargetingFunctions;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectCategory;
@@ -30,13 +26,11 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.event.entity.EntityStruckByLightningEvent;
 import net.neoforged.neoforge.event.entity.living.LivingExperienceDropEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
-import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -44,28 +38,6 @@ import java.util.Optional;
 
 @EventBusSubscriber
 public class MagicHandler {
-    @SubscribeEvent
-    public static void magicUpdate(PlayerTickEvent.Pre event) {
-        if(!DragonStateProvider.isDragon(event.getEntity()) || !(event.getEntity() instanceof ServerPlayer serverPlayer)) {
-            return;
-        }
-
-        MagicData data =  MagicData.getData(event.getEntity());
-        data.tickAbilities(serverPlayer);
-    }
-
-    @SubscribeEvent
-    public static void clientMagicUpdate(ClientTickEvent.Pre event) {
-        Player player = Minecraft.getInstance().player;
-
-        if(!DragonStateProvider.isDragon(player)) {
-            return;
-        }
-
-        MagicData data =  MagicData.getData(player);
-        data.tickAbilities(player);
-    }
-
     // TODO: Delete this event and move its effects into the MobEffects themselves
     @SubscribeEvent
     public static void processTickingMobEffects(EntityTickEvent.Post event){

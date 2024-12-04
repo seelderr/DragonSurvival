@@ -19,7 +19,7 @@ public record AreaTarget(Either<BlockTargeting, EntityTargeting> target, LevelBa
 
     @Override
     public void apply(final ServerPlayer dragon, final DragonAbilityInstance ability) {
-        double radius = radius().calculate(ability.getLevel());
+        double radius = radius().calculate(ability.level());
 
         target().ifLeft(blockTarget -> {
             BlockPos.betweenClosedStream(AABB.ofSize(dragon.position(), radius * 2, radius * 2, radius * 2)).forEach(position -> {

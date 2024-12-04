@@ -25,33 +25,49 @@ public record ActionContainer(AbilityTargeting effect, LevelBasedValue triggerRa
     // Active (simple): Triggered once on key press (trigger_rate is not relevant in this case)
     // Active (channeled): Triggered per tick while key is being held
     public void tick(final ServerPlayer dragon, final DragonAbilityInstance instance, int currentTick) {
-        float rate = triggerRate().calculate(instance.getLevel());
+        float rate = triggerRate.calculate(instance.level());
 
         if (rate > 0 && currentTick % rate != 0) {
             return;
         }
 
-        effect.apply(dragon, instance);
-        DragonAbility.Type abilityType = instance.getAbility().type();
+        /* TODO :: how to handle mana cost properly
+            - ticking cannot be used for simple activation - validate?
+            - reserved can only realistically be used for passive (since this action container holds no duration)
+                - having some mana switch between reserved and un-reserved while playing doesn't sound enticing anyway
+                - when is the reservation applied / when is it disabled?
+                - (add a check at the top for 'instance.isEnabled()' and if it returns false, remove the reservation?)
+                - (do reservations need an id to keep track of them? i.e. add resource location to codec? would need Codec.either?)
+                - (should we simplify this whole ability -> list of action containers -> list of target selections -> list of applied effects construct?)
+            - move mana cost to activation? can still be balanced for the ability (list of effects)
+        */
 
-        if ((abilityType == DragonAbility.Type.PASSIVE || abilityType == DragonAbility.Type.ACTIVE_CHANNELED) && manaCost().isPresent() && manaCost().get().type() == ManaCost.Type.TICKING) {
-            int cost = (int) manaCost().get().manaCost().calculate(instance.getLevel());
-            ManaHandler.consumeMana(dragon, cost);
+        DragonAbility.Type abilityType = instance.ability().value().type();
+        ManaCost.Type manaCostType = manaCost.map(ManaCost::type).orElse(null);
 
-            if (!ManaHandler.hasEnoughMana(dragon, cost)) {
-                instance.release(dragon);
-                MagicData magicData = MagicData.getData(dragon);
-                magicData.stopCasting(dragon);
-                // TODO: We can send back the reason we failed here to the client
-                PacketDistributor.sendToPlayer(dragon, new SyncStopCast(dragon.getId(), false));
+        if (manaCostType == ManaCost.Type.TICKING && (abilityType == DragonAbility.Type.PASSIVE || abilityType == DragonAbility.Type.ACTIVE_CHANNELED)) {
+            int cost = (int) manaCost.get().manaCost().calculate(instance.level()); // TODO :: remove cast to int
+
+            if (ManaHandler.hasEnoughMana(dragon, cost)) {
+                ManaHandler.consumeMana(dragon, cost); // TODO :: make this return a boolean and remove 'hasEnoughMana'?
+            } else {
+                stopCasting(dragon, instance);
+                return;
             }
-        } else if (abilityType == DragonAbility.Type.ACTIVE_SIMPLE) {
-            // We are a simple active ability, just release the ability as we have cast it
-            instance.release(dragon);
-            MagicData magicData = MagicData.getData(dragon);
-            magicData.stopCasting(dragon);
-            // TODO: We can send back the reason we failed here to the client
-            PacketDistributor.sendToPlayer(dragon, new SyncStopCast(dragon.getId(), false));
         }
+
+        effect.apply(dragon, instance);
+
+        if (abilityType == DragonAbility.Type.ACTIVE_SIMPLE) {
+            stopCasting(dragon, instance);
+        }
+    }
+
+    private void stopCasting(final ServerPlayer dragon, final DragonAbilityInstance instance) {
+        instance.release(dragon);
+        MagicData magicData = MagicData.getData(dragon);
+        magicData.stopCasting(dragon);
+        // TODO: We can send back the reason we failed here to the client
+        PacketDistributor.sendToPlayer(dragon, new SyncStopCast(dragon.getId(), false));
     }
 }

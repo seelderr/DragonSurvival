@@ -175,11 +175,12 @@ public class MagicHUD {
             for (int x = 0; x < DragonAbility.MAX_ACTIVE_ON_HOTBAR; x++) {
                 DragonAbilityInstance ability = magicData.getAbilityFromSlot(x);
 
-                if (ability != null && ability.getAbility().icon() != null) {
-                    guiGraphics.blit(ability.getAbility().icon().get(ability.getLevel()), posX + x * sizeX + 3, posY + 1, 0, 0, 16, 16, 16, 16);
+                if (ability != null) {
+                    guiGraphics.blit(ability.getIcon(), posX + x * sizeX + 3, posY + 1, 0, 0, 16, 16, 16, 16);
 
-                    float skillCooldown = ability.getAbility().getCooldown(ability.getLevel());
-                    float currentCooldown = ability.getCooldown(player) - Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false);
+                    float skillCooldown = ability.value().getCooldown(ability.level());
+                    float currentCooldown = ability.getCooldown() - Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false);
+
                     if (skillCooldown > 0 && currentCooldown > 0 && skillCooldown != currentCooldown) {
                         float f = Mth.clamp(currentCooldown / skillCooldown, 0, 1);
                         int boxX = posX + x * sizeX + 3;
@@ -213,7 +214,7 @@ public class MagicHUD {
                         int xPos;
 
                         if (currentMana <= manaSlot) {
-                            xPos = ManaHandler.isPlayerInGoodConditions(player) ? 19 : 37;
+                            xPos = ManaHandler.isRegeneratingMana(player) ? 19 : 37;
                         } else {
                             xPos = 0;
                         }
