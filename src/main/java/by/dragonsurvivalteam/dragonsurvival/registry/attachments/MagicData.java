@@ -1,19 +1,25 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.attachments;
 
+import by.dragonsurvivalteam.dragonsurvival.client.gui.hud.MagicHUD;
+import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncCooldownState;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.common.util.INBTSerializable;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +30,7 @@ public class MagicData implements INBTSerializable<CompoundTag> {
     private int selectedAbilitySlot = 0;
     private int currentMana = 0;
 
+    private boolean errorMessageSent = false;
     private boolean isCasting = false;
     private boolean castWasDenied = false;
     private int castTimer;
@@ -52,20 +59,15 @@ public class MagicData implements INBTSerializable<CompoundTag> {
         return castTimer;
     }
 
-    // Keep track of the casting timer for the currently selected ability
-    public void tickAbilitiesClient() {
-        for (DragonAbilityInstance instance : abilities) {
-            instance.applyClient();
-        }
-
-        if (isCasting) {
-            castTimer = Math.max(0, castTimer - 1);
-        }
-    }
-
-    public void tickAbilities(ServerPlayer player) {
+    public void tickAbilities(Player player) {
         for (DragonAbilityInstance instance : abilities) {
             instance.apply(player);
+        }
+
+        if (player.level().isClientSide()) {
+            if (isCasting) {
+                castTimer = Math.max(0, castTimer - 1);
+            }
         }
     }
 
@@ -87,48 +89,31 @@ public class MagicData implements INBTSerializable<CompoundTag> {
         return isCasting ? getAbilityFromSlot(getSelectedAbilitySlot()) : null;
     }
 
-    public boolean setAbilitySlotAndBeginCastServer(int slot, ServerPlayer player) {
+    public boolean setAbilitySlotAndBeginCast(int slot, Player player) {
         if(slot < 0 || slot >= abilities.size()) {
             return false;
         }
 
         DragonAbilityInstance ability = getAbilityFromSlot(slot);
-        if(ability == null || !canBeginCast(slot)) {
-            return false;
-        }
-
-        if(!ability.getAbility().usageBlocked().map(blocked -> !blocked.matches((ServerLevel) player.level(), player.position(), player)).orElse(false)) {
-            DragonAbilityInstance currentlyCasting = getCurrentlyCasting();
-            if(currentlyCasting != null) {
-                currentlyCasting.release();
+        if(ability == null || !canBeginCast(slot, player)) {
+            if(player.level().isClientSide()) {
+                if(ability != null && getAbilityFromSlot(slot).isInCooldown(player) && !errorMessageSent) {
+                    errorMessageSent = true;
+                    MagicHUD.castingError(Component.translatable(MagicHUD.COOLDOWN, NumberFormat.getInstance().format(ability.getCooldown(player) / 20F) + "s").withStyle(ChatFormatting.RED));
+                }
             }
-
-            setSelectedAbilitySlot(slot);
-            beginCasting();
-        } else {
             return false;
-        }
-
-        return true;
-    }
-
-    public void setAbilitySlotAndBeginCastClient(int slot) {
-        if (slot < 0 || slot >= abilities.size()) {
-            return;
-        }
-
-        DragonAbilityInstance ability = getAbilityFromSlot(slot);
-        if (ability == null || !canBeginCast(slot) || castWasDenied) {
-            return;
         }
 
         DragonAbilityInstance currentlyCasting = getCurrentlyCasting();
-        if (currentlyCasting != null) {
-            currentlyCasting.release();
+        if(currentlyCasting != null) {
+            currentlyCasting.release(player);
         }
 
         setSelectedAbilitySlot(slot);
         beginCasting();
+
+        return true;
     }
 
     public void denyCast() {
@@ -140,16 +125,35 @@ public class MagicData implements INBTSerializable<CompoundTag> {
         }
     }
 
-    public void stopCasting() {
+    public void stopCasting(Player player) {
         DragonAbilityInstance currentlyCasting = getCurrentlyCasting();
         if (currentlyCasting != null) {
-            currentlyCasting.release();
+            if(currentlyCasting.isActive()) {
+                currentlyCasting.release(player);
+            } else {
+                currentlyCasting.releaseWithoutCooldown();
+            }
+
+            if(player instanceof ServerPlayer serverPlayer) {
+                PacketDistributor.sendToPlayer(serverPlayer, new SyncCooldownState(player.getId(), getSelectedAbilitySlot(), currentlyCasting.getCooldown(player)));
+            }
         }
         isCasting = false;
     }
 
+    public void setCooldown(int slot, int cooldown) {
+        DragonAbilityInstance ability = getAbilityFromSlot(slot);
+        if(ability != null) {
+            ability.setCooldown(cooldown);
+        }
+    }
+
     public void setCastWasDenied(boolean castWasDenied) {
         this.castWasDenied = castWasDenied;
+    }
+
+    public void setErrorMessageSent(boolean errorMessageSent) {
+        this.errorMessageSent = errorMessageSent;
     }
 
     private void beginCasting() {
@@ -167,8 +171,22 @@ public class MagicData implements INBTSerializable<CompoundTag> {
         return isCasting && getCurrentlyCasting() != null;
     }
 
-    public boolean canBeginCast(int slot) {
-        return !isCasting() && getAbilityFromSlot(slot) != null && !getAbilityFromSlot(slot).isInCooldown() && !castWasDenied;
+    private boolean canBeginCast(int slot, Player player) {
+        DragonAbilityInstance ability = getAbilityFromSlot(slot);
+        if(ability == null) {
+            return false;
+        }
+
+        boolean isNotInCooldown = !ability.isInCooldown(player);
+        boolean hasEnoughMana = getAbilityFromSlot(slot).checkInitialManaCost(player);
+        boolean commonConditions = isNotInCooldown && hasEnoughMana;
+        if(commonConditions && player.level().isClientSide()) {
+            commonConditions = !castWasDenied;
+        } else if(commonConditions) {
+            boolean entityPredicate = !getAbilityFromSlot(slot).getAbility().usageBlocked().map(blocked -> !blocked.matches((ServerLevel) player.level(), player.position(), player)).orElse(false);
+            commonConditions = entityPredicate;
+        }
+        return commonConditions;
     }
 
     public boolean shouldRenderAbilities() {

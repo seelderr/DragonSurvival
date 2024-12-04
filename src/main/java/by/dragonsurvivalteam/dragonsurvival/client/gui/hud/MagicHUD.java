@@ -1,7 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.hud;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
-import by.dragonsurvivalteam.dragonsurvival.client.handlers.magic.ClientCastingHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ManaHandler;
@@ -21,11 +20,15 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
 
 import java.awt.*;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
+@EventBusSubscriber
 public class MagicHUD {
     // 1.20.6 moved a whole bunch of widgets around, so to keep compatibiltiy with older versions, we need to use the old widgets texture
     public static final ResourceLocation WIDGET_TEXTURES = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/widgets.png");
@@ -34,6 +37,15 @@ public class MagicHUD {
     private static final ResourceLocation CAST_BAR_FILL = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/casting_bars/cast_bar_fill.png");
 
     public static final Color COLOR = new Color(243, 48, 59);
+
+    @Translation(type = Translation.Type.MISC, comments = "§fNot enough§r §cmana or experience§r!")
+    public static final String NO_MANA = Translation.Type.GUI.wrap("ability.no_mana");
+
+    @Translation(type = Translation.Type.MISC, comments = "§fThis ability is §r§cnot ready§r§f yet!§r (%s)")
+    public static final String COOLDOWN = Translation.Type.GUI.wrap("ability.cooldown");
+
+    @Translation(type = Translation.Type.MISC, comments = "§fThis skill cannot be used §r§cwhile flying§r§f!§f")
+    public static final String FLYING = Translation.Type.GUI.wrap("ability.flying");
 
     @ConfigRange(min = -1000, max = 1000)
     @Translation(key = "cast_bar_x_offset", type = Translation.Type.CONFIGURATION, comments = "Offset for the x position of the cast bar")
@@ -127,9 +139,17 @@ public class MagicHUD {
     private static MutableComponent errorMessage;
 
     public static void castingError(MutableComponent component) {
-        if (ClientCastingHandler.hasCast) return;
         errorTicks = Functions.secondsToTicks(5);
         errorMessage = component;
+    }
+
+    @SubscribeEvent
+    public static void tickDownError(ClientTickEvent.Pre event) {
+        errorTicks--;
+
+        if (errorTicks <= 0) {
+            errorMessage = Component.empty();
+        }
     }
 
     public static void renderAbilityHUD(final Player player, final GuiGraphics guiGraphics, int width, int height) {
@@ -158,13 +178,13 @@ public class MagicHUD {
                 if (ability != null && ability.getAbility().icon() != null) {
                     guiGraphics.blit(ability.getAbility().icon().get(ability.getLevel()), posX + x * sizeX + 3, posY + 1, 0, 0, 16, 16, 16, 16);
 
-                    int skillCooldown = ability.getAbility().getCooldown(ability.getLevel());
-                    int currentCooldown = ability.cooldown;
+                    float skillCooldown = ability.getAbility().getCooldown(ability.getLevel());
+                    float currentCooldown = ability.getCooldown(player) - Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false);
                     if (skillCooldown > 0 && currentCooldown > 0 && skillCooldown != currentCooldown) {
-                        float f = Mth.clamp((float) currentCooldown / (float) skillCooldown, 0, 1);
+                        float f = Mth.clamp(currentCooldown / skillCooldown, 0, 1);
                         int boxX = posX + x * sizeX + 3;
                         int boxY = posY + 1;
-                        int offset = 16 - (16 - (int) (f * 16));
+                        int offset = 16 - (int)(16 - (f * 16));
                         int color = new Color(0.15F, 0.15F, 0.15F, 0.75F).getRGB();
                         int fColor = errorTicks > 0 ? new Color(1F, 0F, 0F, 0.75F).getRGB() : color;
                         guiGraphics.fill(boxX, boxY, boxX + 16, boxY + offset, fColor);
@@ -237,11 +257,6 @@ public class MagicHUD {
 
         if (errorTicks > 0) {
             guiGraphics.drawString(Minecraft.getInstance().font, errorMessage.getVisualOrderText(), (int) (width / 2f - Minecraft.getInstance().font.width(errorMessage) / 2f), height - 70, 0);
-            errorTicks--;
-
-            if (errorTicks <= 0) {
-                errorMessage = Component.empty();
-            }
         }
     }
 }

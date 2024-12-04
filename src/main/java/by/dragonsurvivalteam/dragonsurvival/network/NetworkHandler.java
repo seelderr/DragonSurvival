@@ -73,6 +73,7 @@ public class NetworkHandler {
         registrar.playToClient(SyncHunterStacksRemoval.TYPE, SyncHunterStacksRemoval.STREAM_CODEC, SyncHunterStacksRemoval::handleClient);
         registrar.playToServer(SyncBeginCast.Data.TYPE, SyncBeginCast.Data.STREAM_CODEC, SyncBeginCast::handleServer);
         registrar.playBidirectional(SyncStopCast.TYPE, SyncStopCast.STREAM_CODEC, new DirectionalPayloadHandler<>(SyncStopCast::handleClient, SyncStopCast::handleServer));
+        registrar.playToClient(SyncCooldownState.TYPE, SyncCooldownState.STREAM_CODEC, SyncCooldownState::handleClient);
         // FIXME
         //registrar.playToServer(SyncSkillLevelChangeCost.TYPE, SyncSkillLevelChangeCost.STREAM_CODEC, SyncSkillLevelChangeCost::handleServer);
 

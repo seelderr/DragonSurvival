@@ -24,7 +24,7 @@ public class FollowEntityDuringAbilitySound extends AbstractTickableSoundInstanc
 
     @Override
     public void tick() {
-        if (ability.isActive())
+        if (ability.isAvailable())
             stop();
 
         this.x = entity.getX();

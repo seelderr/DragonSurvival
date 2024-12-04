@@ -45,7 +45,7 @@ import java.util.Optional;
 @EventBusSubscriber
 public class MagicHandler {
     @SubscribeEvent
-    public static void magicUpdate(PlayerTickEvent.Post event) {
+    public static void magicUpdate(PlayerTickEvent.Pre event) {
         if(!DragonStateProvider.isDragon(event.getEntity()) || !(event.getEntity() instanceof ServerPlayer serverPlayer)) {
             return;
         }
@@ -55,7 +55,7 @@ public class MagicHandler {
     }
 
     @SubscribeEvent
-    public static void clientMagicUpdate(ClientTickEvent.Post event) {
+    public static void clientMagicUpdate(ClientTickEvent.Pre event) {
         Player player = Minecraft.getInstance().player;
 
         if(!DragonStateProvider.isDragon(player)) {
@@ -63,7 +63,7 @@ public class MagicHandler {
         }
 
         MagicData data =  MagicData.getData(player);
-        data.tickAbilitiesClient();
+        data.tickAbilities(player);
     }
 
     // TODO: Delete this event and move its effects into the MobEffects themselves

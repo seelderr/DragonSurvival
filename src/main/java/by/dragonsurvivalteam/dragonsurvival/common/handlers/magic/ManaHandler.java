@@ -146,7 +146,7 @@ public class ManaHandler {
     }
 
     public static void consumeMana(Player player, int manaCost) {
-        if (player == null || player.isCreative() || player.hasEffect(DSEffects.SOURCE_OF_MAGIC) || !hasEnoughMana(player, manaCost)) {
+        if (player == null || player.isCreative() || player.hasEffect(DSEffects.SOURCE_OF_MAGIC)) {
             return;
         }
 

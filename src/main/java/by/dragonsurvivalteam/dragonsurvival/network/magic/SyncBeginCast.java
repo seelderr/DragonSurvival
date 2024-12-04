@@ -7,7 +7,6 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
@@ -21,8 +20,8 @@ public class SyncBeginCast implements IMessage<SyncBeginCast.Data> {
         context.enqueueWork(() -> {
             MagicData magicData = MagicData.getData(sender);
             // The server can deny the cast if the player doesn't meet the entity predicate for the casting
-            if(!magicData.setAbilitySlotAndBeginCastServer(message.abilitySlot, (ServerPlayer) sender)) {
-                context.reply(new SyncStopCast(message.playerId()));
+            if(!magicData.setAbilitySlotAndBeginCast(message.abilitySlot, sender)) {
+                context.reply(new SyncStopCast(message.playerId(), true));
             }
         });
     }

@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.codecs.ability;
 
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ManaHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncStopCast;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MagicData;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.targeting.AbilityTargeting;
@@ -38,13 +39,19 @@ public record ActionContainer(AbilityTargeting effect, LevelBasedValue triggerRa
             ManaHandler.consumeMana(dragon, cost);
 
             if (!ManaHandler.hasEnoughMana(dragon, cost)) {
-                instance.release();
-                PacketDistributor.sendToPlayer(dragon, new SyncStopCast(dragon.getId()));
+                instance.release(dragon);
+                MagicData magicData = MagicData.getData(dragon);
+                magicData.stopCasting(dragon);
+                // TODO: We can send back the reason we failed here to the client
+                PacketDistributor.sendToPlayer(dragon, new SyncStopCast(dragon.getId(), false));
             }
         } else if (abilityType == DragonAbility.Type.ACTIVE_SIMPLE) {
             // We are a simple active ability, just release the ability as we have cast it
-            instance.release();
-            PacketDistributor.sendToPlayer(dragon, new SyncStopCast(dragon.getId()));
+            instance.release(dragon);
+            MagicData magicData = MagicData.getData(dragon);
+            magicData.stopCasting(dragon);
+            // TODO: We can send back the reason we failed here to the client
+            PacketDistributor.sendToPlayer(dragon, new SyncStopCast(dragon.getId(), false));
         }
     }
 }
