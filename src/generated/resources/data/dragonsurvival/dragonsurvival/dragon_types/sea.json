@@ -3,7 +3,7 @@
   "misc_resources": {
     "ability_bar": "dragonsurvival:textures/gui/casting_bars/cave_cast_bar.png",
     "altar_banner": "dragonsurvival:textures/gui/dragon_altar/sea_altar_icon.png",
-    "food_sprites": "dragonsurvival:textures/gui/food_icons/cave_food_sprites.png",
+    "food_sprites": "dragonsurvival:textures/gui/food_icons/cave_food_icons.png",
     "growth_bar_fill": "dragonsurvival:textures/gui/growth/circle_cave.png",
     "growth_icons": [
       {

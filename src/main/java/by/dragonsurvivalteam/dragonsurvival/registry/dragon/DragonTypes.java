@@ -32,7 +32,7 @@ public class DragonTypes {
                 List.of(),
                 List.of(),
                 new MiscDragonTextures(
-                        DragonSurvival.res("textures/gui/food_icons/cave_food_sprites.png"),
+                        DragonSurvival.res("textures/gui/food_icons/cave_food_icons.png"),
                         DragonSurvival.res("textures/gui/mana_icons/cave_mana_icons.png"),
                         DragonSurvival.res("textures/gui/dragon_altar/cave_altar_icon.png"),
                         DragonSurvival.res("textures/gui/source_of_magic/cave_source_of_magic_0.png"),
@@ -70,7 +70,7 @@ public class DragonTypes {
                 List.of(),
                 List.of(),
                 new MiscDragonTextures(
-                        DragonSurvival.res("textures/gui/food_icons/cave_food_sprites.png"),
+                        DragonSurvival.res("textures/gui/food_icons/cave_food_icons.png"),
                         DragonSurvival.res("textures/gui/mana_icons/cave_mana_icons.png"),
                         DragonSurvival.res("textures/gui/dragon_altar/sea_altar_icon.png"),
                         DragonSurvival.res("textures/gui/source_of_magic/cave_source_of_magic_0.png"),
@@ -108,7 +108,7 @@ public class DragonTypes {
                 List.of(),
                 List.of(),
                 new MiscDragonTextures(
-                        DragonSurvival.res("textures/gui/food_icons/cave_food_sprites.png"),
+                        DragonSurvival.res("textures/gui/food_icons/cave_food_icons.png"),
                         DragonSurvival.res("textures/gui/mana_icons/cave_mana_icons.png"),
                         DragonSurvival.res("textures/gui/dragon_altar/forest_altar_icon.png"),
                         DragonSurvival.res("textures/gui/source_of_magic/cave_source_of_magic_0.png"),
