@@ -46,7 +46,7 @@ public record ActionContainer(AbilityTargeting effect, LevelBasedValue triggerRa
         ManaCost.Type manaCostType = manaCost.map(ManaCost::type).orElse(null);
 
         if (manaCostType == ManaCost.Type.TICKING && (abilityType == DragonAbility.Type.PASSIVE || abilityType == DragonAbility.Type.ACTIVE_CHANNELED)) {
-            int cost = (int) manaCost.get().manaCost().calculate(instance.level()); // TODO :: remove cast to int
+            float cost = manaCost.get().manaCost().calculate(instance.level());
 
             if (ManaHandler.hasEnoughMana(dragon, cost)) {
                 ManaHandler.consumeMana(dragon, cost); // TODO :: make this return a boolean and remove 'hasEnoughMana'?

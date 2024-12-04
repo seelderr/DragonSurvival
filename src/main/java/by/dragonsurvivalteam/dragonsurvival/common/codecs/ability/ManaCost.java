@@ -12,6 +12,14 @@ public record ManaCost(Type type, LevelBasedValue manaCost) {
             LevelBasedValue.CODEC.fieldOf("amount").forGetter(ManaCost::manaCost)
     ).apply(instance, ManaCost::new));
 
+    public static ManaCost ticking(final LevelBasedValue manaCost) {
+        return new ManaCost(Type.TICKING, manaCost);
+    }
+
+    public static ManaCost reserved(final LevelBasedValue manaCost) {
+        return new ManaCost(Type.RESERVED, manaCost);
+    }
+
     public enum Type implements StringRepresentable {
         // SIMPLE("simple"), // TODO :: this is probably not needed anywhere?
         TICKING("ticking"),

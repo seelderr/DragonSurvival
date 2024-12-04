@@ -197,8 +197,8 @@ public class MagicHUD {
 
             // Don't render more than two rows (1 icon = 1 mana point)
             // This makes the mana bars also stop just before the emote button when the chat window is open
-            int maxMana = Math.min(20, ManaHandler.getMaxMana(player));
-            int currentMana = Math.min(maxMana, ManaHandler.getCurrentMana(player));
+            float maxMana = Math.min(20, ManaHandler.getMaxMana(player));
+            float currentMana = Math.min(maxMana, ManaHandler.getCurrentMana(player));
 
             int manaX = i1;
             int manaY = height - sizeY;
@@ -207,20 +207,24 @@ public class MagicHUD {
             manaY += manabarYOffset;
 
             ResourceLocation manaIcons = DragonStateProvider.getData(player).getType().value().miscResources().manaSprites();
-            for (int i = 0; i < 1 + Math.ceil(maxMana / 10.0); i++) {
-                for (int x = 0; x < 10; x++) {
-                    int manaSlot = i * 10 + x;
+
+            for (int row = 0; row < 1 + Math.ceil(maxMana / 10); row++) {
+                for (int point = 0; point < 10; point++) {
+                    int manaSlot = row * 10 + point;
+
                     if (manaSlot < maxMana) {
                         int xPos;
 
                         if (currentMana <= manaSlot) {
+                            // TODO :: have a partially-filled icon for 0.01..0.99 values?
+                            //  would only apply to the last "filled" mana icon
                             xPos = ManaHandler.isRegeneratingMana(player) ? 19 : 37;
                         } else {
                             xPos = 0;
                         }
 
                         float rescale = 2.15F;
-                        guiGraphics.blit(manaIcons, manaX + x * (int) (18 / rescale), manaY - 12 - i * ((int) (18 / rescale) + 1), xPos / rescale, 0, (int) (18 / rescale), (int) (18 / rescale), (int) (256 / rescale), (int) (256 / rescale));
+                        guiGraphics.blit(manaIcons, manaX + point * (int) (18 / rescale), manaY - 12 - row * ((int) (18 / rescale) + 1), xPos / rescale, 0, (int) (18 / rescale), (int) (18 / rescale), (int) (256 / rescale), (int) (256 / rescale));
                     }
                 }
             }

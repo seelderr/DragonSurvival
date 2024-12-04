@@ -3,7 +3,7 @@
     {
       "mana_cost": {
         "type": "ticking",
-        "amount": 5.0
+        "amount": 0.25
       },
       "target_selection": {
         "applied_effects": {
@@ -76,7 +76,7 @@
     "cast_time": 20.0,
     "cooldown": 40.0
   },
-  "description": "Placeholder description.",
+  "description": "dragonsurvival.ability.nether_breath.desc",
   "icon": {
     "texture_entries": [
       {
@@ -118,5 +118,12 @@
       ]
     },
     "maximum_level": 4
+  },
+  "usage_blocked": {
+    "location": {
+      "fluid": {
+        "fluids": "minecraft:water"
+      }
+    }
   }
 }

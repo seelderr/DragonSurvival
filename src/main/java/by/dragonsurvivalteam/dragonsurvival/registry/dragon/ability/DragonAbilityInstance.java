@@ -63,7 +63,11 @@ public class DragonAbilityInstance {
     }
 
     public void tick(final Player dragon) {
-        cooldown = Math.max(NO_COOLDOWN, cooldown - 1);
+        if (dragon.isCreative()) {
+            cooldown = NO_COOLDOWN;
+        } else {
+            cooldown = Math.max(NO_COOLDOWN, cooldown - 1);
+        }
 
         if (isActive && canBeCast()) {
             apply(dragon);
@@ -83,18 +87,18 @@ public class DragonAbilityInstance {
         }
 
         if (dragon instanceof ServerPlayer serverPlayer) {
-            ability.value().effects().forEach(effect -> effect.tick(serverPlayer, this, currentTick));
+            ability.value().actions().forEach(action -> action.tick(serverPlayer, this, currentTick));
         }
     }
 
-    private int getInitialManaCost() {
+    private float getInitialManaCost() {
         return ability.value().activation().map(
                 activation -> activation.initialManaCost().map(cost -> cost.calculate(level())).orElse(0f)
-        ).orElse(0f).intValue(); // TODO :: use floatValue once mana has decimals
+        ).orElse(0f);
     }
 
     public boolean checkInitialManaCost(final Player dragon) {
-        int manaCost = getInitialManaCost();
+        float manaCost = getInitialManaCost();
 
         if (!ManaHandler.hasEnoughMana(dragon, manaCost)) {
             releaseWithoutCooldown();
@@ -111,24 +115,20 @@ public class DragonAbilityInstance {
         return true;
     }
 
-    public ResourceLocation getIcon() {
-        return ability.value().icon().get(level);
-    }
-
     public boolean isApplyingEffects() {
         return isActive && canBeCast() && currentTick >= getCastTime();
-    }
-
-    public void setActive(boolean isActive) {
-        this.isActive = isActive;
     }
 
     public boolean canBeCast() {
         return isEnabled && cooldown == NO_COOLDOWN;
     }
 
-    public boolean canBeUsed(final Player dragon) {
-        return canBeCast() && checkInitialManaCost(dragon);
+    public ResourceLocation getIcon() {
+        return ability.value().icon().get(level);
+    }
+
+    public void setActive(boolean isActive) {
+        this.isActive = isActive;
     }
 
     // Used for when a client was denied from casting an ability by the server
@@ -155,11 +155,14 @@ public class DragonAbilityInstance {
     }
 
     // TODO: These need to be synced in some way for MagicHUD?
+    //  technically no since it just adds 1 per tick while the ability is active
+    //  this can be done on both sides
     public int getCurrentCastTime() {
         return currentTick;
     }
 
     // TODO: These need to be synced in some way for MagicHUD?
+    //  should not be needed, since the client has info about the level and would reach the same value as the server here
     public int getCastTime() {
         return ability.value().activation().map(
                 activation -> activation.castTime().map(time -> time.calculate(level())).orElse(0f)

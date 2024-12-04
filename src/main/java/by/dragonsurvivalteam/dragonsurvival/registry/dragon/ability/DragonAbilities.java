@@ -20,26 +20,28 @@ import by.dragonsurvivalteam.dragonsurvival.registry.projectile.ProjectileData;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.Projectiles;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.datafixers.util.Either;
-import net.minecraft.advancements.critereon.*;
+import net.minecraft.advancements.critereon.EntityPredicate;
+import net.minecraft.advancements.critereon.FluidPredicate;
+import net.minecraft.advancements.critereon.LocationPredicate;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
+import net.minecraft.world.level.material.Fluids;
 
 import java.util.List;
 import java.util.Optional;
 
 public class DragonAbilities {
-
-    @Translation(type = Translation.Type.ABILITY, comments = {"Test fireball ability."})
+    @Translation(type = Translation.Type.ABILITY, comments = "Test fireball ability.")
     public static final ResourceKey<DragonAbility> FIRE_BALL_TEST = key("fire_ball_test");
 
-    @Translation(type = Translation.Type.ABILITY, comments = {"Spike test."})
+    @Translation(type = Translation.Type.ABILITY, comments = "Spike test.")
     public static final ResourceKey<DragonAbility> SPIKE_TEST = key("spike_test");
 
-    @Translation(type = Translation.Type.ABILITY, comments = {"Test ball lightning ability."})
+    @Translation(type = Translation.Type.ABILITY, comments = "Test ball lightning ability.")
     public static final ResourceKey<DragonAbility> BALL_LIGHTNING = key("ball_lightning_test");
 
     // TODO: How to actually do this in the new system?
@@ -48,7 +50,8 @@ public class DragonAbilities {
             "■ Is able to destroy some blocks. Cannot be used under water, and during rain."
     })*/
 
-    //@Translation(type = Translation.Type.ABILITY, comments = {"Nether Breath"})
+    @Translation(type = Translation.Type.ABILITY, comments = "Nether breath")
+    @Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = "Some ability description")
     public static final ResourceKey<DragonAbility> NETHER_BREATH = key("nether_breath");
 
     public static void registerAbilities(final BootstrapContext<DragonAbility> context) {
@@ -85,7 +88,7 @@ public class DragonAbilities {
                                 1
                         ))
                 ),
-                "test"
+                Translation.Type.ABILITY_DESCRIPTION.wrap(FIRE_BALL_TEST.location().getPath())
                 )
         );
 
@@ -122,7 +125,7 @@ public class DragonAbilities {
                                 1
                             ))
                         ),
-                "test"
+                Translation.Type.ABILITY_DESCRIPTION.wrap(SPIKE_TEST.location().getPath())
                 )
         );
 
@@ -160,7 +163,7 @@ public class DragonAbilities {
                                 1
                         ))
                 ),
-                "test"
+                Translation.Type.ABILITY_DESCRIPTION.wrap(BALL_LIGHTNING.location().getPath())
                 )
         );
 
@@ -171,92 +174,50 @@ public class DragonAbilities {
                         Optional.of(LevelBasedValue.constant(Functions.secondsToTicks(1))),
                         Optional.of(LevelBasedValue.constant(Functions.secondsToTicks(2)))
                 )),
-                Optional.of(new Upgrade(
-                        Upgrade.Type.PASSIVE,
-                        4,
-                        LevelBasedValue.lookup(List.of(0.f, 10.f, 30.f, 50.f), LevelBasedValue.perLevel(15))
-                )),
-                Optional.empty(),
-                // FIXME We need a way to do an inverse predicate here for this to work (I can get it to force it to only be allowed in water, but not only be allowed NOT in water)
-                /*Optional.of(EntityPredicate.Builder.entity().located(LocationPredicate.Builder.location().setFluid(FluidPredicate.Builder.fluid().of(Fluids.WATER))).build())*/
-                List.of(new ActionContainer(
-                            new DragonBreathTarget(
-                                Either.right(
-                                        new AbilityTargeting.EntityTargeting(
-                                                // TODO: Conditional effect predicated on fire immunity?
-                                                //  probably not -> entities should handle fire immunity by themselves
-                                                Optional.of(Condition.living()),
-                                                List.of(
-                                                        new DamageEffect(
-                                                                context.lookup(Registries.DAMAGE_TYPE).getOrThrow(DSDamageTypes.CAVE_DRAGON_BREATH),
-                                                                LevelBasedValue.perLevel(3)
-                                                        ),
-                                                        new FireEffect(
-                                                                LevelBasedValue.perLevel(Functions.secondsToTicks(5))
-                                                        ),
-                                                        new PotionEffect(
-                                                                HolderSet.direct(DSEffects.BURN),
-                                                                LevelBasedValue.constant(0),
-                                                                LevelBasedValue.constant(Functions.secondsToTicks(10)),
-                                                                LevelBasedValue.constant(1)
-                                                        )
+                Optional.of(new Upgrade(Upgrade.Type.PASSIVE, 4, LevelBasedValue.lookup(List.of(0f, 10f, 30f, 50f), LevelBasedValue.perLevel(15)))),
+                Optional.of(EntityPredicate.Builder.entity().located(LocationPredicate.Builder.location().setFluid(FluidPredicate.Builder.fluid().of(Fluids.WATER))).build()),
+                List.of(new ActionContainer(new DragonBreathTarget(Either.right(
+                                new AbilityTargeting.EntityTargeting(
+                                        Optional.of(Condition.living()),
+                                        List.of(
+                                                new DamageEffect(
+                                                        context.lookup(Registries.DAMAGE_TYPE).getOrThrow(DSDamageTypes.CAVE_DRAGON_BREATH),
+                                                        LevelBasedValue.perLevel(3)
                                                 ),
-                                                false
-                                        )
-                                ),
-                                LevelBasedValue.constant(1)
-                            ),
-                            LevelBasedValue.constant(10),
-                            Optional.of(new ManaCost(
-                                ManaCost.Type.TICKING,
-                                LevelBasedValue.constant(5)
-                            ))
-                        ),
-                        new ActionContainer(
-                                new SelfTarget(
-                                        Either.right(
-                                                new AbilityTargeting.EntityTargeting(
-                                                        Optional.empty(),
-                                                        List.of(new BreathParticlesEffect(
-                                                                0.2f,
-                                                                0.02f,
-                                                                new SmallFireParticleOption(37, true),
-                                                                new LargeFireParticleOption(37, false)
-                                                        )
-                                                        ),
-                                                        true
+                                                new FireEffect(
+                                                        LevelBasedValue.perLevel(Functions.secondsToTicks(5))
+                                                ),
+                                                new PotionEffect(
+                                                        HolderSet.direct(DSEffects.BURN),
+                                                        LevelBasedValue.constant(0),
+                                                        LevelBasedValue.constant(Functions.secondsToTicks(10)),
+                                                        LevelBasedValue.constant(1)
                                                 )
-                                        )
-                                ),
-                                LevelBasedValue.constant(1),
-                                Optional.empty()
-                        )),
-                new LevelBasedResource(
-                        List.of(new LevelBasedResource.TextureEntry(
-                                ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/skills/cave/nether_breath_0.png"),
-                                0
-                        ),
-                        new LevelBasedResource.TextureEntry(
-                                ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/skills/cave/nether_breath_1.png"),
-                                1
-                        ),
-                        new LevelBasedResource.TextureEntry(
-                                ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/skills/cave/nether_breath_2.png"),
-                                2
-                        ),
-                        new LevelBasedResource.TextureEntry(
-                                ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/skills/cave/nether_breath_3.png"),
-                                3
-                        ),
-                        new LevelBasedResource.TextureEntry(
-                                ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/skills/cave/nether_breath_4.png"),
-                                4
-                        )
-                        )
-                ),
-                "Placeholder description."
+                                        ),
+                                        false
+                                )
+                        ), LevelBasedValue.constant(1)), LevelBasedValue.constant(10), Optional.of(ManaCost.ticking(LevelBasedValue.constant(0.25f)))),
+                        new ActionContainer(new SelfTarget(Either.right(
+                                new AbilityTargeting.EntityTargeting(
+                                        Optional.empty(),
+                                        List.of(new BreathParticlesEffect(
+                                                0.2f,
+                                                0.02f,
+                                                new SmallFireParticleOption(37, true),
+                                                new LargeFireParticleOption(37, false)
+                                        )),
+                                        true
+                                )
+                        )), LevelBasedValue.constant(1), Optional.empty())),
+                new LevelBasedResource(List.of(
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/nether_breath_0.png"), 0),
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/nether_breath_1.png"), 1),
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/nether_breath_2.png"), 2),
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/nether_breath_3.png"), 3),
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/nether_breath_4.png"), 4)
+                )),
+                Translation.Type.ABILITY_DESCRIPTION.wrap(NETHER_BREATH.location().getPath())
         ));
-
     }
 
     public static ResourceKey<DragonAbility> key(final ResourceLocation location) {

@@ -1,45 +1,35 @@
 package by.dragonsurvivalteam.dragonsurvival.network.magic;
 
-import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MagicData;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
+public record SyncBeginCast(int playerId, int abilitySlot) implements CustomPacketPayload {
+    public static final Type<SyncBeginCast> TYPE = new Type<>(DragonSurvival.res("sync_begin_cast"));
 
-public class SyncBeginCast implements IMessage<SyncBeginCast.Data> {
+    public static final StreamCodec<FriendlyByteBuf, SyncBeginCast> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.VAR_INT, SyncBeginCast::playerId,
+            ByteBufCodecs.VAR_INT, SyncBeginCast::abilitySlot,
+            SyncBeginCast::new
+    );
 
-    public static void handleServer(final SyncBeginCast.Data message, final IPayloadContext context) {
-        Player sender = context.player();
+    public static void handleServer(final SyncBeginCast packet, final IPayloadContext context) {
         context.enqueueWork(() -> {
-            MagicData magicData = MagicData.getData(sender);
+            MagicData magic = MagicData.getData(context.player());
             // The server can deny the cast if the player doesn't meet the entity predicate for the casting
-            if(!magicData.setAbilitySlotAndBeginCast(message.abilitySlot, sender)) {
-                context.reply(new SyncStopCast(message.playerId(), true));
+            if (!magic.attemptCast(packet.abilitySlot, context.player())) {
+                context.reply(new SyncStopCast(packet.playerId(), true));
             }
         });
     }
 
-    public record Data(int playerId, int abilitySlot) implements CustomPacketPayload {
-        public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "ability_casting"));
-
-        public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
-                ByteBufCodecs.VAR_INT,
-                Data::playerId,
-                ByteBufCodecs.VAR_INT,
-                Data::abilitySlot,
-                Data::new
-        );
-
-        @Override
-        public @NotNull Type<? extends CustomPacketPayload> type() {
-            return TYPE;
-        }
+    @Override
+    public @NotNull Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 }

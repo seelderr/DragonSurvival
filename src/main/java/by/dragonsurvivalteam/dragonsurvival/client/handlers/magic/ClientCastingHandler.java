@@ -102,8 +102,8 @@ public class ClientCastingHandler {
         int selectedSlot = magicData.getSelectedAbilitySlot();
 
         // Proceed with casting (ignore anything blocking the cast from happening; we'll let the server deny the client later)
-        if(isAbilityKey(event.getKey(), magicData.getSelectedAbilitySlot()) && !magicData.isCasting() && magicData.setAbilitySlotAndBeginCast(selectedSlot, player)) {
-            PacketDistributor.sendToServer(new SyncBeginCast.Data(player.getId(), selectedSlot));
+        if (isAbilityKey(event.getKey(), magicData.getSelectedAbilitySlot()) && !magicData.isCasting() && magicData.attemptCast(selectedSlot, player)) {
+            PacketDistributor.sendToServer(new SyncBeginCast(player.getId(), selectedSlot));
         }
     }
 

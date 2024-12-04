@@ -11,24 +11,19 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 public record SyncCooldownState(int playerId, int slot, int cooldown) implements CustomPacketPayload {
-
     public static final Type<SyncCooldownState> TYPE = new CustomPacketPayload.Type<>(DragonSurvival.res("sync_cooldown_state"));
 
     public static final StreamCodec<FriendlyByteBuf, SyncCooldownState> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.VAR_INT,
-            SyncCooldownState::playerId,
-            ByteBufCodecs.VAR_INT,
-            SyncCooldownState::slot,
-            ByteBufCodecs.VAR_INT,
-            SyncCooldownState::cooldown,
+            ByteBufCodecs.VAR_INT, SyncCooldownState::playerId,
+            ByteBufCodecs.VAR_INT, SyncCooldownState::slot,
+            ByteBufCodecs.VAR_INT, SyncCooldownState::cooldown,
             SyncCooldownState::new
     );
 
     public static void handleClient(final SyncCooldownState packet, final IPayloadContext context) {
         context.enqueueWork(() -> {
-            if(context.player().level().getEntity(packet.playerId) instanceof Player player) {
-                MagicData magicData = MagicData.getData(player);
-                magicData.setClientCooldown(packet.slot, packet.cooldown);
+            if (context.player().level().getEntity(packet.playerId) instanceof Player player) {
+                MagicData.getData(player).setClientCooldown(packet.slot(), packet.cooldown());
             }
         });
     }

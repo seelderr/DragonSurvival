@@ -26,8 +26,8 @@ public class ManaHandler {
      * Level 20:  550 experience points <br>
      * Level 30: 1395 experience points <br>
      */
-    private static final int EXPERIENCE_TO_MANA = 10;
-    private static final int LEVELS_TO_MANA = 4;
+    private static final float EXPERIENCE_TO_MANA = 10;
+    private static final float LEVELS_TO_MANA = 4;
 
     public static final int MAX_MANA_FROM_ABILITY = 10;
     private static final int MAX_MANA_FROM_LEVELS = 9;
@@ -35,9 +35,9 @@ public class ManaHandler {
     @SubscribeEvent
     public static void playerTick(PlayerTickEvent.Post event) {
         Player player = event.getEntity();
+        MagicData magic = MagicData.getData(player);
 
-        MagicData data = MagicData.getData(player);
-        if (data.getCurrentlyCasting() != null) {
+        if (magic.getCurrentlyCasting() != null) {
             return;
         }
 
@@ -48,7 +48,7 @@ public class ManaHandler {
         }
 
         if (player.tickCount % Functions.secondsToTicks(rate) == 0) {
-            if (data.getCurrentMana() < getMaxMana(player)) {
+            if (magic.getCurrentMana() < getMaxMana(player)) {
                 replenishMana(player, 1);
             }
         }
@@ -64,12 +64,12 @@ public class ManaHandler {
         return player.hasEffect(DSEffects.SOURCE_OF_MAGIC) || player.hasEffect(DSEffects.MANA_REGENERATION);
     }
 
-    public static boolean hasEnoughMana(final Player player, int manaCost) {
+    public static boolean hasEnoughMana(final Player player, float manaCost) {
         if (player.hasEffect(DSEffects.SOURCE_OF_MAGIC) || player.isCreative()) {
             return true;
         }
 
-        int currentMana = getCurrentMana(player);
+        float currentMana = getCurrentMana(player);
 
         if (ServerConfig.consumeExperienceAsMana) {
             currentMana += getManaFromExperience(player);
@@ -78,14 +78,14 @@ public class ManaHandler {
         return currentMana - manaCost >= 0;
     }
 
-    public static int getMaxMana(final Player player) {
-        int mana = (int) player.getAttributeValue(DSAttributes.MANA);
+    public static float getMaxMana(final Player player) {
+        float mana = (float) player.getAttributeValue(DSAttributes.MANA);
         mana += getBonusManaFromExperience(player);
 
         return Math.max(0, mana);
     }
 
-    public static void replenishMana(Player player, int mana) {
+    public static void replenishMana(final Player player, float mana) {
         if (player.level().isClientSide()) {
             return;
         }
@@ -100,12 +100,12 @@ public class ManaHandler {
         PacketDistributor.sendToPlayer((ServerPlayer) player, new SyncMana(player.getId(), data.getCurrentMana()));
     }
 
-    public static void consumeMana(Player player, int manaCost) {
+    public static void consumeMana(final Player player, float manaCost) {
         if (player == null || player.isCreative() || player.hasEffect(DSEffects.SOURCE_OF_MAGIC)) {
             return;
         }
 
-        int pureMana = getCurrentMana(player);
+        float pureMana = getCurrentMana(player);
 
         if (ServerConfig.consumeExperienceAsMana && player.level().isClientSide()) {
             // Check if experience would be consumed as part of the mana cost
@@ -118,46 +118,47 @@ public class ManaHandler {
             return;
         }
 
-        MagicData magicData = MagicData.getData(serverPlayer);
+        MagicData magic = MagicData.getData(serverPlayer);
+
         if (ServerConfig.consumeExperienceAsMana) {
             if (pureMana < manaCost) {
-                int missingMana = pureMana - manaCost;
+                float missingMana = pureMana - manaCost;
                 player.giveExperiencePoints(convertMana(missingMana));
-                magicData.setCurrentMana(0);
+                magic.setCurrentMana(0);
             } else {
-                magicData.setCurrentMana(pureMana - manaCost);
+                magic.setCurrentMana(pureMana - manaCost);
             }
         } else {
-            magicData.setCurrentMana(pureMana - manaCost);
+            magic.setCurrentMana(pureMana - manaCost);
         }
 
-        PacketDistributor.sendToPlayer(serverPlayer, new SyncMana(player.getId(), magicData.getCurrentMana()));
+        PacketDistributor.sendToPlayer(serverPlayer, new SyncMana(player.getId(), magic.getCurrentMana()));
     }
 
-    public static int getCurrentMana(Player player) {
+    public static float getCurrentMana(Player player) {
         return Math.min(MagicData.getData(player).getCurrentMana(), getMaxMana(player));
     }
 
-    public static int getBonusManaFromExperience(final Player player) {
+    public static float getBonusManaFromExperience(final Player player) {
         return Math.min(MAX_MANA_FROM_LEVELS, convertLevels(player.experienceLevel));
     }
 
-    public static int getManaFromExperience(final Player player) {
+    public static float getManaFromExperience(final Player player) {
         return convertExperience(ExperienceUtils.getTotalExperience(player));
     }
 
     /** Convert experience points to mana based on the {@link ManaHandler#LEVELS_TO_MANA} ratio */
-    private static int convertLevels(int levels) {
+    private static float convertLevels(int levels) {
         return levels / LEVELS_TO_MANA;
     }
 
     /** Convert experience points to mana based on the {@link ManaHandler#EXPERIENCE_TO_MANA} ratio */
-    private static int convertExperience(int experience) {
+    private static float convertExperience(int experience) {
         return experience / EXPERIENCE_TO_MANA;
     }
 
     /** Convert mana to experience points based on the {@link ManaHandler#EXPERIENCE_TO_MANA} ratio */
-    private static int convertMana(int mana) {
-        return mana * EXPERIENCE_TO_MANA;
+    private static int convertMana(float mana) {
+        return (int) (mana * EXPERIENCE_TO_MANA);
     }
 }

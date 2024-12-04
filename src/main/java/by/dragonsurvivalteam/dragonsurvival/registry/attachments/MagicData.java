@@ -33,7 +33,7 @@ public class MagicData implements INBTSerializable<CompoundTag> {
     private List<DragonAbilityInstance> abilities = new ArrayList<>();
     private boolean renderAbilities = true;
     private int selectedAbilitySlot = 0;
-    private int currentMana = 0;
+    private float currentMana = 0;
 
     private boolean errorMessageSent = false;
     private boolean isCasting = false;
@@ -44,11 +44,11 @@ public class MagicData implements INBTSerializable<CompoundTag> {
         return player.getData(DSDataAttachments.MAGIC);
     }
 
-    public int getCurrentMana() {
+    public float getCurrentMana() {
         return currentMana;
     }
 
-    public void setCurrentMana(int currentMana) {
+    public void setCurrentMana(float currentMana) {
         this.currentMana = Math.max(0, currentMana);
     }
 
@@ -105,7 +105,9 @@ public class MagicData implements INBTSerializable<CompoundTag> {
         return isCasting ? getAbilityFromSlot(getSelectedAbilitySlot()) : null;
     }
 
-    public boolean setAbilitySlotAndBeginCast(int slot, Player player) {
+    // TODO :: wait for some server response before showing the casting hud?
+    //  otherwise it will flicker if the usage_blocked condition on the server prevents the cast
+    public boolean attemptCast(int slot, Player player) {
         if (slot < 0 || slot >= abilities.size()) {
             return false;
         }
@@ -142,7 +144,9 @@ public class MagicData implements INBTSerializable<CompoundTag> {
     public void denyCast() {
         isCasting = false;
         castWasDenied = true;
+
         DragonAbilityInstance currentlyCasting = getCurrentlyCasting();
+
         if (currentlyCasting != null) {
             currentlyCasting.releaseWithoutCooldown();
         }
@@ -201,8 +205,9 @@ public class MagicData implements INBTSerializable<CompoundTag> {
         return isCasting && getCurrentlyCasting() != null;
     }
 
+    // TODO :: return a blocked_type here? Like 'cooldown' 'mana_cost' etc.?
     private boolean isCastBlocked(final Player dragon, final DragonAbilityInstance instance) {
-        boolean canBeUsed = instance.canBeUsed(dragon);
+        boolean canBeUsed = instance.canBeCast() && instance.checkInitialManaCost(dragon);
 
         if (!canBeUsed) {
             return true;
@@ -210,7 +215,7 @@ public class MagicData implements INBTSerializable<CompoundTag> {
 
         if (dragon instanceof ServerPlayer serverPlayer) {
             return instance.ability().value().usageBlocked().map(
-                    condition -> !condition.matches(serverPlayer.serverLevel(), dragon.position(), dragon)
+                    condition -> condition.matches(serverPlayer.serverLevel(), dragon.position(), dragon)
             ).orElse(false);
         } else {
             return castWasDenied;
@@ -255,7 +260,7 @@ public class MagicData implements INBTSerializable<CompoundTag> {
         abilities.forEach(instance -> abilityKeys.put(instance.id(), instance.save(provider)));
 
         tag.put(ABILITIES, abilityKeys);
-        tag.putInt(CURRENT_MANA, currentMana);
+        tag.putFloat(CURRENT_MANA, currentMana);
         tag.putInt(SELECTED_ABILITY_SLOT, selectedAbilitySlot);
         tag.putBoolean(RENDER_ABILITIES, renderAbilities);
 
@@ -277,7 +282,7 @@ public class MagicData implements INBTSerializable<CompoundTag> {
         }
 
         this.abilities = abilities;
-        currentMana = tag.getInt(CURRENT_MANA);
+        currentMana = tag.getFloat(CURRENT_MANA);
         selectedAbilitySlot = tag.getInt(SELECTED_ABILITY_SLOT);
         renderAbilities = tag.getBoolean(RENDER_ABILITIES);
     }

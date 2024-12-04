@@ -33,7 +33,7 @@ public record DragonAbility(
         Optional<Activation> activation,
         Optional<Upgrade> upgrade,
         Optional<EntityPredicate> usageBlocked,
-        List<ActionContainer> effects,
+        List<ActionContainer> actions,
         LevelBasedResource icon,
         String description
 ) {
@@ -60,7 +60,7 @@ public record DragonAbility(
             Activation.CODEC.optionalFieldOf("activation").forGetter(DragonAbility::activation),
             Upgrade.CODEC.optionalFieldOf("upgrade").forGetter(DragonAbility::upgrade),
             EntityPredicate.CODEC.optionalFieldOf("usage_blocked").forGetter(DragonAbility::usageBlocked), // TODO :: e.g. when the ability is not supposed to be used underwater
-            ActionContainer.CODEC.listOf().optionalFieldOf("actions", List.of()).forGetter(DragonAbility::effects),
+            ActionContainer.CODEC.listOf().optionalFieldOf("actions", List.of()).forGetter(DragonAbility::actions),
             LevelBasedResource.CODEC.fieldOf("icon").forGetter(DragonAbility::icon),
             // TODO: How do we handle descriptions that are fed various values from the ability itself?
             Codec.STRING.fieldOf("description").forGetter(DragonAbility::description)

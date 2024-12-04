@@ -10,22 +10,19 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
-public record SyncMana(int playerId, int mana) implements CustomPacketPayload {
+public record SyncMana(int playerId, float mana) implements CustomPacketPayload {
     public static final Type<SyncMana> TYPE = new CustomPacketPayload.Type<>(DragonSurvival.res("sync_mana"));
 
     public static final StreamCodec<FriendlyByteBuf, SyncMana> STREAM_CODEC = StreamCodec.composite(
-        ByteBufCodecs.VAR_INT,
-        SyncMana::playerId,
-        ByteBufCodecs.VAR_INT,
-        SyncMana::mana,
+        ByteBufCodecs.VAR_INT, SyncMana::playerId,
+        ByteBufCodecs.FLOAT, SyncMana::mana,
         SyncMana::new
     );
 
     public static void handleClient(final SyncMana packet, final IPayloadContext context) {
         context.enqueueWork(() -> {
-            if(context.player().level().getEntity(packet.playerId) instanceof Player player) {
-                MagicData magicData = MagicData.getData(player);
-                magicData.setCurrentMana(packet.mana);
+            if (context.player().level().getEntity(packet.playerId) instanceof Player player) {
+                MagicData.getData(player).setCurrentMana(packet.mana());
             }
         });
     }

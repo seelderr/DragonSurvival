@@ -18,8 +18,10 @@ public record MiscDragonTextures(
         ResourceLocation growthBarFill,
         List<GrowthIcon> growthIcons,
         ColorRGBA primaryColor,
-        ColorRGBA secondaryColor)
-{
+        ColorRGBA secondaryColor
+) {
+    // TODO :: should all of these be defined?
+    //  could be colored: mana_sprites / help_button / growth_bar_fill
     public static final Codec<MiscDragonTextures> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ResourceLocation.CODEC.fieldOf("food_sprites").forGetter(MiscDragonTextures::foodSprites),
             ResourceLocation.CODEC.fieldOf("mana_sprites").forGetter(MiscDragonTextures::manaSprites),

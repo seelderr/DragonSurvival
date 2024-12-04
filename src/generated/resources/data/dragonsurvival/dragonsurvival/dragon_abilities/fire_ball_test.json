@@ -28,7 +28,7 @@
     "cast_time": 1.0,
     "cooldown": 40.0
   },
-  "description": "test",
+  "description": "dragonsurvival.ability.fire_ball_test.desc",
   "icon": {
     "texture_entries": [
       {
