@@ -23,8 +23,8 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
 import java.util.Optional;
+import javax.annotation.Nullable;
 
 public class DragonAbilityInstance {
     public static final int MIN_LEVEL = 0;
@@ -80,6 +80,12 @@ public class DragonAbilityInstance {
     }
 
     public void tickActions(final Player dragon) {
+        if (currentTick == 0) {
+            // TODO :: does sound need to be played on both sides? would it overlap?
+            //  currently at least this one would play on both
+            value().activation().playStartSound(dragon);
+        }
+
         currentTick++;
 
         if (!(dragon instanceof ServerPlayer serverPlayer)) {
@@ -91,6 +97,7 @@ public class DragonAbilityInstance {
         int castTime = getCastTime();
 
         if (currentTick < castTime) {
+            value().activation().playChargingSound(dragon);
             return;
         }
 
@@ -110,6 +117,7 @@ public class DragonAbilityInstance {
             }
         }
 
+        value().activation().playLoopingSound(dragon);
         ability.value().actions().forEach(action -> action.tick(serverPlayer, this, currentTick));
 
         if (value().activation().type() == Activation.Type.ACTIVE_SIMPLE) {
@@ -118,10 +126,11 @@ public class DragonAbilityInstance {
     }
 
     private void stopCasting(final ServerPlayer dragon) {
+        value().activation().playEndSound(dragon);
         release(dragon);
 
-        MagicData magicData = MagicData.getData(dragon);
-        magicData.stopCasting(dragon);
+        MagicData magic = MagicData.getData(dragon);
+        magic.stopCasting(dragon);
         // TODO: We can send back the reason we failed here to the client
         PacketDistributor.sendToPlayer(dragon, new SyncStopCast(dragon.getId(), false));
     }

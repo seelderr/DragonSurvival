@@ -44,7 +44,6 @@ public record DragonAbility(
     public static final StreamCodec<RegistryFriendlyByteBuf, Holder<DragonAbility>> STREAM_CODEC = ByteBufCodecs.holderRegistry(REGISTRY);
 
     public static final int MAX_ACTIVE_ON_HOTBAR = 4;
-    public static final int MAX_PASSIVE = 8;
 
     public int getCooldown(int abilityLevel) {
         return activation.cooldown().map(cooldown -> cooldown.calculate(abilityLevel)).orElse(0f).intValue();
