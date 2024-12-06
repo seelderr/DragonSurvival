@@ -1,4 +1,4 @@
-// 1.21.1	2024-12-06T11:06:53.97407	Registries
+// 1.21.1	2024-12-06T17:53:12.8989213	Registries
 011b2ee382ec961722c100bbf059b4aa460f44b0 data/dragonsurvival/damage_type/anti_dragon.json
 afb20257741b4a8be55ecf8e013125f113a9d486 data/dragonsurvival/damage_type/cave_dragon_breath.json
 7a732909707be826e322901b5c204e548e48a12b data/dragonsurvival/damage_type/cave_dragon_burn.json
@@ -25,9 +25,9 @@ a1ef6fe51d5c3cb3367bbb908738d2bfea1b2e9f data/dragonsurvival/dragonsurvival/drag
 cc3af9ed87138450ac1df6243e066b34fbd9e0c5 data/dragonsurvival/dragonsurvival/dragon_stages/adult.json
 f75a3d86538b7578c9ebb34835592ac394264091 data/dragonsurvival/dragonsurvival/dragon_stages/newborn.json
 b3a6a65f3d5661c89088602017d0a34db1347ffb data/dragonsurvival/dragonsurvival/dragon_stages/young.json
-79e7634f8cea3528ebd1952f1c1030e98d392097 data/dragonsurvival/dragonsurvival/dragon_types/cave.json
-7368d127b142a5d66f56f750bd6ff005641d0584 data/dragonsurvival/dragonsurvival/dragon_types/forest.json
-4e9a7d6bcf8674ae7791a2af5ca6887896d8b722 data/dragonsurvival/dragonsurvival/dragon_types/sea.json
+10c2e74cfe0e71d9ffe620f52539f9512bd07b30 data/dragonsurvival/dragonsurvival/dragon_types/cave.json
+9e4adc4b58dfc8fd98c1ce866b9bdba25215b5e6 data/dragonsurvival/dragonsurvival/dragon_types/forest.json
+b2172c195f5432931e76b50c2f1a516db1764070 data/dragonsurvival/dragonsurvival/dragon_types/sea.json
 3e0a597e494d517172c43297a6945d6e40b8fb4a data/dragonsurvival/dragonsurvival/projectile_data/ball_lightning.json
 730d4143dc4108b9d603af2a5c5755c1b69ff339 data/dragonsurvival/dragonsurvival/projectile_data/fireball.json
 955dc4c319fcf6f65e1769303395ae818bba86ec data/dragonsurvival/dragonsurvival/projectile_data/spike.json

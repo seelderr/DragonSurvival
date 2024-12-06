@@ -14,9 +14,10 @@ public record ActionContainer(AbilityTargeting effect, LevelBasedValue triggerRa
     ).apply(instance, ActionContainer::new));
 
     public void tick(final ServerPlayer dragon, final DragonAbilityInstance instance, int currentTick) {
+        int actualTick = currentTick - instance.getCastTime();
         float rate = triggerRate.calculate(instance.level());
 
-        if (rate > 0 && currentTick % rate != 0) {
+        if (rate > 0 && actualTick % rate != 0) {
             return;
         }
 
