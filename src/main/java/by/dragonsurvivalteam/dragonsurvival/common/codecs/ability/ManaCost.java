@@ -21,7 +21,6 @@ public record ManaCost(Type type, LevelBasedValue manaCost) {
     }
 
     public enum Type implements StringRepresentable {
-        // SIMPLE("simple"), // TODO :: this is probably not needed anywhere?
         TICKING("ticking"),
         // TODO :: this will be handled in the mana handler (reduce max. by the reserved amount)
         RESERVED("reserved");

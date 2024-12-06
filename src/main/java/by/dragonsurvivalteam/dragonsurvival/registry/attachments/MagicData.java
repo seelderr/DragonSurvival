@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.registry.attachments;
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.hud.MagicHUD;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Activation;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncCooldownState;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbility;
@@ -241,7 +242,7 @@ public class MagicData implements INBTSerializable<CompoundTag> {
         abilities.clear();
         int slot = 0;
         for (Holder<DragonAbility> ability : type.value().abilities()) {
-            if (ability.value().type() != DragonAbility.Type.PASSIVE) {
+            if (ability.value().activation().type() != Activation.Type.PASSIVE) {
                 if (slot < DragonAbility.MAX_ACTIVE_ON_HOTBAR) {
                     abilities.add(new DragonAbilityInstance(ability, 1, slot++));
                 } else {

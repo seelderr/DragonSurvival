@@ -48,6 +48,7 @@ public class DragonAbilities {
     //  have one generic translation part which applies to all abilities (name, cooldown, duration, level)
     //  people can move them around using the string.format syntax, e.g. -> '%2$' etc. (example for using the second parameter)
     //  the ability description itself needs to be generic since there is no reasonable way to supply what each effect does etc.
+    //  (at most you might be able to give the range / radius of each target)
     @Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = {
             "■ Elemental breath: a stream of fire that ignites enemies and blocks. Range depends on age of the dragon.",
             "■ Is able to destroy some blocks. Cannot be used under water, and during rain."
@@ -57,12 +58,14 @@ public class DragonAbilities {
 
     public static void registerAbilities(final BootstrapContext<DragonAbility> context) {
         context.register(FIRE_BALL_TEST, new DragonAbility(
-                Optional.of(new Activation(
-                        Activation.Type.SIMPLE,
+                new Activation(
+                        Activation.Type.ACTIVE_SIMPLE,
                         Optional.empty(),
-                        Optional.of(LevelBasedValue.constant(1)),
-                        Optional.of(LevelBasedValue.constant((float) Functions.secondsToTicks(2)))
-                )),
+                        Optional.empty(),
+                        Optional.of(LevelBasedValue.constant((float) Functions.secondsToTicks(1))),
+                        Optional.of(LevelBasedValue.constant((float) Functions.secondsToTicks(2))),
+                        Optional.empty()
+                ),
                 Optional.empty(),
                 Optional.empty(),
                 List.of(new ActionContainer(
@@ -80,8 +83,7 @@ public class DragonAbilities {
                                         )
                                 )
                         ),
-                        LevelBasedValue.constant(1),
-                        Optional.empty()
+                        LevelBasedValue.constant(1)
                 )),
                 new LevelBasedResource(
                         List.of(new LevelBasedResource.TextureEntry(
@@ -92,12 +94,14 @@ public class DragonAbilities {
         ));
 
         context.register(SPIKE_TEST, new DragonAbility(
-                Optional.of(new Activation(
-                        Activation.Type.SIMPLE,
+                new Activation(
+                        Activation.Type.ACTIVE_SIMPLE,
                         Optional.empty(),
-                        Optional.of(LevelBasedValue.constant(1)),
-                        Optional.of(LevelBasedValue.constant((float) Functions.secondsToTicks(2)))
-                )),
+                        Optional.empty(),
+                        Optional.of(LevelBasedValue.constant((float) Functions.secondsToTicks(1))),
+                        Optional.of(LevelBasedValue.constant((float) Functions.secondsToTicks(2))),
+                        Optional.empty()
+                ),
                 Optional.empty(),
                 Optional.empty(),
                 List.of(new ActionContainer(
@@ -115,8 +119,7 @@ public class DragonAbilities {
                                         )
                                 )
                         ),
-                        LevelBasedValue.constant(1),
-                        Optional.empty()
+                        LevelBasedValue.constant(1)
                 )),
                 new LevelBasedResource(
                         List.of(new LevelBasedResource.TextureEntry(
@@ -127,13 +130,14 @@ public class DragonAbilities {
         ));
 
         context.register(BALL_LIGHTNING, new DragonAbility(
-                Optional.of(new Activation(
-                        Activation.Type.SIMPLE,
+                new Activation(
+                        Activation.Type.ACTIVE_SIMPLE,
                         Optional.empty(),
-                        Optional.of(LevelBasedValue.constant(1)),
-                        Optional.of(LevelBasedValue.constant((float) Functions.secondsToTicks(2))
-                        )
-                )),
+                        Optional.empty(),
+                        Optional.of(LevelBasedValue.constant((float) Functions.secondsToTicks(1))),
+                        Optional.of(LevelBasedValue.constant((float) Functions.secondsToTicks(2))),
+                        Optional.empty()
+                ),
                 Optional.empty(),
                 Optional.empty(),
                 List.of(new ActionContainer(
@@ -151,8 +155,7 @@ public class DragonAbilities {
                                         )
                                 )
                         ),
-                        LevelBasedValue.constant(1),
-                        Optional.empty()
+                        LevelBasedValue.constant(1)
                 )),
                 new LevelBasedResource(
                         List.of(new LevelBasedResource.TextureEntry(
@@ -163,12 +166,14 @@ public class DragonAbilities {
         ));
 
         context.register(NETHER_BREATH, new DragonAbility(
-                Optional.of(new Activation(
-                        Activation.Type.CHANNELED,
+                new Activation(
+                        Activation.Type.ACTIVE_CHANNELED,
                         Optional.empty(),
-                        Optional.of(LevelBasedValue.constant(Functions.secondsToTicks(1))),
-                        Optional.of(LevelBasedValue.constant(Functions.secondsToTicks(2)))
-                )),
+                        Optional.of(ManaCost.ticking(LevelBasedValue.constant(0.025f))),
+                        Optional.of(LevelBasedValue.constant((float) Functions.secondsToTicks(1))),
+                        Optional.of(LevelBasedValue.constant((float) Functions.secondsToTicks(2))),
+                        Optional.empty()
+                ),
                 Optional.of(new Upgrade(Upgrade.Type.PASSIVE, 4, LevelBasedValue.lookup(List.of(0f, 10f, 30f, 50f), LevelBasedValue.perLevel(15)))),
                 Optional.of(EntityPredicate.Builder.entity().located(LocationPredicate.Builder.location().setFluid(FluidPredicate.Builder.fluid().of(Fluids.WATER))).build()),
                 List.of(new ActionContainer(new DragonBreathTarget(Either.right(
@@ -191,7 +196,7 @@ public class DragonAbilities {
                                         ),
                                         false
                                 )
-                        ), LevelBasedValue.constant(1)), LevelBasedValue.constant(10), Optional.of(ManaCost.ticking(LevelBasedValue.constant(0.25f)))),
+                        ), LevelBasedValue.constant(1)), LevelBasedValue.constant(10)),
                         new ActionContainer(new SelfTarget(Either.right(
                                 new AbilityTargeting.EntityTargeting(
                                         Optional.empty(),
@@ -203,7 +208,7 @@ public class DragonAbilities {
                                         )),
                                         true
                                 )
-                        )), LevelBasedValue.constant(1), Optional.empty())),
+                        )), LevelBasedValue.constant(1))),
                 new LevelBasedResource(List.of(
                         new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/nether_breath_0.png"), 0),
                         new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/nether_breath_1.png"), 1),

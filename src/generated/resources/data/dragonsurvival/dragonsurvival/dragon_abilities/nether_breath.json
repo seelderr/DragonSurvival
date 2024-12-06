@@ -1,10 +1,6 @@
 {
   "actions": [
     {
-      "mana_cost": {
-        "type": "ticking",
-        "amount": 0.25
-      },
       "target_selection": {
         "applied_effects": {
           "entity_effect": [
@@ -72,8 +68,12 @@
     }
   ],
   "activation": {
-    "type": "channeled",
+    "type": "active_channeled",
     "cast_time": 20.0,
+    "continuous_mana_cost": {
+      "type": "ticking",
+      "amount": 0.025
+    },
     "cooldown": 40.0
   },
   "icon": {

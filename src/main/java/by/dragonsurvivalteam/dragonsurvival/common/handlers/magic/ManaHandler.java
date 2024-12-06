@@ -11,6 +11,7 @@ import by.dragonsurvivalteam.dragonsurvival.util.ExperienceUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -65,7 +66,7 @@ public class ManaHandler {
     }
 
     public static boolean hasEnoughMana(final Player player, float manaCost) {
-        if (player.hasEffect(DSEffects.SOURCE_OF_MAGIC) || player.isCreative()) {
+        if (manaCost == 0 || player.hasEffect(DSEffects.SOURCE_OF_MAGIC) || player.isCreative()) {
             return true;
         }
 
@@ -101,7 +102,7 @@ public class ManaHandler {
     }
 
     public static void consumeMana(final Player player, float manaCost) {
-        if (player == null || player.isCreative() || player.hasEffect(DSEffects.SOURCE_OF_MAGIC)) {
+        if (manaCost == 0 || player == null || player.isCreative() || player.hasEffect(DSEffects.SOURCE_OF_MAGIC)) {
             return;
         }
 
@@ -159,6 +160,14 @@ public class ManaHandler {
 
     /** Convert mana to experience points based on the {@link ManaHandler#EXPERIENCE_TO_MANA} ratio */
     private static int convertMana(float mana) {
-        return (int) (mana * EXPERIENCE_TO_MANA);
+        float converted = mana * EXPERIENCE_TO_MANA;
+
+        if (converted > 0) {
+            return Mth.ceil(converted);
+        } else if (converted < 0) {
+            return Mth.floor(converted);
+        }
+
+        return 0;
     }
 }

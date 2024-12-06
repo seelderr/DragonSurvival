@@ -40,7 +40,7 @@ public record DragonType(
             RegistryCodecs.homogeneousList(DragonStage.REGISTRY).optionalFieldOf("stages", HolderSet.empty()).forGetter(DragonType::stages),
             // No defined bodies means all are applicable
             RegistryCodecs.homogeneousList(DragonBody.REGISTRY).optionalFieldOf("bodies", HolderSet.empty()).forGetter(DragonType::bodies),
-            MiscCodecs.dragonAbilityCodec().optionalFieldOf("abilities", HolderSet.empty()).forGetter(DragonType::abilities),
+            RegistryCodecs.homogeneousList(DragonAbility.REGISTRY).optionalFieldOf("abilities", HolderSet.empty()).forGetter(DragonType::abilities),
             DragonPenalty.CODEC.listOf().optionalFieldOf("penalties", List.of()).forGetter(DragonType::penalties),
             Modifier.CODEC.listOf().optionalFieldOf("modifiers", List.of()).forGetter(DragonType::modifiers),
             FoodModifier.CODEC.listOf().optionalFieldOf("food_data", List.of()).forGetter(DragonType::foodData),

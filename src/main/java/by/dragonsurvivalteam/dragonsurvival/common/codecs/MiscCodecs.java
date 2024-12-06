@@ -1,11 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.common.codecs;
 
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbility;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.advancements.critereon.MinMaxBounds;
-import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -16,40 +14,6 @@ import net.minecraft.world.item.Item;
 import java.util.Arrays;
 
 public class MiscCodecs {
-    public static Codec<HolderSet<DragonAbility>> dragonAbilityCodec() {
-        int maximum = DragonAbility.MAX_ACTIVE_ON_HOTBAR + DragonAbility.MAX_PASSIVE;
-
-        // TODO :: this doesn't really need to be checked anymore with the current plan to not limit the amount of abilities
-        return RegistryCodecs.homogeneousList(DragonAbility.REGISTRY).validate(abilities -> {
-            if (abilities.size() > maximum) {
-                return DataResult.error(() -> "Defined [" + abilities.size() + "] abilities - only up to [" + maximum + "] are allowed");
-            }
-
-            int currentActive = 0;
-            int currentPassive = 0;
-
-            for (Holder<DragonAbility> ability : abilities) {
-                if (ability.value().type() == DragonAbility.Type.PASSIVE) {
-                    currentPassive++;
-                } else {
-                    currentActive++;
-                }
-            }
-
-            if (currentActive > DragonAbility.MAX_ACTIVE_ON_HOTBAR) {
-                int finalCurrentActive = currentActive;
-                return DataResult.error(() -> "Defined [" + finalCurrentActive + "] active abilities - only up to [" + DragonAbility.MAX_ACTIVE_ON_HOTBAR + "] are allowed");
-            }
-
-            if (currentPassive > DragonAbility.MAX_PASSIVE) {
-                int finalCurrentPassive = currentPassive;
-                return DataResult.error(() -> "Defined [" + finalCurrentPassive + "] passive abilities - only up to [" + DragonAbility.MAX_PASSIVE + "] are allowed");
-            }
-
-            return DataResult.success(abilities);
-        });
-    }
-
     public static Codec<MinMaxBounds.Doubles> percentageBounds() {
         return MinMaxBounds.Doubles.CODEC.validate(value -> {
             boolean isValid = true;
