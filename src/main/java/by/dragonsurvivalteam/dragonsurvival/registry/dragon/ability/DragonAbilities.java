@@ -11,6 +11,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.particles.LargeFireParticleOp
 import by.dragonsurvivalteam.dragonsurvival.common.particles.SmallFireParticleOption;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSSounds;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.entity_effects.*;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.targeting.AbilityTargeting;
@@ -172,7 +173,12 @@ public class DragonAbilities {
                         Optional.of(ManaCost.ticking(LevelBasedValue.constant(0.025f))),
                         Optional.of(LevelBasedValue.constant((float) Functions.secondsToTicks(1))),
                         Optional.of(LevelBasedValue.constant((float) Functions.secondsToTicks(2))),
-                        Optional.empty()
+                        Optional.of(new Activation.Sound(
+                                Optional.of(DSSounds.FIRE_BREATH_START.get()),
+                                Optional.empty(),
+                                Optional.of(DSSounds.FIRE_BREATH_LOOP.get()),
+                                Optional.of(DSSounds.FIRE_BREATH_END.get())
+                        ))
                 ),
                 Optional.of(new Upgrade(Upgrade.Type.PASSIVE, 4, LevelBasedValue.lookup(List.of(0f, 10f, 30f, 50f), LevelBasedValue.perLevel(15)))),
                 Optional.of(EntityPredicate.Builder.entity().located(LocationPredicate.Builder.location().setFluid(FluidPredicate.Builder.fluid().of(Fluids.WATER))).build()),

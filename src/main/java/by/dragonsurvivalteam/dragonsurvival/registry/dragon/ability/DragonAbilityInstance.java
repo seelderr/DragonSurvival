@@ -10,6 +10,8 @@ import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MagicData;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.sounds.TickableSoundInstance;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -20,6 +22,8 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
@@ -48,6 +52,10 @@ public class DragonAbilityInstance {
     private int currentTick;
     private int cooldown;
 
+    // Needs to use OnlyIn as TickableSoundInstance is client-side only
+    @OnlyIn(Dist.CLIENT)
+    private TickableSoundInstance currentTickingSound;
+
     public DragonAbilityInstance(final Holder<DragonAbility> ability, int level, int slot) {
         this(ability, level, slot, true);
     }
@@ -57,6 +65,20 @@ public class DragonAbilityInstance {
         this.level = level;
         this.slot = slot;
         this.isEnabled = isEnabled;
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public void setSoundInstance(TickableSoundInstance soundInstance) {
+        stopSound();
+        this.currentTickingSound = soundInstance;
+        Minecraft.getInstance().getSoundManager().queueTickingSound(soundInstance);
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public void stopSound() {
+        if (currentTickingSound != null) {
+            Minecraft.getInstance().getSoundManager().stop(currentTickingSound);
+        }
     }
 
     public Tag save(@NotNull final HolderLookup.Provider provider) {
@@ -80,13 +102,21 @@ public class DragonAbilityInstance {
     }
 
     public void tickActions(final Player dragon) {
-        if (currentTick == 0) {
-            // TODO :: does sound need to be played on both sides? would it overlap?
-            //  currently at least this one would play on both
-            value().activation().playStartSound(dragon);
+        currentTick++;
+
+        int castTime = getCastTime();
+
+        if (currentTick < castTime) {
+            if(currentTick == 1) {
+                value().activation().playChargingSound(dragon, this);
+            }
+            return;
         }
 
-        currentTick++;
+        if(currentTick == castTime) {
+            value().activation().playStartSound(dragon);
+            value().activation().playLoopingSound(dragon, this);
+        }
 
         if (!(dragon instanceof ServerPlayer serverPlayer)) {
             // TODO :: should mana also be consumed client-side?
@@ -94,10 +124,7 @@ public class DragonAbilityInstance {
             return;
         }
 
-        int castTime = getCastTime();
-
         if (currentTick < castTime) {
-            value().activation().playChargingSound(dragon);
             return;
         }
 
@@ -117,7 +144,6 @@ public class DragonAbilityInstance {
             }
         }
 
-        value().activation().playLoopingSound(dragon);
         ability.value().actions().forEach(action -> action.tick(serverPlayer, this, currentTick));
 
         if (value().activation().type() == Activation.Type.ACTIVE_SIMPLE) {

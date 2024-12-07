@@ -157,8 +157,10 @@ public class MagicData implements INBTSerializable<CompoundTag> {
         DragonAbilityInstance currentlyCasting = getCurrentlyCasting();
 
         if (currentlyCasting != null) {
+            currentlyCasting.stopSound();
             if (currentlyCasting.isApplyingEffects()) {
                 currentlyCasting.release(player);
+                currentlyCasting.value().activation().playEndSound(player);
             } else {
                 currentlyCasting.releaseWithoutCooldown();
             }

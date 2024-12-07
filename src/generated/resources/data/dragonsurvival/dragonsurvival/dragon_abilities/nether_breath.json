@@ -74,7 +74,12 @@
       "type": "ticking",
       "amount": 0.025
     },
-    "cooldown": 40.0
+    "cooldown": 40.0,
+    "sound": {
+      "end": "dragonsurvival:fire_breath_end",
+      "looping": "dragonsurvival:fire_breath_loop",
+      "start": "dragonsurvival:fire_breath_start"
+    }
   },
   "icon": {
     "texture_entries": [
