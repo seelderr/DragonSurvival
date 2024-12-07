@@ -41,8 +41,13 @@ public class ClientProxy implements Proxy {
     @Override
     public void queueTickingSound(final ResourceLocation id, final SoundEvent soundEvent, final SoundSource soundSource, final Entity entity) {
         TickableSoundInstance sound = new FollowEntitySound(soundEvent, soundSource, entity);
+        TickableSoundInstance previousSound = soundInstances.put(id, sound);
+
+        if (previousSound != null) {
+            Minecraft.getInstance().getSoundManager().stop(previousSound);
+        }
+
         Minecraft.getInstance().getSoundManager().queueTickingSound(sound);
-        soundInstances.put(id, sound);
     }
 
     @Override

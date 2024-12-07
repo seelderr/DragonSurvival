@@ -82,7 +82,6 @@ public class DragonAbilityInstance {
     }
 
     public void queueTickingSound(final SoundEvent soundEvent, final SoundSource soundSource, final Player dragon) {
-        stopSound(dragon);
         DragonSurvival.PROXY.queueTickingSound(location().withSuffix(dragon.getStringUUID()), soundEvent, soundSource, dragon);
     }
 
