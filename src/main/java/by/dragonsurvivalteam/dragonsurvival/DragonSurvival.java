@@ -9,9 +9,6 @@ import by.dragonsurvivalteam.dragonsurvival.registry.datagen.loot.DragonOreLootM
 import by.dragonsurvivalteam.dragonsurvival.util.proxy.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.util.proxy.Proxy;
 import by.dragonsurvivalteam.dragonsurvival.util.proxy.ServerProxy;
-import by.dragonsurvivalteam.dragonsurvival.util.proxy.sound.SoundManagerClientProxy;
-import by.dragonsurvivalteam.dragonsurvival.util.proxy.sound.SoundManagerProxy;
-import by.dragonsurvivalteam.dragonsurvival.util.proxy.sound.SoundManagerServerProxy;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -39,7 +36,6 @@ public class DragonSurvival {
     public static final String MODID = "dragonsurvival";
     public static final Logger LOGGER = LogManager.getLogger("Dragon Survival");
     public static Proxy PROXY;
-    public static SoundManagerProxy SOUND_MANAGER_PROXY;
 
     public static final DeferredRegister<MapCodec<? extends IGlobalLootModifier>> GLM = DeferredRegister.create(NeoForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, MODID);
     private static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<DragonOreLootModifier>> DRAGON_ORE = DragonSurvival.GLM.register("dragon_ore", DragonOreLootModifier.CODEC);
@@ -48,7 +44,6 @@ public class DragonSurvival {
 
     public DragonSurvival(IEventBus bus, ModContainer container) {
         PROXY = FMLLoader.getDist().isClient() ? new ClientProxy() : new ServerProxy();
-        SOUND_MANAGER_PROXY = FMLLoader.getDist().isClient() ? new SoundManagerClientProxy() : new SoundManagerServerProxy();
 
         ConfigHandler.initConfig();
 

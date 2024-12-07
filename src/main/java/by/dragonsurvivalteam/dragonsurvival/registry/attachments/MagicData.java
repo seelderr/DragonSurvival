@@ -144,6 +144,7 @@ public class MagicData implements INBTSerializable<CompoundTag> {
 
     public void denyCast() {
         DragonAbilityInstance currentlyCasting = getCurrentlyCasting();
+
         if (currentlyCasting != null) {
             currentlyCasting.stopSound();
             currentlyCasting.releaseWithoutCooldown();

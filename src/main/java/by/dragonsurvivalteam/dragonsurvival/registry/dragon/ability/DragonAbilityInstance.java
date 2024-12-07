@@ -7,7 +7,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.ManaCost;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ManaHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncStopCast;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MagicData;
-import by.dragonsurvivalteam.dragonsurvival.util.proxy.sound.*;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.ChatFormatting;
@@ -24,9 +23,6 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
@@ -55,8 +51,6 @@ public class DragonAbilityInstance {
     private int currentTick;
     private int cooldown;
 
-    private final TickableSoundInstanceProxy currentTickingSound;
-
     public DragonAbilityInstance(final Holder<DragonAbility> ability, int level, int slot) {
         this(ability, level, slot, true);
     }
@@ -66,16 +60,6 @@ public class DragonAbilityInstance {
         this.level = level;
         this.slot = slot;
         this.isEnabled = isEnabled;
-        this.currentTickingSound = FMLLoader.getDist().isClient() ? new TickableSoundInstanceClientProxy() : new TickableSoundInstanceServerProxy();
-    }
-
-    public void queueTickingSound(SoundEvent soundEvent, SoundSource soundSource, Entity entity) {
-        stopSound();
-        currentTickingSound.queueTickingSound(soundEvent, soundSource, entity);
-    }
-
-    public void stopSound() {
-        currentTickingSound.stopTickingSound();
     }
 
     public Tag save(@NotNull final HolderLookup.Provider provider) {
@@ -98,19 +82,28 @@ public class DragonAbilityInstance {
         }
     }
 
-    public void tickActions(final Player dragon) {
+    public void queueTickingSound(final SoundEvent soundEvent, final SoundSource soundSource, final Entity entity) {
+        stopSound();
+        DragonSurvival.PROXY.queueTickingSound(location(), soundEvent, soundSource, entity);
+    }
+
+    public void stopSound() {
+        DragonSurvival.PROXY.stopTickingSound(location());
+    }
+
+    private void tickActions(final Player dragon) {
+        int castTime = getCastTime();
         currentTick++;
 
-        int castTime = getCastTime();
-
         if (currentTick < castTime) {
-            if(currentTick == 1) {
+            if (currentTick == 1) {
                 value().activation().playChargingSound(dragon, this);
             }
+
             return;
         }
 
-        if(currentTick == castTime) {
+        if (currentTick == castTime) {
             value().activation().playStartSound(dragon);
             value().activation().playLoopingSound(dragon, this);
         }

@@ -89,7 +89,7 @@ public record Activation(
     public void playStartSound(final Player dragon) {
         sound.flatMap(Sound::start).ifPresent(start -> {
             if(dragon.level().isClientSide()) {
-                DragonSurvival.SOUND_MANAGER_PROXY.playSoundAtEyeLevel(start, SoundSource.PLAYERS, dragon);
+                DragonSurvival.PROXY.playSoundAtEyeLevel(dragon, start);
             } else {
                 dragon.level().playSound(dragon, dragon.blockPosition(), start, SoundSource.PLAYERS, 1, 1);
             }
@@ -98,28 +98,28 @@ public record Activation(
 
     public void playChargingSound(final Player dragon, DragonAbilityInstance instance) {
         sound.flatMap(Sound::charging).ifPresent(charging -> {
-            if(dragon.level().isClientSide()) {
+            if (dragon.level().isClientSide()) {
                 instance.queueTickingSound(charging, SoundSource.PLAYERS, dragon);
             } else {
-                PacketDistributor.sendToPlayersTrackingEntity(dragon, new SyncAbilityTickingSound(dragon.getId(), instance.slot(), 0, false));
+                PacketDistributor.sendToPlayersTrackingEntity(dragon, new SyncAbilityTickingSound(dragon.getId(), instance.slot(), SyncAbilityTickingSound.SoundType.CHARGING, false));
             }
         });
     }
 
     public void playLoopingSound(final Player dragon, DragonAbilityInstance instance) {
         sound.flatMap(Sound::looping).ifPresent(looping -> {
-            if(dragon.level().isClientSide()) {
+            if (dragon.level().isClientSide()) {
                 instance.queueTickingSound(looping, SoundSource.PLAYERS, dragon);
             } else {
-                PacketDistributor.sendToPlayersTrackingEntity(dragon, new SyncAbilityTickingSound(dragon.getId(), instance.slot(), 1, false));
+                PacketDistributor.sendToPlayersTrackingEntity(dragon, new SyncAbilityTickingSound(dragon.getId(), instance.slot(), SyncAbilityTickingSound.SoundType.LOOPING, false));
             }
         });
     }
 
     public void playEndSound(final Player dragon) {
         sound.flatMap(Sound::end).ifPresent(end -> {
-            if(dragon.level().isClientSide()) {
-                DragonSurvival.SOUND_MANAGER_PROXY.playSoundAtEyeLevel(end, SoundSource.PLAYERS, dragon);
+            if (dragon.level().isClientSide()) {
+                DragonSurvival.PROXY.playSoundAtEyeLevel(dragon, end);
             } else {
                 dragon.level().playSound(dragon, dragon.blockPosition(), end, SoundSource.PLAYERS, 1, 1);
             }
