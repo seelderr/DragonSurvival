@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.network.syncing;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonPenaltyHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.RequestClientData;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAdvancementTriggers;
@@ -35,12 +36,7 @@ public class SyncComplete implements IMessage<SyncComplete.Data> {
         if (entity instanceof Player player) {
             context.enqueueWork(() -> {
                 DragonStateHandler handler = DragonStateProvider.getData(player);
-                Holder<DragonType> previousType = handler.getDragonType();
                 handler.deserializeNBT(player.registryAccess(), message.nbt);
-                if (previousType != null && !previousType.is(handler.getType())) {
-                    MagicData magicData = MagicData.getData(player);
-                    magicData.refresh(handler.getType());
-                }
                 DSModifiers.updateAllModifiers(player);
                 player.refreshDimensions();
             });
@@ -84,7 +80,13 @@ public class SyncComplete implements IMessage<SyncComplete.Data> {
                     DragonStateHandler handler = DragonStateProvider.getData(player);
                     Holder<DragonType> previousType = handler.getDragonType();
                     handler.deserializeNBT(player.registryAccess(), message.nbt);
-                    if (previousType != null && !previousType.is(handler.getType())) {
+                    // When we are sending a complete sync to the client, the client has requested it. This happens in two cases:
+                    // 1. When the player changes dragon type in the dragon selection screen
+                    // 2. When the player reverts to human in the dragon altar screen
+                    // In both of these cases, we want to make sure to refresh the magic data if the server isn't set to save it
+
+                    // TODO: This doesn't fully work with saveAllAbilities config. We'd need to make a mapping of dragon types to magicData instances.
+                    if (previousType == null || (!ServerConfig.saveAllAbilities && !previousType.is(handler.getType()))) {
                         MagicData magicData = MagicData.getData(player);
                         magicData.refresh(handler.getType());
                     }
