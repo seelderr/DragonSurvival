@@ -143,15 +143,14 @@ public class MagicData implements INBTSerializable<CompoundTag> {
     }
 
     public void denyCast() {
-        isCasting = false;
-        castWasDenied = true;
-
         DragonAbilityInstance currentlyCasting = getCurrentlyCasting();
-
         if (currentlyCasting != null) {
             currentlyCasting.stopSound();
             currentlyCasting.releaseWithoutCooldown();
         }
+
+        isCasting = false;
+        castWasDenied = true;
     }
 
     public void stopCasting(final Player player) {

@@ -1,10 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.network.sound;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
-import by.dragonsurvivalteam.dragonsurvival.client.sounds.FollowEntitySound;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MagicData;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
-import net.minecraft.client.resources.sounds.TickableSoundInstance;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -27,7 +25,7 @@ public record SyncAbilityTickingSound(int playerId, int abilitySlot, int soundEv
             SyncAbilityTickingSound::new
     );
 
-    private static SoundEvent soundEventToSoundInstance(final SyncAbilityTickingSound packet, final DragonAbilityInstance instance) {
+    private static SoundEvent getSoundEventFromAbilityInstance(final SyncAbilityTickingSound packet, final DragonAbilityInstance instance) {
         switch(packet.soundEvent) {
             case 0:
             {
@@ -66,10 +64,9 @@ public record SyncAbilityTickingSound(int playerId, int abilitySlot, int soundEv
             if(packet.stop) {
                 instance.stopSound();
             } else {
-                SoundEvent sound = soundEventToSoundInstance(packet, instance);
+                SoundEvent sound = getSoundEventFromAbilityInstance(packet, instance);
                 if(sound != null) {
-                    TickableSoundInstance soundInstance = new FollowEntitySound(sound, SoundSource.PLAYERS, player);
-                    instance.setSoundInstance(soundInstance);
+                    instance.queueTickingSound(sound, SoundSource.PLAYERS, player);
                 }
             }
         });

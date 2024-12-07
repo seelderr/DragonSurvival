@@ -1,22 +1,17 @@
 package by.dragonsurvivalteam.dragonsurvival.common.codecs.ability;
 
-import by.dragonsurvivalteam.dragonsurvival.client.sounds.FollowEntitySound;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.network.sound.SyncAbilityTickingSound;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.sounds.SimpleSoundInstance;
-import net.minecraft.client.resources.sounds.SoundInstance;
-import net.minecraft.client.resources.sounds.TickableSoundInstance;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
-import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
@@ -94,15 +89,7 @@ public record Activation(
     public void playStartSound(final Player dragon) {
         sound.flatMap(Sound::start).ifPresent(start -> {
             if(dragon.level().isClientSide()) {
-                Vec3 pos = dragon.getEyePosition(Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false));
-                SimpleSoundInstance sound = new SimpleSoundInstance(
-                        start,
-                        SoundSource.PLAYERS,
-                        1.0F, 1.0F,
-                        SoundInstance.createUnseededRandom(),
-                        pos.x, pos.y, pos.z
-                );
-                Minecraft.getInstance().getSoundManager().playDelayed(sound, 0);
+                DragonSurvival.SOUND_MANAGER_PROXY.playSoundAtEyeLevel(start, SoundSource.PLAYERS, dragon);
             } else {
                 dragon.level().playSound(dragon, dragon.blockPosition(), start, SoundSource.PLAYERS, 1, 1);
             }
@@ -112,8 +99,7 @@ public record Activation(
     public void playChargingSound(final Player dragon, DragonAbilityInstance instance) {
         sound.flatMap(Sound::charging).ifPresent(charging -> {
             if(dragon.level().isClientSide()) {
-                TickableSoundInstance sound = new FollowEntitySound(charging, SoundSource.PLAYERS, dragon);
-                instance.setSoundInstance(sound);
+                instance.queueTickingSound(charging, SoundSource.PLAYERS, dragon);
             } else {
                 PacketDistributor.sendToPlayersTrackingEntity(dragon, new SyncAbilityTickingSound(dragon.getId(), instance.slot(), 0, false));
             }
@@ -123,8 +109,7 @@ public record Activation(
     public void playLoopingSound(final Player dragon, DragonAbilityInstance instance) {
         sound.flatMap(Sound::looping).ifPresent(looping -> {
             if(dragon.level().isClientSide()) {
-                TickableSoundInstance sound = new FollowEntitySound(looping, SoundSource.PLAYERS, dragon);
-                instance.setSoundInstance(sound);
+                instance.queueTickingSound(looping, SoundSource.PLAYERS, dragon);
             } else {
                 PacketDistributor.sendToPlayersTrackingEntity(dragon, new SyncAbilityTickingSound(dragon.getId(), instance.slot(), 1, false));
             }
@@ -134,15 +119,7 @@ public record Activation(
     public void playEndSound(final Player dragon) {
         sound.flatMap(Sound::end).ifPresent(end -> {
             if(dragon.level().isClientSide()) {
-                Vec3 pos = dragon.getEyePosition(Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false));
-                SimpleSoundInstance sound = new SimpleSoundInstance(
-                        end,
-                        SoundSource.PLAYERS,
-                        1.0F, 1.0F,
-                        SoundInstance.createUnseededRandom(),
-                        pos.x, pos.y, pos.z
-                );
-                Minecraft.getInstance().getSoundManager().play(sound);
+                DragonSurvival.SOUND_MANAGER_PROXY.playSoundAtEyeLevel(end, SoundSource.PLAYERS, dragon);
             } else {
                 dragon.level().playSound(dragon, dragon.blockPosition(), end, SoundSource.PLAYERS, 1, 1);
             }

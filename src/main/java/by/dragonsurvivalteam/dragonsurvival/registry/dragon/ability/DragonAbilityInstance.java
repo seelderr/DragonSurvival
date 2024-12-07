@@ -7,11 +7,10 @@ import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.ManaCost;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ManaHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncStopCast;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MagicData;
+import by.dragonsurvivalteam.dragonsurvival.util.proxy.sound.*;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.sounds.TickableSoundInstance;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -21,9 +20,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
@@ -52,9 +55,7 @@ public class DragonAbilityInstance {
     private int currentTick;
     private int cooldown;
 
-    // Needs to use OnlyIn as TickableSoundInstance is client-side only
-    @OnlyIn(Dist.CLIENT)
-    private TickableSoundInstance currentTickingSound;
+    private final TickableSoundInstanceProxy currentTickingSound;
 
     public DragonAbilityInstance(final Holder<DragonAbility> ability, int level, int slot) {
         this(ability, level, slot, true);
@@ -65,20 +66,16 @@ public class DragonAbilityInstance {
         this.level = level;
         this.slot = slot;
         this.isEnabled = isEnabled;
+        this.currentTickingSound = FMLLoader.getDist().isClient() ? new TickableSoundInstanceClientProxy() : new TickableSoundInstanceServerProxy();
     }
 
-    @OnlyIn(Dist.CLIENT)
-    public void setSoundInstance(TickableSoundInstance soundInstance) {
+    public void queueTickingSound(SoundEvent soundEvent, SoundSource soundSource, Entity entity) {
         stopSound();
-        this.currentTickingSound = soundInstance;
-        Minecraft.getInstance().getSoundManager().queueTickingSound(soundInstance);
+        currentTickingSound.queueTickingSound(soundEvent, soundSource, entity);
     }
 
-    @OnlyIn(Dist.CLIENT)
     public void stopSound() {
-        if (currentTickingSound != null) {
-            Minecraft.getInstance().getSoundManager().stop(currentTickingSound);
-        }
+        currentTickingSound.stopTickingSound();
     }
 
     public Tag save(@NotNull final HolderLookup.Provider provider) {
