@@ -1,12 +1,15 @@
 package by.dragonsurvivalteam.dragonsurvival.network.magic;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
+import by.dragonsurvivalteam.dragonsurvival.network.sound.StopTickingSound;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MagicData;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,7 +43,12 @@ public record SyncStopCast(int playerId, boolean wasDenied) implements CustomPac
     public static void handleServer(final SyncStopCast packet, final IPayloadContext context) {
         context.enqueueWork(() -> {
             if (context.player().level().getEntity(packet.playerId) instanceof Player player) {
-                MagicData.getData(player).stopCasting(player);
+                MagicData data = MagicData.getData(player);
+                DragonAbilityInstance currentlyCasting = data.getCurrentlyCasting();
+                if(currentlyCasting != null) {
+                    PacketDistributor.sendToPlayersTrackingEntity(player, new StopTickingSound(currentlyCasting.location()));
+                    data.stopCasting(player);
+                }
             }
         });
     }

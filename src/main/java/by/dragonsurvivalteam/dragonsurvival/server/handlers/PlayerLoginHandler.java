@@ -4,14 +4,18 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.container.OpenDragonAltar;
-import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncMagicData;
+import by.dragonsurvivalteam.dragonsurvival.network.sound.StartTickingSound;
+import by.dragonsurvivalteam.dragonsurvival.network.sound.StopTickingSound;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.SyncComplete;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.AltarData;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MagicData;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.body.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
@@ -55,7 +59,18 @@ public class PlayerLoginHandler {
         }
     }
 
+    public static void stopTickingSounds(Entity tracker, Entity tracked) {
+        if(tracker instanceof ServerPlayer && tracked instanceof ServerPlayer) {
+            MagicData magicDataTracked = MagicData.getData((Player) tracked);
+            DragonAbilityInstance currentlyCasting = magicDataTracked.getCurrentlyCasting();
+            if(currentlyCasting != null) {
+                PacketDistributor.sendToPlayer((ServerPlayer) tracker, new StopTickingSound(currentlyCasting.location()));
+            }
+        }
+    }
 
+    // TODO: Do we need to start up any existing ticking sounds when a player starts getting tracked? e.g. moves into render distance while casting.
+    // Do we even care enough to account for this edge case?
     @SubscribeEvent
     public static void onTrackingStart(PlayerEvent.StartTracking startTracking) {
         Entity tracker = startTracking.getEntity();
@@ -64,39 +79,22 @@ public class PlayerLoginHandler {
     }
 
     @SubscribeEvent
+    public static void onTrackingEnd(PlayerEvent.StopTracking stopTracking) {
+        Entity tracker = stopTracking.getEntity();
+        Entity tracked = stopTracking.getTarget();
+        stopTickingSounds(tracker, tracked);
+    }
+
+    @SubscribeEvent
     public static void onLogin(PlayerEvent.PlayerLoggedInEvent event) {
         syncCompleteSingle(event.getEntity());
-        // Also sync the magic data, since each player needs to know about their own magic data
-        if(!event.getEntity().level().isClientSide()) {
-            PacketDistributor.sendToPlayer((ServerPlayer) event.getEntity(), new SyncMagicData.Data(event.getEntity().getId(), MagicData.getData(event.getEntity()).serializeNBT(event.getEntity().registryAccess())));
-        }
     }
 
     @SubscribeEvent
     public static void onRespawn(PlayerEvent.PlayerRespawnEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            DragonStateProvider.getOptional(player).ifPresent(dragonStateHandler -> {
-                // FIXME
-                /*AbstractDragonType type = dragonStateHandler.getType();
-
-                if (type instanceof CaveDragonType cave) {
-                    cave.rainResistanceSupply = CaveDragonType.getMaxRainResistanceSupply(player);
-                    cave.lavaAirSupply = CaveDragonConfig.caveLavaSwimmingTicks;
-                }
-
-                if (type instanceof SeaDragonType sea) {
-                    sea.timeWithoutWater = 0;
-                }
-
-                if (type instanceof ForestDragonType forest) {
-                    forest.timeInDarkness = 0;
-                }*/
-
-                SyncComplete.handleDragonSync(player);
-                PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncComplete.Data(player.getId(), dragonStateHandler.serializeNBT(player.registryAccess())));
-            });
+            syncCompleteAll(player);
         }
-        syncCompleteSingle(event.getEntity());
     }
 
     @SubscribeEvent

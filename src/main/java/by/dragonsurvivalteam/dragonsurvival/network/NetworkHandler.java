@@ -18,7 +18,8 @@ import by.dragonsurvivalteam.dragonsurvival.network.magic.*;
 import by.dragonsurvivalteam.dragonsurvival.network.particle.SyncBreathParticles;
 import by.dragonsurvivalteam.dragonsurvival.network.particle.SyncParticleTrail;
 import by.dragonsurvivalteam.dragonsurvival.network.player.*;
-import by.dragonsurvivalteam.dragonsurvival.network.sound.SyncAbilityTickingSound;
+import by.dragonsurvivalteam.dragonsurvival.network.sound.StartTickingSound;
+import by.dragonsurvivalteam.dragonsurvival.network.sound.StopTickingSound;
 import by.dragonsurvivalteam.dragonsurvival.network.status.*;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.SyncComplete;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -75,7 +76,8 @@ public class NetworkHandler {
         registrar.playToServer(SyncBeginCast.TYPE, SyncBeginCast.STREAM_CODEC, SyncBeginCast::handleServer);
         registrar.playBidirectional(SyncStopCast.TYPE, SyncStopCast.STREAM_CODEC, new DirectionalPayloadHandler<>(SyncStopCast::handleClient, SyncStopCast::handleServer));
         registrar.playToClient(SyncCooldownState.TYPE, SyncCooldownState.STREAM_CODEC, SyncCooldownState::handleClient);
-        registrar.playToClient(SyncAbilityTickingSound.TYPE, SyncAbilityTickingSound.STREAM_CODEC, SyncAbilityTickingSound::handleClient);
+        registrar.playToClient(StartTickingSound.TYPE, StartTickingSound.STREAM_CODEC, StartTickingSound::handleClient);
+        registrar.playToClient(StopTickingSound.TYPE, StopTickingSound.STREAM_CODEC, StopTickingSound::handleClient);
         // FIXME
         //registrar.playToServer(SyncSkillLevelChangeCost.TYPE, SyncSkillLevelChangeCost.STREAM_CODEC, SyncSkillLevelChangeCost::handleServer);
 

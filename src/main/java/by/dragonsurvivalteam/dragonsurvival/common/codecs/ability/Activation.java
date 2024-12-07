@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.common.codecs.ability;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
-import by.dragonsurvivalteam.dragonsurvival.network.sound.SyncAbilityTickingSound;
+import by.dragonsurvivalteam.dragonsurvival.network.sound.StartTickingSound;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -101,7 +101,7 @@ public record Activation(
             if (dragon.level().isClientSide()) {
                 instance.queueTickingSound(charging, SoundSource.PLAYERS, dragon);
             } else {
-                PacketDistributor.sendToPlayersTrackingEntity(dragon, new SyncAbilityTickingSound(dragon.getId(), instance.slot(), SyncAbilityTickingSound.SoundType.CHARGING, false));
+                PacketDistributor.sendToPlayersTrackingEntity(dragon, new StartTickingSound(dragon.getId(), charging, instance.location()));
             }
         });
     }
@@ -111,7 +111,7 @@ public record Activation(
             if (dragon.level().isClientSide()) {
                 instance.queueTickingSound(looping, SoundSource.PLAYERS, dragon);
             } else {
-                PacketDistributor.sendToPlayersTrackingEntity(dragon, new SyncAbilityTickingSound(dragon.getId(), instance.slot(), SyncAbilityTickingSound.SoundType.LOOPING, false));
+                PacketDistributor.sendToPlayersTrackingEntity(dragon, new StartTickingSound(dragon.getId(), looping, instance.location()));
             }
         });
     }
