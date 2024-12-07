@@ -17,12 +17,11 @@ public record StopTickingSound(ResourceLocation id) implements CustomPacketPaylo
     );
 
     public static void handleClient(final StopTickingSound packet, final IPayloadContext context) {
-        context.enqueueWork(() -> DragonSurvival.PROXY.stopTickingSound(packet.id));
+        context.enqueueWork(() -> DragonSurvival.PROXY.stopTickingSound(packet.id()));
     }
 
     @Override
     public @NotNull CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
         return TYPE;
     }
-
 }

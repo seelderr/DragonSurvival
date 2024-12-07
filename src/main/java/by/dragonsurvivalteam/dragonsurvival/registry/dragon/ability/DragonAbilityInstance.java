@@ -21,7 +21,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
@@ -82,13 +81,13 @@ public class DragonAbilityInstance {
         }
     }
 
-    public void queueTickingSound(final SoundEvent soundEvent, final SoundSource soundSource, final Entity entity) {
-        stopSound();
-        DragonSurvival.PROXY.queueTickingSound(location(), soundEvent, soundSource, entity);
+    public void queueTickingSound(final SoundEvent soundEvent, final SoundSource soundSource, final Player dragon) {
+        stopSound(dragon);
+        DragonSurvival.PROXY.queueTickingSound(location().withSuffix(dragon.getStringUUID()), soundEvent, soundSource, dragon);
     }
 
-    public void stopSound() {
-        DragonSurvival.PROXY.stopTickingSound(location());
+    public void stopSound(final Player dragon) {
+        DragonSurvival.PROXY.stopTickingSound(location().withSuffix(dragon.getStringUUID()));
     }
 
     private void tickActions(final Player dragon) {

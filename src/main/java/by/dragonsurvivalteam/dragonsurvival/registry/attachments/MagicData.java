@@ -33,12 +33,12 @@ import java.util.Optional;
 public class MagicData implements INBTSerializable<CompoundTag> {
     private List<DragonAbilityInstance> abilities = new ArrayList<>();
     private boolean renderAbilities = true;
-    private int selectedAbilitySlot = 0;
-    private float currentMana = 0;
+    private int selectedAbilitySlot;
+    private float currentMana;
 
-    private boolean errorMessageSent = false;
-    private boolean isCasting = false;
-    private boolean castWasDenied = false;
+    private boolean errorMessageSent;
+    private boolean isCasting;
+    private boolean castWasDenied;
     private int castTimer;
 
     public static MagicData getData(Player player) {
@@ -143,14 +143,6 @@ public class MagicData implements INBTSerializable<CompoundTag> {
     }
 
     public void denyCast() {
-        DragonAbilityInstance currentlyCasting = getCurrentlyCasting();
-
-        if (currentlyCasting != null) {
-            currentlyCasting.stopSound();
-            currentlyCasting.releaseWithoutCooldown();
-        }
-
-        isCasting = false;
         castWasDenied = true;
     }
 
@@ -158,7 +150,8 @@ public class MagicData implements INBTSerializable<CompoundTag> {
         DragonAbilityInstance currentlyCasting = getCurrentlyCasting();
 
         if (currentlyCasting != null) {
-            currentlyCasting.stopSound();
+            currentlyCasting.stopSound(player);
+
             if (currentlyCasting.isApplyingEffects()) {
                 currentlyCasting.release(player);
                 currentlyCasting.value().activation().playEndSound(player);
@@ -244,6 +237,7 @@ public class MagicData implements INBTSerializable<CompoundTag> {
     public void refresh(Holder<DragonType> type) {
         abilities.clear();
         int slot = 0;
+
         for (Holder<DragonAbility> ability : type.value().abilities()) {
             if (ability.value().activation().type() != Activation.Type.PASSIVE) {
                 if (slot < DragonAbility.MAX_ACTIVE_ON_HOTBAR) {

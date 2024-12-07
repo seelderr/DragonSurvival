@@ -28,25 +28,26 @@ public record SyncStopCast(int playerId, boolean wasDenied) implements CustomPac
 
     public static void handleClient(final SyncStopCast packet, final IPayloadContext context) {
         context.enqueueWork(() -> {
-            if (context.player().level().getEntity(packet.playerId) instanceof Player player) {
+            if (context.player().level().getEntity(packet.playerId()) instanceof Player player) {
                 MagicData magic = MagicData.getData(player);
 
                 if (packet.wasDenied()) {
                     magic.denyCast();
-                } else {
-                    magic.stopCasting(player);
                 }
+
+                magic.stopCasting(player);
             }
         });
     }
 
     public static void handleServer(final SyncStopCast packet, final IPayloadContext context) {
         context.enqueueWork(() -> {
-            if (context.player().level().getEntity(packet.playerId) instanceof Player player) {
+            if (context.player().level().getEntity(packet.playerId()) instanceof Player player) {
                 MagicData data = MagicData.getData(player);
                 DragonAbilityInstance currentlyCasting = data.getCurrentlyCasting();
-                if(currentlyCasting != null) {
-                    PacketDistributor.sendToPlayersTrackingEntity(player, new StopTickingSound(currentlyCasting.location()));
+
+                if (currentlyCasting != null) {
+                    PacketDistributor.sendToPlayersTrackingEntity(player, new StopTickingSound(currentlyCasting.location().withSuffix(player.getStringUUID())));
                     data.stopCasting(player);
                 }
             }

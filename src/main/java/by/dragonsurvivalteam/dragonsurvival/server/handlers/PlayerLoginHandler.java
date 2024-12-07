@@ -4,7 +4,6 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.container.OpenDragonAltar;
-import by.dragonsurvivalteam.dragonsurvival.network.sound.StartTickingSound;
 import by.dragonsurvivalteam.dragonsurvival.network.sound.StopTickingSound;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.SyncComplete;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.AltarData;
@@ -13,9 +12,7 @@ import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilit
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.body.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
@@ -59,12 +56,13 @@ public class PlayerLoginHandler {
         }
     }
 
-    public static void stopTickingSounds(Entity tracker, Entity tracked) {
-        if(tracker instanceof ServerPlayer && tracked instanceof ServerPlayer) {
-            MagicData magicDataTracked = MagicData.getData((Player) tracked);
+    public static void stopTickingSounds(final Entity tracker, final Entity tracked) {
+        if (tracker instanceof ServerPlayer trackerPlayer && tracked instanceof ServerPlayer trackedPlayer) {
+            MagicData magicDataTracked = MagicData.getData(trackedPlayer);
             DragonAbilityInstance currentlyCasting = magicDataTracked.getCurrentlyCasting();
-            if(currentlyCasting != null) {
-                PacketDistributor.sendToPlayer((ServerPlayer) tracker, new StopTickingSound(currentlyCasting.location()));
+
+            if (currentlyCasting != null) {
+                PacketDistributor.sendToPlayer(trackerPlayer, new StopTickingSound(currentlyCasting.location().withSuffix(trackedPlayer.getStringUUID())));
             }
         }
     }
@@ -72,16 +70,16 @@ public class PlayerLoginHandler {
     // TODO: Do we need to start up any existing ticking sounds when a player starts getting tracked? e.g. moves into render distance while casting.
     // Do we even care enough to account for this edge case?
     @SubscribeEvent
-    public static void onTrackingStart(PlayerEvent.StartTracking startTracking) {
-        Entity tracker = startTracking.getEntity();
-        Entity tracked = startTracking.getTarget();
+    public static void onTrackingStart(final PlayerEvent.StartTracking event) {
+        Entity tracker = event.getEntity();
+        Entity tracked = event.getTarget();
         syncCompleteSingle(tracker, tracked);
     }
 
     @SubscribeEvent
-    public static void onTrackingEnd(PlayerEvent.StopTracking stopTracking) {
-        Entity tracker = stopTracking.getEntity();
-        Entity tracked = stopTracking.getTarget();
+    public static void onTrackingEnd(final PlayerEvent.StopTracking event) {
+        Entity tracker = event.getEntity();
+        Entity tracked = event.getTarget();
         stopTickingSounds(tracker, tracked);
     }
 

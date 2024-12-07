@@ -31,7 +31,7 @@ public record StartTickingSound(int playerId, SoundEvent soundEvent, ResourceLoc
                 return;
             }
 
-            DragonSurvival.PROXY.queueTickingSound(packet.id, packet.soundEvent, SoundSource.PLAYERS, player);
+            DragonSurvival.PROXY.queueTickingSound(packet.id(), packet.soundEvent(), SoundSource.PLAYERS, player);
         });
     }
 

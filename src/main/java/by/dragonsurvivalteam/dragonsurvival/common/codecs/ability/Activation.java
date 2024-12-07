@@ -101,7 +101,7 @@ public record Activation(
             if (dragon.level().isClientSide()) {
                 instance.queueTickingSound(charging, SoundSource.PLAYERS, dragon);
             } else {
-                PacketDistributor.sendToPlayersTrackingEntity(dragon, new StartTickingSound(dragon.getId(), charging, instance.location()));
+                PacketDistributor.sendToPlayersTrackingEntity(dragon, new StartTickingSound(dragon.getId(), charging, instance.location().withSuffix(dragon.getStringUUID())));
             }
         });
     }
@@ -111,7 +111,7 @@ public record Activation(
             if (dragon.level().isClientSide()) {
                 instance.queueTickingSound(looping, SoundSource.PLAYERS, dragon);
             } else {
-                PacketDistributor.sendToPlayersTrackingEntity(dragon, new StartTickingSound(dragon.getId(), looping, instance.location()));
+                PacketDistributor.sendToPlayersTrackingEntity(dragon, new StartTickingSound(dragon.getId(), looping, instance.location().withSuffix(dragon.getStringUUID())));
             }
         });
     }
