@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.models.DragonModel;
 import by.dragonsurvivalteam.dragonsurvival.client.skins.DragonSkins;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.ActionContainer;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ClientConfig;
@@ -18,11 +19,15 @@ import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonMovement;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MagicData;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MovementData;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonTypes;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.targeting.AreaTarget;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.targeting.DragonBreathTarget;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.targeting.LookingAtTarget;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStage;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
@@ -46,8 +51,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.phys.Vec2;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.*;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -109,19 +113,23 @@ public class ClientDragonRenderer {
     @ConfigOption(side = ConfigSide.CLIENT, category = "rendering", key = "dragon_name_tags")
     public static Boolean dragonNameTags = false;
 
-    /** Show breath hit range when hitboxes are being rendered */
+    /** Show ability hitboxes when hitboxes are being rendered */
     @SubscribeEvent
-    public static void renderBreathHitBox(final RenderLevelStageEvent event) {
-        if (ClientConfig.renderBreathRange && event.getStage() == RenderLevelStageEvent.Stage.AFTER_SOLID_BLOCKS && Minecraft.getInstance().getEntityRenderDispatcher().shouldRenderHitBoxes()) {
+    public static void renderAbilityHitboxes(final RenderLevelStageEvent event) {
+        if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_SOLID_BLOCKS && Minecraft.getInstance().getEntityRenderDispatcher().shouldRenderHitBoxes()) {
             LocalPlayer localPlayer = Minecraft.getInstance().player;
 
             if (localPlayer == null) {
                 return;
             }
 
-            DragonStateHandler handler = DragonStateProvider.getData(localPlayer);
+            if (!DragonStateProvider.isDragon(localPlayer)) {
+                return;
+            }
 
-            if (!handler.isDragon()) {
+            MagicData magicData = MagicData.getData(localPlayer);
+            DragonAbilityInstance ability = magicData.getAbilityFromSlot(magicData.getSelectedAbilitySlot());
+            if(ability == null) {
                 return;
             }
 
@@ -132,32 +140,32 @@ public class ClientDragonRenderer {
             poseStack.pushPose();
             poseStack.translate(-camera.x(), -camera.y(), -camera.z());
 
-            int range = (int) localPlayer.getAttributeValue(DSAttributes.DRAGON_BREATH_RANGE);
-            Holder<DragonType> dragonType = handler.getType();
 
-            int red = DragonUtils.isType(dragonType, DragonTypes.CAVE) ? 1 : 0;
-            int green = DragonUtils.isType(dragonType, DragonTypes.FOREST) ? 1 : 0;
-            int blue = DragonUtils.isType(dragonType, DragonTypes.SEA) ? 1 : 0;
+            for (ActionContainer action : ability.value().actions()) {
+                var abilityTargeting = action.effect();
+                if(abilityTargeting instanceof DragonBreathTarget breathTarget) {
+                    LevelRenderer.renderLineBox(poseStack, buffer, breathTarget.calculateBreathArea(localPlayer, ability), 1, 0, 0, 1);
+                } else if (abilityTargeting instanceof LookingAtTarget lookingAtTarget) {
+                    HitResult result;
+                    if(lookingAtTarget.target().left().isPresent()) {
+                        result = lookingAtTarget.getBlockHitResult(localPlayer, ability);
+                    } else if(lookingAtTarget.target().right().isPresent()) {
+                        result = lookingAtTarget.getEntityHitResult(localPlayer, entity -> true, ability);
+                    } else {
+                        continue;
+                    }
 
-            LevelRenderer.renderLineBox(poseStack, buffer, DragonBreathTarget.calculateBreathArea(localPlayer, handler.getSize(), range), red, green, blue, 1);
-
-            /* Draw the area which will affect blocks
-            Pair<BlockPos, Direction> data = DragonAbilities.breathStartPosition(localPlayer, red == 1 ? new NetherBreathAbility() : green == 1 ? new ForestBreathAbility() : new StormBreathAbility(), range);
-            BlockPos startPosition = data.getFirst();
-
-            if (startPosition != null) {
-                AABB blockRange = new AABB(
-                        startPosition.getX() - (double) range / 2,
-                        startPosition.getY() - (double) range / 2,
-                        startPosition.getZ() - (double) range / 2,
-                        startPosition.getX() + (double) range / 2,
-                        startPosition.getY() + (double) range / 2,
-                        startPosition.getZ() + (double) range / 2
-                );
-
-                LevelRenderer.renderLineBox(poseStack, buffer, blockRange, 1, 1, 1, 1);
+                    if(result.getType() == HitResult.Type.BLOCK) {
+                        BlockHitResult blockResult = (BlockHitResult) result;
+                        LevelRenderer.renderLineBox(poseStack, buffer, new AABB(blockResult.getBlockPos()), 0, 1, 0, 1);
+                    } else if(result.getType() == HitResult.Type.ENTITY) {
+                        EntityHitResult entityResult = (EntityHitResult) result;
+                        LevelRenderer.renderLineBox(poseStack, buffer, entityResult.getEntity().getBoundingBox().inflate(1.5), 0, 1, 0, 1);
+                    }
+                } else if (abilityTargeting instanceof AreaTarget areaTarget) {
+                    LevelRenderer.renderLineBox(poseStack, buffer, areaTarget.calculateAffectedArea(localPlayer, ability), 0, 0, 1, 1);
+                }
             }
-            */
 
             poseStack.popPose();
         }

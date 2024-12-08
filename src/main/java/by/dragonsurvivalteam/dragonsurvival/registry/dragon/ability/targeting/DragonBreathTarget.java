@@ -24,7 +24,7 @@ public record DragonBreathTarget(Either<BlockTargeting, EntityTargeting> target,
     @Override
     public void apply(final ServerPlayer dragon, final DragonAbilityInstance ability) {
         target().ifLeft(blockTarget -> {
-            AABB breathArea = calculateBreathArea(dragon, DragonStateProvider.getData(dragon).getSize(), rangeMultiplier().calculate(ability.level()));
+            AABB breathArea = calculateBreathArea(dragon, ability);
 
             BlockPos.betweenClosedStream(breathArea).forEach(position -> {
                 if (blockTarget.targetConditions().isEmpty() || blockTarget.targetConditions().get().matches(dragon.serverLevel(), position)) {
@@ -32,7 +32,7 @@ public record DragonBreathTarget(Either<BlockTargeting, EntityTargeting> target,
                 }
             });
         }).ifRight(entityTarget -> {
-            AABB breathArea = calculateBreathArea(dragon, DragonStateProvider.getData(dragon).getSize(), rangeMultiplier().calculate(ability.level()));
+            AABB breathArea = calculateBreathArea(dragon, ability);
 
             dragon.serverLevel().getEntities(EntityTypeTest.forClass(Entity.class), breathArea,
                     entity -> isEntityRelevant(dragon, entityTarget, entity) && entityTarget.targetConditions().map(conditions -> conditions.matches(dragon.serverLevel(), dragon.position(), entity)).orElse(true)
@@ -45,9 +45,9 @@ public record DragonBreathTarget(Either<BlockTargeting, EntityTargeting> target,
         return CODEC;
     }
 
-    public static AABB calculateBreathArea(final Player player, double size, double rangeMultiplier) {
-        Vec3 viewVector = player.getLookAngle().scale(rangeMultiplier * player.getAttributeValue(DSAttributes.DRAGON_BREATH_RANGE));
-        double defaultRadius = size * 0.03;
+    public AABB calculateBreathArea(final Player dragon, final DragonAbilityInstance abilityInstance) {
+        Vec3 viewVector = dragon.getLookAngle().scale(rangeMultiplier.calculate(abilityInstance.level()) * dragon.getAttributeValue(DSAttributes.DRAGON_BREATH_RANGE));
+        double defaultRadius = DragonStateProvider.getData(dragon).getSize() * 0.03;
 
         // Set the radius (value will be at least the default radius)
         double xOffset = getOffset(viewVector.x(), defaultRadius);
@@ -55,17 +55,17 @@ public record DragonBreathTarget(Either<BlockTargeting, EntityTargeting> target,
         double zOffset = getOffset(viewVector.z(), defaultRadius);
 
         // Check for look angle to avoid extending the range in the direction the player is not facing / looking
-        double xMin = (player.getLookAngle().x() < 0 ? xOffset : defaultRadius);
-        double yMin = (player.getLookAngle().y() < 0 ? yOffset : 0);
-        double zMin = (player.getLookAngle().z() < 0 ? zOffset : defaultRadius);
+        double xMin = (dragon.getLookAngle().x() < 0 ? xOffset : defaultRadius);
+        double yMin = (dragon.getLookAngle().y() < 0 ? yOffset : 0);
+        double zMin = (dragon.getLookAngle().z() < 0 ? zOffset : defaultRadius);
         Vec3 min = new Vec3(Math.abs(xMin), Math.abs(yMin), Math.abs(zMin));
 
-        double xMax = (player.getLookAngle().x() > 0 ? xOffset : defaultRadius);
-        double yMax = (player.getLookAngle().y() > 0 ? yOffset + player.getEyeHeight() : player.getEyeHeight());
-        double zMax = (player.getLookAngle().z() > 0 ? zOffset : defaultRadius);
+        double xMax = (dragon.getLookAngle().x() > 0 ? xOffset : defaultRadius);
+        double yMax = (dragon.getLookAngle().y() > 0 ? yOffset + dragon.getEyeHeight() : dragon.getEyeHeight());
+        double zMax = (dragon.getLookAngle().z() > 0 ? zOffset : defaultRadius);
         Vec3 max = new Vec3(Math.abs(xMax), Math.abs(yMax), Math.abs(zMax));
 
-        return new AABB(player.position().subtract(min), player.position().add(max));
+        return new AABB(dragon.position().subtract(min), dragon.position().add(max));
     }
 
     private static double getOffset(double value, double defaultValue) {

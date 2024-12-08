@@ -15,10 +15,6 @@ public class ClientConfig {
     @ConfigOption(side = ConfigSide.CLIENT, category = "misc", key = "alternate_cast_mode")
     public static Boolean alternateCastMode = false;
 
-    @Translation(key = "render_breath_range", type = Translation.Type.CONFIGURATION, comments = "If enabled the dragon breath range will be rendered (while hitboxes are shown)")
-    @ConfigOption(side = ConfigSide.CLIENT, category = "misc", key = "render_breath_range")
-    public static Boolean renderBreathRange = true;
-
     @Translation(key = "stable_night_vision", type = Translation.Type.CONFIGURATION, comments = "If enabled night vision will no longer flicker when on a low duration")
     @ConfigOption(side = ConfigSide.CLIENT, category = "misc", key = "stable_night_vision")
     public static Boolean stableNightVision = true;
