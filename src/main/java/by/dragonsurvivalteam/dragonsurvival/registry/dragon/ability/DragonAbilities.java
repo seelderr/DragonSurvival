@@ -3,10 +3,9 @@ package by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.Condition;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.LevelBasedResource;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.ActionContainer;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Activation;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.ManaCost;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Upgrade;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.*;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.animation.AnimationLayer;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.animation.SimpleAbilityAnimation;
 import by.dragonsurvivalteam.dragonsurvival.common.particles.LargeFireParticleOption;
 import by.dragonsurvivalteam.dragonsurvival.common.particles.SmallFireParticleOption;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
@@ -65,6 +64,7 @@ public class DragonAbilities {
                         Optional.empty(),
                         Optional.of(LevelBasedValue.constant((float) Functions.secondsToTicks(1))),
                         Optional.of(LevelBasedValue.constant((float) Functions.secondsToTicks(2))),
+                        Optional.empty(),
                         Optional.empty()
                 ),
                 Optional.empty(),
@@ -101,6 +101,7 @@ public class DragonAbilities {
                         Optional.empty(),
                         Optional.of(LevelBasedValue.constant((float) Functions.secondsToTicks(1))),
                         Optional.of(LevelBasedValue.constant((float) Functions.secondsToTicks(2))),
+                        Optional.empty(),
                         Optional.empty()
                 ),
                 Optional.empty(),
@@ -137,6 +138,7 @@ public class DragonAbilities {
                         Optional.empty(),
                         Optional.of(LevelBasedValue.constant((float) Functions.secondsToTicks(1))),
                         Optional.of(LevelBasedValue.constant((float) Functions.secondsToTicks(2))),
+                        Optional.empty(),
                         Optional.empty()
                 ),
                 Optional.empty(),
@@ -178,6 +180,11 @@ public class DragonAbilities {
                                 Optional.empty(),
                                 Optional.of(DSSounds.FIRE_BREATH_LOOP.get()),
                                 Optional.of(DSSounds.FIRE_BREATH_END.get())
+                        )),
+                        Optional.of(new Activation.Animations(
+                                Optional.empty(),
+                                Optional.of(new SimpleAbilityAnimation("breath", AnimationLayer.BREATH, 5, false, false)),
+                                Optional.empty()
                         ))
                 ),
                 Optional.of(new Upgrade(Upgrade.Type.PASSIVE, 4, LevelBasedValue.lookup(List.of(0f, 10f, 30f, 50f), LevelBasedValue.perLevel(15)))),

@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.network.magic;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
+import by.dragonsurvivalteam.dragonsurvival.network.animation.StopAbilityAnimation;
 import by.dragonsurvivalteam.dragonsurvival.network.sound.StopTickingSound;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MagicData;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
@@ -48,6 +49,9 @@ public record SyncStopCast(int playerId, boolean wasDenied) implements CustomPac
 
                 if (currentlyCasting != null) {
                     PacketDistributor.sendToPlayersTrackingEntity(player, new StopTickingSound(currentlyCasting.location().withSuffix(player.getStringUUID())));
+                    if(!currentlyCasting.isApplyingEffects() || (currentlyCasting.isApplyingEffects() && !currentlyCasting.hasEndAnimation())) {
+                        PacketDistributor.sendToPlayersTrackingEntity(player, new StopAbilityAnimation(player.getId()));
+                    }
                     data.stopCasting(player);
                 }
             }

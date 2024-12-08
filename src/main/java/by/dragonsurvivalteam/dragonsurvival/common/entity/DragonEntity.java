@@ -1,23 +1,25 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity;
 
-import by.dragonsurvivalteam.dragonsurvival.client.ISecondAnimation;
 import by.dragonsurvivalteam.dragonsurvival.client.emotes.Emote;
 import by.dragonsurvivalteam.dragonsurvival.client.models.DragonModel;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRenderer;
-import by.dragonsurvivalteam.dragonsurvival.client.render.util.AnimationTimer;
+import by.dragonsurvivalteam.dragonsurvival.client.render.util.AnimationTickTimer;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.EmoteCap;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.animation.AbilityAnimation;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.animation.AnimationLayer;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.animation.AnimationType;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ClientConfig;
-import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MagicData;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MovementData;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.TreasureRestData;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStage;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.AnimationUtils;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -75,7 +77,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
     public boolean clearVerticalVelocity = false;
     DragonAbilityInstance lastCast = null;
     public boolean started, ended;
-    AnimationTimer animationTimer = new AnimationTimer();
+    AnimationTickTimer animationTickTimer = new AnimationTickTimer();
 
     // Default player values
     private static final double DEFAULT_WALK_SPEED = 0.1; // Abilities#walkingSpeed
@@ -85,6 +87,8 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
     private static final double DEFAULT_FAST_SWIM_SPEED = 0.13;
 
     public AnimationController<DragonEntity> mainAnimationController;
+    private Pair<AbilityAnimation, AnimationType> currentAbilityAnimation;
+    private boolean begunPlayingAbilityAnimation = false;
 
     private static double globalTickCount = 0;
 
@@ -113,6 +117,36 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
         registrar.add(new AnimationController<>(this, "breath", this::breathPredicate));
     }
 
+    public void setCurrentAbilityAnimation(Pair<AbilityAnimation, AnimationType> currentAbilityAnimation) {
+        if(this.currentAbilityAnimation != null) {
+            animationTickTimer.putAnimation(this.currentAbilityAnimation.getFirst().getName(), 0.0);
+        }
+        this.currentAbilityAnimation = currentAbilityAnimation;
+        begunPlayingAbilityAnimation = false;
+    }
+
+    private boolean checkAndPlayAbilityAnimation(final AnimationState<DragonEntity> state, AnimationLayer layer) {
+        AnimationLayer currentAbilityLayer = currentAbilityAnimation != null ? currentAbilityAnimation.getFirst().getLayer() : null;
+        boolean isNotPlayingCurrentAbilityAnimation = currentAbilityAnimation != null && currentAbilityLayer == layer && animationTickTimer.getDuration(currentAbilityAnimation.getFirst().getName()) <= 0;
+        if (!begunPlayingAbilityAnimation && isNotPlayingCurrentAbilityAnimation) {
+            begunPlayingAbilityAnimation = true;
+            state.getController().setAnimationSpeed(1.0);
+            currentAbilityAnimation.getFirst().play(state, this, currentAbilityAnimation.getSecond());
+            if(currentAbilityAnimation.getSecond() == AnimationType.PLAY_ONCE) {
+                // Only trigger use a timer for PLAY_ONCE animations, as the others are intended to await a future packet to stop them
+                animationTickTimer.putAnimation(currentAbilityAnimation.getFirst().getName(), animationDuration(getPlayer(), currentAbilityAnimation.getFirst().getName()));
+            }
+        } else if(begunPlayingAbilityAnimation && isNotPlayingCurrentAbilityAnimation && currentAbilityAnimation.getSecond() == AnimationType.PLAY_ONCE) {
+            begunPlayingAbilityAnimation = false;
+            currentAbilityAnimation = null;
+        } else if(begunPlayingAbilityAnimation && currentAbilityLayer == layer) {
+            state.getController().setAnimationSpeed(1.0);
+            return true;
+        }
+
+        return begunPlayingAbilityAnimation && currentAbilityLayer == layer;
+    }
+
     // For the breath weapon only, we want it to play on a separate controller,
     // so it can play at the same time as other animations
     private PlayState breathPredicate(final AnimationState<DragonEntity> state) {
@@ -122,17 +156,8 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
             return PlayState.STOP;
         }
 
-        MagicData data = MagicData.getData(player);
-        DragonAbilityInstance currentCast = data.getCurrentlyCasting();
-
-        if (currentCast != null) {
-            RawAnimation ability = renderAbility(state, currentCast);
-            if (ability != null) {
-                if (ability.getAnimationStages().stream().anyMatch(stage -> stage.animationName().equals("breath"))) {
-                    state.getController().transitionLength(5);
-                    return state.setAndContinue(ability);
-                }
-            }
+        if (checkAndPlayAbilityAnimation(state, AnimationLayer.BREATH)) {
+            return PlayState.CONTINUE;
         }
 
         return PlayState.STOP;
@@ -162,13 +187,10 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
         }
 
         DragonStateHandler handler = DragonStateProvider.getData(player);
-        MagicData magicData = MagicData.getData(player);
-        DragonAbilityInstance currentCast = magicData.getCurrentlyCasting();
         RawAnimation builder = null;
 
-        // FIXME
-        if (currentCast instanceof ISecondAnimation || lastCast instanceof ISecondAnimation) {
-            builder = renderAbility(state, currentCast);
+        if (checkAndPlayAbilityAnimation(state, AnimationLayer.BITE)) {
+            return PlayState.CONTINUE;
         }
 
         MovementData movement = MovementData.getData(player);
@@ -176,42 +198,42 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
             // When the player is using an item
             movement.bite = false;
             return state.setAndContinue(AnimationUtils.createAnimation(builder, USE_ITEM));
-        } else if (!ClientDragonRenderer.renderItemsInMouth && doesAnimationExist(player, "eat_item_right") && player.isUsingItem() && DragonFoodHandler.isEdible(player.getMainHandItem(), handler.getType()) || animationTimer.getDuration("eat_item_right") > 0) {
+        } else if (!ClientDragonRenderer.renderItemsInMouth && doesAnimationExist(player, "eat_item_right") && player.isUsingItem() && DragonFoodHandler.isEdible(player.getMainHandItem(), handler.getType()) || animationTickTimer.getDuration("eat_item_right") > 0) {
             // When the player is eating the main hand item
-            if (animationTimer.getDuration("eat_item_right") <= 0) {
+            if (animationTickTimer.getDuration("eat_item_right") <= 0) {
                 movement.bite = false;
-                animationTimer.putAnimation("eat_item_right", 0.32 * 20);
+                animationTickTimer.putAnimation("eat_item_right", 0.32 * 20);
             }
 
             return state.setAndContinue(AnimationUtils.createAnimation(builder, EAT_ITEM_RIGHT));
-        } else if (!ClientDragonRenderer.renderItemsInMouth && doesAnimationExist(player, "eat_item_left") && player.isUsingItem() && DragonFoodHandler.isEdible(player.getMainHandItem(), handler.getType()) || animationTimer.getDuration("eat_item_right") > 0) {
+        } else if (!ClientDragonRenderer.renderItemsInMouth && doesAnimationExist(player, "eat_item_left") && player.isUsingItem() && DragonFoodHandler.isEdible(player.getMainHandItem(), handler.getType()) || animationTickTimer.getDuration("eat_item_right") > 0) {
             // When the player is eating the offhand item
-            if (animationTimer.getDuration("eat_item_left") <= 0) {
+            if (animationTickTimer.getDuration("eat_item_left") <= 0) {
                 movement.bite = false;
-                animationTimer.putAnimation("eat_item_left", 0.32 * 20);
+                animationTickTimer.putAnimation("eat_item_left", 0.32 * 20);
             }
 
             return state.setAndContinue(AnimationUtils.createAnimation(builder, EAT_ITEM_LEFT));
-        } else if (!ClientDragonRenderer.renderItemsInMouth && doesAnimationExist(player, "use_item_right") && !player.getMainHandItem().isEmpty() && movement.bite && player.getMainArm() == HumanoidArm.RIGHT || animationTimer.getDuration("use_item_right") > 0) {
+        } else if (!ClientDragonRenderer.renderItemsInMouth && doesAnimationExist(player, "use_item_right") && !player.getMainHandItem().isEmpty() && movement.bite && player.getMainArm() == HumanoidArm.RIGHT || animationTickTimer.getDuration("use_item_right") > 0) {
             // When the player is using the main hand item
-            if (animationTimer.getDuration("use_item_right") <= 0) {
+            if (animationTickTimer.getDuration("use_item_right") <= 0) {
                 movement.bite = false;
-                animationTimer.putAnimation("use_item_right", 0.32 * 20);
+                animationTickTimer.putAnimation("use_item_right", 0.32 * 20);
             }
 
             return state.setAndContinue(AnimationUtils.createAnimation(builder, USE_ITEM_RIGHT));
-        } else if (!ClientDragonRenderer.renderItemsInMouth && doesAnimationExist(player, "use_item_left") && !player.getOffhandItem().isEmpty() && movement.bite && player.getMainArm() == HumanoidArm.LEFT || animationTimer.getDuration("use_item_left") > 0) {
+        } else if (!ClientDragonRenderer.renderItemsInMouth && doesAnimationExist(player, "use_item_left") && !player.getOffhandItem().isEmpty() && movement.bite && player.getMainArm() == HumanoidArm.LEFT || animationTickTimer.getDuration("use_item_left") > 0) {
             // When the player is using the offhand item
-            if (animationTimer.getDuration("use_item_left") <= 0) {
+            if (animationTickTimer.getDuration("use_item_left") <= 0) {
                 movement.bite = false;
-                animationTimer.putAnimation("use_item_left", 0.32 * 20);
+                animationTickTimer.putAnimation("use_item_left", 0.32 * 20);
             }
 
             return state.setAndContinue(AnimationUtils.createAnimation(builder, USE_ITEM_LEFT));
-        } else if (movement.bite && !movement.dig || animationTimer.getDuration("bite") > 0) {
-            if (animationTimer.getDuration("bite") <= 0) {
+        } else if (movement.bite && !movement.dig || animationTickTimer.getDuration("bite") > 0) {
+            if (animationTickTimer.getDuration("bite") <= 0) {
                 movement.bite = false;
-                animationTimer.putAnimation("bite", 0.44 * 20);
+                animationTickTimer.putAnimation("bite", 0.44 * 20);
             }
 
             return state.setAndContinue(AnimationUtils.createAnimation(builder, BITE));
@@ -222,6 +244,14 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
 
     private boolean doesAnimationExist(final Player player, final String animation) {
         return GeckoLibCache.getBakedAnimations().get(DragonModel.getAnimationResource(player)).getAnimation(animation) != null;
+    }
+
+    private double animationDuration(final Player player, final String animation) {
+        if(!doesAnimationExist(player, animation)) {
+            return 0;
+        }
+
+        return GeckoLibCache.getBakedAnimations().get(DragonModel.getAnimationResource(player)).getAnimation(animation).length();
     }
 
     private PlayState emotePredicate(final AnimationState<DragonEntity> state, int slot) {
@@ -338,9 +368,6 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
         }
 
         Vec3 deltaMovement = player.getDeltaMovement();
-        MagicData magicData = MagicData.getData(player);
-        DragonAbilityInstance currentCast = magicData.getCurrentlyCasting();
-
         RawAnimation builder = null;
 
         // This predicate runs first, so we reset neck and tail lock here. If any animation locks them, they will be re-locked in time before the neck/tail animations are played.
@@ -348,9 +375,8 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
         neckLocked = false;
         tailLocked = false;
 
-        // FIXME
-        if (!(currentCast instanceof ISecondAnimation) && !(lastCast instanceof ISecondAnimation)) {
-            builder = renderAbility(state, currentCast);
+        if (checkAndPlayAbilityAnimation(state, AnimationLayer.BASE)) {
+            return PlayState.CONTINUE;
         }
 
         final double INPUT_EPSILON = 0.0000001D;

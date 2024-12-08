@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 
-import by.dragonsurvivalteam.dragonsurvival.client.render.util.AnimationTimer;
+import by.dragonsurvivalteam.dragonsurvival.client.render.util.AnimationTickTimer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.util.RandomAnimationPicker;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
@@ -35,7 +35,7 @@ public class AmbusherEntity extends Hunter implements RangedAttackMob {
     private boolean isFirstClientTick = true;
     private float nextArrowVelocity = 0.0f;
     private RawAnimation currentIdleAnim;
-    private final AnimationTimer ambusherTimer = new AnimationTimer();
+    private final AnimationTickTimer ambusherTickTimer = new AnimationTickTimer();
 
     private static final EntityDataAccessor<Boolean> HAS_RELEASED_GRIFFIN = SynchedEntityData.defineId(AmbusherEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> NEARBY_DRAGON_PLAYER = SynchedEntityData.defineId(AmbusherEntity.class, EntityDataSerializers.BOOLEAN);
@@ -293,14 +293,14 @@ public class AmbusherEntity extends Hunter implements RangedAttackMob {
         if (hasReleasedGriffin() && !hasPlayedReleaseAnimation && !hasPlayedReinforcementsAnimation) {
             if (hasCalledReinforcements()) {
                 hasPlayedReinforcementsAnimation = true;
-                ambusherTimer.putAnimation(AMBUSH_AND_GRIFFIN_RELEASE, (double) AMBUSH_ANIM_DURATION);
+                ambusherTickTimer.putAnimation(AMBUSH_AND_GRIFFIN_RELEASE, (double) AMBUSH_ANIM_DURATION);
                 state.setAndContinue(AMBUSH_AND_GRIFFIN_RELEASE);
             } else {
                 hasPlayedReleaseAnimation = true;
-                ambusherTimer.putAnimation(ONLY_GRIFFIN_RELEASE, (double) GRIFFIN_RELEASE_ANIM_DURATION);
+                ambusherTickTimer.putAnimation(ONLY_GRIFFIN_RELEASE, (double) GRIFFIN_RELEASE_ANIM_DURATION);
                 state.setAndContinue(ONLY_GRIFFIN_RELEASE);
             }
-        } else if (ambusherTimer.getDuration(ONLY_GRIFFIN_RELEASE) > 0 || ambusherTimer.getDuration(AMBUSH_AND_GRIFFIN_RELEASE) > 0) {
+        } else if (ambusherTickTimer.getDuration(ONLY_GRIFFIN_RELEASE) > 0 || ambusherTickTimer.getDuration(AMBUSH_AND_GRIFFIN_RELEASE) > 0) {
             // Let release animation conclude
             return PlayState.CONTINUE;
         } else {
@@ -347,9 +347,9 @@ public class AmbusherEntity extends Hunter implements RangedAttackMob {
         if (hasReleasedGriffin() && getGriffinReleaseReloadTimer() == -1 && getAmbushHornTimer() == -1) {
             // We check at 1 because the first client tick already sees the value incremented by 1 (we start at 0)
             if (getRangedAttackTimer() == 1) {
-                ambusherTimer.putAnimation(CROSSBOW_SHOOT_AND_RELOAD_BLEND, (double) CROSSBOW_SHOOT_AND_RELOAD_TIME);
+                ambusherTickTimer.putAnimation(CROSSBOW_SHOOT_AND_RELOAD_BLEND, (double) CROSSBOW_SHOOT_AND_RELOAD_TIME);
                 return state.setAndContinue(CROSSBOW_SHOOT_AND_RELOAD_BLEND);
-            } else if (ambusherTimer.getDuration(CROSSBOW_SHOOT_AND_RELOAD_BLEND) > 0) {
+            } else if (ambusherTickTimer.getDuration(CROSSBOW_SHOOT_AND_RELOAD_BLEND) > 0) {
                 // Always let the reload animation conclude
                 return PlayState.CONTINUE;
             } else {

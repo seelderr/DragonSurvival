@@ -1,6 +1,11 @@
 package by.dragonsurvivalteam.dragonsurvival.util.proxy;
 
+import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.FollowEntitySound;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.animation.AbilityAnimation;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.animation.AnimationType;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
@@ -16,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class ClientProxy implements Proxy {
     private final Map<ResourceLocation, TickableSoundInstance> soundInstances = new HashMap<>();
@@ -57,5 +63,15 @@ public class ClientProxy implements Proxy {
         if (instance != null) {
             Minecraft.getInstance().getSoundManager().stop(instance);
         }
+    }
+
+    @Override
+    public void setCurrentAbilityAnimation(int playerId, Pair<AbilityAnimation, AnimationType> animation) {
+        AtomicReference<DragonEntity> dragonEntity = ClientDragonRenderer.playerDragonHashMap.get(playerId);
+        if(dragonEntity == null) {
+            return;
+        }
+
+        dragonEntity.get().setCurrentAbilityAnimation(animation);
     }
 }

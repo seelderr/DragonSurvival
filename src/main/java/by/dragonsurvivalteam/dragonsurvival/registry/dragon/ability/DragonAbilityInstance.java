@@ -96,14 +96,15 @@ public class DragonAbilityInstance {
         if (currentTick < castTime) {
             if (currentTick == 1) {
                 value().activation().playChargingSound(dragon, this);
+                value().activation().playStartAndChargingAnimation(dragon);
             }
 
             return;
         }
 
         if (currentTick == castTime) {
-            value().activation().playStartSound(dragon);
-            value().activation().playLoopingSound(dragon, this);
+            value().activation().playStartAndLoopingSound(dragon, this);
+            value().activation().playLoopingAnimation(dragon);
         }
 
         if (!(dragon instanceof ServerPlayer serverPlayer)) {
@@ -141,6 +142,7 @@ public class DragonAbilityInstance {
 
     private void stopCasting(final ServerPlayer dragon) {
         value().activation().playEndSound(dragon);
+        value().activation().playEndAnimation(dragon);
         release(dragon);
 
         MagicData magic = MagicData.getData(dragon);
@@ -189,6 +191,10 @@ public class DragonAbilityInstance {
 
     public boolean isApplyingEffects() {
         return isActive && canBeCast() && currentTick >= getCastTime();
+    }
+
+    public boolean hasEndAnimation() {
+        return value().activation().animations().isPresent() && value().activation().animations().get().end().isPresent();
     }
 
     public boolean canBeCast() {

@@ -1,5 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.util.proxy;
 
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.animation.AbilityAnimation;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.animation.AnimationType;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
@@ -22,4 +25,6 @@ public interface Proxy {
     default void queueTickingSound(final ResourceLocation id, final SoundEvent soundEvent, final SoundSource soundSource, final Entity entity) { /* Nothing to do */ }
 
     default void stopTickingSound(final ResourceLocation id) { /* Nothing to do */ }
+
+    default void setCurrentAbilityAnimation(int playerId, Pair<AbilityAnimation, AnimationType> animation) { /* Nothing to do */ }
 }

@@ -52,4 +52,8 @@ public class AnimationUtils {
         float deltaTick = Minecraft.getInstance().getTimer().getRealtimeDeltaTicks();
         return deltaTick / (MS_FOR_60FPS / Minecraft.getInstance().level.tickRateManager().millisecondsPerTick());
     }
+
+    public static float getDeltaSeconds() {
+        return (Minecraft.getInstance().getTimer().getRealtimeDeltaTicks() * Minecraft.getInstance().level.tickRateManager().millisecondsPerTick()) / 1000.f;
+    }
 }

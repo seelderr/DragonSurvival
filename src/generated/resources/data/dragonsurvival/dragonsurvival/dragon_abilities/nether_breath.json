@@ -69,6 +69,15 @@
   ],
   "activation": {
     "type": "active_channeled",
+    "animations": {
+      "looping": {
+        "animation_key": "breath",
+        "layer": "BREATH",
+        "locks_neck": false,
+        "locks_tail": false,
+        "transition_length": 5
+      }
+    },
     "cast_time": 20.0,
     "continuous_mana_cost": {
       "type": "ticking",

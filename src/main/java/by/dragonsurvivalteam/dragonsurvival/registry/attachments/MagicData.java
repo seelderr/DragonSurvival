@@ -1,8 +1,11 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.attachments;
 
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.hud.MagicHUD;
+import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Activation;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncCooldownState;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbility;
@@ -28,6 +31,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 @EventBusSubscriber
 public class MagicData implements INBTSerializable<CompoundTag> {
@@ -155,7 +159,13 @@ public class MagicData implements INBTSerializable<CompoundTag> {
             if (currentlyCasting.isApplyingEffects()) {
                 currentlyCasting.release(player);
                 currentlyCasting.value().activation().playEndSound(player);
+                if(currentlyCasting.hasEndAnimation()) {
+                    currentlyCasting.value().activation().playEndAnimation(player);
+                } else {
+                    DragonSurvival.PROXY.setCurrentAbilityAnimation(player.getId(), null);
+                }
             } else {
+                DragonSurvival.PROXY.setCurrentAbilityAnimation(player.getId(), null);
                 currentlyCasting.releaseWithoutCooldown();
             }
 

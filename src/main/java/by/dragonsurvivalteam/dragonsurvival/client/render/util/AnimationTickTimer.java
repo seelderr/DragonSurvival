@@ -9,16 +9,15 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 @EventBusSubscriber
-public class AnimationTimer {
-    public static CopyOnWriteArrayList<AnimationTimer> timers = new CopyOnWriteArrayList<>();
+public class AnimationTickTimer {
+    public static CopyOnWriteArrayList<AnimationTickTimer> timers = new CopyOnWriteArrayList<>();
     protected ConcurrentHashMap<String, Double> animationTimes = new ConcurrentHashMap<>();
 
     @SubscribeEvent
-    public static void onTick(final ClientTickEvent.Post event) {
-        for (AnimationTimer timer : timers) {
+    public static void onTick(final ClientTickEvent.Pre event) {
+        for (AnimationTickTimer timer : timers) {
             timer.animationTimes.keySet().forEach(key -> {
                 timer.animationTimes.computeIfPresent(key, (animation, tick) -> tick - 1);
-
                 if (timer.animationTimes.get(key) <= 0) {
                     timer.animationTimes.remove(key);
                 }
