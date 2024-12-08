@@ -17,6 +17,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.flight.SpinStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncDeltaMovement;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncFlyingStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.*;
+import by.dragonsurvivalteam.dragonsurvival.network.modifiers.SyncModifierWithDuration;
 import by.dragonsurvivalteam.dragonsurvival.network.particle.SyncBreathParticles;
 import by.dragonsurvivalteam.dragonsurvival.network.particle.SyncParticleTrail;
 import by.dragonsurvivalteam.dragonsurvival.network.player.*;
@@ -82,6 +83,7 @@ public class NetworkHandler {
         registrar.playToClient(StopTickingSound.TYPE, StopTickingSound.STREAM_CODEC, StopTickingSound::handleClient);
         registrar.playToClient(StopAbilityAnimation.TYPE, StopAbilityAnimation.STREAM_CODEC, StopAbilityAnimation::handleClient);
         registrar.playToClient(SyncAbilityAnimation.TYPE, SyncAbilityAnimation.STREAM_CODEC, SyncAbilityAnimation::handleClient);
+        registrar.playToClient(SyncModifierWithDuration.TYPE, SyncModifierWithDuration.STREAM_CODEC, SyncModifierWithDuration::handleClient);
         // FIXME
         //registrar.playToServer(SyncSkillLevelChangeCost.TYPE, SyncSkillLevelChangeCost.STREAM_CODEC, SyncSkillLevelChangeCost::handleServer);
 

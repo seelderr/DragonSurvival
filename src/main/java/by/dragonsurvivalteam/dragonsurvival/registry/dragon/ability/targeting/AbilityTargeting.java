@@ -71,7 +71,7 @@ public interface AbilityTargeting {
 
     @SuppressWarnings("RedundantIfStatement") // ignore for clarity
     default boolean isEntityRelevant(final ServerPlayer dragon, final EntityTargeting targeting, final Entity entity) {
-        if (dragon == entity) {
+        if (!targeting.targetFriendly() && dragon == entity) {
             return false;
         }
 

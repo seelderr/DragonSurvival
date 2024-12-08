@@ -3,18 +3,22 @@ package by.dragonsurvivalteam.dragonsurvival.registry.attachments;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ModifierWithDuration;
+import by.dragonsurvivalteam.dragonsurvival.network.modifiers.SyncModifierWithDuration;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.util.INBTSerializable;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -96,13 +100,19 @@ public class ModifiersWithDuration implements INBTSerializable<CompoundTag> {
         return modifiersWithDuration.values();
     }
 
+    public void syncModifiersToPlayer(final ServerPlayer player) {
+        for(ModifierWithDuration.Instance modifier : all()) {
+            PacketDistributor.sendToPlayer(player, new SyncModifierWithDuration(player.getId(), modifier));
+        }
+    }
+
     @Override
     public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider) {
         CompoundTag tag = new CompoundTag();
         ListTag entries = new ListTag();
 
         if (modifiersWithDuration != null) {
-            modifiersWithDuration.values().forEach(ModifierWithDuration.Instance::save);
+            modifiersWithDuration.values().forEach(modifier -> entries.add(modifier.save(provider)));
             tag.put(MODIFIERS_WITH_DURATION, entries);
         }
 
@@ -115,7 +125,7 @@ public class ModifiersWithDuration implements INBTSerializable<CompoundTag> {
         ListTag entries = tag.getList(MODIFIERS_WITH_DURATION, ListTag.TAG_COMPOUND);
 
         for (int i = 0; i < entries.size(); i++) {
-            ModifierWithDuration.Instance modifier = ModifierWithDuration.Instance.load(entries.getCompound(i));
+            ModifierWithDuration.Instance modifier = ModifierWithDuration.Instance.load(provider, entries.getCompound(i));
 
             if (modifier != null) {
                 modifiers.put(modifier.baseData().id(), modifier);
@@ -131,10 +141,6 @@ public class ModifiersWithDuration implements INBTSerializable<CompoundTag> {
 
     @SubscribeEvent
     public static void tickModifiers(final EntityTickEvent.Post event) {
-        if (event.getEntity().level().isClientSide()) {
-            return;
-        }
-
         if (event.getEntity() instanceof LivingEntity livingEntity) {
             livingEntity.getExistingData(DSDataAttachments.MODIFIERS_WITH_DURATION).ifPresent(data -> data.tick(livingEntity));
         }

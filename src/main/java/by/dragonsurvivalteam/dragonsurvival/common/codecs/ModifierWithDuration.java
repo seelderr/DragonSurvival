@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.common.codecs;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
+import by.dragonsurvivalteam.dragonsurvival.network.modifiers.SyncModifierWithDuration;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachments;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.ModifiersWithDuration;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.AttributeModifierSupplier;
@@ -10,6 +11,7 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
@@ -20,6 +22,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
+import net.neoforged.neoforge.network.PacketDistributor;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import javax.annotation.Nullable;
@@ -49,8 +53,11 @@ public record ModifierWithDuration(ResourceLocation id, List<Modifier> modifiers
         }
 
         ClientEffectProvider.ClientData clientData = new ClientEffectProvider.ClientData(ability.getIcon(), /* TODO */ Component.empty(), Optional.of(dragon.getUUID()));
-        data.add(target, new Instance(this, new HashMap<>(), clientData, abilityLevel, newDuration));
-        // TODO :: send packet to client
+        ModifierWithDuration.Instance newModifier = new ModifierWithDuration.Instance(this, new HashMap<>(), clientData, abilityLevel, newDuration);
+        data.add(target, newModifier);
+        if(target instanceof ServerPlayer player) {
+            PacketDistributor.sendToPlayer(player, new SyncModifierWithDuration(player.getId(), newModifier));
+        }
     }
 
     public static class Instance implements AttributeModifierSupplier, ClientEffectProvider {
@@ -84,12 +91,12 @@ public record ModifierWithDuration(ResourceLocation id, List<Modifier> modifiers
             this.currentDuration = currentDuration;
         }
 
-        public Tag save() {
-            return CODEC.encodeStart(NbtOps.INSTANCE, this).getOrThrow();
+        public Tag save(@NotNull final HolderLookup.Provider provider) {
+            return CODEC.encodeStart(provider.createSerializationContext(NbtOps.INSTANCE), this).getOrThrow();
         }
 
-        public static @Nullable Instance load(final CompoundTag nbt) {
-            return CODEC.parse(NbtOps.INSTANCE, nbt).resultOrPartial(DragonSurvival.LOGGER::error).orElse(null);
+        public static @Nullable Instance load(@NotNull final HolderLookup.Provider provider, final CompoundTag nbt) {
+            return CODEC.parse(provider.createSerializationContext(NbtOps.INSTANCE), nbt).resultOrPartial(DragonSurvival.LOGGER::error).orElse(null);
         }
 
         public boolean tick() {
