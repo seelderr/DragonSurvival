@@ -4,6 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.container.OpenDragonAltar;
+import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncMagicData;
 import by.dragonsurvivalteam.dragonsurvival.network.sound.StopTickingSound;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.SyncComplete;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.AltarData;
@@ -44,6 +45,10 @@ public class PlayerLoginHandler {
                 SyncComplete.handleDragonSync(player);
                 PacketDistributor.sendToPlayer(player, new SyncComplete.Data(player.getId(), handler.serializeNBT(player.registryAccess())));
             });
+
+            // In this case we also need to send over the magic data, as the client that owns the abilities needs to know about them.
+            MagicData magicData = MagicData.getData(player);
+            PacketDistributor.sendToPlayer(player, new SyncMagicData.Data(player.getId(), magicData.serializeNBT(player.registryAccess())));
         }
     }
 
