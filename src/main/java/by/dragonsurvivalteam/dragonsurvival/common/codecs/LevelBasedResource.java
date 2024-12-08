@@ -7,6 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ExtraCodecs;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 // TODO :: should be usable for ability and penalty icons as well
@@ -15,14 +16,12 @@ public record LevelBasedResource(List<TextureEntry> textureEntries) {
             TextureEntry.CODEC.listOf().fieldOf("texture_entries").forGetter(LevelBasedResource::textureEntries)
     ).apply(instance, LevelBasedResource::new));
 
-    public LevelBasedResource {
-        // Highest 'from_level' is the first element
-        // FIXME :: This crashes datagen if we have more than one element
-        //Collections.reverse(textureEntries);
-    }
-
     public ResourceLocation get(int abilityLevel) {
-        for (TextureEntry data : textureEntries()) {
+        // TODO :: We copy the array here as the list in the record is immutable. Is there a clever a way to avoid this?
+        List<TextureEntry> sortedEntries = new ArrayList<>(textureEntries);
+        sortedEntries.sort(TextureEntry::compareTo);
+        sortedEntries = sortedEntries.reversed();
+        for (TextureEntry data : sortedEntries) {
             if (abilityLevel >= data.fromLevel()) {
                 return data.location();
             }
