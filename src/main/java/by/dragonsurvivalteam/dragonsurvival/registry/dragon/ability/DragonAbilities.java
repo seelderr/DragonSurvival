@@ -333,6 +333,7 @@ public class DragonAbilities {
                                         List.of(
                                                 new ModifierWithDuration(
                                                         ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "tough_leather"),
+                                                        ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/modifiers/strong_leather.png"),
                                                         List.of(
                                                                 new Modifier(
                                                                         Attributes.ARMOR,

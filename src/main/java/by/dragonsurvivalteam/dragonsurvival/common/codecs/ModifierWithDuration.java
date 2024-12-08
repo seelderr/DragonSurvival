@@ -28,11 +28,12 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import javax.annotation.Nullable;
 
-public record ModifierWithDuration(ResourceLocation id, List<Modifier> modifiers, LevelBasedValue duration) {
+public record ModifierWithDuration(ResourceLocation id, ResourceLocation icon, List<Modifier> modifiers, LevelBasedValue duration) {
     public static final int INFINITE_DURATION = -1;
 
     public static final Codec<ModifierWithDuration> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ResourceLocation.CODEC.fieldOf("id").forGetter(ModifierWithDuration::id),
+            ResourceLocation.CODEC.optionalFieldOf("icon", ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/modifiers/default_modifier.png")).forGetter(ModifierWithDuration::icon),
             Modifier.CODEC.listOf().fieldOf("modifiers").forGetter(ModifierWithDuration::modifiers),
             LevelBasedValue.CODEC.optionalFieldOf("duration", LevelBasedValue.constant(INFINITE_DURATION)).forGetter(ModifierWithDuration::duration)
     ).apply(instance, ModifierWithDuration::new));
@@ -52,7 +53,7 @@ public record ModifierWithDuration(ResourceLocation id, List<Modifier> modifiers
             data.remove(target, instance);
         }
 
-        ClientEffectProvider.ClientData clientData = new ClientEffectProvider.ClientData(ability.getIcon(), /* TODO */ Component.empty(), Optional.of(dragon.getUUID()));
+        ClientEffectProvider.ClientData clientData = new ClientEffectProvider.ClientData(icon, /* TODO */ Component.empty(), Optional.of(dragon.getUUID()));
         ModifierWithDuration.Instance newModifier = new ModifierWithDuration.Instance(this, new HashMap<>(), clientData, abilityLevel, newDuration);
         data.add(target, newModifier);
         if(target instanceof ServerPlayer player) {

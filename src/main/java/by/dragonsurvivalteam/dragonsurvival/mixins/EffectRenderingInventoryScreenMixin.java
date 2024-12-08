@@ -13,7 +13,10 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
+import net.minecraft.util.StringUtil;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffectUtil;
 import net.neoforged.neoforge.client.event.ScreenEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -49,7 +52,7 @@ public class EffectRenderingInventoryScreenMixin {
         int width = isCompact ? 32 : 120;
 
         for (int i = 0; i < providerAmount; i++) {
-            graphics.blitSprite(((EffectRenderingInventoryScreenAccessor)self).dragonSurvival$getEffectBackgroundLargeSprite(), renderX, topPos, width, 32);
+            graphics.blitSprite(isCompact ? ((EffectRenderingInventoryScreenAccessor)self).dragonSurvival$getEffectBackgroundSmallSprite() : ((EffectRenderingInventoryScreenAccessor)self).dragonSurvival$getEffectBackgroundLargeSprite(), renderX, topPos, width, 32);
             topPos += yOffset;
         }
     }
@@ -60,9 +63,7 @@ public class EffectRenderingInventoryScreenMixin {
 
         for (ClientEffectProvider provider : providers) {
             // FIXME :: can this even be safely done if we don't know how the texture is stored etc.?
-            //  maybe have dedicated texture icons for the effect type?
-            //  for 'blitSprite' the texture would need to be in the '/gui' sub-directory
-            graphics.blit(provider.clientData().texture(), renderX + (isCompact ? 6 : 7), topPos + 7, 0, 0, 0, 0);
+            graphics.blit(provider.clientData().texture(), renderX + (isCompact ? 6 : 7), topPos + 7, 0, 0, 0, 18, 18, 20, 20);
             topPos += yOffset;
         }
     }
@@ -75,10 +76,18 @@ public class EffectRenderingInventoryScreenMixin {
             // TODO: have a generic name per client effect provider type?
 //            Component name = Component.translatable(provider.id().getPath());
 //            graphics.drawString(((ScreenAccessor)self).dragonSurvival$getFont(), name, renderX + 10 + 18, topPos+ 6, /* ChatFormatting.WHITE */ 16777215);
-
-            Component duration = Component.literal(Integer.toString(provider.currentDuration()));
+            Component duration = dragonSurvival$formatDuration(provider, Minecraft.getInstance().level.tickRateManager().tickrate());
             graphics.drawString(((ScreenAccessor)self).dragonSurvival$getFont(), duration, renderX + 10 + 18, topPos + 6 + 10, 8355711);
             topPos += yOffset;
+        }
+    }
+
+    @Unique private static Component dragonSurvival$formatDuration(final ClientEffectProvider effect, float ticksPerSecond) {
+        if (effect.isInfiniteDuration()) {
+            return Component.translatable("effect.duration.infinite");
+        } else {
+            int i = Mth.floor((float)effect.getDuration());
+            return Component.literal(StringUtil.formatTickDuration(i, ticksPerSecond));
         }
     }
 
@@ -122,7 +131,7 @@ public class EffectRenderingInventoryScreenMixin {
             dragonSurvival$renderAbilityBackgrounds(graphics, offset, yOffset, initialYOffset, providers.size(), isCompact);
             dragonSurvival$renderAbilityIcons(graphics, offset, yOffset, initialYOffset, providers, isCompact);
 
-            if (isCompact) {
+            if (!isCompact) {
                 // TODO: Potentially render extra tooltip data anyways?
                 this.dragonSurvival$renderAbilityLabels(graphics, offset, yOffset, initialYOffset, providers);
             } else if (mouseX >= offset && mouseX <= offset + 33) {
@@ -139,15 +148,9 @@ public class EffectRenderingInventoryScreenMixin {
 
                 if (hoveredProvider != null) {
                     List<Component> list = List.of(
-                            // TODO :: what should be part of this tooltip?
-                            //  duration would be too dynamic since it gets set once on the server
                             hoveredProvider.clientData().tooltip(),
-                            // TODO: Add a proper translation key here
-                            //  see other comment in the method above about the name of the effect
-//                            Component.translatable(hoveredProvider.id().getPath()),
-                            Component.literal(Integer.toString(hoveredProvider.currentDuration()))
+                            dragonSurvival$formatDuration(hoveredProvider, Minecraft.getInstance().level.tickRateManager().tickrate())
                     );
-
                     graphics.renderTooltip(((ScreenAccessor) self).dragonSurvival$getFont(), list, Optional.empty(), mouseX, mouseY);
                 }
             }
