@@ -11,9 +11,12 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.CollisionContext;
 
 // TODO :: add sub entity predicate for easy is ally / team check (and tamable animals) / spectator
 public record DragonBreathTarget(Either<BlockTargeting, EntityTargeting> target, LevelBasedValue rangeMultiplier) implements AbilityTargeting {
@@ -28,7 +31,9 @@ public record DragonBreathTarget(Either<BlockTargeting, EntityTargeting> target,
 
             BlockPos.betweenClosedStream(breathArea).forEach(position -> {
                 if (blockTarget.targetConditions().isEmpty() || blockTarget.targetConditions().get().matches(dragon.serverLevel(), position)) {
-                    blockTarget.effect().forEach(target -> target.apply(dragon, ability, position));
+                    // TODO :: Is this too expensive to calculate for each block?
+                    BlockHitResult blockHitResult = getBlockHitResult(dragon, ability);
+                    blockTarget.effect().forEach(target -> target.apply(dragon, ability, position, blockHitResult.getDirection()));
                 }
             });
         }).ifRight(entityTarget -> {
@@ -45,8 +50,13 @@ public record DragonBreathTarget(Either<BlockTargeting, EntityTargeting> target,
         return CODEC;
     }
 
-    public AABB calculateBreathArea(final Player dragon, final DragonAbilityInstance abilityInstance) {
-        Vec3 viewVector = dragon.getLookAngle().scale(rangeMultiplier.calculate(abilityInstance.level()) * dragon.getAttributeValue(DSAttributes.DRAGON_BREATH_RANGE));
+    public BlockHitResult getBlockHitResult(Player dragon, final DragonAbilityInstance ability) {
+        Vec3 viewVector = dragon.getLookAngle().scale(rangeMultiplier.calculate(ability.level()) * dragon.getAttributeValue(DSAttributes.DRAGON_BREATH_RANGE));
+        return dragon.level().clip(new ClipContext(viewVector, viewVector, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, CollisionContext.empty()));
+    }
+
+    public AABB calculateBreathArea(final Player dragon, final DragonAbilityInstance ability) {
+        Vec3 viewVector = dragon.getLookAngle().scale(rangeMultiplier.calculate(ability.level()) * dragon.getAttributeValue(DSAttributes.DRAGON_BREATH_RANGE));
         double defaultRadius = DragonStateProvider.getData(dragon).getSize() * 0.03;
 
         // Set the radius (value will be at least the default radius)

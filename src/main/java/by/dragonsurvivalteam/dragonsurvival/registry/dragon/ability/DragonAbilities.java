@@ -210,6 +210,13 @@ public class DragonAbilities {
                                         false
                                 )
                         ), LevelBasedValue.constant(1)), LevelBasedValue.constant(10)),
+                        new ActionContainer(new DragonBreathTarget(Either.left(
+                                new AbilityTargeting.BlockTargeting(
+                                                Optional.empty(),
+                                                List.of(new by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.block_effects.FireEffect(
+                                                        LevelBasedValue.constant(0.1f)
+                                                )))
+                        ), LevelBasedValue.constant(1)), LevelBasedValue.constant(1)),
                         new ActionContainer(new SelfTarget(Either.right(
                                 new AbilityTargeting.EntityTargeting(
                                         Optional.empty(),

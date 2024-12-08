@@ -11,7 +11,7 @@ public record SelfTarget(Either<BlockTargeting, EntityTargeting> target) impleme
 
     @Override
     public void apply(final ServerPlayer dragon, final DragonAbilityInstance ability) {
-        target().ifLeft(blockTarget -> blockTarget.effect().forEach(target -> target.apply(dragon, ability, dragon.blockPosition())))
+        target().ifLeft(blockTarget -> blockTarget.effect().forEach(target -> target.apply(dragon, ability, dragon.blockPosition(), null)))
                 .ifRight(entityTarget -> entityTarget.effect().forEach(target -> target.apply(dragon, ability, dragon)));
     }
 

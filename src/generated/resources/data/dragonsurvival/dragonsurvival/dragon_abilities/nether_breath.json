@@ -43,6 +43,21 @@
     {
       "target_selection": {
         "applied_effects": {
+          "block_effect": [
+            {
+              "effect_type": "dragonsurvival:fire",
+              "ignite_probability": 0.1
+            }
+          ]
+        },
+        "range_multiplier": 1.0,
+        "target_type": "dragonsurvival:dragon_breath"
+      },
+      "trigger_rate": 1.0
+    },
+    {
+      "target_selection": {
+        "applied_effects": {
           "entity_effect": [
             {
               "effect_type": "dragonsurvival:breath_particles",

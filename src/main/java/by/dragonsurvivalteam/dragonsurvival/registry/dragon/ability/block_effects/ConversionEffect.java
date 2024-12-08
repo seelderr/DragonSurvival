@@ -4,10 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilit
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
-import net.minecraft.core.HolderSet;
-import net.minecraft.core.RegistryCodecs;
+import net.minecraft.core.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
@@ -30,7 +27,7 @@ public record ConversionEffect(List<ConversionData> conversionData, LevelBasedVa
     }
 
     @Override
-    public void apply(final ServerPlayer dragon, final DragonAbilityInstance ability, final BlockPos position) {
+    public void apply(final ServerPlayer dragon, final DragonAbilityInstance ability, final BlockPos position, Direction direction) {
         if (dragon.getRandom().nextDouble() < probability().calculate(ability.level())) {
             return;
         }

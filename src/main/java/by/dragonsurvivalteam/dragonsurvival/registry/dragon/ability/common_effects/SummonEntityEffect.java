@@ -7,10 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.entity_effec
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
-import net.minecraft.core.HolderSet;
-import net.minecraft.core.RegistryCodecs;
+import net.minecraft.core.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -59,7 +56,7 @@ public record SummonEntityEffect(HolderSet<EntityType<?>> entities, List<Attribu
     }
 
     @Override
-    public void apply(final ServerPlayer dragon, final DragonAbilityInstance ability, final BlockPos position) {
+    public void apply(final ServerPlayer dragon, final DragonAbilityInstance ability, final BlockPos position, Direction direction) {
         spawn(dragon.serverLevel(), dragon, ability, position);
     }
 

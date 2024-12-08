@@ -1,0 +1,38 @@
+package by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.block_effects;
+
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.enchantment.LevelBasedValue;
+import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.state.BlockState;
+
+public record FireEffect(LevelBasedValue igniteProbabiltiy) implements AbilityBlockEffect {
+    public static final MapCodec<FireEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+            LevelBasedValue.CODEC.fieldOf("ignite_probability").forGetter(FireEffect::igniteProbabiltiy)
+    ).apply(instance, FireEffect::new));
+
+    @Override
+    public void apply(ServerPlayer dragon, DragonAbilityInstance ability, BlockPos position, Direction direction) {
+        BlockState state = dragon.serverLevel().getBlockState(position);
+        Block block = state.getBlock();
+        if (block instanceof TntBlock tnt) {
+            tnt.onCaughtFire(state, dragon.level(), position, direction, dragon);
+            dragon.level().setBlock(position, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL_IMMEDIATE);
+        } else if (block instanceof CampfireBlock && !state.getValue(CampfireBlock.LIT)) {
+            dragon.level().setBlock(position, state.setValue(CampfireBlock.LIT, true), Block.UPDATE_ALL_IMMEDIATE);
+        } else if (FireBlock.canBePlacedAt(dragon.level(), position, direction) && dragon.getRandom().nextDouble() < igniteProbabiltiy.calculate(ability.level())) {
+            BlockState fireBlockState = FireBlock.getState(dragon.level(), position);
+            dragon.level().setBlock(position, fireBlockState, Block.UPDATE_ALL_IMMEDIATE);
+            state.onCaughtFire(dragon.level(), position, direction, dragon);
+        }
+    }
+
+    @Override
+    public MapCodec<? extends AbilityBlockEffect> blockCodec() {
+        return CODEC;
+    }
+}

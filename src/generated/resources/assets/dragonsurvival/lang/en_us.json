@@ -474,8 +474,6 @@
   "dragonsurvival.configuration.penalties_enabled.tooltip": "If disabled all penalties will be turned off",
   "dragonsurvival.configuration.pillager_experience_gain": "Pillager Experience Gain",
   "dragonsurvival.configuration.pillager_experience_gain.tooltip": "How many experience points are gained when stealing from villagers",
-  "dragonsurvival.configuration.render_breath_range": "Render Breath Range",
-  "dragonsurvival.configuration.render_breath_range.tooltip": "If enabled the dragon breath range will be rendered (while hitboxes are shown)",
   "dragonsurvival.configuration.render_custom_skin": "Render Custom Skin",
   "dragonsurvival.configuration.render_custom_skin.tooltip": "If enabled your custom dragon skin will be rendered",
   "dragonsurvival.configuration.render_dragon_claws": "Render Dragon Claws",

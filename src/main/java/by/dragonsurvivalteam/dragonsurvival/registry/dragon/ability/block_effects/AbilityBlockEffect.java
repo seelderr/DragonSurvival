@@ -6,6 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.common_effec
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
@@ -15,6 +16,7 @@ import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 
+import javax.annotation.Nullable;
 import java.util.function.Function;
 
 /*
@@ -29,7 +31,7 @@ public interface AbilityBlockEffect {
 
     Codec<AbilityBlockEffect> CODEC = REGISTRY.byNameCodec().dispatch("effect_type", AbilityBlockEffect::blockCodec, Function.identity());
 
-    void apply(final ServerPlayer dragon, final DragonAbilityInstance ability, final BlockPos position);
+    void apply(final ServerPlayer dragon, final DragonAbilityInstance ability, final BlockPos position, @Nullable Direction direction);
     MapCodec<? extends AbilityBlockEffect> blockCodec();
 
     @SubscribeEvent
@@ -43,6 +45,7 @@ public interface AbilityBlockEffect {
             event.register(REGISTRY_KEY, DragonSurvival.res("bonemeal"), () -> BonemealEffect.CODEC);
             event.register(REGISTRY_KEY, DragonSurvival.res("conversion"), () -> ConversionEffect.CODEC);
             event.register(REGISTRY_KEY, DragonSurvival.res("summon_entity"), () -> SummonEntityEffect.CODEC);
+            event.register(REGISTRY_KEY, DragonSurvival.res("fire"), () -> FireEffect.CODEC);
         }
     }
 }

@@ -23,7 +23,7 @@ public record AreaTarget(Either<BlockTargeting, EntityTargeting> target, LevelBa
         target().ifLeft(blockTarget -> {
             BlockPos.betweenClosedStream(calculateAffectedArea(dragon, ability)).forEach(position -> {
                 if (blockTarget.targetConditions().isEmpty() || blockTarget.targetConditions().get().matches(dragon.serverLevel(), position)) {
-                    blockTarget.effect().forEach(target -> target.apply(dragon, ability, position));
+                    blockTarget.effect().forEach(target -> target.apply(dragon, ability, position, null));
                 }
             });
         }).ifRight(entityTarget -> {
