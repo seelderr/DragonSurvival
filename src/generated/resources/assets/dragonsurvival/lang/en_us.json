@@ -102,6 +102,8 @@
   "dragon_ability.dragonsurvival.nether_breath": "Nether breath",
   "dragon_ability.dragonsurvival.nether_breath.desc": "■ Elemental breath: a stream of fire that ignites enemies and blocks. Range depends on age of the dragon.\n■ Is able to destroy some blocks. Cannot be used under water, and during rain.",
   "dragon_ability.dragonsurvival.spike_test": "Spike test.",
+  "dragon_ability.dragonsurvival.tough_skin": "Sturdy Skin",
+  "dragon_ability.dragonsurvival.tough_skin.desc": "Grants additional armor points to all entities in an area around the dragon.",
   "dragonsurvival.advancement.be_adult_dragon": "Older And Stronger",
   "dragonsurvival.advancement.be_adult_dragon.desc": "Grow your dragon into an adult! Time to look for a player-rider.",
   "dragonsurvival.advancement.be_dragon": "Be Yourself",

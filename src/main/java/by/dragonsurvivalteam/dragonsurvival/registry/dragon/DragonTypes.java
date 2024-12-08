@@ -30,7 +30,8 @@ public class DragonTypes {
                 HolderSet.direct(
                         context.lookup(DragonAbility.REGISTRY).getOrThrow(DragonAbilities.NETHER_BREATH),
                         context.lookup(DragonAbility.REGISTRY).getOrThrow(DragonAbilities.FIRE_BALL),
-                        context.lookup(DragonAbility.REGISTRY).getOrThrow(DragonAbilities.LAVA_VISION)
+                        context.lookup(DragonAbility.REGISTRY).getOrThrow(DragonAbilities.LAVA_VISION),
+                        context.lookup(DragonAbility.REGISTRY).getOrThrow(DragonAbilities.TOUGH_SKIN)
                 ),
                 List.of(),
                 List.of(),

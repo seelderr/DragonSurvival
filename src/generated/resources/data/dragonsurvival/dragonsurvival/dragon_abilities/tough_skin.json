@@ -1,0 +1,97 @@
+{
+  "actions": [
+    {
+      "target_selection": {
+        "applied_effects": {
+          "entity_effect": [
+            {
+              "effect_type": "dragonsurvival:modifier",
+              "modifiers": [
+                {
+                  "duration": {
+                    "type": "minecraft:linear",
+                    "base": 1200.0,
+                    "per_level_above_first": 1200.0
+                  },
+                  "id": "dragonsurvival:tough_leather",
+                  "modifiers": [
+                    {
+                      "amount": 3.0,
+                      "attribute": "minecraft:generic.armor",
+                      "operation": "add_value"
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "target_friendly": true
+        },
+        "radius": 5.0,
+        "target_type": "dragonsurvival:area"
+      },
+      "trigger_rate": 1.0
+    }
+  ],
+  "activation": {
+    "type": "active_simple",
+    "animations": {
+      "end": {
+        "animation_key": "mass_buff",
+        "layer": "BASE",
+        "locks_neck": true,
+        "locks_tail": true
+      },
+      "start_and_charging": {
+        "animation_key": "cast_mass_buff",
+        "layer": "BASE",
+        "locks_neck": true,
+        "locks_tail": true,
+        "transition_length": 2
+      }
+    },
+    "cast_time": 20.0,
+    "cooldown": 600.0,
+    "initial_mana_cost": 1.0,
+    "sound": {
+      "end": "minecraft:ui.toast.in"
+    }
+  },
+  "icon": {
+    "texture_entries": [
+      {
+        "from_level": 0,
+        "texture_resource": "dragonsurvival:textures/skills/cave/strong_leather_0.png"
+      },
+      {
+        "from_level": 1,
+        "texture_resource": "dragonsurvival:textures/skills/cave/strong_leather_1.png"
+      },
+      {
+        "from_level": 2,
+        "texture_resource": "dragonsurvival:textures/skills/cave/strong_leather_2.png"
+      },
+      {
+        "from_level": 3,
+        "texture_resource": "dragonsurvival:textures/skills/cave/strong_leather_3.png"
+      }
+    ]
+  },
+  "upgrade": {
+    "type": "passive",
+    "experience_cost": {
+      "type": "minecraft:lookup",
+      "fallback": {
+        "type": "minecraft:linear",
+        "base": 15.0,
+        "per_level_above_first": 15.0
+      },
+      "values": [
+        0.0,
+        15.0,
+        35.0
+      ]
+    },
+    "maximum_level": 3
+  }
+}

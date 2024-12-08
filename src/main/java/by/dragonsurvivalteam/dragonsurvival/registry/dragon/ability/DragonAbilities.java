@@ -3,6 +3,8 @@ package by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.Condition;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.LevelBasedResource;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.Modifier;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.ModifierWithDuration;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.*;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.animation.AnimationLayer;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.animation.SimpleAbilityAnimation;
@@ -14,6 +16,7 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSSounds;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.entity_effects.*;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.targeting.AbilityTargeting;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.targeting.AreaTarget;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.targeting.DragonBreathTarget;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.targeting.SelfTarget;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.ProjectileData;
@@ -29,6 +32,8 @@ import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 import net.minecraft.world.level.material.Fluids;
 
@@ -61,6 +66,10 @@ public class DragonAbilities {
     @Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = "■ Personal buff: makes lava more §2transparent§r while active.")
     @Translation(type = Translation.Type.ABILITY, comments = "Lava Vision")
     public static final ResourceKey<DragonAbility> LAVA_VISION = key("lava_vision");
+
+    @Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = "Grants additional armor points to all entities in an area around the dragon.")
+    @Translation(type = Translation.Type.ABILITY, comments = "Sturdy Skin") // TODO :: strong leather, tough skin or sturdy skin?
+    public static final ResourceKey<DragonAbility> TOUGH_SKIN = key("tough_skin");
 
     public static void registerAbilities(final BootstrapContext<DragonAbility> context) {
         context.register(FIRE_BALL, new DragonAbility(
@@ -293,6 +302,58 @@ public class DragonAbilities {
                         new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/lava_vision_2.png"), 2),
                         new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/lava_vision_3.png"), 3),
                         new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/lava_vision_4.png"), 4)
+                ))
+        ));
+
+        context.register(TOUGH_SKIN, new DragonAbility(
+                new Activation(
+                        Activation.Type.ACTIVE_SIMPLE,
+                        Optional.of(LevelBasedValue.constant(1)),
+                        Optional.empty(),
+                        Optional.of(LevelBasedValue.constant(Functions.secondsToTicks(1))),
+                        Optional.of(LevelBasedValue.constant(Functions.secondsToTicks(30))),
+                        Optional.of(new Activation.Sound(
+                                Optional.empty(),
+                                Optional.empty(),
+                                Optional.empty(),
+                                Optional.of(SoundEvents.UI_TOAST_IN)
+                        )),
+                        Optional.of(new Activation.Animations(
+                                Optional.of(Either.right(new SimpleAbilityAnimation("cast_mass_buff", AnimationLayer.BASE, 2, true, true))),
+                                Optional.empty(),
+                                Optional.of(new SimpleAbilityAnimation("mass_buff", AnimationLayer.BASE, 0, true, true))
+                        ))
+                ),
+                Optional.of(new Upgrade(Upgrade.Type.PASSIVE, 3, LevelBasedValue.lookup(List.of(0f, 15f, 35f), LevelBasedValue.perLevel(15)))),
+                Optional.empty(),
+                List.of(new ActionContainer(new AreaTarget(Either.right(
+                        new AbilityTargeting.EntityTargeting(
+                                Optional.empty(),
+                                List.of(new ModifierEffect(
+                                        List.of(
+                                                new ModifierWithDuration(
+                                                        ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "tough_leather"),
+                                                        List.of(
+                                                                new Modifier(
+                                                                        Attributes.ARMOR,
+                                                                        LevelBasedValue.constant(3),
+                                                                        AttributeModifier.Operation.ADD_VALUE,
+                                                                        Optional.empty()
+                                                                )
+                                                        ),
+                                                        LevelBasedValue.perLevel(Functions.secondsToTicks(60))
+                                                )
+                                        )
+                                )),
+                                true
+                        )),
+                        LevelBasedValue.constant(5)
+                ), LevelBasedValue.constant(1))),
+                new LevelBasedResource(List.of(
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/strong_leather_0.png"), 0),
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/strong_leather_1.png"), 1),
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/strong_leather_2.png"), 2),
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/strong_leather_3.png"), 3)
                 ))
         ));
     }

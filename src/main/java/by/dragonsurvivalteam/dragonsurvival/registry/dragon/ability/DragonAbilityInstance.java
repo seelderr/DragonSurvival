@@ -49,6 +49,7 @@ public class DragonAbilityInstance {
     private boolean isActive;
     private int currentTick;
     private int cooldown;
+    private boolean justCompletedCast;
 
     public DragonAbilityInstance(final Holder<DragonAbility> ability, int level, int slot) {
         this(ability, level, slot, true);
@@ -143,12 +144,10 @@ public class DragonAbilityInstance {
     private void stopCasting(final ServerPlayer dragon) {
         value().activation().playEndSound(dragon);
         value().activation().playEndAnimation(dragon);
-        release(dragon);
-
         MagicData magic = MagicData.getData(dragon);
         magic.stopCasting(dragon);
         // TODO: We can send back the reason we failed here to the client
-        PacketDistributor.sendToPlayer(dragon, new SyncStopCast(dragon.getId(), false));
+        PacketDistributor.sendToPlayer(dragon, new SyncStopCast(dragon.getId(), false, true));
     }
 
     private float getInitialManaCost() {
@@ -216,12 +215,22 @@ public class DragonAbilityInstance {
 
     public void release(final Player dragon) {
         currentTick = 0;
+        this.justCompletedCast = true;
 
         if (dragon.isCreative()) {
             cooldown = NO_COOLDOWN;
         } else {
             cooldown = ability.value().getCooldown(level);
         }
+    }
+
+    public boolean pollJustCompletedCast() {
+        if(justCompletedCast) {
+            justCompletedCast = false;
+            return true;
+        }
+
+        return false;
     }
 
     public void enable() {

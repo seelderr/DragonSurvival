@@ -150,13 +150,13 @@ public class MagicData implements INBTSerializable<CompoundTag> {
         castWasDenied = true;
     }
 
-    public void stopCasting(final Player player) {
+    public void stopCasting(final Player player, boolean forceApplyingEffects) {
         DragonAbilityInstance currentlyCasting = getCurrentlyCasting();
 
         if (currentlyCasting != null) {
             currentlyCasting.stopSound(player);
 
-            if (currentlyCasting.isApplyingEffects()) {
+            if (forceApplyingEffects) {
                 currentlyCasting.release(player);
                 currentlyCasting.value().activation().playEndSound(player);
                 if(currentlyCasting.hasEndAnimation()) {
@@ -177,6 +177,11 @@ public class MagicData implements INBTSerializable<CompoundTag> {
         }
 
         isCasting = false;
+    }
+
+    public void stopCasting(final Player player) {
+        DragonAbilityInstance currentlyCasting = getCurrentlyCasting();
+        stopCasting(player, currentlyCasting != null && currentlyCasting.isApplyingEffects());
     }
 
     public void setClientCooldown(int slot, int cooldown) {

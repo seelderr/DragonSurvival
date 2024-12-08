@@ -78,7 +78,7 @@ public class ClientCastingHandler {
             // Cancel casting if in progress
             if (magicData.isCasting()) {
                 magicData.stopCasting(player);
-                PacketDistributor.sendToServer(new SyncStopCast(player.getId(), false));
+                PacketDistributor.sendToServer(new SyncStopCast(player.getId(), false, false));
             }
 
             // Update slot
@@ -114,7 +114,7 @@ public class ClientCastingHandler {
         if (isAbilityKey(event.getKey(), magicData.getSelectedAbilitySlot())) {
             if (magicData.isCasting()) {
                 magicData.stopCasting(player);
-                PacketDistributor.sendToServer(new SyncStopCast(player.getId(), false));
+                PacketDistributor.sendToServer(new SyncStopCast(player.getId(), false, false));
             }
 
             // Now that the player has released the ability key, we can allow them to attempt to cast again and reset the error message

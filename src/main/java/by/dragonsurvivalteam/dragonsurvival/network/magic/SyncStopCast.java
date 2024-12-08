@@ -18,12 +18,13 @@ import org.jetbrains.annotations.NotNull;
  * @param playerId The player that stopped casting
  * @param wasDenied Forces the client to re-press the cast button to initiate another cast
  */
-public record SyncStopCast(int playerId, boolean wasDenied) implements CustomPacketPayload {
+public record SyncStopCast(int playerId, boolean wasDenied, boolean forceWasApplyingEffects) implements CustomPacketPayload {
     public static final Type<SyncStopCast> TYPE = new CustomPacketPayload.Type<>(DragonSurvival.res("sync_stop_cast"));
 
     public static final StreamCodec<FriendlyByteBuf, SyncStopCast> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.VAR_INT, SyncStopCast::playerId,
             ByteBufCodecs.BOOL, SyncStopCast::wasDenied,
+            ByteBufCodecs.BOOL, SyncStopCast::forceWasApplyingEffects,
             SyncStopCast::new
     );
 
@@ -36,7 +37,11 @@ public record SyncStopCast(int playerId, boolean wasDenied) implements CustomPac
                     magic.denyCast();
                 }
 
-                magic.stopCasting(player);
+                if(packet.forceWasApplyingEffects()) {
+                    magic.stopCasting(player, true);
+                } else {
+                    magic.stopCasting(player);
+                }
             }
         });
     }
