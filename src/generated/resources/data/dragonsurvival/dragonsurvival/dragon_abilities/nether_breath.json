@@ -46,7 +46,7 @@
           "block_effect": [
             {
               "effect_type": "dragonsurvival:fire",
-              "ignite_probability": 0.1
+              "ignite_probability": 0.05
             }
           ]
         },

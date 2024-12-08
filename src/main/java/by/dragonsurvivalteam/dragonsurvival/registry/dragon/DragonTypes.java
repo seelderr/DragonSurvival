@@ -27,7 +27,11 @@ public class DragonTypes {
         context.register(CAVE, new DragonType(
                 HolderSet.empty(),
                 HolderSet.empty(),
-                HolderSet.direct(context.lookup(DragonAbility.REGISTRY).getOrThrow(DragonAbilities.NETHER_BREATH)),
+                HolderSet.direct(
+                        context.lookup(DragonAbility.REGISTRY).getOrThrow(DragonAbilities.NETHER_BREATH),
+                        context.lookup(DragonAbility.REGISTRY).getOrThrow(DragonAbilities.FIRE_BALL),
+                        context.lookup(DragonAbility.REGISTRY).getOrThrow(DragonAbilities.LAVA_VISION)
+                ),
                 List.of(),
                 List.of(),
                 List.of(),

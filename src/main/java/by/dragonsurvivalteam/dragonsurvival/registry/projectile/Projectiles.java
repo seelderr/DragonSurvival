@@ -76,7 +76,7 @@ public class Projectiles {
                 List.of(
                         new ProjectileDamageEffect(
                                 context.lookup(Registries.DAMAGE_TYPE).getOrThrow(DamageTypes.FIREBALL),
-                                LevelBasedValue.perLevel(5)
+                                LevelBasedValue.perLevel(10, 9)
                         )
                 ),
                 List.of())

@@ -28,6 +28,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 import net.minecraft.world.level.material.Fluids;
 
@@ -35,8 +36,9 @@ import java.util.List;
 import java.util.Optional;
 
 public class DragonAbilities {
-    @Translation(type = Translation.Type.ABILITY, comments = "Test fireball ability.")
-    public static final ResourceKey<DragonAbility> FIRE_BALL_TEST = key("fire_ball_test");
+    @Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = "■ Ranged attack: shoots out a fireball that §cexplodes§r and sets the area on fire.")
+    @Translation(type = Translation.Type.ABILITY, comments = "Fireball")
+    public static final ResourceKey<DragonAbility> FIRE_BALL = key("fire_ball");
 
     @Translation(type = Translation.Type.ABILITY, comments = "Spike test.")
     public static final ResourceKey<DragonAbility> SPIKE_TEST = key("spike_test");
@@ -56,19 +58,32 @@ public class DragonAbilities {
     @Translation(type = Translation.Type.ABILITY, comments = "Nether breath")
     public static final ResourceKey<DragonAbility> NETHER_BREATH = key("nether_breath");
 
+    @Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = "■ Personal buff: makes lava more §2transparent§r while active.")
+    @Translation(type = Translation.Type.ABILITY, comments = "Lava Vision")
+    public static final ResourceKey<DragonAbility> LAVA_VISION = key("lava_vision");
+
     public static void registerAbilities(final BootstrapContext<DragonAbility> context) {
-        context.register(FIRE_BALL_TEST, new DragonAbility(
+        context.register(FIRE_BALL, new DragonAbility(
                 new Activation(
                         Activation.Type.ACTIVE_SIMPLE,
+                        Optional.of(LevelBasedValue.constant(1)),
                         Optional.empty(),
-                        Optional.empty(),
-                        Optional.of(LevelBasedValue.constant((float) Functions.secondsToTicks(1))),
-                        Optional.of(LevelBasedValue.constant((float) Functions.secondsToTicks(2))),
-                        Optional.empty(),
-                        Optional.empty()
+                        Optional.of(LevelBasedValue.constant(Functions.secondsToTicks(2))),
+                        Optional.of(LevelBasedValue.constant(Functions.secondsToTicks(7))),
+                        Optional.of(new Activation.Sound(
+                                Optional.empty(),
+                                Optional.empty(),
+                                Optional.empty(),
+                                Optional.of(SoundEvents.FIRECHARGE_USE)
+                        )),
+                        Optional.of(new Activation.Animations(
+                                Optional.of(Either.right(new SimpleAbilityAnimation("breath", AnimationLayer.BREATH, 5, false, false))),
+                                Optional.empty(),
+                                Optional.empty()
+                        ))
                 ),
-                Optional.empty(),
-                Optional.empty(),
+                Optional.of(new Upgrade(Upgrade.Type.PASSIVE, 4, LevelBasedValue.lookup(List.of(0f, 20f, 40f, 45f), LevelBasedValue.perLevel(15)))),
+                Optional.of(EntityPredicate.Builder.entity().located(LocationPredicate.Builder.location().setFluid(FluidPredicate.Builder.fluid().of(Fluids.WATER))).build()),
                 List.of(new ActionContainer(
                         new SelfTarget(
                                 Either.right(
@@ -86,12 +101,13 @@ public class DragonAbilities {
                         ),
                         LevelBasedValue.constant(1)
                 )),
-                new LevelBasedResource(
-                        List.of(new LevelBasedResource.TextureEntry(
-                                ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/icons/body_type_central.png"),
-                                1
-                        ))
-                )
+                new LevelBasedResource(List.of(
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/fireball_0.png"), 0),
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/fireball_1.png"), 1),
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/fireball_2.png"), 2),
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/fireball_3.png"), 3),
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/fireball_4.png"), 4)
+                ))
         ));
 
         context.register(SPIKE_TEST, new DragonAbility(
@@ -99,8 +115,8 @@ public class DragonAbilities {
                         Activation.Type.ACTIVE_SIMPLE,
                         Optional.empty(),
                         Optional.empty(),
-                        Optional.of(LevelBasedValue.constant((float) Functions.secondsToTicks(1))),
-                        Optional.of(LevelBasedValue.constant((float) Functions.secondsToTicks(2))),
+                        Optional.of(LevelBasedValue.constant(Functions.secondsToTicks(1))),
+                        Optional.of(LevelBasedValue.constant(Functions.secondsToTicks(2))),
                         Optional.empty(),
                         Optional.empty()
                 ),
@@ -136,8 +152,8 @@ public class DragonAbilities {
                         Activation.Type.ACTIVE_SIMPLE,
                         Optional.empty(),
                         Optional.empty(),
-                        Optional.of(LevelBasedValue.constant((float) Functions.secondsToTicks(1))),
-                        Optional.of(LevelBasedValue.constant((float) Functions.secondsToTicks(2))),
+                        Optional.of(LevelBasedValue.constant(Functions.secondsToTicks(1))),
+                        Optional.of(LevelBasedValue.constant(Functions.secondsToTicks(2))),
                         Optional.empty(),
                         Optional.empty()
                 ),
@@ -173,8 +189,8 @@ public class DragonAbilities {
                         Activation.Type.ACTIVE_CHANNELED,
                         Optional.empty(),
                         Optional.of(ManaCost.ticking(LevelBasedValue.constant(0.025f))),
-                        Optional.of(LevelBasedValue.constant((float) Functions.secondsToTicks(1))),
-                        Optional.of(LevelBasedValue.constant((float) Functions.secondsToTicks(2))),
+                        Optional.of(LevelBasedValue.constant(Functions.secondsToTicks(1))),
+                        Optional.of(LevelBasedValue.constant(Functions.secondsToTicks(2))),
                         Optional.of(new Activation.Sound(
                                 Optional.of(DSSounds.FIRE_BREATH_START.get()),
                                 Optional.empty(),
@@ -214,7 +230,7 @@ public class DragonAbilities {
                                 new AbilityTargeting.BlockTargeting(
                                                 Optional.empty(),
                                                 List.of(new by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.block_effects.FireEffect(
-                                                        LevelBasedValue.constant(0.1f)
+                                                        LevelBasedValue.constant(0.05f)
                                                 )))
                         ), LevelBasedValue.constant(1)), LevelBasedValue.constant(1)),
                         new ActionContainer(new SelfTarget(Either.right(
@@ -235,6 +251,48 @@ public class DragonAbilities {
                         new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/nether_breath_2.png"), 2),
                         new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/nether_breath_3.png"), 3),
                         new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/nether_breath_4.png"), 4)
+                ))
+        ));
+
+        context.register(LAVA_VISION, new DragonAbility(
+                new Activation(
+                        Activation.Type.ACTIVE_SIMPLE,
+                        Optional.of(LevelBasedValue.constant(1)),
+                        Optional.empty(),
+                        Optional.of(LevelBasedValue.constant(Functions.secondsToTicks(1))),
+                        Optional.of(LevelBasedValue.constant(Functions.secondsToTicks(30))),
+                        Optional.of(new Activation.Sound(
+                                Optional.empty(),
+                                Optional.empty(),
+                                Optional.empty(),
+                                Optional.of(SoundEvents.UI_TOAST_IN)
+                        )),
+                        Optional.of(new Activation.Animations(
+                                Optional.of(Either.right(new SimpleAbilityAnimation("cast_self_buff", AnimationLayer.BASE, 2, true, false))),
+                                Optional.empty(),
+                                Optional.of(new SimpleAbilityAnimation("self_buff", AnimationLayer.BASE, 0, true, false))
+                        ))
+                ),
+                Optional.of(new Upgrade(Upgrade.Type.PASSIVE, 4, LevelBasedValue.lookup(List.of(0f, 25f, 45f, 60f), LevelBasedValue.perLevel(15)))),
+                Optional.empty(),
+                List.of(new ActionContainer(new SelfTarget(Either.right(
+                                new AbilityTargeting.EntityTargeting(
+                                        Optional.empty(),
+                                        List.of(new PotionEffect(
+                                                HolderSet.direct(DSEffects.LAVA_VISION),
+                                                LevelBasedValue.constant(0),
+                                                LevelBasedValue.perLevel(Functions.secondsToTicks(30)),
+                                                LevelBasedValue.constant(1)
+                                        )),
+                                        true
+                                )
+                        )), LevelBasedValue.constant(1))),
+                new LevelBasedResource(List.of(
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/lava_vision_0.png"), 0),
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/lava_vision_1.png"), 1),
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/lava_vision_2.png"), 2),
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/lava_vision_3.png"), 3),
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/lava_vision_4.png"), 4)
                 ))
         ));
     }
