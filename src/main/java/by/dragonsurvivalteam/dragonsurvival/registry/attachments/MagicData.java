@@ -15,6 +15,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -27,14 +28,18 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
 
 import java.text.NumberFormat;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
 import java.util.Optional;
 
 @EventBusSubscriber
 public class MagicData implements INBTSerializable<CompoundTag> {
-    private List<DragonAbilityInstance> abilities = new ArrayList<>();
+    public static final int NO_SLOT = -1;
+    public static final int MAX_ACTIVE = 4;
+
+    private Map<ResourceKey<DragonAbility>, DragonAbilityInstance> abilities = new HashMap<>();
+    private Map<Integer, ResourceKey<DragonAbility>> hotbar = new HashMap<>();
     private boolean renderAbilities = true;
     private int selectedAbilitySlot;
     private float currentMana;
@@ -82,7 +87,7 @@ public class MagicData implements INBTSerializable<CompoundTag> {
 
         MagicData magic = optional.get();
 
-        for (DragonAbilityInstance instance : magic.abilities) {
+        for (DragonAbilityInstance instance : magic.abilities.values()) {
             instance.tick(event.getEntity());
         }
 
@@ -91,22 +96,23 @@ public class MagicData implements INBTSerializable<CompoundTag> {
         }
     }
 
-    public @Nullable DragonAbilityInstance getAbilityFromSlot(int slot) {
-        if (slot < 0 || slot >= abilities.size()) {
-            return null;
-        }
+    public @Nullable DragonAbilityInstance fromSlot(int slot) {
+        ResourceKey<DragonAbility> key = hotbar.get(slot);
+        return key != null ? abilities.get(key) : null;
+    }
 
-        for (DragonAbilityInstance ability : abilities) {
-            if (ability.slot() == slot) {
-                return ability;
+    public int slotFromAbility(final ResourceKey<DragonAbility> key) {
+        for (int slot : hotbar.keySet()) {
+            if (hotbar.get(slot) == key) {
+                return slot;
             }
         }
 
-        return null;
+        return NO_SLOT;
     }
 
     public @Nullable DragonAbilityInstance getCurrentlyCasting() {
-        return isCasting ? getAbilityFromSlot(getSelectedAbilitySlot()) : null;
+        return isCasting ? fromSlot(getSelectedAbilitySlot()) : null;
     }
 
     // TODO :: wait for some server response before showing the casting hud?
@@ -116,7 +122,7 @@ public class MagicData implements INBTSerializable<CompoundTag> {
             return false;
         }
 
-        DragonAbilityInstance instance = getAbilityFromSlot(slot);
+        DragonAbilityInstance instance = fromSlot(slot);
 
         if (instance == null) {
             return false;
@@ -184,7 +190,7 @@ public class MagicData implements INBTSerializable<CompoundTag> {
     }
 
     public void setClientCooldown(int slot, int cooldown) {
-        DragonAbilityInstance ability = getAbilityFromSlot(slot);
+        DragonAbilityInstance ability = fromSlot(slot);
 
         if (ability != null) {
             ability.setCooldown(cooldown);
@@ -201,7 +207,7 @@ public class MagicData implements INBTSerializable<CompoundTag> {
     }
 
     private void beginCasting() {
-        DragonAbilityInstance instance = getAbilityFromSlot(getSelectedAbilitySlot());
+        DragonAbilityInstance instance = fromSlot(getSelectedAbilitySlot());
 
         if (instance == null) {
             return;
@@ -248,79 +254,64 @@ public class MagicData implements INBTSerializable<CompoundTag> {
         selectedAbilitySlot = 0;
     }
 
-    public void refresh(Holder<DragonType> type) {
+    public void refresh(final Holder<DragonType> type) {
         abilities.clear();
+        hotbar.clear();
+
         int slot = 0;
 
         for (Holder<DragonAbility> ability : type.value().abilities()) {
             if (ability.value().activation().type() != Activation.Type.PASSIVE) {
-                if (slot < DragonAbility.MAX_ACTIVE_ON_HOTBAR) {
-                    abilities.add(new DragonAbilityInstance(ability, 1, slot++));
+                if (slot < MAX_ACTIVE) {
+                    abilities.put(ability.getKey(), new DragonAbilityInstance(ability, 1));
+                    hotbar.put(slot, ability.getKey());
+                    slot++;
                 } else {
-                    abilities.add(new DragonAbilityInstance(ability, 1, -1));
+                    abilities.put(ability.getKey(), new DragonAbilityInstance(ability, 1));
                 }
             } else {
-                abilities.add(new DragonAbilityInstance(ability, 1, -1));
+                abilities.put(ability.getKey(), new DragonAbilityInstance(ability, 1));
             }
         }
     }
 
     public List<DragonAbilityInstance> getActiveAbilities() {
-        return abilities.stream().filter(
+        return abilities.values().stream().filter(
                 instance -> instance.ability().value().activation().type() != Activation.Type.PASSIVE
         ).toList();
     }
 
     public List<DragonAbilityInstance> getPassiveAbilities() {
-        return abilities.stream().filter(
+        return abilities.values().stream().filter(
                 instance -> instance.ability().value().activation().type() == Activation.Type.PASSIVE
         ).toList();
     }
 
-    public void swapAbilitiesInSlots(int slot1, int slot2) {
-        DragonAbilityInstance ability1 = getAbilityFromSlot(slot1);
-        DragonAbilityInstance ability2 = getAbilityFromSlot(slot2);
+    public void moveAbilityToSlot(final ResourceKey<DragonAbility> key, int newSlot) {
+        int currentSlot = slotFromAbility(key);
+        ResourceKey<DragonAbility> previous = hotbar.put(newSlot, key);
 
-        if (ability1 != null) {
-            ability1.setSlot(slot2);
+        if (previous != null && currentSlot != NO_SLOT) {
+            hotbar.put(currentSlot, previous);
+        } else {
+            hotbar.remove(currentSlot);
         }
-
-        if (ability2 != null) {
-            ability2.setSlot(slot1);
-        }
-    }
-
-    public void moveAbilityToSlot(ResourceKey<DragonAbility> abilityKey, int newSlot) {
-        DragonAbilityInstance ability = getAbilityFromResourceKey(abilityKey);
-        if (ability != null) {
-            DragonAbilityInstance abilityOccupyingTargetedSlot = getAbilityFromSlot(newSlot);
-            if (abilityOccupyingTargetedSlot != null) {
-                swapAbilitiesInSlots(ability.slot(), abilityOccupyingTargetedSlot.slot());
-            } else {
-                ability.setSlot(newSlot);
-            }
-        }
-    }
-
-    public DragonAbilityInstance getAbilityFromResourceKey(ResourceKey<DragonAbility> key) {
-        for (DragonAbilityInstance ability : abilities) {
-            if (Objects.equals(ability.ability().getKey(), key)) {
-                return ability;
-            }
-        }
-
-        return null;
     }
 
     @Override
     public @UnknownNullability CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider) {
         CompoundTag tag = new CompoundTag();
-        CompoundTag abilityKeys = new CompoundTag();
-        abilities.forEach(instance -> abilityKeys.put(instance.id(), instance.save(provider)));
 
-        tag.put(ABILITIES, abilityKeys);
+        CompoundTag abilities = new CompoundTag();
+        this.abilities.values().forEach(instance -> abilities.put(instance.id(), instance.save(provider)));
+
+        CompoundTag hotbar = new CompoundTag();
+        this.hotbar.forEach((slot, key) -> hotbar.putInt(key.location().toString(), slot));
+
+        tag.put(ABILITIES, abilities);
+        tag.put(HOTBAR, hotbar);
         tag.putFloat(CURRENT_MANA, currentMana);
-        tag.putInt(SELECTED_ABILITY_SLOT, selectedAbilitySlot);
+        tag.putInt(SELECTED_SLOT, selectedAbilitySlot);
         tag.putBoolean(RENDER_ABILITIES, renderAbilities);
 
         return tag;
@@ -328,7 +319,7 @@ public class MagicData implements INBTSerializable<CompoundTag> {
 
     @Override
     public void deserializeNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag tag) {
-        List<DragonAbilityInstance> abilities = new ArrayList<>();
+        Map<ResourceKey<DragonAbility>, DragonAbilityInstance> abilities = new HashMap<>();
         CompoundTag storedAbilities = tag.getCompound(ABILITIES);
 
         for (String key : storedAbilities.getAllKeys()) {
@@ -336,18 +327,32 @@ public class MagicData implements INBTSerializable<CompoundTag> {
             DragonAbilityInstance instance = DragonAbilityInstance.load(provider, abilityTag);
 
             if (instance != null) {
-                abilities.add(instance);
+                abilities.put(instance.key(), instance);
             }
         }
 
         this.abilities = abilities;
+
+        Map<Integer, ResourceKey<DragonAbility>> hotbar = new HashMap<>();
+        CompoundTag storedHotbar = tag.getCompound(HOTBAR);
+
+        for (String location : storedHotbar.getAllKeys()) {
+            int slot = storedHotbar.getInt(location);
+            // TODO :: what if the ability is removed through a datapack?
+            ResourceKey<DragonAbility> key = ResourceKey.create(DragonAbility.REGISTRY, ResourceLocation.parse(location));
+            hotbar.put(slot, key);
+        }
+
+        this.hotbar = hotbar;
+
         currentMana = tag.getFloat(CURRENT_MANA);
-        selectedAbilitySlot = tag.getInt(SELECTED_ABILITY_SLOT);
+        selectedAbilitySlot = tag.getInt(SELECTED_SLOT);
         renderAbilities = tag.getBoolean(RENDER_ABILITIES);
     }
 
     private final String ABILITIES = "abilities";
-    private final String CURRENT_MANA = "currentMana";
-    private final String SELECTED_ABILITY_SLOT = "selectedAbilitySlot";
-    private final String RENDER_ABILITIES = "renderAbilities";
+    private final String HOTBAR = "hotbar";
+    private final String CURRENT_MANA = "current_mana";
+    private final String SELECTED_SLOT = "selected_slot";
+    private final String RENDER_ABILITIES = "render_abilities";
 }

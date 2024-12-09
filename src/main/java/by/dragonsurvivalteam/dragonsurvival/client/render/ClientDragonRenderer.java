@@ -125,7 +125,7 @@ public class ClientDragonRenderer {
             }
 
             MagicData magicData = MagicData.getData(localPlayer);
-            DragonAbilityInstance ability = magicData.getAbilityFromSlot(magicData.getSelectedAbilitySlot());
+            DragonAbilityInstance ability = magicData.fromSlot(magicData.getSelectedAbilitySlot());
             if(ability == null) {
                 return;
             }

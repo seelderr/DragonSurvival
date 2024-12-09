@@ -13,7 +13,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.util.FormattedCharSequence;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
@@ -67,27 +66,29 @@ public class AbilityButton extends Button {
     public void onRelease(double pMouseX, double pMouseY) {
         super.onRelease(pMouseX, pMouseY);
 
-        if(ability == null) return;
+        if (ability == null) return;
 
         if (!ability.isPassive()) {
             dragging = false;
             DragonAbilityInstance abilitySwappedTo = null;
+            //noinspection DataFlowIssue -> player is present
             MagicData data = MagicData.getData(Minecraft.getInstance().player);
-            for (Renderable s : screen.renderables) {
-                if (s instanceof AbilityButton btn) {
-                    if(btn.slot != -1) {
-                        if(btn.isMouseOver(pMouseX, pMouseY)) {
-                            PacketDistributor.sendToServer(new SyncSlotAssignment(ability.key(), btn.slot));
-                            data.moveAbilityToSlot(ability.key(), btn.slot);
-                            abilitySwappedTo = btn.ability;
+
+            for (Renderable renderable : screen.renderables) {
+                if (renderable instanceof AbilityButton button) {
+                    if (button.slot != MagicData.NO_SLOT) {
+                        if (button.isMouseOver(pMouseX, pMouseY)) {
+                            PacketDistributor.sendToServer(new SyncSlotAssignment(ability.key(), button.slot));
+                            data.moveAbilityToSlot(ability.key(), button.slot);
+                            abilitySwappedTo = button.ability;
                             break;
                         }
                     }
                 }
             }
 
-            if(canBeRemoved) {
-                if(abilitySwappedTo == null) {
+            if (canBeRemoved) {
+                if (abilitySwappedTo == null) {
                     PacketDistributor.sendToServer(new SyncSlotAssignment(ability.key(), -1));
                     data.moveAbilityToSlot(ability.key(), -1);
                 }
@@ -102,7 +103,7 @@ public class AbilityButton extends Button {
     @Override
     public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         if(canBeRemoved) {
-            ability = MagicData.getData(Minecraft.getInstance().player).getAbilityFromSlot(slot);
+            ability = MagicData.getData(Minecraft.getInstance().player).fromSlot(slot);
         }
 
         if(ability == null) {

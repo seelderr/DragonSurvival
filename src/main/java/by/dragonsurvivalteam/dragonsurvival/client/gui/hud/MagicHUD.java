@@ -9,7 +9,6 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MagicData;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.platform.Window;
@@ -161,7 +160,7 @@ public class MagicHUD {
         int sizeX = 20;
         int sizeY = 20;
 
-        int i1 = width - sizeX * DragonAbility.MAX_ACTIVE_ON_HOTBAR - 20;
+        int i1 = width - sizeX * MagicData.MAX_ACTIVE - 20;
         int posX = i1;
         int posY = height - sizeY;
 
@@ -173,8 +172,8 @@ public class MagicHUD {
             guiGraphics.blit(VANILLA_WIDGETS, posX, posY - 2, 0, 0, 0, 41, 22, 256, 256);
             guiGraphics.blit(VANILLA_WIDGETS, posX + 41, posY - 2, 0, 141, 0, 41, 22, 256, 256);
 
-            for (int x = 0; x < DragonAbility.MAX_ACTIVE_ON_HOTBAR; x++) {
-                DragonAbilityInstance ability = magicData.getAbilityFromSlot(x);
+            for (int x = 0; x < MagicData.MAX_ACTIVE; x++) {
+                DragonAbilityInstance ability = magicData.fromSlot(x);
 
                 if (ability != null) {
                     guiGraphics.blit(ability.getIcon(), posX + x * sizeX + 3, posY + 1, 0, 0, 16, 16, 16, 16);
@@ -232,7 +231,7 @@ public class MagicHUD {
         }
 
         if (magicData.isCasting()) {
-            DragonAbilityInstance ability = magicData.getAbilityFromSlot(magicData.getSelectedAbilitySlot());
+            DragonAbilityInstance ability = magicData.fromSlot(magicData.getSelectedAbilitySlot());
             float currentCastTime = magicData.getClientCastTimer() - Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false);
             int skillCastTime = ability.getCastTime();
             if (skillCastTime > 0) {

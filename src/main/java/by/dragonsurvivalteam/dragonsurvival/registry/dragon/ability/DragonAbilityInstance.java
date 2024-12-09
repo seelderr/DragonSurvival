@@ -38,13 +38,11 @@ public class DragonAbilityInstance {
     public static Codec<DragonAbilityInstance> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             DragonAbility.CODEC.fieldOf("ability").forGetter(DragonAbilityInstance::ability),
             Codec.INT.fieldOf("level").forGetter(DragonAbilityInstance::level),
-            Codec.INT.fieldOf("slot").forGetter(DragonAbilityInstance::slot),
             Codec.BOOL.fieldOf("is_enabled").forGetter(DragonAbilityInstance::isEnabled)
     ).apply(instance, DragonAbilityInstance::new));
 
     private final Holder<DragonAbility> ability;
     private int level;
-    private int slot;
     private boolean isEnabled;
 
     // TODO :: values which will not be saved
@@ -53,14 +51,13 @@ public class DragonAbilityInstance {
     private int cooldown;
     private boolean justCompletedCast;
 
-    public DragonAbilityInstance(final Holder<DragonAbility> ability, int level, int slot) {
-        this(ability, level, slot, true);
+    public DragonAbilityInstance(final Holder<DragonAbility> ability, int level) {
+        this(ability, level, true);
     }
 
-    public DragonAbilityInstance(final Holder<DragonAbility> ability, int level, int slot, boolean isEnabled) {
+    public DragonAbilityInstance(final Holder<DragonAbility> ability, int level, boolean isEnabled) {
         this.ability = ability;
         this.level = level;
-        this.slot = slot;
         this.isEnabled = isEnabled;
     }
 
@@ -284,10 +281,6 @@ public class DragonAbilityInstance {
         return Component.translatable(Translation.Type.ABILITY.wrap(ability().getKey().location().getPath()));
     }
 
-    public void setSlot(int slot) {
-        this.slot = slot;
-    }
-
     public ResourceKey<DragonAbility> key() {
         return ability.getKey();
     }
@@ -306,10 +299,6 @@ public class DragonAbilityInstance {
 
     public int level() {
         return level;
-    }
-
-    public int slot() {
-        return slot;
     }
 
     public boolean isEnabled() {
