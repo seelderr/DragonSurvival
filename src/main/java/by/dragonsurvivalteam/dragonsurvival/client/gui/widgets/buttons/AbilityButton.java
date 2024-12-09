@@ -61,23 +61,6 @@ public class AbilityButton extends Button {
     @Override
     public void onClick(double pMouseX, double pMouseY) {
         super.onClick(pMouseX, pMouseY);
-
-        // FIXME
-        /*if (skillType == 0) {
-            screen.renderables.forEach(s -> {
-                if (s instanceof AbilityButton btn) {
-                    if (btn != this && btn.skillType == 0 && btn.dragging) {
-                        MagicData data = MagicData.getData(Minecraft.getInstance().player);
-                        btn.onRelease(pMouseX, pMouseY);
-                        DragonAbilityInstance ab1 = data.getAbilityFromSlot(btn.slot);
-                        DragonAbilityInstance ab2 = data.getAbilityFromSlot(slot);
-                        cap.activeDragonAbilities.put(slot, ab1.getName());
-                        cap.activeDragonAbilities.put(btn.slot, ab2.getName());
-                        PacketDistributor.sendToServer(new SyncMagicCap.Data(Minecraft.getInstance().player.getId(), cap.serializeNBT(Minecraft.getInstance().player.registryAccess())));
-                    }
-                }
-            });
-        }*/
     }
 
     @Override
