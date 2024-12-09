@@ -19,6 +19,7 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSSounds;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbility;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.block_effects.FireEffect;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.entity_effects.*;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.targeting.AbilityTargeting;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.targeting.AreaTarget;
@@ -231,7 +232,7 @@ public class CaveDragonAbilities {
                                                         context.lookup(Registries.DAMAGE_TYPE).getOrThrow(DSDamageTypes.CAVE_DRAGON_BREATH),
                                                         LevelBasedValue.perLevel(3)
                                                 ),
-                                                new FireEffect(
+                                                new IgniteEffect(
                                                         LevelBasedValue.perLevel(Functions.secondsToTicks(5))
                                                 ),
                                                 new PotionEffect(
@@ -247,7 +248,7 @@ public class CaveDragonAbilities {
                         new ActionContainer(new DragonBreathTarget(Either.left(
                                 new AbilityTargeting.BlockTargeting(
                                         Optional.empty(),
-                                        List.of(new by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.block_effects.FireEffect(
+                                        List.of(new FireEffect(
                                                 LevelBasedValue.constant(0.05f)
                                         )))
                         ), LevelBasedValue.constant(1)), LevelBasedValue.constant(1)),
