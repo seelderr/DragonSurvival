@@ -47,6 +47,8 @@ public class AbilityScreen extends Screen {
     private static final String HELP_INNATE = Translation.Type.GUI.wrap("help.innate_abilities");
 
     private static final ResourceLocation BACKGROUND_MAIN = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/ability_screen/background_main.png");
+    private static final int INNER_BACKGROUND_WIDTH = 185;
+    private static final int BACKGROUND_BEZEL_WIDTH = 10;
     private static final ResourceLocation EXP_EMPTY = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/ability_screen/exp_empty.png");
     private static final ResourceLocation EXP_FULL = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/ability_screen/exp_full.png");
 
@@ -192,7 +194,7 @@ public class AbilityScreen extends Screen {
         List<DragonAbilityInstance> actives = data.getActiveAbilities();
         List<DragonAbilityInstance> passives = data.getPassiveAbilities();
         for(int i = 0; i < ABILITIES_PER_COLUMN; i++) {
-            addRenderableWidget(new AbilityButton(guiLeft + 55, guiTop + 15 + i * 35, actives.get(i), this));
+            addRenderableWidget(new AbilityButton((int) (guiLeft + BACKGROUND_BEZEL_WIDTH + (INNER_BACKGROUND_WIDTH / 3.7f)), guiTop + i * 40, actives.get(i), this));
         }
        /* DragonStateProvider.getOptional(Minecraft.getInstance().player).ifPresent(cap -> {
             for (int num = 0; num < MagicCap.activeAbilitySlots; num++) {

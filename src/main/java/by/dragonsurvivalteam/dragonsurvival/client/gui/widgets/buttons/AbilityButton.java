@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons;
 
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Activation;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Upgrade;
 import by.dragonsurvivalteam.dragonsurvival.magic.AbilityTooltipRenderer;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbility;
@@ -21,13 +22,15 @@ import java.util.List;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class AbilityButton extends Button {
-    public static final ResourceLocation BLANK_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/blank.png");
+    public static final ResourceLocation ACTIVE_BACKGROUND = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/ability_screen/skill_main.png");
+    public static final ResourceLocation PASSIVE_BACKGROUND = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/ability_screen/skill_other.png");
+    public static final ResourceLocation AUTOUPGRADE_ORNAMENTATION = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/ability_screen/skill_autoupgrade.png");
 
     public DragonAbilityInstance ability;
     private final Screen screen;
 
     public AbilityButton(int x, int y, DragonAbilityInstance ability, Screen screen) {
-        super(x, y, 32, 32, Component.empty(), action -> { /* Nothing to do */ }, DEFAULT_NARRATION);
+        super(x, y, 34, 34, Component.empty(), action -> { /* Nothing to do */ }, DEFAULT_NARRATION);
         this.screen = screen;
         this.ability = ability;
     }
@@ -85,26 +88,50 @@ public class AbilityButton extends Button {
     @Override
     public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         // FIXME
-        boolean isDragging = false;
+        boolean isAnyAbilityButtonDragging = false;
 
         if (!ability.isPassive()) {
             for (Renderable s : screen.renderables) {
                 if (s instanceof AbilityButton btn) {
                     if (btn != this && !btn.ability.isPassive() && btn.dragging) {
-                        isDragging = true;
+                        isAnyAbilityButtonDragging = true;
                         break;
                     }
                 }
             }
         }
 
-        guiGraphics.blit(BLANK_TEXTURE, getX(), getY(), 0, 0, 32, 32, 32, 32);
+        isAnyAbilityButtonDragging |= dragging;
 
-        if (ability != null && !dragging) {
-            guiGraphics.blit(ability.getIcon(), getX(), getY(), 0, 0, 32, 32, 32, 32);
+        if(ability.isPassive()) {
+            guiGraphics.blit(PASSIVE_BACKGROUND, getX() - 2, getY() - 2, 0, 0, 38, 38, 38, 38);
+        } else {
+            guiGraphics.blit(ACTIVE_BACKGROUND, getX() - 2, getY() - 2, 0, 0, 38, 38, 38, 38);
         }
 
-        if (isHovered()) {
+        if(ability.ability().value().upgrade().isPresent()) {
+            if(ability.ability().value().upgrade().get().type() == Upgrade.Type.PASSIVE) {
+                guiGraphics.blit(AUTOUPGRADE_ORNAMENTATION, getX() - 2, getY() - 2, 0, 0, 38, 38, 38, 38);
+            }
+        }
+
+        if (ability != null) {
+            guiGraphics.pose().pushPose();
+            guiGraphics.pose().translate(0, 0, 50);
+            int x, y;
+            if(dragging) {
+                x = mouseX - 17;
+                y = mouseY - 17;
+                guiGraphics.pose().translate(0, 0, 100);
+            } else {
+                x = getX();
+                y = getY();
+            }
+            guiGraphics.blit(ability.getIcon(), x, y, 0, 0, 34, 34, 34, 34);
+            guiGraphics.pose().popPose();
+        }
+
+        if (isHovered() && !isAnyAbilityButtonDragging) {
             if (ability != null) {
                 FormattedText nameAndDescriptionRaw = ability.getName();
 
@@ -118,7 +145,7 @@ public class AbilityButton extends Button {
                 guiGraphics.pose().pushPose();
                 // Render above the other UI elements
                 guiGraphics.pose().translate(0, 0, 150);
-                AbilityTooltipRenderer.drawAbilityHover(guiGraphics, getX() + width, yPos - 50, ability);
+                AbilityTooltipRenderer.drawAbilityHover(guiGraphics, getX() + width, yPos - 30, ability);
                 guiGraphics.pose().popPose();
             }
         }
