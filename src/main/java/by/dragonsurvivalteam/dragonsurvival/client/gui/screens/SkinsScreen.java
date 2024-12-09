@@ -337,7 +337,7 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
         wikiButton.setTooltip(Tooltip.create(Component.translatable(WIKI)));
         addRenderableWidget(wikiButton);
 
-        addRenderableWidget(new HelpButton(startX + 128 + imageWidth / 2 - 8, startY + 128 + 30, 16, 16, HELP, 1));
+        addRenderableWidget(new HelpButton(startX + 128 + imageWidth / 2 - 8, startY + 128 + 30, 16, 16, HELP));
 
         addRenderableWidget(Button.builder(Component.translatable(SELF), button -> {
             playerName = Objects.requireNonNull(player).getGameProfile().getName();

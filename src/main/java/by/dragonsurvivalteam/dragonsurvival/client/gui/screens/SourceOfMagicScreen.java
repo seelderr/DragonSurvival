@@ -47,7 +47,7 @@ public class SourceOfMagicScreen extends AbstractContainerScreen<SourceOfMagicCo
     @Override
     protected void init() {
         super.init();
-        addRenderableWidget(new HelpButton(leftPos + 12, topPos + 12, 12, 12, HELP, 0));
+        addRenderableWidget(new HelpButton(leftPos + 12, topPos + 12, 12, 12, HELP));
     }
 
     @Override

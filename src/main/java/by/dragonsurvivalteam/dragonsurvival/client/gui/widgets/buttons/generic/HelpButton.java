@@ -17,70 +17,69 @@ import java.util.List;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class HelpButton extends ExtendedButton {
-    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/help_button.png");
+    private static final ResourceLocation DEFAULT_HELP_BUTTON = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/help_button.png");
 
     private final String text;
-    private final int variation;
     private final Holder<DragonType> type;
+    private final ResourceLocation main;
+    private final ResourceLocation hover;
 
     private boolean usesVanillaTooltip;
 
-    public HelpButton(int x, int y, int sizeX, int sizeY, String text, int variation) {
-        this(DragonStateProvider.getData(Minecraft.getInstance().player).getDragonType(), x, y, sizeX, sizeY, text, variation);
+    public HelpButton(int x, int y, int sizeX, int sizeY, String text) {
+        this(DragonStateProvider.getData(Minecraft.getInstance().player).getDragonType(), x, y, sizeX, sizeY, text, null, null);
+    }
+
+    public HelpButton(int x, int y, int sizeX, int sizeY, String text, ResourceLocation main, ResourceLocation hover) {
+        this(DragonStateProvider.getData(Minecraft.getInstance().player).getDragonType(), x, y, sizeX, sizeY, text, main, hover);
     }
 
     // This is needed for the DragonScreen, as otherwise we'll get cut out by the scissoring used for the rendering of the player entity in the window
-    public HelpButton(int x, int y, int sizeX, int sizeY, String text, int variation, boolean usesVanillaTooltip) {
-        this(DragonStateProvider.getData(Minecraft.getInstance().player).getDragonType(), x, y, sizeX, sizeY, text, variation);
+    public HelpButton(int x, int y, int sizeX, int sizeY, String text, boolean usesVanillaTooltip) {
+        this(DragonStateProvider.getData(Minecraft.getInstance().player).getDragonType(), x, y, sizeX, sizeY, text, null, null);
         if (usesVanillaTooltip) {
             setTooltip(Tooltip.create(Component.translatable(text)));
         }
         this.usesVanillaTooltip = usesVanillaTooltip;
     }
 
-    public HelpButton(Holder<DragonType> type, int x, int y, int sizeX, int sizeY, String text, int variation) {
+    public HelpButton(Holder<DragonType> type, int x, int y, int sizeX, int sizeY, String text, ResourceLocation main, ResourceLocation hover) {
         super(x, y, sizeX, sizeY, Component.empty(), action -> { /* Nothing to do */ });
         this.text = text;
-        this.variation = variation;
         this.type = type;
+        this.main = main;
+        this.hover = hover;
     }
 
     @Override
     public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        RenderSystem.setShaderTexture(0, TEXTURE);
-
-        float size = variation == 0 ? 18f : 22f;
-        float xSize = (float) (width + (variation == 0 ? 0 : 2)) / size;
-        float ySize = (float) (height + (variation == 0 ? 0 : 2)) / size;
-
         if (isHovered() && !usesVanillaTooltip) {
             // Render the tooltip manually since minecraft's tooltip positioner often fails with this button type
             guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, List.of(Component.translatable(text)), mouseX, mouseY);
         }
 
-        guiGraphics.pose().pushPose();
-        guiGraphics.pose().translate(getX() - getX() * xSize, getY() - getY() * ySize, 0);
-        guiGraphics.pose().scale(xSize, ySize, 0);
+        // FIXME :: We don't use the supplied size at all here. Figure out how to use it correctly.
+        if(main == null || hover == null) {
+            ResourceLocation texture;
+            if (type != null) {
+                texture = type.value().miscResources().helpButton();
+            } else {
+                // Can occur when the altar is entered as a human
+                texture = DEFAULT_HELP_BUTTON;
+            }
 
-        // FIXME: These UV coordinates will be wrong until we get the final texture
-        ResourceLocation texture;
-        float vOffset = 0;
-
-        if (type != null) {
-            texture = type.value().miscResources().helpButton();
+            if(!isHovered()) {
+                guiGraphics.blit(texture, getX(), getY(), 0, 1, 9, 9, 20, 11);
+            } else {
+                guiGraphics.blit(texture, getX() - 1, getY() - 1, 9, 0, 11, 11, 20, 11);
+            }
         } else {
-            // Can occur when the altar is entered as a human
-            texture = TEXTURE;
-            vOffset = 4 * size;
+            if(!isHovered()) {
+                guiGraphics.blit(main, getX(), getY(), 1, 0, 9, 9, 20, 11);
+            } else {
+                guiGraphics.blit(hover, getX(), getY(), 0, 10, 11, 11, 20, 11);
+            }
         }
-
-        if (variation == 0) {
-            guiGraphics.blit(texture, getX(), getY(), 0, vOffset, 18, 18, 256, 256);
-        } else {
-            guiGraphics.blit(texture, getX() - 1, getY() - 1, 18, vOffset, 22, 22, 256, 256);
-        }
-
-        guiGraphics.pose().popPose();
     }
 
     @Override

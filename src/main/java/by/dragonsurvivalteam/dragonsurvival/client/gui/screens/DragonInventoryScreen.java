@@ -152,7 +152,7 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
         clawMenuButtons.add(growthIcon);
 
         // Info button at the bottom of the claw menu
-        HelpButton infoButton = new HelpButton(leftPos - 80 + 34, topPos + 112, 9, 9, HELP_CLAWS, 0, true);
+        HelpButton infoButton = new HelpButton(leftPos - 80 + 34, topPos + 112, 9, 9, HELP_CLAWS, true);
         addRenderableWidget(infoButton);
         clawMenuButtons.add(infoButton);
 

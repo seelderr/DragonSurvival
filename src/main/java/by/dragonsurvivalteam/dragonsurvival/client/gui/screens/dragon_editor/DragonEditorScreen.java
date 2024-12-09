@@ -786,7 +786,7 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
         showUiCheckbox = new ExtendedCheckbox(guiLeft - 15, 11, 40, 18, 18, Component.translatable(SHOW_UI), showUi, p -> showUi = p.selected());
         addRenderableWidget(showUiCheckbox);
         addRenderableWidget(new BackgroundColorButton(guiLeft - 45, 11, 18, 18, Component.empty(), action -> { /* Nothing to do */ }, this));
-        addRenderableWidget(new HelpButton(dragonType, guiLeft - 75, 11, 15, 15, CUSTOMIZATION, 1));
+        addRenderableWidget(new HelpButton(guiLeft - 75, 11, 15, 15, CUSTOMIZATION));
     }
 
     @Override
