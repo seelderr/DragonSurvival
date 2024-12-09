@@ -3,7 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.registry.dragon;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.GrowthIcon;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.MiscDragonTextures;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilities;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.abilities.CaveDragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.datapacks.AncientDatapack;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStages;
@@ -28,10 +28,10 @@ public class DragonTypes {
                 HolderSet.empty(),
                 HolderSet.empty(),
                 HolderSet.direct(
-                        context.lookup(DragonAbility.REGISTRY).getOrThrow(DragonAbilities.NETHER_BREATH),
-                        context.lookup(DragonAbility.REGISTRY).getOrThrow(DragonAbilities.FIRE_BALL),
-                        context.lookup(DragonAbility.REGISTRY).getOrThrow(DragonAbilities.LAVA_VISION),
-                        context.lookup(DragonAbility.REGISTRY).getOrThrow(DragonAbilities.TOUGH_SKIN)
+                        context.lookup(DragonAbility.REGISTRY).getOrThrow(CaveDragonAbilities.NETHER_BREATH),
+                        context.lookup(DragonAbility.REGISTRY).getOrThrow(CaveDragonAbilities.FIRE_BALL),
+                        context.lookup(DragonAbility.REGISTRY).getOrThrow(CaveDragonAbilities.LAVA_VISION),
+                        context.lookup(DragonAbility.REGISTRY).getOrThrow(CaveDragonAbilities.TOUGH_SKIN)
                 ),
                 List.of(),
                 List.of(),
@@ -70,7 +70,7 @@ public class DragonTypes {
         context.register(SEA, new DragonType(
                 HolderSet.empty(),
                 HolderSet.empty(),
-                HolderSet.direct(context.lookup(DragonAbility.REGISTRY).getOrThrow(DragonAbilities.NETHER_BREATH)),
+                HolderSet.direct(context.lookup(DragonAbility.REGISTRY).getOrThrow(CaveDragonAbilities.NETHER_BREATH)),
                 List.of(),
                 List.of(),
                 List.of(),
@@ -108,7 +108,7 @@ public class DragonTypes {
         context.register(FOREST, new DragonType(
                 HolderSet.empty(),
                 HolderSet.empty(),
-                HolderSet.direct(context.lookup(DragonAbility.REGISTRY).getOrThrow(DragonAbilities.NETHER_BREATH)),
+                HolderSet.direct(context.lookup(DragonAbility.REGISTRY).getOrThrow(CaveDragonAbilities.NETHER_BREATH)),
                 List.of(),
                 List.of(),
                 List.of(),
