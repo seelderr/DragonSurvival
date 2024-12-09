@@ -100,24 +100,19 @@ public class CaveDragonAbilities {
                 ),
                 Optional.of(new Upgrade(Upgrade.Type.PASSIVE, 4, LevelBasedValue.lookup(List.of(0f, 20f, 40f, 45f), LevelBasedValue.perLevel(15)))),
                 Optional.of(EntityPredicate.Builder.entity().located(LocationPredicate.Builder.location().setFluid(FluidPredicate.Builder.fluid().of(Fluids.WATER))).build()),
-                List.of(new ActionContainer(
-                        new SelfTarget(
-                                Either.right(
-                                        new AbilityTargeting.EntityTargeting(
-                                                Optional.of(Condition.living()),
-                                                List.of(new ProjectileEffect(
-                                                        context.lookup(ProjectileData.REGISTRY).getOrThrow(Projectiles.FIREBALL),
-                                                        TargetDirection.lookingAt(),
-                                                        LevelBasedValue.constant(1),
-                                                        LevelBasedValue.constant(0),
-                                                        LevelBasedValue.constant(1)
-                                                )),
-                                                false
-                                        )
-                                )
-                        ),
-                        LevelBasedValue.constant(1)
-                )),
+                List.of(new ActionContainer(new SelfTarget(Either.right(
+                        new AbilityTargeting.EntityTargeting(
+                                Optional.of(Condition.living()),
+                                List.of(new ProjectileEffect(
+                                        context.lookup(ProjectileData.REGISTRY).getOrThrow(Projectiles.FIREBALL),
+                                        TargetDirection.lookingAt(),
+                                        LevelBasedValue.constant(1),
+                                        LevelBasedValue.constant(0),
+                                        LevelBasedValue.constant(1)
+                                )),
+                                false
+                        )
+                ), false), LevelBasedValue.constant(1))),
                 new LevelBasedResource(List.of(
                         new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/fireball_0.png"), 0),
                         new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/fireball_1.png"), 1),
@@ -187,7 +182,7 @@ public class CaveDragonAbilities {
                                         )),
                                         true
                                 )
-                        )), LevelBasedValue.constant(1))),
+                        ), false), LevelBasedValue.constant(1))),
                 new LevelBasedResource(List.of(
                         new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/nether_breath_0.png"), 0),
                         new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/nether_breath_1.png"), 1),
@@ -229,7 +224,7 @@ public class CaveDragonAbilities {
                                 )),
                                 true
                         )
-                )), LevelBasedValue.constant(1))),
+                ), false), LevelBasedValue.constant(1))),
                 new LevelBasedResource(List.of(
                         new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/lava_vision_0.png"), 0),
                         new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/lava_vision_1.png"), 1),

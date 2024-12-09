@@ -27,6 +27,8 @@ public interface AbilityEntityEffect {
     void apply(final ServerPlayer dragon, final DragonAbilityInstance ability, final Entity entity);
     MapCodec<? extends AbilityEntityEffect> entityCodec();
 
+    default void remove(final ServerPlayer dragon, final DragonAbilityInstance ability, final Entity entity) { /* Nothing to do */ }
+
     @SubscribeEvent
     static void register(final NewRegistryEvent event) {
         event.register(REGISTRY);

@@ -40,19 +40,24 @@ public record HarvestBonus(ResourceLocation id, HolderSet<Block> applicableTo, L
         int newDuration = (int) duration().calculate(abilityLevel);
 
         HarvestBonuses data = target.getData(DSDataAttachments.HARVEST_BONUSES);
-        HarvestBonus.Instance instance = data.get(this);
+        Instance instance = data.get(this);
 
         if (instance != null && instance.currentDuration() == newDuration && instance.appliedAbilityLevel() == abilityLevel) {
             return;
         }
 
         if (instance != null) {
-            data.remove(instance);
+            data.remove(this);
         }
 
         ClientEffectProvider.ClientData clientData = new ClientEffectProvider.ClientData(ability.getIcon(), /* TODO */ Component.empty(), Optional.of(dragon.getUUID()));
-        data.add(new HarvestBonus.Instance(this, clientData, abilityLevel, newDuration));
+        data.add(new Instance(this, clientData, abilityLevel, newDuration));
         // TODO :: send packet to client
+    }
+
+    public void remove(final LivingEntity target) {
+        HarvestBonuses data = target.getData(DSDataAttachments.HARVEST_BONUSES);
+        data.remove(this);
     }
 
     public static class Instance implements ClientEffectProvider {

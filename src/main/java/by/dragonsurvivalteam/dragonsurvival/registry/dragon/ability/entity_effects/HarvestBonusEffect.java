@@ -18,7 +18,14 @@ public record HarvestBonusEffect(List<HarvestBonus> bonuses) implements AbilityE
     @Override
     public void apply(final ServerPlayer dragon, final DragonAbilityInstance ability, final Entity entity) {
         if (entity instanceof LivingEntity livingEntity) {
-            bonuses().forEach(modifier -> modifier.apply(dragon, ability, livingEntity));
+            bonuses.forEach(bonus -> bonus.apply(dragon, ability, livingEntity));
+        }
+    }
+
+    @Override
+    public void remove(final ServerPlayer dragon, final DragonAbilityInstance ability, final Entity entity) {
+        if (entity instanceof LivingEntity livingEntity) {
+            bonuses.forEach(bonus -> bonus.remove(livingEntity));
         }
     }
 

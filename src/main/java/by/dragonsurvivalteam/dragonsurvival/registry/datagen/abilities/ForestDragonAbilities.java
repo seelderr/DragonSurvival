@@ -44,25 +44,19 @@ public class ForestDragonAbilities {
                 ),
                 Optional.empty(),
                 Optional.empty(),
-                List.of(new ActionContainer(
-                        new AreaTarget(
-                                Either.right(
-                                        new AbilityTargeting.EntityTargeting(
-                                                Optional.of(Condition.living()),
-                                                List.of(new ProjectileEffect(
-                                                        context.lookup(ProjectileData.REGISTRY).getOrThrow(Projectiles.SPIKE),
-                                                        TargetDirection.towardsEntity(),
-                                                        LevelBasedValue.constant(1),
-                                                        LevelBasedValue.constant(0),
-                                                        LevelBasedValue.constant(1)
-                                                )),
-                                                false
-                                        )
-                                ),
-                                LevelBasedValue.constant(32)
-                        ),
-                        LevelBasedValue.constant(1)
-                )),
+                List.of(new ActionContainer(new AreaTarget(Either.right(
+                        new AbilityTargeting.EntityTargeting(
+                                Optional.of(Condition.living()),
+                                List.of(new ProjectileEffect(
+                                        context.lookup(ProjectileData.REGISTRY).getOrThrow(Projectiles.SPIKE),
+                                        TargetDirection.towardsEntity(),
+                                        LevelBasedValue.constant(1),
+                                        LevelBasedValue.constant(0),
+                                        LevelBasedValue.constant(1)
+                                )),
+                                false
+                        )
+                ), LevelBasedValue.constant(32)), LevelBasedValue.constant(1))),
                 new LevelBasedResource(
                         List.of(
                                 new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/icons/body_type_central.png"), 1)

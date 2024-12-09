@@ -19,6 +19,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 
 import java.util.Optional;
@@ -50,6 +51,11 @@ public record DamageModification(ResourceLocation id, HolderSet<DamageType> dama
         ClientEffectProvider.ClientData clientData = new ClientEffectProvider.ClientData(ability.getIcon(), /* TODO */ Component.empty(), Optional.of(dragon.getUUID()));
         data.add(new Instance(this, clientData, abilityLevel, newDuration));
         // TODO :: send packet to client
+    }
+
+    public void remove(final LivingEntity target) {
+        DamageModifications data = target.getData(DSDataAttachments.DAMAGE_MODIFICATIONS);
+        data.remove(target, this);
     }
 
     public static class Instance implements ClientEffectProvider {

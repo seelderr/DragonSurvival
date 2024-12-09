@@ -54,10 +54,25 @@ public record ModifierWithDuration(ResourceLocation id, ResourceLocation icon, L
         }
 
         ClientEffectProvider.ClientData clientData = new ClientEffectProvider.ClientData(icon, /* TODO */ Component.empty(), Optional.of(dragon.getUUID()));
-        ModifierWithDuration.Instance newModifier = new ModifierWithDuration.Instance(this, new HashMap<>(), clientData, abilityLevel, newDuration);
+        Instance newModifier = new ModifierWithDuration.Instance(this, new HashMap<>(), clientData, abilityLevel, newDuration);
         data.add(target, newModifier);
-        if(target instanceof ServerPlayer player) {
-            PacketDistributor.sendToPlayer(player, new SyncModifierWithDuration(player.getId(), newModifier));
+
+        if (target instanceof ServerPlayer serverPlayer) {
+            // TODO :: just sync client data in one generic packet so it can be re-used?
+            PacketDistributor.sendToPlayer(serverPlayer, new SyncModifierWithDuration(serverPlayer.getId(), newModifier));
+        }
+    }
+
+    public void remove(final LivingEntity target) {
+        ModifiersWithDuration data = target.getData(DSDataAttachments.MODIFIERS_WITH_DURATION);
+        Instance instance = data.get(this);
+
+        if (instance != null) {
+            data.remove(target, instance);
+        }
+
+        if (target instanceof ServerPlayer serverPlayer) {
+            // TODO :: sync the removal
         }
     }
 

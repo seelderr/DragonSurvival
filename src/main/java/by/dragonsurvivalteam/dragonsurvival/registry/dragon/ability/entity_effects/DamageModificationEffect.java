@@ -6,6 +6,7 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 
 import java.util.List;
 
@@ -16,7 +17,14 @@ public record DamageModificationEffect(List<DamageModification> modifications) i
 
     @Override
     public void apply(final ServerPlayer dragon, final DragonAbilityInstance ability, final Entity entity) {
-        modifications().forEach(modification -> modification.apply(dragon, entity, ability));
+        modifications.forEach(modification -> modification.apply(dragon, entity, ability));
+    }
+
+    @Override
+    public void remove(final ServerPlayer dragon, final DragonAbilityInstance ability, final Entity entity) {
+        if (entity instanceof LivingEntity livingEntity) {
+            modifications.forEach(modification -> modification.remove(livingEntity));
+        }
     }
 
     @Override

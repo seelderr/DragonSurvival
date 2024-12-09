@@ -65,12 +65,12 @@ public class HarvestBonuses implements INBTSerializable<CompoundTag> {
         harvestBonuses.put(bonus.baseData().id(), bonus);
     }
 
-    public void remove(final HarvestBonus.Instance bonus) {
+    public void remove(final HarvestBonus bonus) {
         if (harvestBonuses == null) {
             return;
         }
 
-        harvestBonuses.remove(bonus.baseData().id());
+        harvestBonuses.remove(bonus.id());
     }
 
     public @Nullable HarvestBonus.Instance get(final HarvestBonus bonus) {

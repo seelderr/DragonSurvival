@@ -26,7 +26,7 @@ public record PotionEffect(HolderSet<MobEffect> effects, LevelBasedValue amplifi
         if (entity instanceof LivingEntity livingEntity) {
             int abilityLevel = ability.level();
 
-            effects().forEach(effect -> {
+            effects.forEach(effect -> {
                 MobEffectInstance currentInstance = livingEntity.getEffect(effect);
 
                 int duration = (int) duration().calculate(abilityLevel);
@@ -39,10 +39,19 @@ public record PotionEffect(HolderSet<MobEffect> effects, LevelBasedValue amplifi
                     return;
                 }
 
-                if (livingEntity.getRandom().nextDouble() < probability().calculate(abilityLevel)) {
+                if (livingEntity.getRandom().nextDouble() < probability.calculate(abilityLevel)) {
                     livingEntity.addEffect(new MobEffectInstance(effect, duration, amplifier));
                 }
             });
+        }
+    }
+
+    @Override
+    public void remove(final ServerPlayer dragon, final DragonAbilityInstance ability, final Entity entity) {
+        if (entity instanceof LivingEntity livingEntity) {
+            // FIXME :: need to flag the instance to know that we applied it?
+            //  would also need to check (and remove) the hidden effect if the base instance is not ours?
+            effects.forEach(livingEntity::removeEffect);
         }
     }
 
