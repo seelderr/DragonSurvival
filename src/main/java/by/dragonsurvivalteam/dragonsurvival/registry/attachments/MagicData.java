@@ -14,6 +14,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -28,6 +29,7 @@ import org.jetbrains.annotations.UnknownNullability;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @EventBusSubscriber
@@ -273,6 +275,41 @@ public class MagicData implements INBTSerializable<CompoundTag> {
         return abilities.stream().filter(
                 instance -> instance.ability().value().activation().type() == Activation.Type.PASSIVE
         ).toList();
+    }
+
+    public void swapAbilitiesInSlots(int slot1, int slot2) {
+        DragonAbilityInstance ability1 = getAbilityFromSlot(slot1);
+        DragonAbilityInstance ability2 = getAbilityFromSlot(slot2);
+
+        if (ability1 != null) {
+            ability1.setSlot(slot2);
+        }
+
+        if (ability2 != null) {
+            ability2.setSlot(slot1);
+        }
+    }
+
+    public void moveAbilityToSlot(ResourceKey<DragonAbility> abilityKey, int newSlot) {
+        DragonAbilityInstance ability = getAbilityFromResourceKey(abilityKey);
+        if (ability != null) {
+            DragonAbilityInstance abilityOccupyingTargetedSlot = getAbilityFromSlot(newSlot);
+            if (abilityOccupyingTargetedSlot != null) {
+                swapAbilitiesInSlots(ability.slot(), abilityOccupyingTargetedSlot.slot());
+            } else {
+                ability.setSlot(newSlot);
+            }
+        }
+    }
+
+    public DragonAbilityInstance getAbilityFromResourceKey(ResourceKey<DragonAbility> key) {
+        for (DragonAbilityInstance ability : abilities) {
+            if (Objects.equals(ability.ability().getKey(), key)) {
+                return ability;
+            }
+        }
+
+        return null;
     }
 
     @Override

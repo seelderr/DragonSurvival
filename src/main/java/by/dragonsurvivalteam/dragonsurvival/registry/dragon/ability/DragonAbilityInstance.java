@@ -284,6 +284,10 @@ public class DragonAbilityInstance {
         return Component.translatable(Translation.Type.ABILITY.wrap(ability().getKey().location().getPath()));
     }
 
+    public void setSlot(int slot) {
+        this.slot = slot;
+    }
+
     public ResourceKey<DragonAbility> key() {
         return ability.getKey();
     }

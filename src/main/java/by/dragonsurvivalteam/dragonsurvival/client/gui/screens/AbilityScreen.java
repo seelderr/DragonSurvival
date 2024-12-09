@@ -5,22 +5,27 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.*;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MagicData;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import by.dragonsurvivalteam.dragonsurvival.util.ExperienceUtils;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.player.Input;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
@@ -57,10 +62,17 @@ public class AbilityScreen extends Screen {
     private static final String HELP_INNATE = Translation.Type.GUI.wrap("help.innate_abilities");
 
     private static final ResourceLocation BACKGROUND_MAIN = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/ability_screen/background_main.png");
+    private static final ResourceLocation BACKGROUND_SIDE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/ability_screen/background_side.png");
     private static final int INNER_BACKGROUND_WIDTH = 185;
     private static final int BACKGROUND_BEZEL_WIDTH = 10;
     private static final ResourceLocation EXP_EMPTY = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/ability_screen/exp_empty.png");
     private static final ResourceLocation EXP_FULL = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/ability_screen/exp_full.png");
+    private static final ResourceLocation LEFT_PANEL_ARROW_CLICK = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/ability_screen/addition_arrow_left_click.png");
+    private static final ResourceLocation LEFT_PANEL_ARROW_HOVER = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/ability_screen/addition_arrow_left_hover.png");
+    private static final ResourceLocation LEFT_PANEL_ARROW_MAIN = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/ability_screen/addition_arrow_left_main.png");
+    private static final ResourceLocation RIGHT_PANEL_ARROW_CLICK = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/ability_screen/addition_arrow_right_click.png");
+    private static final ResourceLocation RIGHT_PANEL_ARROW_HOVER = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/ability_screen/addition_arrow_right_hover.png");
+    private static final ResourceLocation RIGHT_PANEL_ARROW_MAIN = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/ability_screen/addition_arrow_right_main.png");
 
     /**
      * Currently used to determine how much % of the green experience bar is filled <br>
@@ -77,6 +89,10 @@ public class AbilityScreen extends Screen {
     private int guiLeft;
     private int guiTop;
     private Holder<DragonType> type;
+    private boolean leftWindowOpen;
+    private final List<AbstractWidget> leftWindowWidgets = new ArrayList<>();
+    private boolean rightWindowOpen;
+    private final List<AbstractWidget> rightWindowWidgets = new ArrayList<>();
 
     public AbilityScreen(Screen sourceScreen) {
         super(Component.empty().append("AbilityScreen")); // FIXME :: what is this component used for
@@ -98,7 +114,13 @@ public class AbilityScreen extends Screen {
         int startX = guiLeft + 25;
         int startY = guiTop - 28;
 
+        if(leftWindowOpen) {
+            guiGraphics.blit(BACKGROUND_SIDE, startX - 50, startY, 0, 0, 48, 203);
+        }
         guiGraphics.blit(BACKGROUND_MAIN, startX, startY, 0, 0, 256, 256);
+        if(rightWindowOpen) {
+            guiGraphics.blit(BACKGROUND_SIDE, startX + 207, startY, 0, 0, 48, 203);
+        }
 
         if (type != null) {
             //noinspection DataFlowIssue -> player should not be null
@@ -206,6 +228,82 @@ public class AbilityScreen extends Screen {
         for(int i = 0; i < ABILITIES_PER_COLUMN; i++) {
             addRenderableWidget(new AbilityButton((int) (guiLeft + BACKGROUND_BEZEL_WIDTH + (INNER_BACKGROUND_WIDTH / 3.7f)), guiTop + i * 40, actives.get(i), this));
         }
+
+        for(int i = 0; i < ABILITIES_PER_COLUMN; i++) {
+            AbstractWidget widget = new AbilityButton(guiLeft - 18, guiTop + i * 40, data.getAbilityFromSlot(i), this, true, i);
+            addRenderableWidget(widget);
+            leftWindowWidgets.add(widget);
+            widget.visible = leftWindowOpen;
+        }
+
+        addRenderableWidget(new ExtendedButton(guiLeft + 17, guiTop + 69, 10, 17, Component.empty(), button -> {
+            leftWindowOpen = !leftWindowOpen;
+            for(AbstractWidget widget : leftWindowWidgets) {
+                widget.visible = leftWindowOpen;
+            }
+        }){
+            boolean isClicking = false;
+
+            @Override
+            public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+                if(isHovered()) {
+                    if(isClicking) {
+                        guiGraphics.blit(LEFT_PANEL_ARROW_CLICK, getX(), getY(), 0, 1, 10, 17, 18, 18);
+                    } else {
+                        guiGraphics.blit(LEFT_PANEL_ARROW_HOVER, getX(), getY(), 0, 1, 10, 17, 18, 18);
+                    }
+                } else {
+                    guiGraphics.blit(LEFT_PANEL_ARROW_MAIN, getX(), getY(), 0, 1, 10, 17, 18, 18);
+                }
+            }
+
+            @Override
+            public void onClick(double mouseX, double mouseY) {
+                super.onClick(mouseX, mouseY);
+                isClicking = true;
+            }
+
+            public void onRelease(double mouseX, double mouseY) {
+                super.onRelease(mouseX, mouseY);
+                isClicking = false;
+            }
+        }
+        );
+
+        addRenderableWidget(new ExtendedButton(guiLeft + 228, guiTop + 69, 10, 17, Component.empty(), button -> {
+            rightWindowOpen = !rightWindowOpen;
+            for(AbstractWidget widget : rightWindowWidgets) {
+                widget.visible = rightWindowOpen;
+            }
+        }){
+            boolean isClicking = false;
+
+            @Override
+            public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+                if(isHovered()) {
+                    if(isClicking) {
+                        guiGraphics.blit(RIGHT_PANEL_ARROW_CLICK, getX(), getY(), 0, 1, 10, 17, 18, 18);
+                    } else {
+                        guiGraphics.blit(RIGHT_PANEL_ARROW_HOVER, getX(), getY(), 0, 1, 10, 17, 18, 18);
+                    }
+                } else {
+                    guiGraphics.blit(RIGHT_PANEL_ARROW_MAIN, getX(), getY(), 0, 1, 10, 17, 18, 18);
+                }
+            }
+
+            @Override
+            public void onClick(double mouseX, double mouseY) {
+                super.onClick(mouseX, mouseY);
+                isClicking = true;
+            }
+
+            public void onRelease(double mouseX, double mouseY) {
+                super.onRelease(mouseX, mouseY);
+                isClicking = false;
+            }
+        }
+        );
+
        /* DragonStateProvider.getOptional(Minecraft.getInstance().player).ifPresent(cap -> {
             for (int num = 0; num < MagicCap.activeAbilitySlots; num++) {
                 addRenderableWidget(new AbilityButton((int) (guiLeft + (90 + 20) / 2.0), guiTop + 40 - 25 + num * 35, 0, num, this));
