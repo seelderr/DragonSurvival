@@ -227,7 +227,7 @@ public class DragonAltarScreen extends Screen {
 
         int guiTop = (height - 190) / 2;
 
-        addRenderableWidget(new HelpButton(width / 2, 32 + 5, 16, 16, HELP, 1));
+        addRenderableWidget(new HelpButton(width / 2, 32 + 5, 16, 16, HELP));
         int xPos = width / 2 - 104;
         for (ResourceKey<DragonType> key : ResourceHelper.keys(Minecraft.getInstance().level.registryAccess(), DragonType.REGISTRY)) {
             addRenderableWidget(new AltarTypeButton(this, Minecraft.getInstance().level.registryAccess().holderOrThrow(key), xPos, guiTop + 30));

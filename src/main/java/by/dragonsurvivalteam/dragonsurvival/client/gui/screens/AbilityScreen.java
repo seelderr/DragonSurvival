@@ -41,6 +41,18 @@ public class AbilityScreen extends Screen {
     })
     private static final String HELP_PASSIVE = Translation.Type.GUI.wrap("help.passive_abilities");
 
+    @Translation(type = Translation.Type.MISC, comments = {
+            "■ §6Active skills§r are used in combat.",
+            "- §9Skill power§r scales off your current experience level. The higher your EXP level, the stronger your active skills.",
+            "- §9Experience or mana§r points are used to cast spells.",
+            "- §9Controls§r - check in-game Minecraft control settings! You can drag and drop skill icons around.",
+            "",
+            "■ §aPassive skills§r are upgraded by spending experience levels.",
+            "- §9Mana§r - do not forget use the Source of Magic and Dragons Treats for an infinite supply of mana!",
+            "- §9More information§r can be found on our Wiki and in our Discord. Check the Curseforge mod page."
+    })
+    private static final String HELP_PASSIVE_ACTIVE = Translation.Type.GUI.wrap("help.passive_active_abilities");
+
     @Translation(type = Translation.Type.MISC, comments = "■ §dInnate skills§r are a dragon's quirks, and represent the benefits and drawbacks of each dragon type.")
     private static final String HELP_INNATE = Translation.Type.GUI.wrap("help.innate_abilities");
 
@@ -210,9 +222,7 @@ public class AbilityScreen extends Screen {
             }
         });*/
 
-        addRenderableWidget(new HelpButton(startX + 218 / 2 + 3 + 10 - 55, startY + 263 / 2 + 28, 9, 9, HELP_ACTIVE, 0));
-        addRenderableWidget(new HelpButton(startX + 218 / 2 + 3 + 10 + 2, startY + 263 / 2 + 28, 9, 9, HELP_PASSIVE, 0));
-        addRenderableWidget(new HelpButton(startX + 218 / 2 + 3 + 10 + 60, startY + 263 / 2 + 28, 9, 9, HELP_INNATE, 0));
+        addRenderableWidget(new HelpButton(guiLeft + BACKGROUND_BEZEL_WIDTH + (INNER_BACKGROUND_WIDTH / 2) + 21, startY + 263 / 2 + 28, 9, 9, HELP_PASSIVE_ACTIVE));
     }
 
 
