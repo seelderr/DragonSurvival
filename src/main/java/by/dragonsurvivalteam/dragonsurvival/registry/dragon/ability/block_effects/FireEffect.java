@@ -16,9 +16,10 @@ public record FireEffect(LevelBasedValue igniteProbabiltiy) implements AbilityBl
     ).apply(instance, FireEffect::new));
 
     @Override
-    public void apply(ServerPlayer dragon, DragonAbilityInstance ability, BlockPos position, Direction direction) {
+    public void apply(final ServerPlayer dragon, final DragonAbilityInstance ability, final BlockPos position, final Direction direction) {
         BlockState state = dragon.serverLevel().getBlockState(position);
         Block block = state.getBlock();
+
         if (block instanceof TntBlock tnt) {
             tnt.onCaughtFire(state, dragon.level(), position, direction, dragon);
             dragon.level().setBlock(position, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL_IMMEDIATE);

@@ -27,7 +27,7 @@ public record ConversionEffect(List<ConversionData> conversionData, LevelBasedVa
     }
 
     @Override
-    public void apply(final ServerPlayer dragon, final DragonAbilityInstance ability, final BlockPos position, Direction direction) {
+    public void apply(final ServerPlayer dragon, final DragonAbilityInstance ability, final BlockPos position, final Direction direction) {
         if (dragon.getRandom().nextDouble() < probability().calculate(ability.level())) {
             return;
         }

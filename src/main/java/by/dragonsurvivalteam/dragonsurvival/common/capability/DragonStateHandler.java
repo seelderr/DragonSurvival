@@ -219,11 +219,11 @@ public class DragonStateHandler extends EntityStateHandler {
 
         MagicData magicData = MagicData.getData(player);
         if (type != null) {
-            // TODO: This doesn't fully work with saveAllAbilities config. We'd need to make a mapping of dragon types to magicData instances.
-            if (oldType == null || (!ServerConfig.saveAllAbilities && !oldType.is(type.getKey()))) {
+            // TODO :: save abilities per type
+            if (oldType == null || !oldType.is(type)) {
                 DSModifiers.updateTypeModifiers(player, this);
-                skinData.skinPreset.initDefaults(dragonType.getKey());
-                magicData.refresh(dragonType);
+                skinData.skinPreset.initDefaults(type.getKey());
+                magicData.refresh(type);
             }
         } else {
             DSModifiers.clearModifiers(player);

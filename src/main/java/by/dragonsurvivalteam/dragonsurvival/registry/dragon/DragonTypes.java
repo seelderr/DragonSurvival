@@ -4,6 +4,8 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.GrowthIcon;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.MiscDragonTextures;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.abilities.CaveDragonAbilities;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.abilities.ForestDragonAbilities;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.abilities.SeaDragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.datapacks.AncientDatapack;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStages;
@@ -16,8 +18,6 @@ import net.minecraft.util.ColorRGBA;
 import java.util.List;
 
 public class DragonTypes {
-
-
     // TODO: Translation key here, also handle translation keys now for this data type
     public static final ResourceKey<DragonType> CAVE = key("cave");
     public static final ResourceKey<DragonType> FOREST = key("forest");
@@ -70,7 +70,7 @@ public class DragonTypes {
         context.register(SEA, new DragonType(
                 HolderSet.empty(),
                 HolderSet.empty(),
-                HolderSet.direct(context.lookup(DragonAbility.REGISTRY).getOrThrow(CaveDragonAbilities.NETHER_BREATH)),
+                HolderSet.direct(context.lookup(DragonAbility.REGISTRY).getOrThrow(SeaDragonAbilities.BALL_LIGHTNING)),
                 List.of(),
                 List.of(),
                 List.of(),
@@ -108,7 +108,7 @@ public class DragonTypes {
         context.register(FOREST, new DragonType(
                 HolderSet.empty(),
                 HolderSet.empty(),
-                HolderSet.direct(context.lookup(DragonAbility.REGISTRY).getOrThrow(CaveDragonAbilities.NETHER_BREATH)),
+                HolderSet.direct(context.lookup(DragonAbility.REGISTRY).getOrThrow(ForestDragonAbilities.FOREST_SPIKE)),
                 List.of(),
                 List.of(),
                 List.of(),

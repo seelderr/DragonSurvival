@@ -8,7 +8,10 @@
               "effect_type": "dragonsurvival:projectile",
               "number_of_projectiles": 1.0,
               "projectile_data": "dragonsurvival:spike",
-              "speed": 1.0
+              "speed": 1.0,
+              "target_direction": {
+                "direction": "towards_entity"
+              }
             }
           ],
           "target_conditions": {
@@ -18,7 +21,8 @@
             }
           }
         },
-        "target_type": "dragonsurvival:self"
+        "radius": 32.0,
+        "target_type": "dragonsurvival:area"
       },
       "trigger_rate": 1.0
     }

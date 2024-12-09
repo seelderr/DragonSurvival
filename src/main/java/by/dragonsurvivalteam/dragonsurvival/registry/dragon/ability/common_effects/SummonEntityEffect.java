@@ -56,7 +56,7 @@ public record SummonEntityEffect(HolderSet<EntityType<?>> entities, List<Attribu
     }
 
     @Override
-    public void apply(final ServerPlayer dragon, final DragonAbilityInstance ability, final BlockPos position, Direction direction) {
+    public void apply(final ServerPlayer dragon, final DragonAbilityInstance ability, final BlockPos position, final Direction direction) {
         spawn(dragon.serverLevel(), dragon, ability, position);
     }
 

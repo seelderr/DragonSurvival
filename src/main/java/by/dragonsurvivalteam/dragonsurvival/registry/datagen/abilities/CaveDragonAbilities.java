@@ -1,10 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.datagen.abilities;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.Condition;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.LevelBasedResource;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.Modifier;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.ModifierWithDuration;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.*;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.ActionContainer;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Activation;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.ManaCost;
@@ -47,15 +44,11 @@ import java.util.List;
 import java.util.Optional;
 
 public class CaveDragonAbilities {
+    // --- Active --- //
+
     @Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = "■ Ranged attack: shoots out a fireball that §cexplodes§r and sets the area on fire.")
     @Translation(type = Translation.Type.ABILITY, comments = "Fireball")
     public static final ResourceKey<DragonAbility> FIRE_BALL = DragonAbilities.key("fire_ball");
-
-    @Translation(type = Translation.Type.ABILITY, comments = "Spike test.")
-    public static final ResourceKey<DragonAbility> SPIKE_TEST = DragonAbilities.key("spike_test");
-
-    @Translation(type = Translation.Type.ABILITY, comments = "Test ball lightning ability.")
-    public static final ResourceKey<DragonAbility> BALL_LIGHTNING = DragonAbilities.key("ball_lightning_test");
 
     // TODO: How to actually do this in the new system?
     //  have one generic translation part which applies to all abilities (name, cooldown, duration, level)
@@ -77,11 +70,15 @@ public class CaveDragonAbilities {
     @Translation(type = Translation.Type.ABILITY, comments = "Sturdy Skin") // TODO :: strong leather, tough skin or sturdy skin?
     public static final ResourceKey<DragonAbility> TOUGH_SKIN = DragonAbilities.key("tough_skin");
 
-    // TODO :: Temporary, needs translation support for modifiers
-    @Translation(type = Translation.Type.MISC, comments = "Strong Leather")
-    public static final String TOUGH_LEATHER = Translation.Type.MODIFIER.wrap("tough_leather");
+    // --- Passive --- //
+
+//    public static final ResourceKey<DragonAbility>
 
     public static void registerAbilities(final BootstrapContext<DragonAbility> context) {
+        registerActiveAbilities(context);
+    }
+
+    private static void registerActiveAbilities(final BootstrapContext<DragonAbility> context) {
         context.register(FIRE_BALL, new DragonAbility(
                 new Activation(
                         Activation.Type.ACTIVE_SIMPLE,
@@ -110,6 +107,7 @@ public class CaveDragonAbilities {
                                                 Optional.of(Condition.living()),
                                                 List.of(new ProjectileEffect(
                                                         context.lookup(ProjectileData.REGISTRY).getOrThrow(Projectiles.FIREBALL),
+                                                        TargetDirection.lookingAt(),
                                                         LevelBasedValue.constant(1),
                                                         LevelBasedValue.constant(0),
                                                         LevelBasedValue.constant(1)
@@ -127,80 +125,6 @@ public class CaveDragonAbilities {
                         new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/fireball_3.png"), 3),
                         new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/fireball_4.png"), 4)
                 ))
-        ));
-
-        context.register(SPIKE_TEST, new DragonAbility(
-                new Activation(
-                        Activation.Type.ACTIVE_SIMPLE,
-                        Optional.empty(),
-                        Optional.empty(),
-                        Optional.of(LevelBasedValue.constant(Functions.secondsToTicks(1))),
-                        Optional.of(LevelBasedValue.constant(Functions.secondsToTicks(2))),
-                        Optional.empty(),
-                        Optional.empty()
-                ),
-                Optional.empty(),
-                Optional.empty(),
-                List.of(new ActionContainer(
-                        new SelfTarget(
-                                Either.right(
-                                        new AbilityTargeting.EntityTargeting(
-                                                Optional.of(Condition.living()),
-                                                List.of(new ProjectileEffect(
-                                                        context.lookup(ProjectileData.REGISTRY).getOrThrow(Projectiles.SPIKE),
-                                                        LevelBasedValue.constant(1),
-                                                        LevelBasedValue.constant(0),
-                                                        LevelBasedValue.constant(1)
-                                                )),
-                                                false
-                                        )
-                                )
-                        ),
-                        LevelBasedValue.constant(1)
-                )),
-                new LevelBasedResource(
-                        List.of(new LevelBasedResource.TextureEntry(
-                                ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/icons/body_type_central.png"),
-                                1
-                        ))
-                )
-        ));
-
-        context.register(BALL_LIGHTNING, new DragonAbility(
-                new Activation(
-                        Activation.Type.ACTIVE_SIMPLE,
-                        Optional.empty(),
-                        Optional.empty(),
-                        Optional.of(LevelBasedValue.constant(Functions.secondsToTicks(1))),
-                        Optional.of(LevelBasedValue.constant(Functions.secondsToTicks(2))),
-                        Optional.empty(),
-                        Optional.empty()
-                ),
-                Optional.empty(),
-                Optional.empty(),
-                List.of(new ActionContainer(
-                        new SelfTarget(
-                                Either.right(
-                                        new AbilityTargeting.EntityTargeting(
-                                                Optional.of(Condition.living()),
-                                                List.of(new ProjectileEffect(
-                                                        context.lookup(ProjectileData.REGISTRY).getOrThrow(Projectiles.BALL_LIGHTNING),
-                                                        LevelBasedValue.constant(1),
-                                                        LevelBasedValue.constant(0),
-                                                        LevelBasedValue.constant(1)
-                                                )),
-                                                false
-                                        )
-                                )
-                        ),
-                        LevelBasedValue.constant(1)
-                )),
-                new LevelBasedResource(
-                        List.of(new LevelBasedResource.TextureEntry(
-                                ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/icons/body_type_central.png"),
-                                1
-                        ))
-                )
         ));
 
         context.register(NETHER_BREATH, new DragonAbility(
@@ -367,5 +291,9 @@ public class CaveDragonAbilities {
                         new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/strong_leather_3.png"), 3)
                 ))
         ));
+    }
+
+    private static void registerPassiveAbilities(final BootstrapContext<DragonAbility> context) {
+
     }
 }

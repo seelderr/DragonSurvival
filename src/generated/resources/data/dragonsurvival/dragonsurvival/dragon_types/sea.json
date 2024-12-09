@@ -1,5 +1,5 @@
 {
-  "abilities": "dragonsurvival:nether_breath",
+  "abilities": "dragonsurvival:ball_lightning",
   "misc_resources": {
     "ability_bar": "dragonsurvival:textures/gui/casting_bars/cave_cast_bar.png",
     "altar_banner": "dragonsurvival:textures/gui/dragon_altar/sea_altar_icon.png",

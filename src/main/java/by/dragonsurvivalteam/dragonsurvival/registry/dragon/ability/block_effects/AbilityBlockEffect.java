@@ -31,7 +31,7 @@ public interface AbilityBlockEffect {
 
     Codec<AbilityBlockEffect> CODEC = REGISTRY.byNameCodec().dispatch("effect_type", AbilityBlockEffect::blockCodec, Function.identity());
 
-    void apply(final ServerPlayer dragon, final DragonAbilityInstance ability, final BlockPos position, @Nullable Direction direction);
+    void apply(final ServerPlayer dragon, final DragonAbilityInstance ability, final BlockPos position, @Nullable final Direction direction);
     MapCodec<? extends AbilityBlockEffect> blockCodec();
 
     @SubscribeEvent

@@ -17,7 +17,7 @@ public record BonemealEffect(LevelBasedValue attempts, LevelBasedValue probabili
     ).apply(instance, BonemealEffect::new));
 
     @Override
-    public void apply(final ServerPlayer dragon, final DragonAbilityInstance ability, final BlockPos position, Direction direction) {
+    public void apply(final ServerPlayer dragon, final DragonAbilityInstance ability, final BlockPos position, final Direction direction) {
         BlockState state = dragon.serverLevel().getBlockState(position);
 
         if (state.getBlock() instanceof BonemealableBlock bonemealableBlock) {
@@ -25,7 +25,8 @@ public record BonemealEffect(LevelBasedValue attempts, LevelBasedValue probabili
             float attempts = attempts().calculate(abilityLevel);
 
             for (int i = 0; i < attempts; i++) {
-                if (dragon.getRandom().nextDouble() < probability().calculate(abilityLevel)) { // TODO :: do the probability check for each loop iteration or just once at the start?
+                // TODO :: do the probability check for each loop iteration or just once at the start?
+                if (dragon.getRandom().nextDouble() < probability().calculate(abilityLevel)) {
                     bonemealableBlock.performBonemeal(dragon.serverLevel(), dragon.getRandom(), position, state);
                 }
             }
