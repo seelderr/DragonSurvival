@@ -259,22 +259,11 @@ public class CaveDragonAbilities {
                 List.of(new ActionContainer(new AreaTarget(Either.right(
                         new AbilityTargeting.EntityTargeting(
                                 Optional.empty(),
-                                List.of(new ModifierEffect(
-                                        List.of(
-                                                new ModifierWithDuration(
-                                                        DragonSurvival.res("tough_leather"),
-                                                        DragonSurvival.res("textures/modifiers/strong_leather.png"),
-                                                        List.of(
-                                                                new Modifier(
-                                                                        Attributes.ARMOR,
-                                                                        LevelBasedValue.constant(3),
-                                                                        AttributeModifier.Operation.ADD_VALUE,
-                                                                        Optional.empty()
-                                                                )
-                                                        ),
-                                                        LevelBasedValue.perLevel(Functions.secondsToTicks(60))
-                                                )
-                                        )
+                                ModifierEffect.single(new ModifierWithDuration(
+                                        DragonSurvival.res("tough_leather"),
+                                        DragonSurvival.res("textures/modifiers/strong_leather.png"),
+                                        List.of(new Modifier(Attributes.ARMOR, LevelBasedValue.constant(3), AttributeModifier.Operation.ADD_VALUE, Optional.empty())),
+                                        LevelBasedValue.perLevel(Functions.secondsToTicks(60))
                                 )),
                                 true
                         )),
@@ -297,13 +286,13 @@ public class CaveDragonAbilities {
                 List.of(new ActionContainer(new SelfTarget(Either.right(
                         new AbilityTargeting.EntityTargeting(
                                 Optional.of(Condition.onBlock(DSBlockTags.SPEEDS_UP_CAVE_DRAGON)),
-                                List.of(new ModifierEffect(List.of(new ModifierWithDuration(
+                                ModifierEffect.single(new ModifierWithDuration(
                                         DragonSurvival.res("cave_athletics"),
                                         /* FIXME */ DragonSurvival.res("textures/modifiers/strong_leather.png"),
                                         // FIXME :: not the final value
                                         List.of(new Modifier(Attributes.MOVEMENT_SPEED, LevelBasedValue.perLevel(0.02f), AttributeModifier.Operation.ADD_VALUE, Optional.empty())),
                                         LevelBasedValue.constant(ModifierWithDuration.INFINITE_DURATION)
-                                )))), true)), true), LevelBasedValue.constant(1))),
+                                )), true)), true), LevelBasedValue.constant(1))),
                 new LevelBasedResource(List.of(
                         new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/cave_athletics_0.png"), 0),
                         new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/cave_athletics_1.png"), 1),

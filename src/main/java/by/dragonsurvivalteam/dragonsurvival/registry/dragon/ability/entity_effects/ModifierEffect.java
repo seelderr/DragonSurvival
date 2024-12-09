@@ -29,6 +29,10 @@ public record ModifierEffect(List<ModifierWithDuration> modifiers) implements Ab
         }
     }
 
+    public static List<AbilityEntityEffect> single(final ModifierWithDuration modifier) {
+        return List.of(new ModifierEffect(List.of(modifier)));
+    }
+
     @Override
     public MapCodec<? extends AbilityEntityEffect> entityCodec() {
         return CODEC;
