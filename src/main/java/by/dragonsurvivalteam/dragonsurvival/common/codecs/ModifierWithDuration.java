@@ -147,6 +147,11 @@ public record ModifierWithDuration(ResourceLocation id, ResourceLocation icon, L
         }
 
         @Override
+        public List<Modifier> modifiers() {
+            return baseData().modifiers();
+        }
+
+        @Override
         public void storeId(final Holder<Attribute> attribute, final ResourceLocation id) {
             ids.computeIfAbsent(attribute, key -> new ArrayList<>()).add(id);
         }

@@ -14,6 +14,7 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSSounds;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSBlockTags;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.block_effects.FireEffect;
@@ -33,7 +34,6 @@ import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -72,10 +72,11 @@ public class CaveDragonAbilities {
 
     // --- Passive --- //
 
-//    public static final ResourceKey<DragonAbility>
+    public static final ResourceKey<DragonAbility> CAVE_ATHLETICS = DragonAbilities.key("cave_athletics");
 
     public static void registerAbilities(final BootstrapContext<DragonAbility> context) {
         registerActiveAbilities(context);
+        registerPassiveAbilities(context);
     }
 
     private static void registerActiveAbilities(final BootstrapContext<DragonAbility> context) {
@@ -261,8 +262,8 @@ public class CaveDragonAbilities {
                                 List.of(new ModifierEffect(
                                         List.of(
                                                 new ModifierWithDuration(
-                                                        ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "tough_leather"),
-                                                        ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/modifiers/strong_leather.png"),
+                                                        DragonSurvival.res("tough_leather"),
+                                                        DragonSurvival.res("textures/modifiers/strong_leather.png"),
                                                         List.of(
                                                                 new Modifier(
                                                                         Attributes.ARMOR,
@@ -289,6 +290,28 @@ public class CaveDragonAbilities {
     }
 
     private static void registerPassiveAbilities(final BootstrapContext<DragonAbility> context) {
-
+        context.register(CAVE_ATHLETICS, new DragonAbility(
+                Activation.passive(),
+                Optional.of(new Upgrade(Upgrade.Type.PASSIVE, 5, LevelBasedValue.perLevel(15))), // FIXME :: not the actual values
+                Optional.empty(),
+                List.of(new ActionContainer(new SelfTarget(Either.right(
+                        new AbilityTargeting.EntityTargeting(
+                                Optional.of(Condition.onBlock(DSBlockTags.SPEEDS_UP_CAVE_DRAGON)),
+                                List.of(new ModifierEffect(List.of(new ModifierWithDuration(
+                                        DragonSurvival.res("cave_athletics"),
+                                        /* FIXME */ DragonSurvival.res("textures/modifiers/strong_leather.png"),
+                                        // FIXME :: not the final value
+                                        List.of(new Modifier(Attributes.MOVEMENT_SPEED, LevelBasedValue.perLevel(0.02f), AttributeModifier.Operation.ADD_VALUE, Optional.empty())),
+                                        LevelBasedValue.constant(ModifierWithDuration.INFINITE_DURATION)
+                                )))), true)), true), LevelBasedValue.constant(1))),
+                new LevelBasedResource(List.of(
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/cave_athletics_0.png"), 0),
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/cave_athletics_1.png"), 1),
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/cave_athletics_2.png"), 2),
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/cave_athletics_3.png"), 3),
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/cave_athletics_4.png"), 4),
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/cave_athletics_5.png"), 5)
+                ))
+        ));
     }
 }

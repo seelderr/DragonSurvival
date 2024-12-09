@@ -260,6 +260,7 @@ public class MagicData implements INBTSerializable<CompoundTag> {
 
         int slot = 0;
 
+        // FIXME :: is the default level really 1? the texture entries start at 0
         for (Holder<DragonAbility> ability : type.value().abilities()) {
             if (ability.value().activation().type() != Activation.Type.PASSIVE) {
                 if (slot < MAX_ACTIVE) {

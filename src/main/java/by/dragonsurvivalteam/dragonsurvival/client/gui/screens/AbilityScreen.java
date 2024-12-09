@@ -219,11 +219,14 @@ public class AbilityScreen extends Screen {
         }*/
 
         // FIXME
+        //noinspection DataFlowIssue -> player is present
         MagicData data = MagicData.getData(minecraft.player);
         List<DragonAbilityInstance> actives = data.getActiveAbilities();
         List<DragonAbilityInstance> passives = data.getPassiveAbilities();
-        for(int i = 0; i < ABILITIES_PER_COLUMN; i++) {
-            addRenderableWidget(new AbilityButton((int) (guiLeft + BACKGROUND_BEZEL_WIDTH + (INNER_BACKGROUND_WIDTH / 3.7f)), guiTop + i * 40, actives.get(i), this));
+
+        for (int i = 0; i < ABILITIES_PER_COLUMN; i++) {
+            DragonAbilityInstance instance = actives.size() > i ? actives.get(i) : null;
+            addRenderableWidget(new AbilityButton((int) (guiLeft + BACKGROUND_BEZEL_WIDTH + (INNER_BACKGROUND_WIDTH / 3.7f)), guiTop + i * 40, instance, this));
         }
 
         // Left panel (hotbar)

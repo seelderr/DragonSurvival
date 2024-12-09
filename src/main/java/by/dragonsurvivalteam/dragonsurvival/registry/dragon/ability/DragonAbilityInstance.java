@@ -59,6 +59,10 @@ public class DragonAbilityInstance {
         this.ability = ability;
         this.level = level;
         this.isEnabled = isEnabled;
+
+        if (isEnabled && value().activation().type() == Activation.Type.PASSIVE) {
+            this.isActive = true;
+        }
     }
 
     public Tag save(@NotNull final HolderLookup.Provider provider) {

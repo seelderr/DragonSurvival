@@ -7,9 +7,13 @@ import by.dragonsurvivalteam.dragonsurvival.common.items.growth.StarHeartItem;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.body.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStage;
+import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.ContextAwarePredicate;
 import net.minecraft.advancements.critereon.EntityPredicate;
+import net.minecraft.advancements.critereon.LocationPredicate;
 import net.minecraft.core.Holder;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.block.Block;
 
 public class Condition {
     public static ContextAwarePredicate none() {
@@ -28,6 +32,10 @@ public class Condition {
 
     public static EntityPredicate living() {
         return EntityPredicate.Builder.entity().subPredicate(EntityCheckPredicate.Builder.start().living().build()).build();
+    }
+
+    public static EntityPredicate onBlock(final TagKey<Block> tag) {
+        return EntityPredicate.Builder.entity().steppingOn(LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(tag))).build();
     }
 
     // --- Builder --- //
