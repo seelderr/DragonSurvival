@@ -120,5 +120,10 @@ public record DamageModification(ResourceLocation id, HolderSet<DamageType> dama
         public int getDuration() {
             return (int) baseData().duration().calculate(appliedAbilityLevel());
         }
+
+        @Override
+        public ResourceLocation getId() {
+            return baseData().id();
+        }
     }
 }

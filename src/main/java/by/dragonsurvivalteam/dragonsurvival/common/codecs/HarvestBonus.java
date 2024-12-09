@@ -121,5 +121,10 @@ public record HarvestBonus(ResourceLocation id, HolderSet<Block> applicableTo, L
         public int getDuration() {
             return (int) baseData().duration().calculate(appliedAbilityLevel());
         }
+
+        @Override
+        public ResourceLocation getId() {
+            return baseData().id();
+        }
     }
 }

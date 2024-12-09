@@ -145,5 +145,10 @@ public record ModifierWithDuration(ResourceLocation id, ResourceLocation icon, L
         public ModifierType getModifierType() {
             return ModifierType.CUSTOM;
         }
+
+        @Override
+        public ResourceLocation getId() {
+            return baseData().id();
+        }
     }
 }

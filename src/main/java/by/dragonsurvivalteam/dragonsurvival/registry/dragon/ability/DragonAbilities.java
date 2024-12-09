@@ -71,6 +71,10 @@ public class DragonAbilities {
     @Translation(type = Translation.Type.ABILITY, comments = "Sturdy Skin") // TODO :: strong leather, tough skin or sturdy skin?
     public static final ResourceKey<DragonAbility> TOUGH_SKIN = key("tough_skin");
 
+    // TODO :: Temporary, needs translation support for modifiers
+    @Translation(type = Translation.Type.MISC, comments = "Strong Leather")
+    public static final String TOUGH_LEATHER = Translation.Type.MODIFIER.wrap("tough_leather");
+
     public static void registerAbilities(final BootstrapContext<DragonAbility> context) {
         context.register(FIRE_BALL, new DragonAbility(
                 new Activation(

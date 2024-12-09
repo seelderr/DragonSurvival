@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.mixins;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachments;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DamageModifications;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.ModifiersWithDuration;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.ClientEffectProvider;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -63,7 +64,7 @@ public class EffectRenderingInventoryScreenMixin {
 
         for (ClientEffectProvider provider : providers) {
             // FIXME :: can this even be safely done if we don't know how the texture is stored etc.?
-            graphics.blit(provider.clientData().texture(), renderX + (isCompact ? 6 : 7), topPos + 7, 0, 0, 0, 18, 18, 20, 20);
+            graphics.blit(provider.clientData().texture(), renderX + (isCompact ? 6 : 7), topPos + 7, 0, 0, 0, 18, 18, 18, 18);
             topPos += yOffset;
         }
     }
@@ -73,9 +74,8 @@ public class EffectRenderingInventoryScreenMixin {
         int topPos = ((AbstractContainerScreenAccessor)self).dragonSurvival$getTopPos() + initialYOffset;
 
         for (ClientEffectProvider provider : providers) {
-            // TODO: have a generic name per client effect provider type?
-//            Component name = Component.translatable(provider.id().getPath());
-//            graphics.drawString(((ScreenAccessor)self).dragonSurvival$getFont(), name, renderX + 10 + 18, topPos+ 6, /* ChatFormatting.WHITE */ 16777215);
+            Component name = Component.translatable(Translation.Type.MODIFIER.wrap(provider.getId().getPath()));
+            graphics.drawString(((ScreenAccessor)self).dragonSurvival$getFont(), name, renderX + 10 + 18, topPos+ 6, /* ChatFormatting.WHITE */ 16777215);
             Component duration = dragonSurvival$formatDuration(provider, Minecraft.getInstance().level.tickRateManager().tickrate());
             graphics.drawString(((ScreenAccessor)self).dragonSurvival$getFont(), duration, renderX + 10 + 18, topPos + 6 + 10, 8355711);
             topPos += yOffset;
@@ -86,7 +86,7 @@ public class EffectRenderingInventoryScreenMixin {
         if (effect.isInfiniteDuration()) {
             return Component.translatable("effect.duration.infinite");
         } else {
-            int i = Mth.floor((float)effect.getDuration());
+            int i = Mth.floor((float)effect.currentDuration());
             return Component.literal(StringUtil.formatTickDuration(i, ticksPerSecond));
         }
     }
@@ -134,8 +134,10 @@ public class EffectRenderingInventoryScreenMixin {
             if (!isCompact) {
                 // TODO: Potentially render extra tooltip data anyways?
                 this.dragonSurvival$renderAbilityLabels(graphics, offset, yOffset, initialYOffset, providers);
-            } else if (mouseX >= offset && mouseX <= offset + 33) {
-                int topPos = ((AbstractContainerScreenAccessor) self).dragonSurvival$getTopPos();
+            }
+
+            if (mouseX >= offset && mouseX <= offset + (isCompact ? 32 : 120)) {
+                int topPos = ((AbstractContainerScreenAccessor) self).dragonSurvival$getTopPos() + initialYOffset;
                 ClientEffectProvider hoveredProvider = null;
 
                 for (ClientEffectProvider provider : providers) {
@@ -147,10 +149,16 @@ public class EffectRenderingInventoryScreenMixin {
                 }
 
                 if (hoveredProvider != null) {
-                    List<Component> list = List.of(
-                            hoveredProvider.clientData().tooltip(),
-                            dragonSurvival$formatDuration(hoveredProvider, Minecraft.getInstance().level.tickRateManager().tickrate())
-                    );
+                    List<Component> list = new ArrayList<>();
+                    if(isCompact) {
+                        list.add(Component.translatable(Translation.Type.MODIFIER.wrap(hoveredProvider.getId().getPath())));
+                        list.add(dragonSurvival$formatDuration(hoveredProvider, Minecraft.getInstance().level.tickRateManager().tickrate()));
+                    }
+
+                    if(!Objects.equals(hoveredProvider.clientData().tooltip(), Component.empty())) {
+                        list.add(hoveredProvider.clientData().tooltip());
+                    }
+
                     graphics.renderTooltip(((ScreenAccessor) self).dragonSurvival$getFont(), list, Optional.empty(), mouseX, mouseY);
                 }
             }

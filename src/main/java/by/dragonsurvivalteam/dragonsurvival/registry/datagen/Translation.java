@@ -78,6 +78,8 @@ public @interface Translation {
         STAGE(DragonSurvival.MODID + ".stage.", ""),
         STAGE_DESCRIPTION(DragonSurvival.MODID + ".stage.", ".desc"),
 
+        MODIFIER(DragonSurvival.MODID + ".modifier.", ""),
+
         /** When used on {@link String} and no specified key it's expected that the string contains the translation key */
         MISC("", "");
 
