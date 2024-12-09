@@ -226,6 +226,7 @@ public class AbilityScreen extends Screen {
             addRenderableWidget(new AbilityButton((int) (guiLeft + BACKGROUND_BEZEL_WIDTH + (INNER_BACKGROUND_WIDTH / 3.7f)), guiTop + i * 40, actives.get(i), this));
         }
 
+        // Left panel (hotbar)
         for(int i = 0; i < ABILITIES_PER_COLUMN; i++) {
             AbstractWidget widget = new AbilityButton(guiLeft - 18, guiTop + i * 40, data.fromSlot(i), this, true, i);
             addRenderableWidget(widget);
