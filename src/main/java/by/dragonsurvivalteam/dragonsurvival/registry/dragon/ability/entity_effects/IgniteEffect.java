@@ -7,14 +7,14 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 
-public record FireEffect(LevelBasedValue fireTicks) implements AbilityEntityEffect {
-    public static final MapCodec<FireEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-            LevelBasedValue.CODEC.fieldOf("fire_ticks").forGetter(FireEffect::fireTicks)
-    ).apply(instance, FireEffect::new));
+public record IgniteEffect(LevelBasedValue igniteTicks) implements AbilityEntityEffect {
+    public static final MapCodec<IgniteEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+            LevelBasedValue.CODEC.fieldOf("ignite_ticks").forGetter(IgniteEffect::igniteTicks)
+    ).apply(instance, IgniteEffect::new));
 
     @Override
     public void apply(final ServerPlayer dragon, final DragonAbilityInstance ability, final Entity entity) {
-        entity.igniteForTicks((int) fireTicks().calculate(ability.level()));
+        entity.igniteForTicks((int) igniteTicks().calculate(ability.level()));
     }
 
     @Override

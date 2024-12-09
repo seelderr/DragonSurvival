@@ -14,8 +14,8 @@
               "effect_type": "dragonsurvival:damage"
             },
             {
-              "effect_type": "dragonsurvival:fire",
-              "fire_ticks": {
+              "effect_type": "dragonsurvival:ignite",
+              "ignite_ticks": {
                 "type": "minecraft:linear",
                 "base": 100.0,
                 "per_level_above_first": 100.0
