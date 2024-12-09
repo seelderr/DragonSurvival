@@ -8,22 +8,23 @@ import net.minecraft.util.ExtraCodecs;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 
-// TODO :: should be usable for ability and penalty icons as well
 public record LevelBasedResource(List<TextureEntry> textureEntries) {
     public static final Codec<LevelBasedResource> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            TextureEntry.CODEC.listOf().fieldOf("texture_entries").forGetter(LevelBasedResource::textureEntries)
+            TextureEntry.CODEC.listOf().xmap(list -> {
+                List<TextureEntry> sorted = new ArrayList<>(list);
+                Collections.sort(sorted);
+                return sorted.reversed();
+            }, Function.identity()).fieldOf("texture_entries").forGetter(LevelBasedResource::textureEntries)
     ).apply(instance, LevelBasedResource::new));
 
     public ResourceLocation get(int abilityLevel) {
-        // TODO :: We copy the array here as the list in the record is immutable. Is there a clever a way to avoid this?
-        List<TextureEntry> sortedEntries = new ArrayList<>(textureEntries);
-        sortedEntries.sort(TextureEntry::compareTo);
-        sortedEntries = sortedEntries.reversed();
-        for (TextureEntry data : sortedEntries) {
-            if (abilityLevel >= data.fromLevel()) {
-                return data.location();
+        for (TextureEntry entry : textureEntries) {
+            if (abilityLevel >= entry.fromLevel()) {
+                return entry.location();
             }
         }
 

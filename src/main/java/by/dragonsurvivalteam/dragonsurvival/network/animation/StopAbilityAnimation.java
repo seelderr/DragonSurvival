@@ -1,8 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.network.animation;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
-import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRenderer;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -11,7 +9,6 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.concurrent.atomic.AtomicReference;
 
 public record StopAbilityAnimation(int playerId) implements CustomPacketPayload {
     public static final Type<StopAbilityAnimation> TYPE = new CustomPacketPayload.Type<>(DragonSurvival.res("stop_ability_animation"));

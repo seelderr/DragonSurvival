@@ -16,8 +16,8 @@ import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 
-import javax.annotation.Nullable;
 import java.util.function.Function;
+import javax.annotation.Nullable;
 
 /*
 - destroy block
