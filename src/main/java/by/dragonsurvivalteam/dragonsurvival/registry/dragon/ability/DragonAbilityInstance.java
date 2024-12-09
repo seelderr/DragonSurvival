@@ -7,6 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.ManaCost;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ManaHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncStopCast;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MagicData;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.ChatFormatting;
@@ -25,6 +26,7 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Optional;
 import javax.annotation.Nullable;
 
@@ -233,6 +235,18 @@ public class DragonAbilityInstance {
         return false;
     }
 
+    public boolean isPassive() {
+        return value().activation().type() == Activation.Type.PASSIVE;
+    }
+
+    public List<Component> getInfo(Player dragon) {
+        return value().getInfo(dragon, this);
+    }
+
+    public int getMaxLevel() {
+        return value().getMaxLevel();
+    }
+
     public void enable() {
         isEnabled = true;
     }
@@ -264,6 +278,10 @@ public class DragonAbilityInstance {
 
     public DragonAbility value() {
         return ability.value();
+    }
+
+    public Component getName() {
+        return Component.translatable(Translation.Type.ABILITY.wrap(ability().getKey().location().getPath()));
     }
 
     public ResourceKey<DragonAbility> key() {

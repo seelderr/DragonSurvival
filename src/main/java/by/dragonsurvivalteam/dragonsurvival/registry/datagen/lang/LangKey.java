@@ -43,17 +43,23 @@ public class LangKey {
     @Translation(type = Translation.Type.MISC, comments = "§6■ Chance: §c%s%%§r")
     public static final String ABILITY_CHANCE = Translation.Type.ABILITY.wrap("general.chance");
 
-    @Translation(type = Translation.Type.MISC, comments = "§6■ Mana cost:§r %s")
-    public static final String ABILITY_MANA_COST = Translation.Type.ABILITY.wrap("general.mana_cost");
+    @Translation(type = Translation.Type.MISC, comments = "§6■ Initial mana cost:§r %s")
+    public static final String ABILITY_INITIAL_MANA_COST = Translation.Type.ABILITY.wrap("general.initial_mana_cost");
+
+    @Translation(type = Translation.Type.MISC, comments = "§6■ Continuous mana cost:§r %s")
+    public static final String ABILITY_CONTINUOUS_MANA_COST = Translation.Type.ABILITY.wrap("general.continuous_mana_cost");
 
     @Translation(type = Translation.Type.MISC, comments = "§6■ Cast time:§r %ss")
     public static final String ABILITY_CAST_TIME = Translation.Type.ABILITY.wrap("general.cast_time");
 
-    @Translation(type = Translation.Type.MISC, comments = "§6■ Duration:§r %ss")
-    public static final String ABILITY_DURATION = Translation.Type.ABILITY.wrap("general.duration");
+    @Translation(type = Translation.Type.MISC, comments = "§6■ Effect duration:§r %ss")
+    public static final String ABILITY_EFFECT_DURATION = Translation.Type.ABILITY.wrap("general.effect_duration");
 
     @Translation(type = Translation.Type.MISC, comments = "§6■ Currently bound to:§r [%s]")
     public static final String ABILITY_KEYBIND = Translation.Type.ABILITY.wrap("general.keybind");
+
+    @Translation(type = Translation.Type.MISC, comments = "§6■ Explosion strength:§r %s")
+    public static final String ABILITY_EXPLOSION_STRENGTH = Translation.Type.ABILITY.wrap("general.explosion_strength");
 
     // --- Misc --- //
 

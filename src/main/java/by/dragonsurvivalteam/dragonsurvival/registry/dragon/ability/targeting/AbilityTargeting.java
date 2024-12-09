@@ -97,7 +97,8 @@ public interface AbilityTargeting {
     }
 
     void apply(final ServerPlayer dragon, final DragonAbilityInstance ability);
-
+    default float getRange(final Player dragon, final DragonAbilityInstance ability) { return -1; }
+    default float getArea(final Player dragon, final DragonAbilityInstance ability) { return -1; }
     MapCodec<? extends AbilityTargeting> codec();
     Either<BlockTargeting, EntityTargeting> target();
 }

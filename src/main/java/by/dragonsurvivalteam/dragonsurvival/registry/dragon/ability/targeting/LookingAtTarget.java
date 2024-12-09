@@ -56,6 +56,10 @@ public record LookingAtTarget(Either<BlockTargeting, EntityTargeting> target, Le
         return ProjectileUtil.getHitResultOnViewVector(dragon, filter, range().calculate(ability.level()));
     }
 
+    public float getRange(Player dragon, final DragonAbilityInstance ability) {
+        return range().calculate(ability.level());
+    }
+
     @Override
     public MapCodec<? extends AbilityTargeting> codec() {
         return CODEC;

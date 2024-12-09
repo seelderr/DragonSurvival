@@ -78,6 +78,10 @@ public record DragonBreathTarget(Either<BlockTargeting, EntityTargeting> target,
         return new AABB(dragon.position().subtract(min), dragon.position().add(max));
     }
 
+    public float getRange(final Player dragon, final DragonAbilityInstance ability) {
+        return (float) (rangeMultiplier.calculate(ability.level()) * dragon.getAttributeValue(DSAttributes.DRAGON_BREATH_RANGE));
+    }
+
     private static double getOffset(double value, double defaultValue) {
         if (value < 0) {
             return Math.min(value, -defaultValue);

@@ -263,6 +263,18 @@ public class MagicData implements INBTSerializable<CompoundTag> {
         }
     }
 
+    public List<DragonAbilityInstance> getActiveAbilities() {
+        return abilities.stream().filter(
+                instance -> instance.ability().value().activation().type() != Activation.Type.PASSIVE
+        ).toList();
+    }
+
+    public List<DragonAbilityInstance> getPassiveAbilities() {
+        return abilities.stream().filter(
+                instance -> instance.ability().value().activation().type() == Activation.Type.PASSIVE
+        ).toList();
+    }
+
     @Override
     public @UnknownNullability CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider) {
         CompoundTag tag = new CompoundTag();

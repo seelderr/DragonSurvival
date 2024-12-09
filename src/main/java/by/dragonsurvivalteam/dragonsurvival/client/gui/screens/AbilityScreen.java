@@ -3,9 +3,13 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.screens;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.hud.MagicHUD;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.*;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MagicData;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonTypes;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.ExperienceUtils;
 import net.minecraft.ChatFormatting;
@@ -42,7 +46,9 @@ public class AbilityScreen extends Screen {
     @Translation(type = Translation.Type.MISC, comments = "■ §dInnate skills§r are a dragon's quirks, and represent the benefits and drawbacks of each dragon type.")
     private static final String HELP_INNATE = Translation.Type.GUI.wrap("help.innate_abilities");
 
-    private static final ResourceLocation BACKGROUND_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/magic_interface.png");
+    private static final ResourceLocation BACKGROUND_MAIN = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/ability_screen/background_main.png");
+    private static final ResourceLocation EXP_EMPTY = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/ability_screen/exp_empty.png");
+    private static final ResourceLocation EXP_FULL = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/ability_screen/exp_full.png");
 
     /**
      * Currently used to determine how much % of the green experience bar is filled <br>
@@ -50,6 +56,8 @@ public class AbilityScreen extends Screen {
      * (Meaning of those whose level change depending on how much experience the player has
      */
     private static final float HIGHEST_LEVEL = 55f;
+
+    private static int ABILITIES_PER_COLUMN = 4;
 
     public Screen sourceScreen;
     //public ArrayList<ActiveDragonAbility> unlockableAbilities = new ArrayList<>();
@@ -75,25 +83,29 @@ public class AbilityScreen extends Screen {
 
         this.renderBlurredBackground(partialTick);
 
-        int startX = guiLeft + 10;
-        int startY = guiTop - 30;
+        int startX = guiLeft + 25;
+        int startY = guiTop - 28;
 
-        guiGraphics.blit(BACKGROUND_TEXTURE, startX, startY, 0, 0, 256, 256);
+        guiGraphics.blit(BACKGROUND_MAIN, startX, startY, 0, 0, 256, 256);
 
         if (type != null) {
-            int barYPos = DragonUtils.isType(type, DragonTypes.SEA) ? 198 : DragonUtils.isType(type, DragonTypes.FOREST) ? 186 : 192;
-
             //noinspection DataFlowIssue -> player should not be null
-            float progress = Mth.clamp((float) minecraft.player.experienceLevel / HIGHEST_LEVEL, 0, 1);
-            float leftExperienceBar = Math.min(1f, Math.min(0.5f, progress) * 2);
-            float rightExperienceBar = Math.min(1f, Math.min(0.5f, progress - 0.5f) * 2);
 
-            guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, startX + 23 / 2, startY + 28, 0, (float) 180 / 2, 105, 3, 128, 128);
-            guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, startX + 254 / 2, startY + 28, 0, (float) 180 / 2, 105, 3, 128, 128);
-            guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, startX + 23 / 2, startY + 28, 0, (float) barYPos / 2, (int) (105 * leftExperienceBar), 3, 128, 128);
+            // Draw XP bars
+            float progress = Mth.clamp((float) minecraft.player.experienceLevel / HIGHEST_LEVEL, 0, 1);
+            float leftExpBarProgress = Math.min(1f, Math.min(0.5f, progress) * 2);
+            float rightExpBarProgress = Math.min(1f, Math.min(0.5f, progress - 0.5f) * 2);
+
+            int barYPos = startY + 10;
+            int leftBarX = startX + 10;
+            int rightBarX = startX + 122;
+
+            guiGraphics.blit(EXP_EMPTY, leftBarX, barYPos, 0, 0, 73, 6, 73, 6);
+            guiGraphics.blit(EXP_EMPTY, rightBarX, barYPos, 0, 0, 73, 6, 73, 6);
+            guiGraphics.blit(EXP_FULL, leftBarX, barYPos, 0, 0, (int) (73 * leftExpBarProgress), 6, 73, 6);
 
             if (progress > 0.5) {
-                guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, startX + 254 / 2, startY + 28, 0, (float) barYPos / 2, (int) (105 * rightExperienceBar), 3, 128, 128);
+                guiGraphics.blit(EXP_FULL, rightBarX, barYPos, 0, 0, (int) (73 * rightExpBarProgress), 6, 73, 6);
             }
 
             int experienceLevels = 0;
@@ -128,9 +140,9 @@ public class AbilityScreen extends Screen {
 
             Component currentLevel = Component.literal(Integer.toString(minecraft.player.experienceLevel)).withStyle(ChatFormatting.DARK_GRAY);
 
-            int xPos = startX + 117 + 1;
-            int finalXPos = (xPos - minecraft.font.width(currentLevel) / 2);
-            guiGraphics.drawString(minecraft.font, currentLevel, finalXPos, startY + 26, 0, false);
+            int expLevelXPos = ((rightBarX + leftBarX) / 2 + 38 - minecraft.font.width(currentLevel) / 2);
+            int expLevelYPos = barYPos - 1;
+            guiGraphics.drawString(minecraft.font, currentLevel, expLevelXPos, expLevelYPos, 0, false);
         }
 
         super.render(guiGraphics, mouseX, mouseY, partialTick);
@@ -159,8 +171,8 @@ public class AbilityScreen extends Screen {
         guiLeft = (width - xSize) / 2;
         guiTop = (height - ySize / 2) / 2;
 
-        int startX = guiLeft;
-        int startY = guiTop;
+        int startX = guiLeft + 15;
+        int startY = guiTop + 2;
 
         //Inventory
         addRenderableWidget(new TabButton(startX + 5 + 10, startY - 26 - 30, TabButton.Type.INVENTORY_TAB, this));
@@ -168,14 +180,20 @@ public class AbilityScreen extends Screen {
         addRenderableWidget(new TabButton(startX + 62 + 10, startY - 26 - 30, TabButton.Type.GITHUB_REMINDER_TAB, this));
         addRenderableWidget(new TabButton(startX + 91 + 10, startY - 26 - 30, TabButton.Type.SKINS_TAB, this));
 
-        addRenderableWidget(new SkillProgressButton(guiLeft + 10 + (int) (219 / 2F), startY + 8 - 30, 4, this));
+        /*addRenderableWidget(new SkillProgressButton(guiLeft + 10 + (int) (219 / 2F), startY + 8 - 30, 4, this));
 
         for (int i = 1; i <= 4; i++) {
             addRenderableWidget(new SkillProgressButton(guiLeft + 10 + (int) (219 / 2F) - i * 23, startY + 8 - 30, 4 - i, this));
             addRenderableWidget(new SkillProgressButton(guiLeft + 10 + (int) (219 / 2F) + i * 23, startY + 8 - 30, 4 + i, this));
-        }
+        }*/
 
         // FIXME
+        MagicData data = MagicData.getData(minecraft.player);
+        List<DragonAbilityInstance> actives = data.getActiveAbilities();
+        List<DragonAbilityInstance> passives = data.getPassiveAbilities();
+        for(int i = 0; i < ABILITIES_PER_COLUMN; i++) {
+            addRenderableWidget(new AbilityButton(guiLeft + 55, guiTop + 15 + i * 35, actives.get(i), this));
+        }
        /* DragonStateProvider.getOptional(Minecraft.getInstance().player).ifPresent(cap -> {
             for (int num = 0; num < MagicCap.activeAbilitySlots; num++) {
                 addRenderableWidget(new AbilityButton((int) (guiLeft + (90 + 20) / 2.0), guiTop + 40 - 25 + num * 35, 0, num, this));
@@ -202,11 +220,11 @@ public class AbilityScreen extends Screen {
     public void tick() {
         // FIXME
         //noinspection DataFlowIssue -> players should be present
-        /*DragonStateHandler data = DragonStateProvider.getData(minecraft.player);
-        unlockableAbilities.clear();
+        DragonStateHandler data = DragonStateProvider.getData(minecraft.player);
+        //unlockableAbilities.clear();
         type = data.getType();
 
-        for (ActiveDragonAbility ability : data.getMagicData().getActiveAbilities()) {
+        /*for (ActiveDragonAbility ability : data.getMagicData().getActiveAbilities()) {
             int level = DragonAbilities.getAbility(minecraft.player, ability.getClass()).map(ActiveDragonAbility::getLevel).orElse(ability.level);
 
             for (int i = level; i < ability.getMaxLevel(); i++) {
@@ -218,10 +236,10 @@ public class AbilityScreen extends Screen {
                     throw new RuntimeException(exception);
                 }
             }
-        }
+        }*/
 
         // Show abilities with the lowest required experience level first
-        unlockableAbilities.sort(Comparator.comparingInt(ActiveDragonAbility::getCurrentRequiredLevel));*/
+       // unlockableAbilities.sort(Comparator.comparingInt(ActiveDragonAbility::getCurrentRequiredLevel));
     }
 
     @Override

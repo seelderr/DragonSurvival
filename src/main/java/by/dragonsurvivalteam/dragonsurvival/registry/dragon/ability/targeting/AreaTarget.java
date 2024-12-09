@@ -35,6 +35,10 @@ public record AreaTarget(Either<BlockTargeting, EntityTargeting> target, LevelBa
         });
     }
 
+    public float getArea(Player dragon, final DragonAbilityInstance ability) {
+        return radius().calculate(ability.level());
+    }
+
     public AABB calculateAffectedArea(final Player dragon, final DragonAbilityInstance ability) {
         double radius = radius().calculate(ability.level());
         return AABB.ofSize(dragon.position(), radius * 2, radius * 2, radius * 2);
