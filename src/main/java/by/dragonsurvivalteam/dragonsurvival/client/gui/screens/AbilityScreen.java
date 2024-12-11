@@ -131,7 +131,7 @@ public class AbilityScreen extends Screen {
         if (type != null) {
             // Draw XP bars
             //noinspection DataFlowIssue -> player should not be null
-            float displayedExperienceAmount = minecraft.player.totalExperience;
+            float displayedExperienceAmount = ExperienceUtils.getTotalExperience(minecraft.player);
             int displayedExperienceLevel = ExperienceUtils.getLevelForExperience((int) displayedExperienceAmount);
             float displayedExperienceProgress = (displayedExperienceAmount - ExperienceUtils.getTotalExperienceForLevel(displayedExperienceLevel)) / (ExperienceUtils.getExperienceForLevel(displayedExperienceLevel + 1));
             float progress = Mth.clamp(displayedExperienceProgress, 0, 1);
@@ -151,7 +151,7 @@ public class AbilityScreen extends Screen {
             }
 
             if(expHoverAmount != 0) {
-                float modifiedExperienceAmount = minecraft.player.totalExperience - expHoverAmount;
+                float modifiedExperienceAmount = ExperienceUtils.getTotalExperience(minecraft.player) - expHoverAmount;
                 int modifiedExperienceLevel = ExperienceUtils.getLevelForExperience((int) modifiedExperienceAmount);
                 float hoverProgress = (float) expHoverAmount / ExperienceUtils.getExperienceForLevel(modifiedExperienceLevel + 1);
                 float rightExpBarHoverProgress = modifiedExperienceLevel == minecraft.player.experienceLevel ? Math.min(rightExpBarProgress, Math.min(0.5f, hoverProgress) * 2) : rightExpBarProgress;
@@ -161,8 +161,6 @@ public class AbilityScreen extends Screen {
                 guiGraphics.pose().rotateAround(Axis.ZP.rotationDegrees(180.0F), rightBarX + 36, barYPos + 3, 0);
                 guiGraphics.blit(EXP_FULL, rightBarX + (int) (73 * (1 - rightExpBarProgress)), barYPos, 0, 0, (int) (73 * rightExpBarHoverProgress), 6, 73, 6);
                 guiGraphics.pose().popPose();
-                System.out.println("Cost aggregate: "+(rightExpBarHoverProgress + leftExpBarHoverProgress) / 2 * ExperienceUtils.getExperienceForLevel(modifiedExperienceLevel + 1 ));
-                System.out.println("Actual cost: " + expHoverAmount);
 
                 if (leftExpBarHoverProgress > 0) {
                     guiGraphics.pose().pushPose();
