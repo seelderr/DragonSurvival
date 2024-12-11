@@ -22,16 +22,17 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
-import javax.annotation.Nullable;
 
 public class DragonAbilityInstance {
-    public static final int MIN_LEVEL = 0;
+    public static final int MIN_LEVEL = 1;
     public static final int MAX_LEVEL = 255;
     public static final int NO_COOLDOWN = 0;
 
@@ -43,6 +44,8 @@ public class DragonAbilityInstance {
 
     private final Holder<DragonAbility> ability;
     private int level;
+    // TODO :: disabled icon -> grayscale icon of min_level?
+    //  otherwise it's kinda annoying to validate the lists so that an entry for level 0 exists (0 meaning disabled)
     private boolean isEnabled;
 
     // TODO :: values which will not be saved
@@ -74,10 +77,6 @@ public class DragonAbilityInstance {
     }
 
     public void tick(final Player dragon) {
-        if(ability.value().upgrade().isPresent()) {
-            ability.value().upgrade().get().updateUpgradeState(dragon, this);
-        }
-
         if (dragon.isCreative()) {
             cooldown = NO_COOLDOWN;
         } else {
@@ -244,20 +243,12 @@ public class DragonAbilityInstance {
         return value().activation().type() == Activation.Type.PASSIVE;
     }
 
-    public List<Component> getInfo(Player dragon) {
+    public List<Component> getInfo(final Player dragon) {
         return value().getInfo(dragon, this);
     }
 
-    public float getExperienceCostToUpgrade() {
-        return value().upgrade().map(upgrade -> upgrade.experienceCost().calculate(level + 1)).orElse(0f);
-    }
-
-    public void tryToUpgrade(Player dragon) {
-        value().upgrade().ifPresent(upgrade -> upgrade.tryToUpgrade(dragon, this));
-    }
-
     public void setLevel(int level) {
-        this.level = level;
+        this.level = Mth.clamp(level, MIN_LEVEL, getMaxLevel());
     }
 
     public int getMaxLevel() {

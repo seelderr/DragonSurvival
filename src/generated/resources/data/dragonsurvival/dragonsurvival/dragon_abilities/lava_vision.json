@@ -49,10 +49,6 @@
   "icon": {
     "texture_entries": [
       {
-        "from_level": 0,
-        "texture_resource": "dragonsurvival:textures/skills/cave/lava_vision_0.png"
-      },
-      {
         "from_level": 1,
         "texture_resource": "dragonsurvival:textures/skills/cave/lava_vision_1.png"
       },

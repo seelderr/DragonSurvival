@@ -1,11 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic;
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
-import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;

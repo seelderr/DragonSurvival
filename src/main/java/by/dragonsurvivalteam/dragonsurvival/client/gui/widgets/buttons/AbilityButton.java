@@ -1,7 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons;
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.AbilityScreen;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ClickHoverButton;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Upgrade;
 import by.dragonsurvivalteam.dragonsurvival.magic.AbilityTooltipRenderer;
 import by.dragonsurvivalteam.dragonsurvival.mixins.ScreenAccessor;
@@ -12,7 +11,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Renderable;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.resources.ResourceLocation;
@@ -20,8 +18,8 @@ import net.minecraft.util.FormattedCharSequence;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
 import java.util.List;
+import javax.annotation.Nullable;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
@@ -29,12 +27,6 @@ public class AbilityButton extends Button {
     public static final ResourceLocation ACTIVE_BACKGROUND = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/ability_screen/skill_main.png");
     public static final ResourceLocation PASSIVE_BACKGROUND = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/ability_screen/skill_other.png");
     public static final ResourceLocation AUTOUPGRADE_ORNAMENTATION = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/ability_screen/skill_autoupgrade.png");
-    public static final ResourceLocation ARROW_LEFT_UPGRADE_CLICK = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/ability_screen/arrow_left_upgrade_click.png");
-    public static final ResourceLocation ARROW_LEFT_UPGRADE_HOVER = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/ability_screen/arrow_left_upgrade_hover.png");
-    public static final ResourceLocation ARROW_LEFT_UPGRADE_MAIN = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/ability_screen/arrow_left_upgrade_main.png");
-    public static final ResourceLocation ARROW_RIGHT_UPGRADE_CLICK = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/ability_screen/arrow_right_upgrade_click.png");
-    public static final ResourceLocation ARROW_RIGHT_UPGRADE_HOVER = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/ability_screen/arrow_right_upgrade_hover.png");
-    public static final ResourceLocation ARROW_RIGHT_UPGRADE_MAIN = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/ability_screen/arrow_right_upgrade_main.png");
 
     private DragonAbilityInstance ability;
     private final AbilityScreen screen;
@@ -53,44 +45,17 @@ public class AbilityButton extends Button {
     }
 
     public AbilityButton(int x, int y, @Nullable final DragonAbilityInstance ability, final AbilityScreen screen) {
-        super(x, y, 34, 34, Component.empty(), action -> { /* Nothing to do */ }, DEFAULT_NARRATION);
+        super(x, y, 34, 34, Component.empty(), button -> { /* Nothing to do */ }, DEFAULT_NARRATION);
         this.screen = screen;
         this.ability = ability;
         this.isHotbar = false;
 
-        if(ability != null) {
-            if(ability.value().upgrade().isPresent() && ability.value().upgrade().get().type() == Upgrade.Type.MANUAL){
-                ((ScreenAccessor)screen).dragonSurvival$addRenderableWidget(new ClickHoverButton(
-                        x - width / 2 + 7, y + 10, 9, 14, 0, 0,  16, 16, Component.empty(), action -> {
-                    //noinspection DataFlowIssue -> player is present
-                    MagicData data = MagicData.getData(Minecraft.getInstance().player);
-                    data.downgradeAbility(ability.key());
-                }, ARROW_LEFT_UPGRADE_CLICK, ARROW_LEFT_UPGRADE_HOVER, ARROW_LEFT_UPGRADE_MAIN));
-
-                ((ScreenAccessor)screen).dragonSurvival$addRenderableWidget(new ClickHoverButton(
-                        x + width / 2 + 18, y + 10, 9, 14, 0, 0, 16, 16, Component.empty(), action -> {
-                    //noinspection DataFlowIssue -> player is present
-                    MagicData data = MagicData.getData(Minecraft.getInstance().player);
-                    data.upgradeAbility(Minecraft.getInstance().player, ability.key());
-                }, ARROW_RIGHT_UPGRADE_CLICK, ARROW_RIGHT_UPGRADE_HOVER, ARROW_RIGHT_UPGRADE_MAIN)
-                {
-                    @Override
-                    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-                        super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
-                        if(isHovered()) {
-                            MagicData data = MagicData.getData(Minecraft.getInstance().player);
-                            if(ability.value().upgrade().isPresent() && ability.level() != ability.value().upgrade().get().maximumLevel()) {
-                                screen.expHoverAmount = (int) data.getUpgradeCost(ability.key());
-                            } else {
-                                screen.expHoverAmount = 0;
-                            }
-                        } else {
-                            screen.expHoverAmount = 0;
-                        }
-                    }
-                });
-            }
+        if (ability == null || ability.value().upgrade().map(Upgrade::type).orElse(null) != Upgrade.Type.MANUAL) {
+            return;
         }
+
+        ((ScreenAccessor) screen).dragonSurvival$addRenderableWidget(new LevelButton(LevelButton.Type.DOWNGRADE, ability, x - width / 2 + 7, y + 10));
+        ((ScreenAccessor) screen).dragonSurvival$addRenderableWidget(new LevelButton(LevelButton.Type.UPGRADE, ability, x + width / 2 + 18, y + 10));
     }
 
     @Override

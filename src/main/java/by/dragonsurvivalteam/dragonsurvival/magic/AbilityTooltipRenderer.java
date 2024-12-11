@@ -82,7 +82,7 @@ public class AbilityTooltipRenderer {
         Color tooltipBackgroundColor = ability.isPassive() ? Color.ofRGB(200, 143, 31) : Color.ofRGB(127, 145, 46);
         guiGraphics.drawCenteredString(Minecraft.getInstance().font, Component.translatable(translationKey), x + 150 / 2, y + 30, tooltipBackgroundColor.getColor());
 
-        if (ability.getMaxLevel() > 1) {
+        if (ability.getMaxLevel() > DragonAbilityInstance.MIN_LEVEL) {
             guiGraphics.drawCenteredString(Minecraft.getInstance().font, Component.empty().append(ability.level() + "/" + ability.getMaxLevel()), x + 150 - 18, y + 9, -1);
             guiGraphics.drawCenteredString(Minecraft.getInstance().font, ability.getName(), x + 150 / 2, y + 9, -1);
         } else {

@@ -4,10 +4,12 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.hud.MagicHUD;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Activation;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Upgrade;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncCooldownState;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
+import by.dragonsurvivalteam.dragonsurvival.util.ExperienceUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
@@ -21,6 +23,7 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.util.INBTSerializable;
+import net.neoforged.neoforge.event.entity.player.PlayerXpEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
@@ -94,6 +97,50 @@ public class MagicData implements INBTSerializable<CompoundTag> {
         if (event.getEntity().level().isClientSide() && magic.isCasting()) {
             magic.castTimer = Math.max(0, magic.castTimer - 1);
         }
+    }
+
+    // TODO :: xp change event can trigger the level change event
+    //  meaning we may check too often
+    //  other alternative would be to dynamically determine the level on the level() call
+    //  that would be even worse though performance-wise
+    //  other option would be to only allow setting levels for passive leveling
+    //  the 'experience_cost' field would have to be renamed though and it might be confusing
+    @SubscribeEvent
+    public static void handlePassiveLeveling(final PlayerXpEvent.XpChange event) {
+        handlePassiveLeveling(event.getEntity());
+    }
+
+    @SubscribeEvent
+    public static void handlePassiveLeveling(final PlayerXpEvent.LevelChange event) {
+        handlePassiveLeveling(event.getEntity());
+    }
+
+    private static void handlePassiveLeveling(final Player player) {
+        if (!DragonStateProvider.isDragon(player)) {
+            return;
+        }
+
+        MagicData magic = MagicData.getData(player);
+        int experience = ExperienceUtils.getTotalExperience(player);
+
+        for (DragonAbilityInstance ability : magic.abilities.values()) {
+            Upgrade upgrade = ability.value().upgrade().orElse(null);
+
+            if (upgrade == null || upgrade.type() != Upgrade.Type.PASSIVE) {
+                continue;
+            }
+
+            for (int level = DragonAbilityInstance.MIN_LEVEL; level <= upgrade.maximumLevel(); level++) {
+                float required = upgrade.experienceCost().calculate(level);
+
+                if (experience < required) {
+                    ability.setLevel(level - 1);
+                    break;
+                }
+            }
+        }
+
+        // TODO :: sync to client or does it already happen properly on both sides? it should if xp is synced between sides?
     }
 
     public @Nullable DragonAbilityInstance fromSlot(int slot) {
@@ -260,19 +307,15 @@ public class MagicData implements INBTSerializable<CompoundTag> {
 
         int slot = 0;
 
-        // FIXME :: is the default level really 1? the texture entries start at 0
         for (Holder<DragonAbility> ability : type.value().abilities()) {
-            if (ability.value().activation().type() != Activation.Type.PASSIVE) {
-                if (slot < MAX_ACTIVE) {
-                    abilities.put(ability.getKey(), new DragonAbilityInstance(ability, 1));
-                    hotbar.put(slot, ability.getKey());
-                    slot++;
-                } else {
-                    abilities.put(ability.getKey(), new DragonAbilityInstance(ability, 1));
-                }
-            } else {
-                abilities.put(ability.getKey(), new DragonAbilityInstance(ability, 1));
+            DragonAbilityInstance instance = new DragonAbilityInstance(ability, DragonAbilityInstance.MIN_LEVEL);
+
+            if (slot < MAX_ACTIVE && ability.value().activation().type() != Activation.Type.PASSIVE) {
+                hotbar.put(slot, ability.getKey());
+                slot++;
             }
+
+            abilities.put(ability.getKey(), instance);
         }
     }
 
@@ -288,30 +331,13 @@ public class MagicData implements INBTSerializable<CompoundTag> {
         ).toList();
     }
 
-    public void upgradeAbility(Player dragon, final ResourceKey<DragonAbility> key) {
+    /** Returns the amount of experience gained / lost when down- or upgrading the ability */
+    public float getCost(final ResourceKey<DragonAbility> key, int delta) {
         DragonAbilityInstance instance = abilities.get(key);
 
-        if (instance != null) {
-            instance.tryToUpgrade(dragon);
-        }
-    }
-
-    public void downgradeAbility(final ResourceKey<DragonAbility> key) {
-        DragonAbilityInstance instance = abilities.get(key);
-
-        if (instance != null) {
-            instance.setLevel(Math.max(0, instance.level() - 1));
-        }
-    }
-
-    public float getUpgradeCost(final ResourceKey<DragonAbility> key) {
-        DragonAbilityInstance instance = abilities.get(key);
-
-        if (instance != null) {
-            return instance.getExperienceCostToUpgrade();
-        }
-
-        return 0;
+        return instance.value().upgrade()
+                .map(upgrade -> upgrade.experienceCost().calculate(instance.level() + delta))
+                .orElse(0f);
     }
 
     public void moveAbilityToSlot(final ResourceKey<DragonAbility> key, int newSlot) {

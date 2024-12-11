@@ -62,7 +62,7 @@ public record DragonAbility(
     }
 
     public int getMaxLevel() {
-        return upgrade.map(Upgrade::maximumLevel).orElse(0);
+        return upgrade.map(Upgrade::maximumLevel).orElse(DragonAbilityInstance.MIN_LEVEL);
     }
 
     public List<Component> getInfo(final Player dragon, final DragonAbilityInstance ability) {

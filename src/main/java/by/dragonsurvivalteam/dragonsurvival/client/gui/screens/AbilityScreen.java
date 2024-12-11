@@ -1,7 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.screens;
 
-import by.dragonsurvivalteam.dragonsurvival.client.gui.hud.MagicHUD;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.*;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.AbilityButton;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.LevelButton;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.TabButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ClickHoverButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
@@ -11,9 +12,6 @@ import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import by.dragonsurvivalteam.dragonsurvival.util.ExperienceUtils;
-import com.mojang.blaze3d.Blaze3D;
-import com.mojang.math.Axis;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -21,7 +19,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -79,26 +76,20 @@ public class AbilityScreen extends Screen {
     private static final ResourceLocation RIGHT_PANEL_ARROW_HOVER = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/ability_screen/addition_arrow_right_hover.png");
     private static final ResourceLocation RIGHT_PANEL_ARROW_MAIN = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/ability_screen/addition_arrow_right_main.png");
 
-    /**
-     * Currently used to determine how much % of the green experience bar is filled <br>
-     * This value is set as the current highest level requirement of the auto-leveling abilities <br>
-     * (Meaning of those whose level change depending on how much experience the player has
-     */
-    private static final float HIGHEST_LEVEL = 55f;
-
     private static int ABILITIES_PER_COLUMN = 4;
 
     public Screen sourceScreen;
-    //public ArrayList<ActiveDragonAbility> unlockableAbilities = new ArrayList<>();
+    public LevelButton hoveredLevelButton;
 
+    private Holder<DragonType> type;
     private int guiLeft;
     private int guiTop;
-    private Holder<DragonType> type;
+
     private boolean leftWindowOpen;
     private final List<AbstractWidget> leftWindowWidgets = new ArrayList<>();
+
     private boolean rightWindowOpen;
     private final List<AbstractWidget> rightWindowWidgets = new ArrayList<>();
-    public int expHoverAmount = 0;
 
     public AbilityScreen(Screen sourceScreen) {
         super(Component.empty().append("AbilityScreen")); // FIXME :: what is this component used for
@@ -111,7 +102,7 @@ public class AbilityScreen extends Screen {
 
     @Override
     public void render(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        if (minecraft == null) {
+        if (minecraft == null || minecraft.player == null) {
             return;
         }
 
@@ -120,21 +111,19 @@ public class AbilityScreen extends Screen {
         int startX = guiLeft + 25;
         int startY = guiTop - 28;
 
-        if(leftWindowOpen) {
+        if (leftWindowOpen) {
             guiGraphics.blit(BACKGROUND_SIDE, startX - 50, startY, 0, 0, 48, 203);
         }
+
         guiGraphics.blit(BACKGROUND_MAIN, startX, startY, 0, 0, 256, 256);
-        if(rightWindowOpen) {
+
+        if (rightWindowOpen) {
             guiGraphics.blit(BACKGROUND_SIDE, startX + 207, startY, 0, 0, 48, 203);
         }
 
         if (type != null) {
             // Draw XP bars
-            //noinspection DataFlowIssue -> player should not be null
-            float displayedExperienceProgress = minecraft.player.experienceProgress;
-            float progress = Mth.clamp(displayedExperienceProgress, 0, 1);
-            float leftExpBarProgress = Math.min(1f, Math.min(0.5f, progress) * 2);
-            float rightExpBarProgress = Math.min(1f, Math.min(0.5f, progress - 0.5f) * 2);
+            float leftExpBarProgress = Math.min(1f, Math.min(0.5f, minecraft.player.experienceProgress) * 2);
 
             int barYPos = startY + 10;
             int leftBarX = startX + 10;
@@ -144,36 +133,44 @@ public class AbilityScreen extends Screen {
             guiGraphics.blit(EXP_EMPTY, rightBarX, barYPos, 0, 0, 73, 6, 73, 6);
             guiGraphics.blit(EXP_FULL, leftBarX, barYPos, 0, 0, (int) (73 * leftExpBarProgress), 6, 73, 6);
 
-            if (progress > 0.5) {
+            if (minecraft.player.experienceProgress > 0.5) {
+                float rightExpBarProgress = Math.min(1f, Math.min(0.5f, minecraft.player.experienceProgress - 0.5f) * 2);
                 guiGraphics.blit(EXP_FULL, rightBarX, barYPos, 0, 0, (int) (73 * rightExpBarProgress), 6, 73, 6);
             }
 
-            if(expHoverAmount != 0) {
-                float modifiedExperienceAmount = ExperienceUtils.getTotalExperience(minecraft.player) - expHoverAmount;
-                int modifiedExperienceLevel = ExperienceUtils.getLevelForExperience((int) modifiedExperienceAmount);
-                float hoverProgress = (float) expHoverAmount / ExperienceUtils.getExperienceForLevel(modifiedExperienceLevel);
-                float rightExpBarHoverProgress = modifiedExperienceLevel == minecraft.player.experienceLevel ? Math.min(rightExpBarProgress, Math.min(0.5f, hoverProgress) * 2) : rightExpBarProgress;
-                float leftExpBarHoverProgress =  modifiedExperienceLevel == minecraft.player.experienceLevel ? Math.min(leftExpBarProgress, Math.min(0.5f, hoverProgress - rightExpBarProgress / 2) * 2) : leftExpBarProgress;
-                guiGraphics.setColor(1.0F, 0.0F, 0.0F, (float) 0.5f);
-                guiGraphics.pose().pushPose();
-                guiGraphics.pose().rotateAround(Axis.ZP.rotationDegrees(180.0F), rightBarX + 36, barYPos + 3, 0);
-                guiGraphics.blit(EXP_FULL, rightBarX + (int) (73 * (1 - rightExpBarProgress)), barYPos, 0, 0, (int) (73 * rightExpBarHoverProgress), 6, 73, 6);
-                guiGraphics.pose().popPose();
+            int experienceModification = hoveredLevelButton != null ? hoveredLevelButton.getExperienceModification() : 0;
+            int newExperience = ExperienceUtils.getTotalExperience(minecraft.player) + experienceModification;
+            int newLevel = Math.max(0, ExperienceUtils.getLevel(newExperience));
 
-                if (leftExpBarHoverProgress > 0) {
-                    guiGraphics.pose().pushPose();
-                    guiGraphics.pose().rotateAround(Axis.ZP.rotationDegrees(180.0F), leftBarX + 36, barYPos + 3, 0);
-                    guiGraphics.blit(EXP_FULL, leftBarX + (int) (73 * (1 - leftExpBarProgress)), barYPos, 0, 0, (int) (73 * leftExpBarHoverProgress), 6, 73, 6);
-                    guiGraphics.pose().popPose();
+            if (experienceModification != 0) {
+                // Used to show the new experience progress of the new level
+                // The level difference itself is shown through the rendered level number
+                // FIXME :: not correct yet - calculated xp progress differs from the actual progress
+                float hoverProgress = (float) newExperience / ExperienceUtils.getTotalExperience(newLevel + 1);
+                float leftExpBarHoverProgress = Math.min(0.5f, hoverProgress) * 2;
+                float rightExpBarHoverProgress = Math.min(0.5f, hoverProgress - leftExpBarHoverProgress / 2) * 2;
+
+                if (experienceModification < 0) {
+                    guiGraphics.setColor(1, 0, 0, 1);
+                } else {
+                    guiGraphics.setColor(0.6f, 0.2f, 0.85f, 1);
                 }
 
-                guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+                drawExperienceBar(guiGraphics, barYPos, leftBarX, leftExpBarHoverProgress);
+
+                if (rightExpBarHoverProgress > 0) {
+                    drawExperienceBar(guiGraphics, barYPos, rightBarX, rightExpBarHoverProgress);
+                }
+
+                guiGraphics.setColor(1, 1, 1, 1);
             }
 
             int greenFontColor = 0x57882F;
-            int redFontColor = 0xE4472F;
-            int color = expHoverAmount != 0 ? redFontColor : greenFontColor;
-            Component expectedLevel = Component.literal(Integer.toString(ExperienceUtils.getLevelForExperience(ExperienceUtils.getTotalExperience(minecraft.player) - expHoverAmount))).withColor(color);
+            int redFontColor = 0xE4472F; // TODO :: use darker color
+            // TODO :: add neutral color for no change
+            int color = experienceModification < 0 ? redFontColor : greenFontColor;
+
+            Component expectedLevel = Component.literal(String.valueOf(newLevel)).withColor(color);
 
             int expLevelXPos = ((rightBarX + leftBarX) / 2 + 38 - minecraft.font.width(expectedLevel) / 2) - 1;
             int expLevelYPos = barYPos - 1;
@@ -181,6 +178,10 @@ public class AbilityScreen extends Screen {
         }
 
         super.render(guiGraphics, mouseX, mouseY, partialTick);
+    }
+
+    private void drawExperienceBar(final GuiGraphics guiGraphics, int y, int initialX, float hoverProgress) {
+        guiGraphics.blit(EXP_FULL, initialX, y, 0, 0, (int) (73 * hoverProgress), 6, 73, 6);
     }
 
     @Override

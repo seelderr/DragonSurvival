@@ -6,40 +6,50 @@ public class ExperienceUtils {
     /**
      * <a href="https://github.com/Shadows-of-Fire/Placebo/blob/1.21/src/main/java/dev/shadowsoffire/placebo/util/EnchantmentUtils.java#L60">Taken from here</a>
      * <br> <br>
-     * Calculates the amount of experience the passed level is worth <br>
-     * <a href="https://minecraft.wiki/w/Experience#Leveling_up">Reference</a>
+     * Calculates the amount of experience the passed level is worth - <a href="https://minecraft.wiki/w/Experience#Leveling_up">Reference</a> <br>
+     * It is intentionally different compared to {@link Player#getXpNeededForNextLevel()} <br>
+     * (Since it calculates the experience required to reach the passed level from the previous level)
      *
      * @param level The target level
      * @return The amount of experience required to reach the given level when starting from the previous level
      */
     public static int getExperienceForLevel(int level) {
         if (level == 0) return 0;
-        if (level >= 30) return 112 + (level - 30) * 9;
-        if (level >= 15) return 37 + (level - 15) * 5;
-        return 7 + level * 2;
+        if (level > 30) return 112 + (level - 31) * 9;
+        if (level > 15) return 37 + (level - 16) * 5;
+        return 7 + (level - 1) * 2;
     }
 
-    public static int getLevelForExperience(int experience) {
+    /** Calculates the experience level the experience is worth */
+    public static int getLevel(int experience) {
         int level = 0;
-        int xp = 0;
-        while (xp <= experience) {
-            xp += getExperienceForLevel(level);
+
+        // TODO :: the older variant has better performance, switch back
+        while (experience > getTotalExperience(level + 1)) {
             level++;
         }
-        return level - 1;
+
+        return level;
     }
 
     /** Calculate the total experience a level is worth given experience levels */
-    public static int getTotalExperienceForLevel(int level) {
-        int total = 0;
-        for (int i = 0; i < level; i++) {
-            total += getExperienceForLevel(i);
+    public static int getTotalExperience(int targetLevel) {
+        int experience = 0;
+
+        for (int level = 1; level <= targetLevel; level++) {
+            experience += getExperienceForLevel(level);
         }
-        return total;
+
+        return experience;
     }
 
-    /** Calculate the total experience the player has. We use this instead of player.totalExperience as that doesn't update properly when using commands to give levels. */
+    /**
+     * Calculate the total experience the player has <br>
+     * {@link Player#totalExperience} is not used since it does not update when using commands to change the experience level
+     */
     public static int getTotalExperience(final Player player) {
-        return getTotalExperienceForLevel(player.experienceLevel) + Math.round(player.experienceProgress * getExperienceForLevel(player.experienceLevel));
+        int currentExperience = getTotalExperience(player.experienceLevel);
+        // TODO :: getExperienceForLevel is closer to the actual level in the ability screen but total experience should be the correct one - there is some bug somewhere
+        return (int) (currentExperience + player.experienceProgress * getTotalExperience(player.experienceLevel + 1));
     }
 }

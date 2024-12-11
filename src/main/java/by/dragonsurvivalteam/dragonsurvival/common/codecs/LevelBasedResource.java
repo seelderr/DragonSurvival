@@ -39,7 +39,7 @@ public record LevelBasedResource(List<TextureEntry> textureEntries) {
         ).apply(instance, TextureEntry::new));
 
         @Override
-        public int compareTo(@NotNull final LevelBasedResource.TextureEntry other) {
+        public int compareTo(@NotNull final TextureEntry other) {
             if (fromLevel() < other.fromLevel()) {
                 return -1;
             } else if (fromLevel() > other.fromLevel()) {
