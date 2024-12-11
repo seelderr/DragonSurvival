@@ -32,7 +32,7 @@ public class ExperienceUtils {
     /** Calculate the total experience a level is worth given experience levels */
     public static int getTotalExperienceForLevel(int level) {
         int total = 0;
-        for (int i = 0; i < level; i++) {
+        for (int i = 0; i <= level; i++) {
             total += getExperienceForLevel(i);
         }
         return total;
