@@ -74,6 +74,10 @@ public class DragonAbilityInstance {
     }
 
     public void tick(final Player dragon) {
+        if(ability.value().upgrade().isPresent()) {
+            ability.value().upgrade().get().updateUpgradeState(dragon, this);
+        }
+
         if (dragon.isCreative()) {
             cooldown = NO_COOLDOWN;
         } else {
@@ -242,6 +246,18 @@ public class DragonAbilityInstance {
 
     public List<Component> getInfo(Player dragon) {
         return value().getInfo(dragon, this);
+    }
+
+    public float getExperienceCostToUpgrade() {
+        return value().upgrade().map(upgrade -> upgrade.experienceCost().calculate(level + 1)).orElse(0f);
+    }
+
+    public void tryToUpgrade(Player dragon) {
+        value().upgrade().ifPresent(upgrade -> upgrade.tryToUpgrade(dragon, this));
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
     }
 
     public int getMaxLevel() {

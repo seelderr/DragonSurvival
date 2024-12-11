@@ -5,6 +5,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,6 +37,40 @@ public record Upgrade(Type type, int maximumLevel, LevelBasedValue experienceCos
         @Override
         public @NotNull String getSerializedName() {
             return name;
+        }
+    }
+
+    public void updateUpgradeState(Player player, DragonAbilityInstance ability) {
+        if(type() == Type.PASSIVE) {
+            float cost = experienceCost().calculate(ability.level());
+            float availableExperience = player.totalExperience;
+            while(availableExperience < cost) {
+                if(ability.level() == 0) {
+                    break;
+                }
+
+                ability.setLevel(ability.level() - 1);
+                cost = experienceCost().calculate(ability.level());
+            }
+            while(availableExperience >= cost) {
+                if(ability.level() == maximumLevel()) {
+                    break;
+                }
+
+                ability.setLevel(ability.level() + 1);
+                cost = experienceCost().calculate(ability.level());
+            }
+        }
+    }
+
+    public void tryToUpgrade(Player player, DragonAbilityInstance ability) {
+        if(type() == Type.MANUAL) {
+            float cost = experienceCost().calculate(ability.level() + 1);
+            float availableExperience = player.totalExperience;
+            if (availableExperience >= cost && ability.level() < maximumLevel()){
+                player.giveExperiencePoints((int) -cost);
+                ability.setLevel(ability.level() + 1);
+            }
         }
     }
 }

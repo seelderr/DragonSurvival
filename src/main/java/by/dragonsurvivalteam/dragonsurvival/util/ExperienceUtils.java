@@ -14,24 +14,26 @@ public class ExperienceUtils {
      */
     public static int getExperienceForLevel(int level) {
         if (level == 0) return 0;
-        if (level > 30) return 112 + (level - 31) * 9;
-        if (level > 15) return 37 + (level - 16) * 5;
-        return 7 + (level - 1) * 2;
+        if (level >= 30) return 112 + (level - 30) * 9;
+        if (level >= 15) return 37 + (level - 15) * 5;
+        return 7 + level * 2;
     }
 
-    /** Calculate teh total experience the player has based on their experience levels */
-    public static int getTotalExperience(final Player player) {
-        return getTotalExperience(player.experienceLevel);
-    }
-
-    /** Calculate the total experience the player has based on their experience levels */
-    public static int getTotalExperience(int currentLevel) {
-        int experience = 0;
-
-        for (int level = 1; level <= currentLevel; level++) {
-            experience += getExperienceForLevel(level);
+    public static int getLevelForExperience(int experience) {
+        int level = 0;
+        int xp = 0;
+        while (xp <= experience) {
+            xp += getExperienceForLevel(level);
+            level++;
         }
+        return level - 1;
+    }
 
-        return experience;
+    public static int getTotalExperienceForLevel(int level) {
+        int total = 0;
+        for (int i = 0; i < level; i++) {
+            total += getExperienceForLevel(i);
+        }
+        return total;
     }
 }

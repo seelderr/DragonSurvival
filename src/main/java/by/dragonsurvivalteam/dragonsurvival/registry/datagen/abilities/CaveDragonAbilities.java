@@ -282,7 +282,7 @@ public class CaveDragonAbilities {
     private static void registerPassiveAbilities(final BootstrapContext<DragonAbility> context) {
         context.register(CAVE_ATHLETICS, new DragonAbility(
                 Activation.passive(),
-                Optional.of(new Upgrade(Upgrade.Type.PASSIVE, 5, LevelBasedValue.perLevel(15))), // FIXME :: not the actual values
+                Optional.of(new Upgrade(Upgrade.Type.MANUAL, 5, LevelBasedValue.perLevel(15))), // FIXME :: not the actual values
                 Optional.empty(),
                 List.of(new ActionContainer(new SelfTarget(Either.right(
                         new AbilityTargeting.EntityTargeting(

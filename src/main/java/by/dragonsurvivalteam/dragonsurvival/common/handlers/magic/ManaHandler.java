@@ -145,7 +145,7 @@ public class ManaHandler {
     }
 
     public static float getManaFromExperience(final Player player) {
-        return convertExperience(ExperienceUtils.getTotalExperience(player));
+        return convertExperience(player.totalExperience);
     }
 
     /** Convert experience points to mana based on the {@link ManaHandler#LEVELS_TO_MANA} ratio */

@@ -72,7 +72,7 @@
     ]
   },
   "upgrade": {
-    "type": "passive",
+    "type": "manual",
     "experience_cost": {
       "type": "minecraft:linear",
       "base": 15.0,

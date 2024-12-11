@@ -288,6 +288,32 @@ public class MagicData implements INBTSerializable<CompoundTag> {
         ).toList();
     }
 
+    public void upgradeAbility(Player dragon, final ResourceKey<DragonAbility> key) {
+        DragonAbilityInstance instance = abilities.get(key);
+
+        if (instance != null) {
+            instance.tryToUpgrade(dragon);
+        }
+    }
+
+    public void downgradeAbility(final ResourceKey<DragonAbility> key) {
+        DragonAbilityInstance instance = abilities.get(key);
+
+        if (instance != null) {
+            instance.setLevel(Math.max(0, instance.level() - 1));
+        }
+    }
+
+    public float getUpgradeCost(final ResourceKey<DragonAbility> key) {
+        DragonAbilityInstance instance = abilities.get(key);
+
+        if (instance != null) {
+            return instance.getExperienceCostToUpgrade();
+        }
+
+        return 0;
+    }
+
     public void moveAbilityToSlot(final ResourceKey<DragonAbility> key, int newSlot) {
         int currentSlot = slotFromAbility(key);
         ResourceKey<DragonAbility> previous = hotbar.put(newSlot, key);

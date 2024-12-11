@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.screens;
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.hud.MagicHUD;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.*;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ClickHoverButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
@@ -10,6 +11,8 @@ import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import by.dragonsurvivalteam.dragonsurvival.util.ExperienceUtils;
+import com.mojang.blaze3d.Blaze3D;
+import com.mojang.math.Axis;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -19,7 +22,6 @@ import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -54,6 +56,12 @@ public class AbilityScreen extends Screen {
             "- §9More information§r can be found on our Wiki and in our Discord. Check the Curseforge mod page."
     })
     private static final String HELP_PASSIVE_ACTIVE = Translation.Type.GUI.wrap("help.passive_active_abilities");
+
+    @Translation(type = Translation.Type.MISC, comments = {
+            "■ §dAbility assignment§r - drag and drop §6Active skills§r to the §9hotbar§r.",
+            "- The §9hotbar§r is used to quickly access your active skills."
+    })
+    private static final String HELP_ABILITY_ASSIGNMENT = Translation.Type.GUI.wrap("help.ability_assignment");
 
     @Translation(type = Translation.Type.MISC, comments = "■ §dInnate skills§r are a dragon's quirks, and represent the benefits and drawbacks of each dragon type.")
     private static final String HELP_INNATE = Translation.Type.GUI.wrap("help.innate_abilities");
@@ -90,6 +98,7 @@ public class AbilityScreen extends Screen {
     private final List<AbstractWidget> leftWindowWidgets = new ArrayList<>();
     private boolean rightWindowOpen;
     private final List<AbstractWidget> rightWindowWidgets = new ArrayList<>();
+    public int expHoverAmount = 0;
 
     public AbilityScreen(Screen sourceScreen) {
         super(Component.empty().append("AbilityScreen")); // FIXME :: what is this component used for
@@ -120,10 +129,12 @@ public class AbilityScreen extends Screen {
         }
 
         if (type != null) {
-            //noinspection DataFlowIssue -> player should not be null
-
             // Draw XP bars
-            float progress = Mth.clamp((float) minecraft.player.experienceLevel / HIGHEST_LEVEL, 0, 1);
+            //noinspection DataFlowIssue -> player should not be null
+            float displayedExperienceAmount = minecraft.player.totalExperience;
+            int displayedExperienceLevel = ExperienceUtils.getLevelForExperience((int) displayedExperienceAmount);
+            float displayedExperienceProgress = (displayedExperienceAmount - ExperienceUtils.getTotalExperienceForLevel(displayedExperienceLevel)) / (ExperienceUtils.getExperienceForLevel(displayedExperienceLevel + 1));
+            float progress = Mth.clamp(displayedExperienceProgress, 0, 1);
             float leftExpBarProgress = Math.min(1f, Math.min(0.5f, progress) * 2);
             float rightExpBarProgress = Math.min(1f, Math.min(0.5f, progress - 0.5f) * 2);
 
@@ -139,54 +150,40 @@ public class AbilityScreen extends Screen {
                 guiGraphics.blit(EXP_FULL, rightBarX, barYPos, 0, 0, (int) (73 * rightExpBarProgress), 6, 73, 6);
             }
 
-            int experienceLevels = 0;
+            if(expHoverAmount != 0) {
+                float modifiedExperienceAmount = minecraft.player.totalExperience - expHoverAmount;
+                int modifiedExperienceLevel = ExperienceUtils.getLevelForExperience((int) modifiedExperienceAmount);
+                float modifiedExperienceProgress = (modifiedExperienceAmount - ExperienceUtils.getTotalExperienceForLevel(modifiedExperienceLevel)) / (ExperienceUtils.getExperienceForLevel(modifiedExperienceLevel + 1 ));
+                float hoverProgress = Mth.clamp(modifiedExperienceProgress, 0, 1);
+                float leftExpBarHoverProgress =  modifiedExperienceLevel == minecraft.player.experienceLevel ? Math.min(leftExpBarProgress, Math.min(0.5f, hoverProgress - rightExpBarProgress) * 2) : leftExpBarProgress;
+                float rightExpBarHoverProgress = modifiedExperienceLevel == minecraft.player.experienceLevel ? Math.min(rightExpBarProgress, Math.min(0.5f, hoverProgress) * 2) : rightExpBarProgress;
+                guiGraphics.setColor(1.0F, 0.0F, 0.0F, (float) Math.sin(Blaze3D.getTime() / 2.f));
+                guiGraphics.pose().pushPose();
+                guiGraphics.pose().rotateAround(Axis.ZP.rotationDegrees(180.0F), rightBarX + 36, barYPos + 3, 0);
+                guiGraphics.blit(EXP_FULL, rightBarX + (int) (73 * (1 - rightExpBarProgress)), barYPos, 0, 0, (int) (73 * rightExpBarHoverProgress), 6, 73, 6);
+                guiGraphics.pose().popPose();
 
-            for (GuiEventListener button : children()) {
-                if (!(button instanceof AbstractWidget widget) || !widget.isHovered()) {
-                    continue;
+                if (leftExpBarHoverProgress > 0) {
+                    guiGraphics.pose().pushPose();
+                    guiGraphics.pose().rotateAround(Axis.ZP.rotationDegrees(180.0F), leftBarX + 36, barYPos + 3, 0);
+                    guiGraphics.blit(EXP_FULL, leftBarX + (int) (73 * (1 - leftExpBarProgress)), barYPos, 0, 0, (int) (73 * leftExpBarHoverProgress), 6, 73, 6);
+                    guiGraphics.pose().popPose();
                 }
 
-                if (button instanceof IncreaseLevelButton increaseLevelButton) {
-                    experienceLevels = increaseLevelButton.upgradeCost;
-                    break;
-                } else if (button instanceof DecreaseLevelButton decreaseLevelButton) {
-                    experienceLevels = decreaseLevelButton.gainedLevels;
-                    break;
-                }
+                guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
             }
 
-            if (experienceLevels != 0) {
-                // Indicate how much % experience would be lost or gained (by comparing the experience points the levels are worth)
-                float change = Mth.clamp((float) ExperienceUtils.getTotalExperience(experienceLevels) / (float) ExperienceUtils.getTotalExperience(minecraft.player), 0, 1);
-                float leftOverlayBar = Math.min(1, Math.min(0.5f, change) * 2);
-                float rightOverlayBar = Math.min(1, Math.min(0.5f, change - 0.5f) * 2);
+            int greenFontColor = 0x57882F;
+            int redFontColor = 0xE4472F;
+            int color = expHoverAmount != 0 ? redFontColor : greenFontColor;
+            Component expectedLevel = Component.literal(Integer.toString(ExperienceUtils.getLevelForExperience(minecraft.player.totalExperience - expHoverAmount))).withColor(color);
 
-                // Render the purple bar which indicates the amount that will be taken from the current experience
-                guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, startX + 23 / 2, startY + 28, 0, (float) 174 / 2, (int) (105 * leftOverlayBar), 3, 128, 128);
-
-                if (rightOverlayBar > 0.5) {
-                    guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, startX + 254 / 2, startY + 28, 0, (float) 174 / 2, (int) (105 * rightOverlayBar), 3, 128, 128);
-                }
-            }
-
-            Component currentLevel = Component.literal(Integer.toString(minecraft.player.experienceLevel)).withStyle(ChatFormatting.DARK_GRAY);
-
-            int expLevelXPos = ((rightBarX + leftBarX) / 2 + 38 - minecraft.font.width(currentLevel) / 2) - 1;
+            int expLevelXPos = ((rightBarX + leftBarX) / 2 + 38 - minecraft.font.width(expectedLevel) / 2) - 1;
             int expLevelYPos = barYPos - 1;
-            guiGraphics.drawString(minecraft.font, currentLevel, expLevelXPos, expLevelYPos, 0, false);
+            guiGraphics.drawString(minecraft.font, expectedLevel, expLevelXPos, expLevelYPos, 0, false);
         }
 
         super.render(guiGraphics, mouseX, mouseY, partialTick);
-
-        // FIXME
-        /*renderables.forEach(renderable -> {
-            if (renderable instanceof AbilityButton babilityButtonn) {
-                if (babilityButtonn.skillType == 0 && babilityButtonn.dragging && babilityButtonn.ability != null) {
-                    RenderSystem.setShaderTexture(0, babilityButtonn.ability.getIcon());
-                    guiGraphics.blit(babilityButtonn.ability.getIcon(), mouseX, mouseY, 0, 0, 32, 32, 32, 32);
-                }
-            }
-        });*/
     }
 
     @Override
@@ -210,13 +207,6 @@ public class AbilityScreen extends Screen {
         addRenderableWidget(new TabButton(startX + 34 + 10, startY - 28 - 30, TabButton.Type.ABILITY_TAB, this));
         addRenderableWidget(new TabButton(startX + 62 + 10, startY - 26 - 30, TabButton.Type.GITHUB_REMINDER_TAB, this));
         addRenderableWidget(new TabButton(startX + 91 + 10, startY - 26 - 30, TabButton.Type.SKINS_TAB, this));
-
-        /*addRenderableWidget(new SkillProgressButton(guiLeft + 10 + (int) (219 / 2F), startY + 8 - 30, 4, this));
-
-        for (int i = 1; i <= 4; i++) {
-            addRenderableWidget(new SkillProgressButton(guiLeft + 10 + (int) (219 / 2F) - i * 23, startY + 8 - 30, 4 - i, this));
-            addRenderableWidget(new SkillProgressButton(guiLeft + 10 + (int) (219 / 2F) + i * 23, startY + 8 - 30, 4 + i, this));
-        }*/
 
         // FIXME
         //noinspection DataFlowIssue -> player is present
@@ -242,93 +232,39 @@ public class AbilityScreen extends Screen {
             widget.visible = leftWindowOpen;
         }
 
-        // Right panel (innate ablities)
+        AbstractWidget leftHelpButton = new HelpButton(guiLeft - 7, startY - 25, 13, 13, HELP_ABILITY_ASSIGNMENT);
+        addRenderableWidget(leftHelpButton);
+        leftWindowWidgets.add(leftHelpButton);
+        leftHelpButton.visible = leftWindowOpen;
 
-        addRenderableWidget(new ExtendedButton(guiLeft + 17, guiTop + 69, 10, 17, Component.empty(), button -> {
+        // Right panel (innate ablities)
+        for(int i = 0; i < ABILITIES_PER_COLUMN; i++) {
+            AbstractWidget widget = new AbilityButton(guiLeft + 239, guiTop + i * 40, null, this);
+            addRenderableWidget(widget);
+            rightWindowWidgets.add(widget);
+            widget.visible = rightWindowOpen;
+        }
+
+        AbstractWidget rightHelpButton = new HelpButton(guiLeft + 250, startY - 25, 13, 13, HELP_INNATE);
+        addRenderableWidget(rightHelpButton);
+        rightWindowWidgets.add(rightHelpButton);
+        rightHelpButton.visible = rightWindowOpen;
+
+        addRenderableWidget(new ClickHoverButton(guiLeft + 17, guiTop + 69, 10, 17, 0, 1, 18, 18, Component.empty(), button -> {
             leftWindowOpen = !leftWindowOpen;
             for(AbstractWidget widget : leftWindowWidgets) {
                 widget.visible = leftWindowOpen;
             }
-        }){
-            boolean isClicking = false;
+        }, LEFT_PANEL_ARROW_CLICK, LEFT_PANEL_ARROW_HOVER, LEFT_PANEL_ARROW_MAIN));
 
-            @Override
-            public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-                if(isHovered()) {
-                    if(isClicking) {
-                        guiGraphics.blit(LEFT_PANEL_ARROW_CLICK, getX(), getY(), 0, 1, 10, 17, 18, 18);
-                    } else {
-                        guiGraphics.blit(LEFT_PANEL_ARROW_HOVER, getX(), getY(), 0, 1, 10, 17, 18, 18);
-                    }
-                } else {
-                    guiGraphics.blit(LEFT_PANEL_ARROW_MAIN, getX(), getY(), 0, 1, 10, 17, 18, 18);
-                }
-            }
-
-            @Override
-            public void onClick(double mouseX, double mouseY) {
-                super.onClick(mouseX, mouseY);
-                isClicking = true;
-            }
-
-            public void onRelease(double mouseX, double mouseY) {
-                super.onRelease(mouseX, mouseY);
-                isClicking = false;
-            }
-        }
-        );
-
-        addRenderableWidget(new ExtendedButton(guiLeft + 228, guiTop + 69, 10, 17, Component.empty(), button -> {
+        addRenderableWidget(new ClickHoverButton(guiLeft + 228, guiTop + 69, 10, 17, 0, 1, 18, 18, Component.empty(), button -> {
             rightWindowOpen = !rightWindowOpen;
             for(AbstractWidget widget : rightWindowWidgets) {
                 widget.visible = rightWindowOpen;
             }
-        }){
-            boolean isClicking = false;
+        }, RIGHT_PANEL_ARROW_CLICK, RIGHT_PANEL_ARROW_HOVER, RIGHT_PANEL_ARROW_MAIN));
 
-            @Override
-            public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-                if(isHovered()) {
-                    if(isClicking) {
-                        guiGraphics.blit(RIGHT_PANEL_ARROW_CLICK, getX(), getY(), 0, 1, 10, 17, 18, 18);
-                    } else {
-                        guiGraphics.blit(RIGHT_PANEL_ARROW_HOVER, getX(), getY(), 0, 1, 10, 17, 18, 18);
-                    }
-                } else {
-                    guiGraphics.blit(RIGHT_PANEL_ARROW_MAIN, getX(), getY(), 0, 1, 10, 17, 18, 18);
-                }
-            }
-
-            @Override
-            public void onClick(double mouseX, double mouseY) {
-                super.onClick(mouseX, mouseY);
-                isClicking = true;
-            }
-
-            public void onRelease(double mouseX, double mouseY) {
-                super.onRelease(mouseX, mouseY);
-                isClicking = false;
-            }
-        }
-        );
-
-       /* DragonStateProvider.getOptional(Minecraft.getInstance().player).ifPresent(cap -> {
-            for (int num = 0; num < MagicCap.activeAbilitySlots; num++) {
-                addRenderableWidget(new AbilityButton((int) (guiLeft + (90 + 20) / 2.0), guiTop + 40 - 25 + num * 35, 0, num, this));
-            }
-
-            for (int num = 0; num < MagicCap.passiveAbilitySlots; num++) {
-                addRenderableWidget(new AbilityButton(guiLeft + (int) ((215 + 10) / 2F), guiTop + 40 - 25 + num * 35, 1, num, this));
-                addRenderableWidget(new IncreaseLevelButton(guiLeft + (int) (219 / 2F) + 35, guiTop + 40 - 17 + num * 35, num));
-                addRenderableWidget(new DecreaseLevelButton(guiLeft + (int) (219 / 2F) - 13, guiTop + 40 - 17 + num * 35, num));
-            }
-
-            for (int num = 0; num < MagicCap.innateAbilitySlots; num++) {
-                addRenderableWidget(new AbilityButton(guiLeft + (int) (340 / 2F), guiTop + 40 - 25 + num * 35, 2, num, this));
-            }
-        });*/
-
-        addRenderableWidget(new HelpButton(guiLeft + BACKGROUND_BEZEL_WIDTH + (INNER_BACKGROUND_WIDTH / 2) + 21, startY + 263 / 2 + 28, 9, 9, HELP_PASSIVE_ACTIVE));
+        addRenderableWidget(new HelpButton(guiLeft + BACKGROUND_BEZEL_WIDTH + (INNER_BACKGROUND_WIDTH / 2) + 19, startY + 263 / 2 + 24, 13, 13, HELP_PASSIVE_ACTIVE));
     }
 
 
