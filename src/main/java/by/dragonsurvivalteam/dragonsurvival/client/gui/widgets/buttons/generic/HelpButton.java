@@ -16,38 +16,25 @@ import java.util.List;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class HelpButton extends ExtendedButton {
-    private static final ResourceLocation DEFAULT_HELP_BUTTON = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/help_button.png");
+    private static final ResourceLocation INFO_HOVER = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/info_hover.png");
+    private static final ResourceLocation INFO_MAIN = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/info_main.png");
 
     private final String text;
-    private final Holder<DragonType> type;
-    private final ResourceLocation main;
-    private final ResourceLocation hover;
 
     private boolean usesVanillaTooltip;
 
     public HelpButton(int x, int y, int sizeX, int sizeY, String text) {
-        this(DragonStateProvider.getData(Minecraft.getInstance().player).getDragonType(), x, y, sizeX, sizeY, text, null, null);
-    }
-
-    public HelpButton(int x, int y, int sizeX, int sizeY, String text, ResourceLocation main, ResourceLocation hover) {
-        this(DragonStateProvider.getData(Minecraft.getInstance().player).getDragonType(), x, y, sizeX, sizeY, text, main, hover);
+        super(x, y, sizeX, sizeY, Component.empty(), action -> { /* Nothing to do */ });
+        this.text = text;
     }
 
     // This is needed for the DragonScreen, as otherwise we'll get cut out by the scissoring used for the rendering of the player entity in the window
     public HelpButton(int x, int y, int sizeX, int sizeY, String text, boolean usesVanillaTooltip) {
-        this(DragonStateProvider.getData(Minecraft.getInstance().player).getDragonType(), x, y, sizeX, sizeY, text, null, null);
+        this(x, y, sizeX, sizeY, text);
         if (usesVanillaTooltip) {
             setTooltip(Tooltip.create(Component.translatable(text)));
         }
         this.usesVanillaTooltip = usesVanillaTooltip;
-    }
-
-    public HelpButton(Holder<DragonType> type, int x, int y, int sizeX, int sizeY, String text, ResourceLocation main, ResourceLocation hover) {
-        super(x, y, sizeX, sizeY, Component.empty(), action -> { /* Nothing to do */ });
-        this.text = text;
-        this.type = type;
-        this.main = main;
-        this.hover = hover;
     }
 
     @Override
@@ -57,27 +44,10 @@ public class HelpButton extends ExtendedButton {
             guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, List.of(Component.translatable(text)), mouseX, mouseY);
         }
 
-        // FIXME :: We don't use the supplied size at all here. Figure out how to use it correctly.
-        if(main == null || hover == null) {
-            ResourceLocation texture;
-            if (type != null) {
-                texture = type.value().miscResources().helpButton();
-            } else {
-                // Can occur when the altar is entered as a human
-                texture = DEFAULT_HELP_BUTTON;
-            }
-
-            if(!isHovered()) {
-                guiGraphics.blit(texture, getX(), getY(), 0, 1, 9, 9, 20, 11);
-            } else {
-                guiGraphics.blit(texture, getX() - 1, getY() - 1, 9, 0, 11, 11, 20, 11);
-            }
+        if(!isHovered()) {
+            guiGraphics.blit(INFO_MAIN, getX(), getY(), width, height, 0, 0, 13, 13, 16, 16);
         } else {
-            if(!isHovered()) {
-                guiGraphics.blit(main, getX(), getY(), 1, 0, 9, 9, 20, 11);
-            } else {
-                guiGraphics.blit(hover, getX(), getY(), 0, 10, 11, 11, 20, 11);
-            }
+            guiGraphics.blit(INFO_HOVER, getX(), getY(), width, height, 0, 0, 13, 13, 16, 16);
         }
     }
 

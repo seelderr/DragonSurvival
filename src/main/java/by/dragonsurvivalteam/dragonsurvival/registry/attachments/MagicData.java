@@ -292,7 +292,7 @@ public class MagicData implements INBTSerializable<CompoundTag> {
         int currentSlot = slotFromAbility(key);
         ResourceKey<DragonAbility> previous = hotbar.put(newSlot, key);
 
-        if (previous != null && currentSlot != NO_SLOT) {
+        if (previous != null && currentSlot != NO_SLOT && newSlot != NO_SLOT) {
             hotbar.put(currentSlot, previous);
         } else {
             hotbar.remove(currentSlot);

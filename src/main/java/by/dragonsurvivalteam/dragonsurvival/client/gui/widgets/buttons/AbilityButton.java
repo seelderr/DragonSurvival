@@ -77,22 +77,22 @@ public class AbilityButton extends Button {
         }
 
         if (!ability.isPassive()) {
-            DragonAbilityInstance swappedTo = null;
             //noinspection DataFlowIssue -> player is present
             MagicData data = MagicData.getData(Minecraft.getInstance().player);
 
+            boolean wasSwappedToASlot = false;
             for (Renderable renderable : screen.renderables) {
                 if (renderable instanceof AbilityButton button && button.slot != MagicData.NO_SLOT) {
                     if (button.isMouseOver(pMouseX, pMouseY)) {
                         PacketDistributor.sendToServer(new SyncSlotAssignment(ability.key(), button.slot));
                         data.moveAbilityToSlot(ability.key(), button.slot);
-                        swappedTo = button.ability;
+                        wasSwappedToASlot = true;
                         break;
                     }
                 }
             }
 
-            if (isHotbar && swappedTo == null) {
+            if (isHotbar && !wasSwappedToASlot) {
                 PacketDistributor.sendToServer(new SyncSlotAssignment(ability.key(), MagicData.NO_SLOT));
                 data.moveAbilityToSlot(ability.key(), MagicData.NO_SLOT);
             }
