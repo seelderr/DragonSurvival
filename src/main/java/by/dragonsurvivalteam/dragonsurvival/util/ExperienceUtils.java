@@ -49,7 +49,6 @@ public class ExperienceUtils {
      */
     public static int getTotalExperience(final Player player) {
         int currentExperience = getTotalExperience(player.experienceLevel);
-        // TODO :: getExperienceForLevel is closer to the actual level in the ability screen but total experience should be the correct one - there is some bug somewhere
-        return (int) (currentExperience + player.experienceProgress * getTotalExperience(player.experienceLevel + 1));
+        return (int) (currentExperience + player.experienceProgress * getExperienceForLevel(player.experienceLevel + 1));
     }
 }
