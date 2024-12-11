@@ -79,7 +79,11 @@ public class AbilityButton extends Button {
                         super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
                         if(isHovered()) {
                             MagicData data = MagicData.getData(Minecraft.getInstance().player);
-                            screen.expHoverAmount = (int) data.getUpgradeCost(ability.key());
+                            if(ability.value().upgrade().isPresent() && ability.level() != ability.value().upgrade().get().maximumLevel()) {
+                                screen.expHoverAmount = (int) data.getUpgradeCost(ability.key());
+                            } else {
+                                screen.expHoverAmount = 0;
+                            }
                         } else {
                             screen.expHoverAmount = 0;
                         }
