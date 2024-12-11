@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.LevelBasedResource;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.Modifier;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ModifierWithDuration;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.ActionContainer;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Activation;
@@ -17,6 +18,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.RegistryFixedCodec;
@@ -109,10 +111,23 @@ public record DragonAbility(
                     }
 
                     if(effect instanceof ModifierEffect modifierEffect) {
-                        for(ModifierWithDuration modifier : modifierEffect.modifiers()) {
-                            float duration = modifier.duration().calculate(ability.level());
+                        for(ModifierWithDuration modifierWithDuration : modifierEffect.modifiers()) {
+                            float duration = modifierWithDuration.duration().calculate(ability.level());
                             if(duration > highestDuration) {
                                 highestDuration = duration;
+                            }
+
+                            for(Modifier modifier : modifierWithDuration.modifiers()) {
+                                MutableComponent name = Component.literal("■ ").append(Component.translatable(modifier.attribute().value().getDescriptionId())).withColor(-219136);
+                                float amount = modifier.amount().calculate(ability.level());
+                                String number;
+                                if(amount > 0) {
+                                    number = "+" + amount;
+                                } else {
+                                    number = String.valueOf(amount);
+                                }
+                                Component value = Component.literal(": ").withColor(-219136).append(Component.literal(number).withStyle(modifier.attribute().value().getStyle(amount > 0)));
+                                info.add(name.append(value));
                             }
                         }
                     }

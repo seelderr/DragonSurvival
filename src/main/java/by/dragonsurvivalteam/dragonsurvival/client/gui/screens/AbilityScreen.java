@@ -171,7 +171,7 @@ public class AbilityScreen extends Screen {
 
             Component currentLevel = Component.literal(Integer.toString(minecraft.player.experienceLevel)).withStyle(ChatFormatting.DARK_GRAY);
 
-            int expLevelXPos = ((rightBarX + leftBarX) / 2 + 38 - minecraft.font.width(currentLevel) / 2);
+            int expLevelXPos = ((rightBarX + leftBarX) / 2 + 38 - minecraft.font.width(currentLevel) / 2) - 1;
             int expLevelYPos = barYPos - 1;
             guiGraphics.drawString(minecraft.font, currentLevel, expLevelXPos, expLevelYPos, 0, false);
         }
@@ -229,6 +229,11 @@ public class AbilityScreen extends Screen {
             addRenderableWidget(new AbilityButton((int) (guiLeft + BACKGROUND_BEZEL_WIDTH + (INNER_BACKGROUND_WIDTH / 3.7f)), guiTop + i * 40, instance, this));
         }
 
+        for (int i = 0; i < ABILITIES_PER_COLUMN; i++) {
+            DragonAbilityInstance instance = passives.size() > i ? passives.get(i) : null;
+            addRenderableWidget(new AbilityButton((int) (guiLeft + BACKGROUND_BEZEL_WIDTH + (INNER_BACKGROUND_WIDTH / 1.23f)), guiTop + i * 40, instance, this));
+        }
+
         // Left panel (hotbar)
         for(int i = 0; i < ABILITIES_PER_COLUMN; i++) {
             AbstractWidget widget = new AbilityButton(guiLeft - 18, guiTop + i * 40, data.fromSlot(i), this, true, i);
@@ -236,6 +241,8 @@ public class AbilityScreen extends Screen {
             leftWindowWidgets.add(widget);
             widget.visible = leftWindowOpen;
         }
+
+        // Right panel (innate ablities)
 
         addRenderableWidget(new ExtendedButton(guiLeft + 17, guiTop + 69, 10, 17, Component.empty(), button -> {
             leftWindowOpen = !leftWindowOpen;

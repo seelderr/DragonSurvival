@@ -81,6 +81,8 @@
   "block.dragonsurvival.stone_dragon_door": "Stone Dragon Door",
   "block.dragonsurvival.warped_dragon_door": "Warped Dragon Door",
   "dragon_ability.dragonsurvival.ball_lightning": "Ball Lightning",
+  "dragon_ability.dragonsurvival.cave_athletics": "Cave Athletics",
+  "dragon_ability.dragonsurvival.cave_athletics.desc": "■ Standing on stone surfaces will increase your movement speed.",
   "dragon_ability.dragonsurvival.fire_ball": "Fireball",
   "dragon_ability.dragonsurvival.fire_ball.desc": "■ Ranged attack: shoots out a fireball that §cexplodes§r and sets the area on fire.",
   "dragon_ability.dragonsurvival.forest_spike": "Forest Spike",

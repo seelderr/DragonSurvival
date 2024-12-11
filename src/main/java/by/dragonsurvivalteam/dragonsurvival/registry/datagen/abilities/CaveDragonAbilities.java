@@ -71,7 +71,8 @@ public class CaveDragonAbilities {
     public static final ResourceKey<DragonAbility> TOUGH_SKIN = DragonAbilities.key("tough_skin");
 
     // --- Passive --- //
-
+    @Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = "■ Standing on stone surfaces will increase your movement speed.")
+    @Translation(type = Translation.Type.ABILITY, comments = "Cave Athletics")
     public static final ResourceKey<DragonAbility> CAVE_ATHLETICS = DragonAbilities.key("cave_athletics");
 
     public static void registerAbilities(final BootstrapContext<DragonAbility> context) {
