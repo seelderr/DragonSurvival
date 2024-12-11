@@ -32,7 +32,7 @@ public class ExperienceUtils {
     /** Calculate the total experience a level is worth given experience levels */
     public static int getTotalExperienceForLevel(int level) {
         int total = 0;
-        for (int i = 0; i <= level; i++) {
+        for (int i = 0; i < level; i++) {
             total += getExperienceForLevel(i);
         }
         return total;
@@ -40,6 +40,6 @@ public class ExperienceUtils {
 
     /** Calculate the total experience the player has. We use this instead of player.totalExperience as that doesn't update properly when using commands to give levels. */
     public static int getTotalExperience(final Player player) {
-        return getTotalExperienceForLevel(player.experienceLevel) + Math.round(player.experienceProgress * getExperienceForLevel(player.experienceLevel + 1));
+        return getTotalExperienceForLevel(player.experienceLevel) + Math.round(player.experienceProgress * getExperienceForLevel(player.experienceLevel));
     }
 }

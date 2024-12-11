@@ -131,9 +131,7 @@ public class AbilityScreen extends Screen {
         if (type != null) {
             // Draw XP bars
             //noinspection DataFlowIssue -> player should not be null
-            float displayedExperienceAmount = ExperienceUtils.getTotalExperience(minecraft.player);
-            int displayedExperienceLevel = ExperienceUtils.getLevelForExperience((int) displayedExperienceAmount);
-            float displayedExperienceProgress = (displayedExperienceAmount - ExperienceUtils.getTotalExperienceForLevel(displayedExperienceLevel)) / (ExperienceUtils.getExperienceForLevel(displayedExperienceLevel + 1));
+            float displayedExperienceProgress = minecraft.player.experienceProgress;
             float progress = Mth.clamp(displayedExperienceProgress, 0, 1);
             float leftExpBarProgress = Math.min(1f, Math.min(0.5f, progress) * 2);
             float rightExpBarProgress = Math.min(1f, Math.min(0.5f, progress - 0.5f) * 2);
@@ -153,10 +151,10 @@ public class AbilityScreen extends Screen {
             if(expHoverAmount != 0) {
                 float modifiedExperienceAmount = ExperienceUtils.getTotalExperience(minecraft.player) - expHoverAmount;
                 int modifiedExperienceLevel = ExperienceUtils.getLevelForExperience((int) modifiedExperienceAmount);
-                float hoverProgress = (float) expHoverAmount / ExperienceUtils.getExperienceForLevel(modifiedExperienceLevel + 1);
+                float hoverProgress = (float) expHoverAmount / ExperienceUtils.getExperienceForLevel(modifiedExperienceLevel);
                 float rightExpBarHoverProgress = modifiedExperienceLevel == minecraft.player.experienceLevel ? Math.min(rightExpBarProgress, Math.min(0.5f, hoverProgress) * 2) : rightExpBarProgress;
                 float leftExpBarHoverProgress =  modifiedExperienceLevel == minecraft.player.experienceLevel ? Math.min(leftExpBarProgress, Math.min(0.5f, hoverProgress - rightExpBarProgress / 2) * 2) : leftExpBarProgress;
-                guiGraphics.setColor(1.0F, 0.0F, 0.0F, (float) Math.sin(Blaze3D.getTime() / 2.f));
+                guiGraphics.setColor(1.0F, 0.0F, 0.0F, (float) 0.5f);
                 guiGraphics.pose().pushPose();
                 guiGraphics.pose().rotateAround(Axis.ZP.rotationDegrees(180.0F), rightBarX + 36, barYPos + 3, 0);
                 guiGraphics.blit(EXP_FULL, rightBarX + (int) (73 * (1 - rightExpBarProgress)), barYPos, 0, 0, (int) (73 * rightExpBarHoverProgress), 6, 73, 6);
