@@ -173,7 +173,7 @@ public class AbilityScreen extends Screen {
             int greenFontColor = 0x57882F;
             int redFontColor = 0xE4472F;
             int color = expHoverAmount != 0 ? redFontColor : greenFontColor;
-            Component expectedLevel = Component.literal(Integer.toString(ExperienceUtils.getLevelForExperience(minecraft.player.totalExperience - expHoverAmount))).withColor(color);
+            Component expectedLevel = Component.literal(Integer.toString(ExperienceUtils.getLevelForExperience(ExperienceUtils.getTotalExperience(minecraft.player) - expHoverAmount))).withColor(color);
 
             int expLevelXPos = ((rightBarX + leftBarX) / 2 + 38 - minecraft.font.width(expectedLevel) / 2) - 1;
             int expLevelYPos = barYPos - 1;
