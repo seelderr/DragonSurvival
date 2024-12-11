@@ -145,8 +145,7 @@ public class AbilityScreen extends Screen {
             if (experienceModification != 0) {
                 // Used to show the new experience progress of the new level
                 // The level difference itself is shown through the rendered level number
-                // FIXME :: not correct yet - calculated xp progress differs from the actual progress
-                float hoverProgress = (float) newExperience / ExperienceUtils.getTotalExperience(newLevel + 1);
+                float hoverProgress = (float) (newExperience - ExperienceUtils.getTotalExperience(newLevel)) / ExperienceUtils.getExperienceForLevel(newLevel + 1);
                 float leftExpBarHoverProgress = Math.min(0.5f, hoverProgress) * 2;
                 float rightExpBarHoverProgress = Math.min(0.5f, hoverProgress - leftExpBarHoverProgress / 2) * 2;
 
