@@ -161,7 +161,7 @@ public class AbilityButton extends Button {
             guiGraphics.pose().pushPose();
             // Render above the other UI elements
             guiGraphics.pose().translate(0, 0, 150);
-            AbilityTooltipRenderer.drawAbilityHover(guiGraphics, getX() + width, yPos - 30, ability);
+            AbilityTooltipRenderer.drawAbilityHover(guiGraphics, mouseX, mouseY, ability);
             guiGraphics.pose().popPose();
         }
     }

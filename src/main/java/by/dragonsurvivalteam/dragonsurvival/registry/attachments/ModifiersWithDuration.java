@@ -101,7 +101,7 @@ public class ModifiersWithDuration implements INBTSerializable<CompoundTag> {
 
     public void syncModifiersToPlayer(final ServerPlayer player) {
         for(ModifierWithDuration.Instance modifier : all()) {
-            PacketDistributor.sendToPlayer(player, new SyncModifierWithDuration(player.getId(), modifier));
+            PacketDistributor.sendToPlayer(player, new SyncModifierWithDuration(player.getId(), modifier, false));
         }
     }
 

@@ -12,12 +12,13 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
-public record SyncModifierWithDuration(int playerId, ModifierWithDuration.Instance modifierInstance) implements CustomPacketPayload {
+public record SyncModifierWithDuration(int playerId, ModifierWithDuration.Instance modifierInstance, boolean remove) implements CustomPacketPayload {
     public static final Type<SyncModifierWithDuration> TYPE = new Type<>(DragonSurvival.res("sync_modifier_with_duration"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, SyncModifierWithDuration> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.VAR_INT, SyncModifierWithDuration::playerId,
             ByteBufCodecs.fromCodecWithRegistries(ModifierWithDuration.Instance.CODEC), SyncModifierWithDuration::modifierInstance,
+            ByteBufCodecs.BOOL, SyncModifierWithDuration::remove,
             SyncModifierWithDuration::new
     );
 
@@ -25,7 +26,11 @@ public record SyncModifierWithDuration(int playerId, ModifierWithDuration.Instan
         context.enqueueWork(() -> {
             if (context.player().level().getEntity(packet.playerId()) instanceof Player player) {
                 ModifiersWithDuration data = player.getData(DSDataAttachments.MODIFIERS_WITH_DURATION);
-                data.add(player, packet.modifierInstance());
+                if(packet.remove) {
+                    data.remove(player, packet.modifierInstance());
+                } else {
+                    data.add(player, packet.modifierInstance());
+                }
             }
         });
     }

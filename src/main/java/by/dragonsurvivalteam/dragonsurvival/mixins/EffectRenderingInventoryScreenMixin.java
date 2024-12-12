@@ -13,6 +13,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.util.StringUtil;
@@ -28,6 +29,9 @@ import java.util.*;
 
 @Mixin(EffectRenderingInventoryScreen.class)
 public class EffectRenderingInventoryScreenMixin {
+
+    @Unique
+    private List<Rect2i> dragonSurvival$areasBlockedByModifierUIForJEI = new ArrayList<>();
 
     @ModifyExpressionValue(method = "renderEffects", at = @At(value = "INVOKE", target = "Ljava/util/Collection;size()I"))
     private int dragonSurvival$adjustRenderedEffectsSize(final int original) {
@@ -53,6 +57,7 @@ public class EffectRenderingInventoryScreenMixin {
 
         for (int i = 0; i < providerAmount; i++) {
             graphics.blitSprite(isCompact ? ((EffectRenderingInventoryScreenAccessor)self).dragonSurvival$getEffectBackgroundSmallSprite() : ((EffectRenderingInventoryScreenAccessor)self).dragonSurvival$getEffectBackgroundLargeSprite(), renderX, topPos, width, 32);
+            dragonSurvival$areasBlockedByModifierUIForJEI.add(new Rect2i(renderX, topPos, width, 32));
             topPos += yOffset;
         }
     }
@@ -101,6 +106,7 @@ public class EffectRenderingInventoryScreenMixin {
         List<ClientEffectProvider> providers = new ArrayList<>();
         providers.addAll(player.getExistingData(DSDataAttachments.MODIFIERS_WITH_DURATION).map(ModifiersWithDuration::all).orElse(List.of()));
         providers.addAll(player.getExistingData(DSDataAttachments.DAMAGE_MODIFICATIONS).map(DamageModifications::all).orElse(List.of()));
+        dragonSurvival$areasBlockedByModifierUIForJEI.clear();
 
         if (!providers.isEmpty() && width >= 32) {
             boolean isCompact = width < 120;

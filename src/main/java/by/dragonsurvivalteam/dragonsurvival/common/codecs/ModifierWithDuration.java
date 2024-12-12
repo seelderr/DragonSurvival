@@ -59,7 +59,7 @@ public record ModifierWithDuration(ResourceLocation id, ResourceLocation icon, L
 
         if (target instanceof ServerPlayer serverPlayer) {
             // TODO :: just sync client data in one generic packet so it can be re-used?
-            PacketDistributor.sendToPlayer(serverPlayer, new SyncModifierWithDuration(serverPlayer.getId(), newModifier));
+            PacketDistributor.sendToPlayer(serverPlayer, new SyncModifierWithDuration(serverPlayer.getId(), newModifier, false));
         }
     }
 
@@ -69,10 +69,9 @@ public record ModifierWithDuration(ResourceLocation id, ResourceLocation icon, L
 
         if (instance != null) {
             data.remove(target, instance);
-        }
-
-        if (target instanceof ServerPlayer serverPlayer) {
-            // TODO :: sync the removal
+            if (target instanceof ServerPlayer serverPlayer) {
+                PacketDistributor.sendToPlayer(serverPlayer, new SyncModifierWithDuration(serverPlayer.getId(), instance, true));
+            }
         }
     }
 
