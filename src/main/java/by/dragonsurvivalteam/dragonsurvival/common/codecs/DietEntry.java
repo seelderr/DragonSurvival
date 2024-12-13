@@ -11,11 +11,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public record DietEntry(ResourceLocationWrapper items, FoodProperties properties) {
+public record DietEntry(List<String> items, FoodProperties properties) {
     public static final Codec<DietEntry> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            // TODO :: move wrapper field in here so you don't have 'items: { entry: "" }' but rather 'items: ""' (and maybe rename 'items')
-            //  (would only be annoying if we intend to re-use it)
-            ResourceLocationWrapper.CODEC.fieldOf("items").forGetter(DietEntry::items), // TODO :: should probably be a list
+            ResourceLocationWrapper.validatedCodec().listOf().fieldOf("items").forGetter(DietEntry::items),
             FoodProperties.DIRECT_CODEC.fieldOf("properties").forGetter(DietEntry::properties)
     ).apply(instance, DietEntry::new));
 
@@ -24,16 +22,16 @@ public record DietEntry(ResourceLocationWrapper items, FoodProperties properties
     }
 
     public static DietEntry from(final String location, final FoodProperties properties) {
-        return new DietEntry(new ResourceLocationWrapper(location), properties);
+        return new DietEntry(List.of(location), properties);
     }
 
     public static Map<ResourceLocation, FoodProperties> map(final List<DietEntry> entries) {
         Map<ResourceLocation, FoodProperties> diet = new HashMap<>();
 
-        entries.forEach(entry -> {
-            Set<ResourceLocation> items = entry.items().getEntries(BuiltInRegistries.ITEM);
+        entries.forEach(entry -> entry.items().forEach(location -> {
+            Set<ResourceLocation> items = ResourceLocationWrapper.getEntries(location, BuiltInRegistries.ITEM);
             items.forEach(item -> diet.put(item, entry.properties()));
-        });
+        }));
 
         return diet;
     }

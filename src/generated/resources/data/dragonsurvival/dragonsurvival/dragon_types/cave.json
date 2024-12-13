@@ -8,9 +8,9 @@
   ],
   "diet": [
     {
-      "items": {
-        "entry": "#minecraft:doors"
-      },
+      "items": [
+        "#minecraft:doors"
+      ],
       "properties": {
         "can_always_eat": true,
         "eat_seconds": 1.0,
