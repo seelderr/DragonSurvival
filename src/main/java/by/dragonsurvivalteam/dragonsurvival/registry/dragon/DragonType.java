@@ -52,6 +52,7 @@ public class DragonType implements AttributeModifierSupplier {
     public static final Codec<Holder<DragonType>> CODEC = RegistryFixedCodec.create(REGISTRY);
     public static final StreamCodec<RegistryFriendlyByteBuf, Holder<DragonType>> STREAM_CODEC = ByteBufCodecs.holderRegistry(REGISTRY);
 
+    private final Optional<Double> startingSize;
     private final HolderSet<DragonStage> stages;
     private final HolderSet<DragonBody> bodies;
     private final HolderSet<DragonAbility> abilities;
@@ -67,7 +68,8 @@ public class DragonType implements AttributeModifierSupplier {
     private @Nullable Map<ResourceLocation, FoodProperties> diet;
     private long lastDietUpdate;
 
-    public DragonType(final HolderSet<DragonStage> stages, final HolderSet<DragonBody> bodies, final HolderSet<DragonAbility> abilities, final List<Holder<DragonPenalty>> penalties, final List<Modifier> modifiers, final List<DietEntry> dietEntries, final MiscDragonTextures miscResources) {
+    public DragonType(final Optional<Double> startingSize, final HolderSet<DragonStage> stages, final HolderSet<DragonBody> bodies, final HolderSet<DragonAbility> abilities, final List<Holder<DragonPenalty>> penalties, final List<Modifier> modifiers, final List<DietEntry> dietEntries, final MiscDragonTextures miscResources) {
+        this.startingSize = startingSize;
         this.stages = stages;
         this.bodies = bodies;
         this.abilities = abilities;
@@ -124,6 +126,10 @@ public class DragonType implements AttributeModifierSupplier {
         } else {
             return DragonStage.getStartingSize(DragonStage.getDefaultStages(provider));
         }
+    }
+
+    public Optional<Double> startingSize() {
+        return startingSize;
     }
 
     @Override
