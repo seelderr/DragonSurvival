@@ -172,7 +172,7 @@ public record DragonStage(
     }
 
     public static List<Holder<DragonStage>> allStages(@Nullable final HolderLookup.Provider provider) {
-        return ResourceHelper.keys(provider, REGISTRY).stream().map(key -> ResourceHelper.get(provider, key).get().getDelegate()).toList();
+        return ResourceHelper.keys(provider, REGISTRY).stream().map(key -> ResourceHelper.get(provider, key).orElseThrow().getDelegate()).toList();
     }
 
     public static Component translatableName(final ResourceKey<DragonStage> dragonStage) {

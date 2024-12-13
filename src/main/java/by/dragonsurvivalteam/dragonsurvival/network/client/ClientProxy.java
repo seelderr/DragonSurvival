@@ -77,15 +77,14 @@ public class ClientProxy {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer == null) {
-            // This check is needed since in single player the server thread will go in here (from 'deserializeNBT')
+            // Safety check
             return;
         }
 
         DragonStateHandler data = DragonStateProvider.getData(localPlayer);
 
         if (!data.isDragon()) {
-            // TODO :: this method is also called when the fake players update their size
-            //  The setSize method just probably always have an entity (and the nbt deserialization just sets the field and then uses join level event or sth. to actually update)
+            // Safety check
             return;
         }
 

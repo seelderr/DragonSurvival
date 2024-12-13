@@ -18,7 +18,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import java.util.List;
 import java.util.Optional;
 
-
 public class DragonStages {
     @Translation(type = Translation.Type.STAGE, comments = "Newborn")
     public static ResourceKey<DragonStage> newborn = key("newborn");
@@ -40,7 +39,7 @@ public class DragonStages {
     public static void registerStages(final BootstrapContext<DragonStage> context) {
         context.register(newborn, newborn());
         context.register(young, young());
-        context.register(adult, adult(null));
+        context.register(adult, adult());
     }
 
     public static DragonStage newborn() {
@@ -106,7 +105,7 @@ public class DragonStages {
         );
     }
 
-    public static DragonStage adult(final ResourceKey<DragonStage> nextStage) {
+    public static DragonStage adult() {
         return new DragonStage(
                 true,
                 new MiscCodecs.Bounds(40, 60),

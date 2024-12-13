@@ -29,7 +29,7 @@ public class DragonTypes {
     public static void registerTypes(final BootstrapContext<DragonType> context) {
         context.register(CAVE, new DragonType(
                 Optional.empty(),
-                HolderSet.empty(),
+                Optional.empty(),
                 HolderSet.empty(),
                 HolderSet.direct(
                         // Active
@@ -76,7 +76,7 @@ public class DragonTypes {
 
         context.register(SEA, new DragonType(
                 Optional.empty(),
-                HolderSet.empty(),
+                Optional.empty(),
                 HolderSet.empty(),
                 HolderSet.direct(context.lookup(DragonAbility.REGISTRY).getOrThrow(SeaDragonAbilities.BALL_LIGHTNING)),
                 List.of(),
@@ -115,7 +115,7 @@ public class DragonTypes {
 
         context.register(FOREST, new DragonType(
                 Optional.empty(),
-                HolderSet.empty(),
+                Optional.empty(),
                 HolderSet.empty(),
                 HolderSet.direct(context.lookup(DragonAbility.REGISTRY).getOrThrow(ForestDragonAbilities.FOREST_SPIKE)),
                 List.of(),
