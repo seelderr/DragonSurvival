@@ -60,7 +60,7 @@ public class GrowthHUD {
 
         Holder<DragonStage> dragonStage = handler.getStage();
         double growth = DragonGrowthHandler.getGrowth(handler.getStage(), stack.getItem());
-        double nextSize = dragonStage.value().getNextSize(localPlayer.registryAccess(), handler.getSize() + growth, handler.previousStage != null ? handler.previousStage.value() : null);
+        double nextSize = dragonStage.value().sizeRange().max();
 
         if (handler.getSize() == nextSize) {
             return;

@@ -13,13 +13,12 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
-/** Synchronizes dragon level and size */
-public record SyncSize(int playerId, Holder<DragonStage> dragonStage, double size) implements CustomPacketPayload {
+/** Synchronizes size */
+public record SyncSize(int playerId, double size) implements CustomPacketPayload {
     public static final Type<SyncSize> TYPE = new Type<>(DragonSurvival.res("sync_size"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, SyncSize> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.VAR_INT, SyncSize::playerId,
-            DragonStage.STREAM_CODEC, SyncSize::dragonStage,
             ByteBufCodecs.DOUBLE, SyncSize::size,
             SyncSize::new
     );
@@ -28,7 +27,7 @@ public record SyncSize(int playerId, Holder<DragonStage> dragonStage, double siz
         context.enqueueWork(() -> {
             if (context.player().level().getEntity(packet.playerId()) instanceof Player player) {
                 DragonStateHandler data = DragonStateProvider.getData(player);
-                data.setClientSize(packet.dragonStage(), packet.size());
+                data.setClientSize(packet.size());
                 player.refreshDimensions();
             }
         });

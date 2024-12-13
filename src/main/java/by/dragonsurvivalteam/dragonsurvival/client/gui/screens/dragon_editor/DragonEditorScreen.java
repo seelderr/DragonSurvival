@@ -457,7 +457,7 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
 
         HANDLER.setHasFlight(true);
         HANDLER.setType(dragonType);
-        HANDLER.setClientSize(dragonStage, dragonStage.value().sizeRange().min());
+        HANDLER.setClientSize(dragonStage.value().sizeRange().min());
         HANDLER.setBody(dragonBody);
 
         HANDLER.getSkinData().skinPreset = preset;
@@ -830,7 +830,7 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
 
         HANDLER.setBody(dragonBody);
         HANDLER.getSkinData().skinPreset = preset;
-        HANDLER.setClientSize(dragonStage, dragonStage.value().sizeRange().min());
+        HANDLER.setClientSize(dragonStage.value().sizeRange().min());
         HANDLER.setHasFlight(true);
 
         if (selectedSaveSlot != lastSelected) {
@@ -896,14 +896,12 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
             data.setType(dragonType, minecraft.player);
             data.setBody(dragonBody, minecraft.player);
 
-            DragonStateHandler.SavedDragonStage savedDragonStage = data.getSavedDragonStage(data.getType().getKey());
-
-            if (!ServerConfig.saveGrowthStage || savedDragonStage == null) {
+            double savedSize = data.getSavedDragonSize(data.getType().getKey());
+            if (!ServerConfig.saveGrowthStage || savedSize == DragonStateHandler.NO_SIZE) {
                 Holder<DragonStage> dragonStage = minecraft.player.registryAccess().holderOrThrow(DragonStages.newborn);
-                data.setClientSize(dragonStage, dragonStage.value().sizeRange().min());
+                data.setClientStage(dragonStage);
             } else {
-                data.previousStage = savedDragonStage.previousStage();
-                data.setClientSize(savedDragonStage.dragonStage(), savedDragonStage.size());
+                data.setClientSize(savedSize);
             }
 
             data.setHasFlight(ServerFlightHandler.startWithFlight || ServerConfig.saveGrowthStage && data.hasFlight());

@@ -30,9 +30,9 @@ public class AncientDatapack {
 
     public static DragonStage ancient() {
         return new DragonStage(
+                true,
                 new MiscCodecs.Bounds(60, 300),
                 Functions.daysToTicks(40),
-                Optional.empty(),
                 List.of(
                         /* Constant */
                         Modifier.constant(Attributes.SUBMERGED_MINING_SPEED, 3, AttributeModifier.Operation.ADD_VALUE, DragonTypes.SEA),

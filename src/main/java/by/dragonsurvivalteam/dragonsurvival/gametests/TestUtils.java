@@ -68,7 +68,7 @@ public class TestUtils {
         helper.assertTrue(DragonUtils.isBody(data, body), String.format("Dragon type was [%s] - expected [%s]", data.getBody(), dragonBody));
 
         Holder<DragonStage> stage = player.registryAccess().holderOrThrow(dragonStage);
-        data.setSize(player, stage, stage.value().sizeRange().min());
+        data.setStage(player, stage);
         helper.assertTrue(data.getStage().is(stage), String.format("Dragon stage was [%s] - expected [%s]", data.getStage().getKey().location(), stage.getKey().location()));
 
         helper.assertTrue(data.isDragon(), "Player is not a dragon - expected player to be a dragon");

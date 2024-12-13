@@ -16,6 +16,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ColorRGBA;
 
 import java.util.List;
+import java.util.Optional;
 
 public class DragonTypes {
     // TODO: Translation key here, also handle translation keys now for this data type
@@ -25,6 +26,7 @@ public class DragonTypes {
 
     public static void registerTypes(final BootstrapContext<DragonType> context) {
         context.register(CAVE, new DragonType(
+                Optional.empty(),
                 HolderSet.empty(),
                 HolderSet.empty(),
                 HolderSet.direct(
@@ -71,6 +73,7 @@ public class DragonTypes {
         ));
 
         context.register(SEA, new DragonType(
+                Optional.empty(),
                 HolderSet.empty(),
                 HolderSet.empty(),
                 HolderSet.direct(context.lookup(DragonAbility.REGISTRY).getOrThrow(SeaDragonAbilities.BALL_LIGHTNING)),
@@ -109,6 +112,7 @@ public class DragonTypes {
         ));
 
         context.register(FOREST, new DragonType(
+                Optional.empty(),
                 HolderSet.empty(),
                 HolderSet.empty(),
                 HolderSet.direct(context.lookup(DragonAbility.REGISTRY).getOrThrow(ForestDragonAbilities.FOREST_SPIKE)),

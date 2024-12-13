@@ -25,13 +25,7 @@ public class DragonSizeCommand {
             DragonStateHandler handler = DragonStateProvider.getData(serverPlayer);
 
             if (handler.isDragon()) {
-                if (handler.getStage().value().sizeRange().matches(size)) {
-                    // If the min. size of the next stage is set it can look like a bug
-                    // (Because after 1 second of running the command the stage changes due to the natural growth)
-                    handler.setSize(serverPlayer, handler.getStage(), size);
-                } else {
-                    handler.setSize(serverPlayer, DragonStage.get(serverPlayer.registryAccess(), size), size);
-                }
+                handler.setSize(serverPlayer, size);
             }
 
             return 1;

@@ -45,9 +45,9 @@ public class DragonStages {
 
     public static DragonStage newborn() {
         return new DragonStage(
+                true,
                 new MiscCodecs.Bounds(10, 25),
                 Functions.hoursToTicks(10),
-                Optional.ofNullable(young),
                 List.of(
                         /* Constant */
                         Modifier.constant(Attributes.SUBMERGED_MINING_SPEED, 1, AttributeModifier.Operation.ADD_VALUE, DragonTypes.SEA),
@@ -76,9 +76,9 @@ public class DragonStages {
 
     public static DragonStage young() {
         return new DragonStage(
+                true,
                 new MiscCodecs.Bounds(25, 40),
                 Functions.daysToTicks(3),
-                Optional.of(adult),
                 List.of(
                         /* Constant */
                         Modifier.constant(Attributes.SUBMERGED_MINING_SPEED, 2, AttributeModifier.Operation.ADD_VALUE, DragonTypes.SEA),
@@ -108,9 +108,9 @@ public class DragonStages {
 
     public static DragonStage adult(final ResourceKey<DragonStage> nextStage) {
         return new DragonStage(
+                true,
                 new MiscCodecs.Bounds(40, 60),
                 Functions.daysToTicks(20),
-                Optional.ofNullable(nextStage),
                 List.of(
                         /* Constant */
                         Modifier.constant(Attributes.SUBMERGED_MINING_SPEED, 3, AttributeModifier.Operation.ADD_VALUE, DragonTypes.SEA),
