@@ -21,12 +21,9 @@ import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import by.dragonsurvivalteam.dragonsurvival.util.ToolUtils;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.HolderSet;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -37,7 +34,10 @@ import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Supplier;
 import javax.annotation.Nullable;
 
@@ -81,7 +81,8 @@ public class DragonStateHandler extends EntityStateHandler {
 
     public void setClientSize(double size) {
         Holder<DragonStage> oldStage = this.dragonStage;
-        updateSizeAndStage(Minecraft.getInstance().player.registryAccess(), size);
+        //noinspection DataFlowIssue -> this should only be calle client side anyway
+        updateSizeAndStage(DragonSurvival.PROXY.getLocalPlayer().registryAccess(), size);
 
         if (this.dragonStage == null) {
             return;
@@ -101,7 +102,7 @@ public class DragonStateHandler extends EntityStateHandler {
 
     /** Sets the stage and retains the current size */
     public void setStage(final Player player, final Holder<DragonStage> dragonStage) {
-        if(!getStages(player.registryAccess()).contains(dragonStage)) {
+        if (!dragonType.value().getStages(player.registryAccess()).contains(dragonStage)) {
             throw new IllegalArgumentException("The stage " + dragonStage + " is not a stage that the dragon type " + dragonType + " can have");
         }
 
@@ -132,10 +133,6 @@ public class DragonStateHandler extends EntityStateHandler {
         }
     }
 
-    private HolderSet<DragonStage> getStages(@Nullable final HolderLookup.Provider provider) {
-        return dragonType.value().stages().size() > 0 ? dragonType.value().stages() : DragonStage.getDefaultStages(provider);
-    }
-
     private void updateSizeAndStage(@Nullable final HolderLookup.Provider provider, double size) {
         if (size == NO_SIZE) {
             this.dragonStage = null;
@@ -144,7 +141,7 @@ public class DragonStateHandler extends EntityStateHandler {
         }
 
         double newSize = DragonStage.getValidSize(size);
-        this.dragonStage = DragonStage.getCurrentStage(getStages(provider), newSize);
+        this.dragonStage = DragonStage.getStage(dragonType.value().getStages(provider), newSize);
         this.size = this.dragonStage.value().getBoundedSize(newSize);
     }
 
@@ -369,7 +366,7 @@ public class DragonStateHandler extends EntityStateHandler {
         }
 
         double size = tag.getDouble(SIZE);
-        Holder<DragonStage> dragonStage = DragonStage.getCurrentStage(getStages(provider), size);
+//        Holder<DragonStage> dragonStage = DragonStage.getStage(getStages(provider), size); // TODO :: ?
 
         if (dragonType != null) {
             if (dragonBody == null) {
@@ -436,12 +433,13 @@ public class DragonStateHandler extends EntityStateHandler {
         CompoundTag compound = tag.getCompound(dragonType.toString() + SAVED_SIZE_SUFFIX);
 
         if (compound.isEmpty()) {
-            var typeData = ResourceHelper.get(provider, dragonType, DragonType.REGISTRY);
-            if(typeData.isPresent()) {
-                return typeData.get().value().getStartingSize(provider);
+            Optional<Holder.Reference<DragonType>> optional = ResourceHelper.get(provider, dragonType);
+
+            if (optional.isPresent()) {
+                return optional.get().value().getStartingSize(provider);
             } else {
                 DragonSurvival.LOGGER.warn("Cannot load saved size for dragon type [{}] while deserializing NBT of [{}] due to the dragon type not existing. Falling back to default newborn size.", dragonType, tag);
-                return ResourceHelper.get(provider, DragonStages.newborn, DragonStage.REGISTRY).get().value().sizeRange().min();
+                return ResourceHelper.get(provider, DragonStages.newborn).orElseThrow().value().sizeRange().min();
             }
         }
 

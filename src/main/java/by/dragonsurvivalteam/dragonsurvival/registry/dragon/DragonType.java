@@ -28,10 +28,11 @@ import net.neoforged.neoforge.registries.DataPackRegistryEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.Map;
 
+@SuppressWarnings("OptionalUsedAsFieldOrParameterType") // ignore
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public class DragonType implements AttributeModifierSupplier {
     public static final ResourceKey<Registry<DragonType>> REGISTRY = ResourceKey.createRegistryKey(DragonSurvival.res("dragon_types"));
@@ -39,7 +40,7 @@ public class DragonType implements AttributeModifierSupplier {
     public static final Codec<DragonType> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.DOUBLE.optionalFieldOf("starting_size").forGetter(DragonType::startingSize),
             // No defined stages means all are applicable
-            RegistryCodecs.homogeneousList(DragonStage.REGISTRY).optionalFieldOf("stages", HolderSet.empty()).forGetter(DragonType::stages),
+            RegistryCodecs.homogeneousList(DragonStage.REGISTRY).optionalFieldOf("stages").forGetter(DragonType::stages),
             // No defined bodies means all are applicable
             RegistryCodecs.homogeneousList(DragonBody.REGISTRY).optionalFieldOf("bodies", HolderSet.empty()).forGetter(DragonType::bodies),
             RegistryCodecs.homogeneousList(DragonAbility.REGISTRY).optionalFieldOf("abilities", HolderSet.empty()).forGetter(DragonType::abilities),
@@ -53,7 +54,7 @@ public class DragonType implements AttributeModifierSupplier {
     public static final StreamCodec<RegistryFriendlyByteBuf, Holder<DragonType>> STREAM_CODEC = ByteBufCodecs.holderRegistry(REGISTRY);
 
     private final Optional<Double> startingSize;
-    private final HolderSet<DragonStage> stages;
+    private final Optional<HolderSet<DragonStage>> stages;
     private final HolderSet<DragonBody> bodies;
     private final HolderSet<DragonAbility> abilities;
     private final List<Holder<DragonPenalty>> penalties;
@@ -68,7 +69,7 @@ public class DragonType implements AttributeModifierSupplier {
     private @Nullable Map<ResourceLocation, FoodProperties> diet;
     private long lastDietUpdate;
 
-    public DragonType(final Optional<Double> startingSize, final HolderSet<DragonStage> stages, final HolderSet<DragonBody> bodies, final HolderSet<DragonAbility> abilities, final List<Holder<DragonPenalty>> penalties, final List<Modifier> modifiers, final List<DietEntry> dietEntries, final MiscDragonTextures miscResources) {
+    public DragonType(final Optional<Double> startingSize, final Optional<HolderSet<DragonStage>> stages, final HolderSet<DragonBody> bodies, final HolderSet<DragonAbility> abilities, final List<Holder<DragonPenalty>> penalties, final List<Modifier> modifiers, final List<DietEntry> dietEntries, final MiscDragonTextures miscResources) {
         this.startingSize = startingSize;
         this.stages = stages;
         this.bodies = bodies;
@@ -85,15 +86,16 @@ public class DragonType implements AttributeModifierSupplier {
 
         ResourceHelper.keys(provider, REGISTRY).forEach(key -> {
             //noinspection OptionalGetWithoutIsPresent -> ignore
-            Holder.Reference<DragonType> type = ResourceHelper.get(provider, key, REGISTRY).get();
-            if(type.value().stages.size() != 0) {
-               if(!DragonStage.stagesHaveContinousSizeRange(type.value().stages, validationError, false)) {
-                     areTypesValid.set(false);
-               }
+            Holder.Reference<DragonType> type = ResourceHelper.get(provider, key).get();
+
+            if (type.value().stages().isPresent()) {
+                if (!DragonStage.stagesHaveContinousSizeRange(type.value().stages().get(), validationError, false)) {
+                    areTypesValid.set(false);
+                }
             }
         });
 
-        if(!areTypesValid.get()) {
+        if (!areTypesValid.get()) {
             throw new IllegalStateException(validationError.toString());
         }
     }
@@ -102,6 +104,7 @@ public class DragonType implements AttributeModifierSupplier {
     public static void register(final DataPackRegistryEvent.NewRegistry event) {
         event.dataPackRegistry(REGISTRY, DIRECT_CODEC, DIRECT_CODEC);
     }
+
 
     public @Nullable FoodProperties getDiet(final Item item) {
         if (diet == null || lastDietUpdate < DataReloadHandler.lastReload) {
@@ -118,14 +121,16 @@ public class DragonType implements AttributeModifierSupplier {
         return ModifierType.DRAGON_TYPE;
     }
 
+    /**
+     * Returns the configured starting size or the smallest size of the configured stages <br>
+     * If no configured stages are present it will return the smallest size of the default stages
+     */
     public double getStartingSize(@Nullable final HolderLookup.Provider provider) {
-        if(startingSize.isPresent()) {
-            return startingSize.get();
-        } else if(stages.size() > 0) {
-            return DragonStage.getStartingSize(stages);
-        } else {
-            return DragonStage.getStartingSize(DragonStage.getDefaultStages(provider));
-        }
+        return startingSize.orElseGet(() -> DragonStage.getStartingSize(getStages(provider)));
+    }
+
+    public HolderSet<DragonStage> getStages(@Nullable final HolderLookup.Provider provider) {
+        return stages.orElseGet(() -> DragonStage.getDefaultStages(provider));
     }
 
     public Optional<Double> startingSize() {
@@ -137,7 +142,7 @@ public class DragonType implements AttributeModifierSupplier {
         return modifiers;
     }
 
-    public HolderSet<DragonStage> stages() {
+    public Optional<HolderSet<DragonStage>> stages() {
         return stages;
     }
 

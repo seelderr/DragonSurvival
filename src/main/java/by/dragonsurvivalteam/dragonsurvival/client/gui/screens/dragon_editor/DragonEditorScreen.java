@@ -424,7 +424,7 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
             dragonBody = localHandler.getBody();
         } else if (dragonType != null) {
             if (dragonStage == null) {
-                dragonStage = ResourceHelper.get(null, DragonStages.newborn, DragonStage.REGISTRY).orElseThrow();
+                dragonStage = ResourceHelper.get(null, DragonStages.newborn).orElseThrow();
             }
 
             if (dragonBody == null) {

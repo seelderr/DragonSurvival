@@ -12,11 +12,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.advancements.critereon.EntityPredicate;
-import net.minecraft.core.Holder;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.core.HolderSet;
-import net.minecraft.core.Registry;
-import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.*;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -81,7 +77,6 @@ public record DragonStage(
         validate(access);
     }
 
-    @SuppressWarnings("DataFlowIssue") // ignore
     private static void validate(RegistryAccess access) {
         boolean areBuiltInLevelsValid = true;
         StringBuilder builtInCheck = new StringBuilder("The following required built-in dragon levels are missing:");
@@ -100,7 +95,7 @@ public record DragonStage(
 
         ResourceHelper.keys(access, REGISTRY).forEach(key -> {
             //noinspection OptionalGetWithoutIsPresent -> ignore
-            Holder.Reference<DragonStage> stage = ResourceHelper.get(access, key, REGISTRY).get();
+            Holder.Reference<DragonStage> stage = ResourceHelper.get(access, key).get();
 
             // Validate that the block destruction size and the crushing size are within the bounds of the current dragon stage
             if (stage.value().destructionData().isPresent()) {
@@ -122,7 +117,8 @@ public record DragonStage(
         HolderSet<DragonStage> defaultStages = getDefaultStages(access);
         // Sort the default stages by size range
         HolderSet<DragonStage> sortedDefaultStages = HolderSet.direct(defaultStages.stream().sorted(Comparator.comparingDouble(stage -> stage.value().sizeRange().min())).toList());
-        if(!stagesHaveContinousSizeRange(sortedDefaultStages, validationError, true)) {
+
+        if (!stagesHaveContinousSizeRange(sortedDefaultStages, validationError, true)) {
             areStagesValid.set(false);
         }
 
@@ -131,10 +127,11 @@ public record DragonStage(
         }
     }
 
-    public static boolean stagesHaveContinousSizeRange(HolderSet<DragonStage> stagesSortedBySize, StringBuilder error, boolean isForDefaultStages) {
-        for (int i = 0; i < stagesSortedBySize.size() - 1; i++) {
-            if (stagesSortedBySize.get(i).value().sizeRange().max() != stagesSortedBySize.get(i + 1).value().sizeRange().min()) {
-                error.append(isForDefaultStages ? "\n- Default stages [" : "\n- Stages [").append(stagesSortedBySize.get(i).getRegisteredName()).append("] and [").append(stagesSortedBySize.get(i + 1).getRegisteredName()).append("] are not connected");
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted") // ignore for clarity
+    public static boolean stagesHaveContinousSizeRange(final HolderSet<DragonStage> sortedStages, final StringBuilder error, boolean isForDefaultStages) {
+        for (int i = 0; i < sortedStages.size() - 1; i++) {
+            if (sortedStages.get(i).value().sizeRange().max() != sortedStages.get(i + 1).value().sizeRange().min()) {
+                error.append(isForDefaultStages ? "\n- Default stages [" : "\n- Stages [").append(sortedStages.get(i).getRegisteredName()).append("] and [").append(sortedStages.get(i + 1).getRegisteredName()).append("] are not connected");
                 return false;
             }
         }
@@ -143,7 +140,7 @@ public record DragonStage(
     }
 
     private static boolean isValid(final StringBuilder builder, @Nullable final HolderLookup.Provider provider, final ResourceKey<DragonStage> stageKey) {
-        Optional<Holder.Reference<DragonStage>> optional = ResourceHelper.get(provider, stageKey, REGISTRY);
+        Optional<Holder.Reference<DragonStage>> optional = ResourceHelper.get(provider, stageKey);
 
         if (optional.isPresent()) {
             return true;
@@ -175,7 +172,7 @@ public record DragonStage(
     }
 
     public static List<Holder<DragonStage>> allStages(@Nullable final HolderLookup.Provider provider) {
-        return ResourceHelper.keys(provider, REGISTRY).stream().map(key -> ResourceHelper.get(provider, key, REGISTRY).get().getDelegate()).toList();
+        return ResourceHelper.keys(provider, REGISTRY).stream().map(key -> ResourceHelper.get(provider, key).get().getDelegate()).toList();
     }
 
     public static Component translatableName(final ResourceKey<DragonStage> dragonStage) {
@@ -196,19 +193,30 @@ public record DragonStage(
         return new MiscCodecs.Bounds(smallest.sizeRange().min(), largest.sizeRange().max());
     }
 
-    public static Holder<DragonStage> getCurrentStage(final HolderSet<DragonStage> stages, double size) {
-        var firstValidStage = stages.stream().filter(stage -> stage.value().sizeRange().matches(size)).findFirst();
-        if(firstValidStage.isPresent()) {
-            return firstValidStage.get();
-        } else {
-            var largestStage = stages.stream().max(Comparator.comparingDouble(stage -> stage.value().sizeRange().max())).get();
-            var smallestStage = stages.stream().min(Comparator.comparingDouble(stage -> stage.value().sizeRange().min())).get();
-            if(size < smallestStage.value().sizeRange().min()) {
-                return smallestStage;
-            } else {
-                return largestStage;
+    public static Holder<DragonStage> getStage(final HolderSet<DragonStage> stages, double size) {
+        Holder<DragonStage> smallest = null;
+        Holder<DragonStage> largest = null;
+
+        for (Holder<DragonStage> stage : stages) {
+            if (stage.value().sizeRange().matches(size)) {
+                return stage;
+            }
+
+            if (smallest == null || stage.value().sizeRange().min() < smallest.value().sizeRange().min()) {
+                smallest = stage;
+            }
+
+            if (largest == null || stage.value().sizeRange().min() > largest.value().sizeRange().min()) {
+                largest = stage;
             }
         }
+
+        //noinspection DataFlowIssue -> stage should not be null at this point
+        if (size < smallest.value().sizeRange().min()) {
+            return smallest;
+        }
+
+        return largest;
     }
 
     public static double getStartingSize(final HolderSet<DragonStage> stages) {
