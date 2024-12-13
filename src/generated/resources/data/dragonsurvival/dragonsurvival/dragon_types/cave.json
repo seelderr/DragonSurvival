@@ -6,6 +6,19 @@
     "dragonsurvival:tough_skin",
     "dragonsurvival:cave_athletics"
   ],
+  "diet": [
+    {
+      "items": [
+        "#minecraft:doors"
+      ],
+      "properties": {
+        "can_always_eat": true,
+        "eat_seconds": 1.0,
+        "nutrition": 2,
+        "saturation": 1.0
+      }
+    }
+  ],
   "misc_resources": {
     "ability_bar": "dragonsurvival:textures/gui/casting_bars/cave_cast_bar.png",
     "altar_banner": "dragonsurvival:textures/gui/dragon_altar/cave_altar_icon.png",

@@ -30,8 +30,7 @@ import java.util.*;
 @Mixin(EffectRenderingInventoryScreen.class)
 public class EffectRenderingInventoryScreenMixin {
 
-    @Unique
-    private List<Rect2i> dragonSurvival$areasBlockedByModifierUIForJEI = new ArrayList<>();
+    @Unique private List<Rect2i> dragonSurvival$areasBlockedByModifierUIForJEI = new ArrayList<>();
 
     @ModifyExpressionValue(method = "renderEffects", at = @At(value = "INVOKE", target = "Ljava/util/Collection;size()I"))
     private int dragonSurvival$adjustRenderedEffectsSize(final int original) {
