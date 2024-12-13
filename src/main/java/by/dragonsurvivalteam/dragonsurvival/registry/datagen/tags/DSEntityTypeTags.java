@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.concurrent.CompletableFuture;
 
 public class DSEntityTypeTags extends EntityTypeTagsProvider {
-    public static final TagKey<EntityType<?>> ANIMAL_AVOID_BLACKLIST =key("animal_avoid_blacklist");
+    public static final TagKey<EntityType<?>> ANIMAL_AVOID_BLACKLIST = key("animal_avoid_blacklist");
     public static final TagKey<EntityType<?>> VEHICLE_WHITELIST = key("vehicle_whitelist");
     public static final TagKey<EntityType<?>> HUNTER_TARGETS = key("hunter_targets");
 

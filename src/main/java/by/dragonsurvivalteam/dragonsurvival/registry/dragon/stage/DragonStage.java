@@ -15,6 +15,7 @@ import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -70,23 +71,23 @@ public record DragonStage(
     private static DragonStage smallest;
     private static DragonStage largest;
 
-    public static void update(@Nullable final HolderLookup.Provider provider) {
-        Pair<DragonStage, DragonStage> sizes = getSizes(provider);
+    public static void update(final RegistryAccess access) {
+        Pair<DragonStage, DragonStage> sizes = getSizes(access);
         smallest = sizes.first();
         largest = sizes.second();
 
-        validate(provider);
+        validate(access);
     }
 
     @SuppressWarnings("DataFlowIssue") // ignore
-    private static void validate(@Nullable final HolderLookup.Provider provider) {
+    private static void validate(RegistryAccess access) {
         boolean areBuiltInLevelsValid = true;
         StringBuilder builtInCheck = new StringBuilder("The following required built-in dragon levels are missing:");
 
         //noinspection ConstantValue -> ignore for clarity
-        areBuiltInLevelsValid = areBuiltInLevelsValid && isValid(builtInCheck, provider, DragonStages.newborn);
-        areBuiltInLevelsValid = areBuiltInLevelsValid && isValid(builtInCheck, provider, DragonStages.young);
-        areBuiltInLevelsValid = areBuiltInLevelsValid && isValid(builtInCheck, provider, DragonStages.adult);
+        areBuiltInLevelsValid = areBuiltInLevelsValid && isValid(builtInCheck, access, DragonStages.newborn);
+        areBuiltInLevelsValid = areBuiltInLevelsValid && isValid(builtInCheck, access, DragonStages.young);
+        areBuiltInLevelsValid = areBuiltInLevelsValid && isValid(builtInCheck, access, DragonStages.adult);
 
         if (!areBuiltInLevelsValid) {
             throw new IllegalStateException(builtInCheck.toString());
@@ -95,9 +96,9 @@ public record DragonStage(
         StringBuilder nextStageCheck = new StringBuilder("The following stages are incorrectly defined:");
         AtomicBoolean areStagesValid = new AtomicBoolean(true);
 
-        ResourceHelper.keys(provider, REGISTRY).forEach(key -> {
+        ResourceHelper.keys(access, REGISTRY).forEach(key -> {
             //noinspection OptionalGetWithoutIsPresent -> ignore
-            Holder.Reference<DragonStage> stage = ResourceHelper.get(provider, key, REGISTRY).get();
+            Holder.Reference<DragonStage> stage = ResourceHelper.get(access, key, REGISTRY).get();
 
             // Validate that the block destruction size and the crushing size are within the bounds of the current dragon stage
             if (stage.value().destructionData().isPresent()) {
@@ -120,7 +121,7 @@ public record DragonStage(
                 return;
             }
 
-            Optional<Holder.Reference<DragonStage>> optional = ResourceHelper.get(provider, nextStage, REGISTRY);
+            Optional<Holder.Reference<DragonStage>> optional = ResourceHelper.get(access, nextStage, REGISTRY);
 
             if (optional.isEmpty()) {
                 nextStageCheck.append("\n- The next stage [").append(nextStage.location()).append("] of [").append(stage.getKey().location()).append("] is not present");
