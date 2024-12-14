@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.util;
 
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
+import com.mojang.blaze3d.Blaze3D;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
 import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
@@ -11,17 +12,27 @@ import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.GlStateBackup;
+import net.neoforged.neoforge.client.event.RegisterShadersEvent;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
+import java.io.IOException;
 import javax.annotation.Nullable;
 
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class RenderingUtils {
     static final double PI_TWO = Math.PI * 2.0;
+    private static ShaderInstance growthCircleShader;
+
 
     public static void drawRect(@NotNull final GuiGraphics guiGraphics, int x, int y, int width, int height, int color) {
         guiGraphics.hLine(x, x + width, y, color);
@@ -147,7 +158,7 @@ public class RenderingUtils {
         RenderSystem.disableBlend();
     }
 
-    public static void drawTexturedCircle(final GuiGraphics guiGraphics, double x, double y, double radius, double u, double v, double texRadius, int sides, double percent, double startAngle) {
+    public static void drawGrowthCircle(final GuiGraphics guiGraphics, double x, double y, double radius, double u, double v, double texRadius, int sides, double percent, double startAngle) {
         Matrix4f matrix4f = guiGraphics.pose().last().pose();
 
         double rad;
@@ -306,5 +317,52 @@ public class RenderingUtils {
         }
 
         return image;
+    }
+
+    public static void drawGrowthCircle(final GuiGraphics guiGraphics, float x, float y, float radius, int sides, float lineWidthPercent, float percent, Color borderColor, Color innerColor) {
+        Matrix4f matrix4f = guiGraphics.pose().last().pose();
+
+        float z = 100;
+        GlStateBackup state = new GlStateBackup();
+        RenderSystem.backupGlState(state);
+        RenderSystem.backupProjectionMatrix();
+
+        RenderSystem.enableBlend();
+        RenderSystem.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
+        RenderSystem.disableDepthTest();
+        RenderSystem.disableCull();
+        RenderSystem.setShaderColor(1F, 1F, 1F, 1.0f);
+        Tesselator tesselator = Tesselator.getInstance();
+        BufferBuilder bufferbuilder = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        float trueX = x + radius;
+        float trueY = y + radius;
+        bufferbuilder.addVertex(matrix4f, trueX - radius, trueY - radius, z).setUv(0, 1);
+        bufferbuilder.addVertex(matrix4f, trueX + radius, trueY - radius, z).setUv(1, 1);
+        bufferbuilder.addVertex(matrix4f, trueX + radius, trueY + radius, z).setUv(1, 0);
+        bufferbuilder.addVertex(matrix4f, trueX - radius, trueY + radius, z).setUv(0, 0);
+
+        growthCircleShader.setSampler("Sampler0", Minecraft.getInstance().getTextureManager().getTexture(DragonSurvival.res("textures/shader/swirl_noise.png")));
+        growthCircleShader.getUniform("Sides").set(sides);
+        growthCircleShader.getUniform("LineWidth").set(lineWidthPercent);
+        float[] colorComponents = new float[4];
+        borderColor.getColorComponents(colorComponents);
+        growthCircleShader.getUniform("BorderColor").set(colorComponents[0], colorComponents[1], colorComponents[2], 1.0f);
+        innerColor.getColorComponents(colorComponents);
+        growthCircleShader.getUniform("InnerColor").set(colorComponents[0], colorComponents[1], colorComponents[2], 1.0f);
+        growthCircleShader.getUniform("Percent").set(percent);
+        growthCircleShader.getUniform("ProjMat").set(RenderSystem.getProjectionMatrix());
+        growthCircleShader.getUniform("ModelViewMat").set(RenderSystem.getModelViewMatrix());
+        growthCircleShader.getUniform("Time").set((float) Blaze3D.getTime() % 1000.f);
+        growthCircleShader.apply();
+        BufferUploader.draw(bufferbuilder.buildOrThrow());
+        growthCircleShader.clear();
+
+        RenderSystem.restoreProjectionMatrix();
+        RenderSystem.restoreGlState(state);
+    }
+
+    @SubscribeEvent
+    public static void registerShaders(RegisterShadersEvent event) throws IOException {
+        event.registerShader(new ShaderInstance(event.getResourceProvider(), DragonSurvival.res("growth_circle"), DefaultVertexFormat.POSITION_TEX), instance -> growthCircleShader = instance);
     }
 }

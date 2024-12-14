@@ -242,7 +242,7 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1, 1, 1, 1);
         RenderSystem.setShaderTexture(0, GrowthHUD.getOrCreate(GrowthHUD.CIRCLE_TEXTURE.apply(handler.getTypeNameLowerCase())));
-        RenderingUtils.drawTexturedCircle(guiGraphics, circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, sides, progress, -0.5);
+        RenderingUtils.drawGrowthCircle(guiGraphics, circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, sides, progress, -0.5);
 
         RenderSystem.setShaderColor(color.getRed() / 255f, color.getBlue() / 255f, color.getGreen() / 255f, 1);
         RenderingUtils.drawSmoothCircle(guiGraphics, circleX + radius, circleY + radius, radius - thickness, sides, 1, 0);
