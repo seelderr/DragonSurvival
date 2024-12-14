@@ -6,6 +6,7 @@ uniform float Time;
 uniform float LineWidth;
 uniform vec4 BorderColor;
 uniform vec4 InnerColor;
+uniform vec4 OutlineColor;
 uniform vec4 TipColor;
 uniform float Percent;
 
@@ -16,6 +17,7 @@ out vec4 fragColor;
 #define DISTORTION_STRENGTH 0.05
 #define DISTORTION_SPEED 0.5
 #define TIP_THRESHOLD 0.025
+#define OUTLINE_THRESHOLD 0.025
 #define PI 3.14159265359
 
 // https://www.shadertoy.com/view/MtKcWW
@@ -45,7 +47,7 @@ void main() {
     float angle = atan(texCoord.y - 0.5, texCoord.x - 0.5) - PI / 2.0;
     float clampedAngle = clampRadians(angle);
     float percent = (clampedAngle / (2.0 * PI));
-    vec4 borderColor = vec4(1.0);
+    vec4 borderColor = vec4(0.5);
     float percentDiff = Percent - percent;
     float tipLerp = 1.0;
     if (percentDiff + TIP_THRESHOLD > 0.0) {
@@ -65,7 +67,8 @@ void main() {
     agitatedDistortedTexCoord.x += DISTORTION_STRENGTH * sin(Time * agitatedDistortionSpeed + texCoord.y * 10.0) + DISTORTION_STRENGTH * cos(Time * agitatedDistortionSpeed * 0.2 + texCoord.x * 10.0);
     agitatedDistortedTexCoord.y += DISTORTION_STRENGTH * cos(Time * agitatedDistortionSpeed + texCoord.x * 10.0) + DISTORTION_STRENGTH * sin(Time * agitatedDistortionSpeed * 0.2 + texCoord.y * 10.0);
     vec2 finalDistortedTexCoord = mix(agitatedDistortedTexCoord, distortedTexCoord, tipLerp);
-    vec4 texColor = texture(Sampler0, finalDistortedTexCoord) * borderColor;
+    vec4 texColor = texture(Sampler0, finalDistortedTexCoord) / 2 + 0.5; // Remap so that we don't end up with super dark spots
+    texColor = texColor * borderColor;
 
     float innerRadius = 0.43 - LineWidth;
     float signedDistanceInner = sdNGon(texCoord - vec2(0.5, 0.5), innerRadius, Sides);
@@ -73,6 +76,7 @@ void main() {
     float signedDistanceOuter = sdNGon(texCoord - vec2(0.5, 0.5), outerRadius, Sides);
     float border = (signedDistanceInner > 0.0 && signedDistanceOuter < 0.0) ? 1.0 : 0.0;
     float inside = (signedDistanceInner < 0.0) ? 1.0 : 0.0;
+    float outline = (signedDistanceOuter > -OUTLINE_THRESHOLD && signedDistanceOuter < 0) ? 1.0 : 0.0;
 
-    fragColor = mix(vec4(texColor.rgb, border), InnerColor, inside);
+    fragColor = mix(mix(vec4(texColor.rgb, border), InnerColor, inside), OutlineColor, outline);
 }

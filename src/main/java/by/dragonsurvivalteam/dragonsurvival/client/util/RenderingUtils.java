@@ -319,7 +319,7 @@ public class RenderingUtils {
         return image;
     }
 
-    public static void drawGrowthCircle(final GuiGraphics guiGraphics, float x, float y, float radius, int sides, float lineWidthPercent, float percent, Color borderColor, Color innerColor) {
+    public static void drawGrowthCircle(final GuiGraphics guiGraphics, float x, float y, float radius, int sides, float lineWidthPercent, float percent, Color borderColor, Color innerColor, Color outlineColor) {
         Matrix4f matrix4f = guiGraphics.pose().last().pose();
 
         float z = 100;
@@ -349,6 +349,8 @@ public class RenderingUtils {
         growthCircleShader.getUniform("BorderColor").set(colorComponents[0], colorComponents[1], colorComponents[2], 1.0f);
         innerColor.getColorComponents(colorComponents);
         growthCircleShader.getUniform("InnerColor").set(colorComponents[0], colorComponents[1], colorComponents[2], 1.0f);
+        outlineColor.getColorComponents(colorComponents);
+        growthCircleShader.getUniform("OutlineColor").set(colorComponents[0], colorComponents[1], colorComponents[2], 1.0f);
         growthCircleShader.getUniform("Percent").set(percent);
         growthCircleShader.getUniform("ProjMat").set(RenderSystem.getProjectionMatrix());
         growthCircleShader.getUniform("ModelViewMat").set(RenderSystem.getModelViewMatrix());

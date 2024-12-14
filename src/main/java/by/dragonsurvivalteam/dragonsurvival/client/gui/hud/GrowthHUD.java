@@ -32,6 +32,7 @@ public class GrowthHUD {
     private static final HashMap<String, ResourceLocation> CACHE = new HashMap<>();
     private static final Color CENTER_COLOR = new Color(99, 99, 99);
     private static final Color BORDER_COLOR = new Color(255 , 181, 2);
+    private static final Color OUTLINE_COLOR = CENTER_COLOR.brighter();
     private static float currentProgress = 0;
 
     @ConfigRange(min = -1000, max = 1000)
@@ -78,7 +79,7 @@ public class GrowthHUD {
         float deltaTick = Minecraft.getInstance().getTimer().getRealtimeDeltaTicks();
         float lerpRate = Math.min(1, deltaTick * 0.2f);
         currentProgress = Mth.lerp(lerpRate, currentProgress, progress);
-        RenderingUtils.drawGrowthCircle(guiGraphics, circleX, circleY, radius, 6, 0.13f, currentProgress, BORDER_COLOR, CENTER_COLOR);
+        RenderingUtils.drawGrowthCircle(guiGraphics, circleX, circleY, radius, 6, 0.13f, currentProgress, BORDER_COLOR, CENTER_COLOR, OUTLINE_COLOR);
 
         guiGraphics.pose().pushPose();
         guiGraphics.pose().translate(0, 0, 300);
