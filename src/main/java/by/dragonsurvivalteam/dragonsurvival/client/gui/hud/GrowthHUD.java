@@ -31,9 +31,9 @@ public class GrowthHUD {
     public static final BiFunction<String, ResourceLocation, String> ICON = (dragonType, dragonStage) -> "textures/gui/growth/" + dragonType + "/" + dragonStage.getPath() + ".png";
 
     private static final HashMap<String, ResourceLocation> CACHE = new HashMap<>();
-    private static final Color CENTER_COLOR = new Color(70, 70, 70);
+    private static final Color CENTER_COLOR = new Color(125, 125, 125);
     private static final Color BORDER_COLOR = new Color(255, 204, 2);
-    private static final Color OUTLINE_COLOR = new Color(70, 70, 70);
+    private static final Color OUTLINE_COLOR = new Color(125, 125, 125);
     private static float currentProgress = 0;
     private static ResourceKey<DragonStage> currentStage;
 

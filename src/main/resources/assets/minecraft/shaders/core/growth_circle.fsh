@@ -53,7 +53,7 @@ void main() {
     float angle = atan(pixelatedTexCoord.y - 0.5, pixelatedTexCoord.x - 0.5) - PI / 2.0;
     float clampedAngle = clampRadians(angle);
     float percent = (clampedAngle / (2.0 * PI));
-    vec4 borderColor = vec4(0.5);
+    vec4 borderColor = vec4(0.25);
     float percentDiff = Percent - percent;
     float tipLerp = 1.0;
     if (percentDiff + tipThreshold > 0.0) {
