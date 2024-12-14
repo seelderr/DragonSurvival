@@ -212,7 +212,7 @@ public class DragonEditorHandler {
                         normalTarget.unbindWrite();
                     }
 
-                    skinGenerationShader.close();
+                    skinGenerationShader.clear();
                     if (settings.glowing) {
                         glowTarget.unbindWrite();
                     } else {
