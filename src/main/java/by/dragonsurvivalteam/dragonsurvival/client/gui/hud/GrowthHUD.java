@@ -12,6 +12,7 @@ import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
@@ -34,6 +35,7 @@ public class GrowthHUD {
     private static final Color BORDER_COLOR = new Color(255, 204, 2);
     private static final Color OUTLINE_COLOR = new Color(70, 70, 70);
     private static float currentProgress = 0;
+    private static ResourceKey<DragonStage> currentStage;
 
     @ConfigRange(min = -1000, max = 1000)
     @Translation(key = "growth_x_offset", type = Translation.Type.CONFIGURATION, comments = "Offset for the x position of the item growth icon")
@@ -79,6 +81,15 @@ public class GrowthHUD {
         float deltaTick = Minecraft.getInstance().getTimer().getRealtimeDeltaTicks();
         float lerpRate = Math.min(1, deltaTick * 0.2f);
         currentProgress = Mth.lerp(lerpRate, currentProgress, progress);
+        ResourceKey<DragonStage> lastStage = currentStage;
+        if(lastStage != dragonStage.getKey()) {
+            if(progress > currentProgress) {
+                currentProgress = 1;
+            } else {
+                currentProgress = 0;
+            }
+        }
+        currentStage = dragonStage.getKey();
         RenderingUtils.drawGrowthCircle(guiGraphics, circleX, circleY, radius, 6, 0.13f, currentProgress, BORDER_COLOR, CENTER_COLOR, OUTLINE_COLOR);
 
         guiGraphics.pose().pushPose();
