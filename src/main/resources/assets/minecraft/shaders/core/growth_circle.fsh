@@ -47,6 +47,7 @@ vec2 pixelate(vec2 uv, float pixelSize) {
 void main() {
     float distortionSpeed = DISTORTION_SPEED;
     float agitatedDistortionSpeed = DISTORTION_SPEED * 2.0;
+    float tipThreshold = Percent - TIP_THRESHOLD > 0 ? TIP_THRESHOLD : Percent;
     // Calculate the percentage of the circle that should be filled
     vec2 pixelatedTexCoord = pixelate(texCoord, 4);
     float angle = atan(pixelatedTexCoord.y - 0.5, pixelatedTexCoord.x - 0.5) - PI / 2.0;
@@ -55,11 +56,11 @@ void main() {
     vec4 borderColor = vec4(0.5);
     float percentDiff = Percent - percent;
     float tipLerp = 1.0;
-    if (percentDiff + TIP_THRESHOLD > 0.0) {
-        if (percentDiff < 0.0 && percentDiff + TIP_THRESHOLD < 1.0) {
-            tipLerp = min(1.0, 1.0 - (percentDiff + TIP_THRESHOLD) / TIP_THRESHOLD);
+    if (percentDiff + tipThreshold > 0.0) {
+        if (percentDiff <= 0.0 && percentDiff + tipThreshold < 1.0) {
+            tipLerp = min(1.0, 1.0 - (percentDiff + tipThreshold) / tipThreshold);
             borderColor = mix(BorderColor, borderColor, tipLerp);
-        } else {
+        } else if (percentDiff > 0.0) {
             tipLerp = 0.0;
             borderColor = BorderColor;
         }
