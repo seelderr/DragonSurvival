@@ -84,7 +84,7 @@ public class GrowthHUD {
         guiGraphics.pose().pushPose();
         guiGraphics.pose().translate(0, 0, 300);
         ResourceLocation levelLocation = Objects.requireNonNull(dragonStage.getKey()).location();
-        guiGraphics.blit(getOrCreate(levelLocation.getNamespace(), ICON.apply(handler.getTypeNameLowerCase(), levelLocation)), circleX + 6, circleY + 6, 0, 0, 20, 20, 20, 20);
+        guiGraphics.blit(getOrCreate(levelLocation.getNamespace(), ICON.apply(handler.getTypeNameLowerCase(), levelLocation)), circleX + 7, circleY + 4, 0, 0, 20, 20, 20, 20);
         guiGraphics.pose().popPose();
     }
 
