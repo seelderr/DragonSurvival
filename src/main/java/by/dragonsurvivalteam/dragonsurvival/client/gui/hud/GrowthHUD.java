@@ -31,8 +31,8 @@ public class GrowthHUD {
 
     private static final HashMap<String, ResourceLocation> CACHE = new HashMap<>();
     private static final Color CENTER_COLOR = new Color(99, 99, 99);
-    private static final Color BORDER_COLOR = new Color(255 , 181, 2);
-    private static final Color OUTLINE_COLOR = CENTER_COLOR.brighter();
+    private static final Color BORDER_COLOR = new Color(255, 204, 2);
+    private static final Color OUTLINE_COLOR = new Color(70, 70, 70);
     private static float currentProgress = 0;
 
     @ConfigRange(min = -1000, max = 1000)
