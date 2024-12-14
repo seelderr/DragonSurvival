@@ -25,7 +25,6 @@ public class AncientDatapack {
 
     public static void register(final BootstrapContext<DragonStage> context) {
         context.register(ancient, ancient());
-        context.register(DragonStages.adult, DragonStages.adult());
     }
 
     public static DragonStage ancient() {
