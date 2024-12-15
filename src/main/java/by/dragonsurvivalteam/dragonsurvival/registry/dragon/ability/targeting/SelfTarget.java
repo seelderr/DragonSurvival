@@ -26,9 +26,15 @@ public record SelfTarget(Either<BlockTargeting, EntityTargeting> target, boolean
             if (entityTarget.targetConditions().map(conditions -> conditions.matches(dragon.serverLevel(), dragon.position(), dragon)).orElse(true)) {
                 entityTarget.effect().forEach(target -> target.apply(dragon, ability, dragon));
             } else if (removeAutomatically) {
-                // TODO :: would also need to remove when disabling the ability
                 entityTarget.effect().forEach(target -> target.remove(dragon, ability, dragon));
             }
+        });
+    }
+
+    @Override
+    public void remove(final ServerPlayer dragon, final DragonAbilityInstance ability) {
+        target().ifRight(entityTarget -> {
+            entityTarget.effect().forEach(target -> target.remove(dragon, ability, dragon));
         });
     }
 

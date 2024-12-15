@@ -23,4 +23,8 @@ public record ActionContainer(AbilityTargeting effect, LevelBasedValue triggerRa
 
         effect.apply(dragon, instance);
     }
+
+    public void remove(final ServerPlayer dragon, final DragonAbilityInstance instance) {
+        effect.remove(dragon, instance);
+    }
 }

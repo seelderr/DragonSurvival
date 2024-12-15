@@ -70,7 +70,7 @@ public record PotionEffect(HolderSet<MobEffect> effects, LevelBasedValue amplifi
 
             float probability = probability().calculate(ability.level());
             if (probability < 1) {
-                name.append(Component.translatable(LangKey.ABILITY_EFFECT_CHANCE, probability));
+                name.append(Component.translatable(LangKey.ABILITY_EFFECT_CHANCE,  String.format("%.0f", probability * 100)));
             }
 
             components.add(name);

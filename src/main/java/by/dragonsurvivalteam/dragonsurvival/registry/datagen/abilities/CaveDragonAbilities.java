@@ -75,6 +75,15 @@ public class CaveDragonAbilities {
     @Translation(type = Translation.Type.ABILITY, comments = "Cave Athletics")
     public static final ResourceKey<DragonAbility> CAVE_ATHLETICS = DragonAbilities.key("cave_athletics");
 
+    @Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = {
+            "■ Your target has a chance to receive the §c«Burned»§r effect from your attacks.\n",
+            "The effect deals damage when the target moves.\n",
+            "The faster the movement, the more damage is done.\n",
+            "■ Creatures with fire resistance are immune to this effect."
+    })
+    @Translation(type = Translation.Type.ABILITY, comments = "Burn")
+    public static final ResourceKey<DragonAbility> BURN = DragonAbilities.key("burn");
+
     public static void registerAbilities(final BootstrapContext<DragonAbility> context) {
         registerActiveAbilities(context);
         registerPassiveAbilities(context);
@@ -301,6 +310,31 @@ public class CaveDragonAbilities {
                         new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/cave_athletics_3.png"), 3),
                         new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/cave_athletics_4.png"), 4),
                         new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/cave_athletics_5.png"), 5)
+                ))
+        ));
+
+        context.register(BURN, new DragonAbility(
+                false,
+                Activation.passive(),
+                Optional.of(new Upgrade(Upgrade.Type.MANUAL, 4, LevelBasedValue.perLevel(15))),
+                Optional.empty(),
+                List.of(new ActionContainer(new SelfTarget(Either.right(
+                        new AbilityTargeting.EntityTargeting(
+                                Optional.empty(),
+                                List.of(new OnAttackEffect(
+                                        HolderSet.direct(DSEffects.BURN),
+                                        LevelBasedValue.constant(0),
+                                        LevelBasedValue.perLevel(Functions.secondsToTicks(5)),
+                                        LevelBasedValue.perLevel(0.15f)
+                                )),
+                                AbilityTargeting.EntityTargetingMode.TARGET_ALL
+                        )
+                ), false), LevelBasedValue.constant(1))),
+                new LevelBasedResource(List.of(
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/burn_1.png"), 1),
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/burn_2.png"), 2),
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/burn_3.png"), 3),
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/burn_4.png"), 4)
                 ))
         ));
     }

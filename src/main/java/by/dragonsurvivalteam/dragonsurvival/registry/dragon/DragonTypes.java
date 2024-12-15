@@ -38,7 +38,8 @@ public class DragonTypes {
                         context.lookup(DragonAbility.REGISTRY).getOrThrow(CaveDragonAbilities.LAVA_VISION),
                         context.lookup(DragonAbility.REGISTRY).getOrThrow(CaveDragonAbilities.TOUGH_SKIN),
                         // Passive
-                        context.lookup(DragonAbility.REGISTRY).getOrThrow(CaveDragonAbilities.CAVE_ATHLETICS)
+                        context.lookup(DragonAbility.REGISTRY).getOrThrow(CaveDragonAbilities.CAVE_ATHLETICS),
+                        context.lookup(DragonAbility.REGISTRY).getOrThrow(CaveDragonAbilities.BURN)
                 ),
                 List.of(),
                 List.of(),

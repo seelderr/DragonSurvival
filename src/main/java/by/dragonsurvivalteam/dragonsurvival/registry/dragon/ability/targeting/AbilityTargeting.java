@@ -4,6 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.block_effects.AbilityBlockEffect;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.entity_effects.AbilityEntityEffect;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.entity_effects.OnAttackEffect;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.entity_effects.ProjectileEffect;
 import com.mojang.datafixers.Products;
 import com.mojang.datafixers.util.Either;
@@ -115,8 +116,8 @@ public interface AbilityTargeting {
             target().right().get().effect().forEach(effect -> {
                 List<MutableComponent> abilityEffectDescriptions = effect.getDescription(dragon, abilityInstance);
                 if(!effect.getDescription(dragon, abilityInstance).isEmpty()) {
-                    if(effect instanceof ProjectileEffect) {
-                        // Special case where we don't want to append the "self target" description for projectiles (as it doesn't make sense)
+                    if(effect instanceof ProjectileEffect || effect instanceof OnAttackEffect) {
+                        // Special case where we don't want to append the "self target" description for projectiles or OnAttackEffect (as it doesn't make sense)
                         descriptions.addAll(effect.getDescription(dragon, abilityInstance));
                     } else {
                         descriptions.addAll(abilityEffectDescriptions.stream().map(abilityEffectDescription -> abilityEffectDescription.append(targetDescription)).toList());
@@ -138,6 +139,7 @@ public interface AbilityTargeting {
 
     MutableComponent getDescription(final Player dragon, final DragonAbilityInstance ability);
     void apply(final ServerPlayer dragon, final DragonAbilityInstance ability);
+    default void remove(final ServerPlayer dragon, final DragonAbilityInstance ability) {};
     MapCodec<? extends AbilityTargeting> codec();
     Either<BlockTargeting, EntityTargeting> target();
 }

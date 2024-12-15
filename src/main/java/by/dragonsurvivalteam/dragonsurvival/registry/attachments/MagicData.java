@@ -23,6 +23,7 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.util.INBTSerializable;
+import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerXpEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -295,13 +296,14 @@ public class MagicData implements INBTSerializable<CompoundTag> {
         this.renderAbilities = renderAbilities;
     }
 
-    public void reset() {
-        abilities.clear();
-        currentMana = 0;
-        selectedAbilitySlot = 0;
-    }
+    public void refresh(final Holder<DragonType> type, final Player player) {
+        // Make sure we remove any passive effects for abilities that are no longer available
+        if(!player.level().isClientSide()) {
+            for (DragonAbilityInstance instance : abilities.values()) {
+                instance.setActive(false, (ServerPlayer)player);
+            }
+        }
 
-    public void refresh(final Holder<DragonType> type) {
         abilities.clear();
         hotbar.clear();
 

@@ -159,7 +159,7 @@ public class DragonStateHandler extends EntityStateHandler {
             if (oldType == null || !oldType.is(type)) {
                 DSModifiers.updateTypeModifiers(player, this);
                 skinData.skinPreset.initDefaults(type.getKey());
-                magicData.refresh(type);
+                magicData.refresh(type, player);
             }
         } else {
             DSModifiers.clearModifiers(player);

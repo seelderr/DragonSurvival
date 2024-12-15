@@ -45,9 +45,9 @@ public record ModifierEffect(List<ModifierWithDuration> modifiers) implements Ab
                 float amount = modifier.amount().calculate(ability.level());
                 String number;
                 if (amount > 0) {
-                    number = "+" + amount;
+                    number = "+" + String.format("%.2f", amount);
                 } else {
-                    number = String.valueOf(amount);
+                    number =  String.format("%.2f", amount);
                 }
                 Component value = Component.literal("§6: ").append(Component.literal(number).withStyle(modifier.attribute().value().getStyle(amount > 0)));
                 name = name.append(value);

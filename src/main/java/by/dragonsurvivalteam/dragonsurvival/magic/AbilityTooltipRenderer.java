@@ -67,7 +67,7 @@ public class AbilityTooltipRenderer {
         int backgroundWidth = 150 + 5;
         int backgroundHeight = 35 + 24 + description.size() * 9;
         int sideWidth = Screen.hasShiftDown() ? extraWidth : 15;
-        int sideHeight = Screen.hasShiftDown() ? Math.max(27 + text.size() * 9, 35 + 24 + description.size() * 9 - 10) : 27 + description.size() * 9;
+        int sideHeight = Screen.hasShiftDown() ? 27 + text.size() * 9 : backgroundHeight - 10;
         ClientTooltipPositioner positioner = new AbilityTooltipPositioner(Screen.hasShiftDown() ? sideWidth : 0);
         Vector2ic position = positioner.positionTooltip(guiGraphics.guiWidth(), guiGraphics.guiHeight(), x, y, backgroundWidth, Math.max(sideHeight, backgroundHeight));
         int trueX = position.x();

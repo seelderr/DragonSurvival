@@ -64,6 +64,9 @@ public class LangKey {
     @Translation(type = Translation.Type.MISC, comments = " every %s seconds")
     public static final String ABILITY_X_SECONDS = Translation.Type.ABILITY.wrap("general.ability_x_seconds");
 
+    @Translation(type = Translation.Type.MISC, comments = " on hit")
+    public static final String ABILITY_ON_HIT = Translation.Type.ABILITY.wrap("general.on_hit");
+
     @Translation(type = Translation.Type.MISC, comments = "Applies ")
     public static final String ABILITY_APPLIES = Translation.Type.ABILITY.wrap("general.applies");
 

@@ -88,7 +88,7 @@ public class SyncComplete implements IMessage<SyncComplete.Data> {
                     // TODO: This doesn't fully work with saveAllAbilities config. We'd need to make a mapping of dragon types to magicData instances.
                     if (previousType == null || (!ServerConfig.saveAllAbilities && !previousType.is(handler.getType()))) {
                         MagicData magicData = MagicData.getData(player);
-                        magicData.refresh(handler.getType());
+                        magicData.refresh(handler.getType(), player);
                     }
                     handleDragonSync(player);
                 })
