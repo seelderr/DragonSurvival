@@ -33,6 +33,7 @@ public class SeaDragonAbilities {
 
     private static void registerActiveAbilities(final BootstrapContext<DragonAbility> context) {
         context.register(BALL_LIGHTNING, new DragonAbility(
+                false,
                 new Activation(
                         Activation.Type.ACTIVE_SIMPLE,
                         Optional.empty(),
@@ -54,7 +55,7 @@ public class SeaDragonAbilities {
                                         LevelBasedValue.constant(0),
                                         LevelBasedValue.constant(1)
                                 )),
-                                false
+                                AbilityTargeting.EntityTargetingMode.TARGET_ALL
                         )
                 ), false), LevelBasedValue.constant(1))),
                 new LevelBasedResource(

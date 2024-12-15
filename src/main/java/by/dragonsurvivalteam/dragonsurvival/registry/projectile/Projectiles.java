@@ -48,7 +48,7 @@ public class Projectiles {
                         new ProjectileData.GenericBallData(
                                 new ProjectileData.GenericBallResource(new LevelBasedResource(List.of(new LevelBasedResource.TextureEntry(FIREBALL.location(), 1)))),
                                 Optional.of(ParticleTypes.LARGE_SMOKE),
-                                List.of(new ProjectilePointTarget(
+                                List.of(new ProjectilePointTarget(Either.right(
                                         new ProjectileTargeting.WorldTargeting(
                                                 Optional.empty(),
                                                 Optional.empty(),
@@ -61,7 +61,7 @@ public class Projectiles {
                                                         false
                                                 )),
                                                 1)
-                                        )
+                                        ))
                                 ),
                                 LevelBasedValue.constant(1f),
                                 LevelBasedValue.constant(1f),
@@ -106,7 +106,7 @@ public class Projectiles {
                         new ProjectileData.GenericBallData(
                                 new ProjectileData.GenericBallResource(new LevelBasedResource(List.of(new LevelBasedResource.TextureEntry(BALL_LIGHTNING.location(), 1)))),
                                 Optional.empty(),
-                                List.of(new ProjectilePointTarget(
+                                List.of(new ProjectilePointTarget(Either.right(
                                         new ProjectileTargeting.WorldTargeting(
                                                 Optional.empty(),
                                                 Optional.empty(),
@@ -119,7 +119,7 @@ public class Projectiles {
                                                         false
                                                 )),
                                                 1)
-                                        )
+                                        ))
                                 ),
                                 LevelBasedValue.constant(1f),
                                 LevelBasedValue.constant(1f),
@@ -130,7 +130,7 @@ public class Projectiles {
                 ),
                 Optional.empty(),
                 List.of(new ProjectileAreaTarget(
-                            Either.right(
+                            Either.left(Either.right(
                                 new ProjectileTargeting.EntityTargeting(
                                     Optional.empty(),
                                     Optional.empty(),
@@ -149,12 +149,12 @@ public class Projectiles {
                                     ),
                                     5
                                 )
-                            ),
+                            )),
                             LevelBasedValue.constant(4),
                             Optional.of(new LargeLightningParticleOption(37, false))
                         ),
                         new ProjectileAreaTarget(
-                                Either.right(
+                                Either.left(Either.right(
                                         new ProjectileTargeting.EntityTargeting(
                                                 Optional.of(EntityPredicate.Builder.entity().located(LocationPredicate.Builder.location().setCanSeeSky(true)).build()),
                                                 Optional.of(new WeatherPredicate(
@@ -175,7 +175,7 @@ public class Projectiles {
                                                 ),
                                                 5
                                         )
-                                ),
+                                )),
                                 LevelBasedValue.constant(4),
                                 Optional.empty()
                         )

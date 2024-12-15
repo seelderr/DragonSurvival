@@ -28,6 +28,7 @@
               "effects": "dragonsurvival:burn"
             }
           ],
+          "entity_targeting_mode": "TARGET_ENEMIES",
           "target_conditions": {
             "type_specific": {
               "type": "dragonsurvival:entity_check_predicate",
@@ -75,7 +76,7 @@
               "spread": 0.2
             }
           ],
-          "target_friendly": true
+          "entity_targeting_mode": "TARGET_ALL"
         },
         "target_type": "dragonsurvival:self"
       },

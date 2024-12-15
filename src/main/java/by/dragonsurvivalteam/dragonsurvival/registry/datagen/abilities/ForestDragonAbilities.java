@@ -33,6 +33,7 @@ public class ForestDragonAbilities {
 
     private static void registerActiveAbilities(final BootstrapContext<DragonAbility> context) {
         context.register(FOREST_SPIKE, new DragonAbility(
+                false,
                 new Activation(
                         Activation.Type.ACTIVE_SIMPLE,
                         Optional.empty(),
@@ -54,7 +55,7 @@ public class ForestDragonAbilities {
                                         LevelBasedValue.constant(0),
                                         LevelBasedValue.constant(1)
                                 )),
-                                false
+                                AbilityTargeting.EntityTargetingMode.TARGET_ALL
                         )
                 ), LevelBasedValue.constant(32)), LevelBasedValue.constant(1))),
                 new LevelBasedResource(

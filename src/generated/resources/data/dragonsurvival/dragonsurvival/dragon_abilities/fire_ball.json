@@ -14,6 +14,7 @@
               }
             }
           ],
+          "entity_targeting_mode": "TARGET_ALL",
           "target_conditions": {
             "type_specific": {
               "type": "dragonsurvival:entity_check_predicate",

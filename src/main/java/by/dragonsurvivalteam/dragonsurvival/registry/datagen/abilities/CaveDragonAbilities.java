@@ -82,6 +82,7 @@ public class CaveDragonAbilities {
 
     private static void registerActiveAbilities(final BootstrapContext<DragonAbility> context) {
         context.register(FIRE_BALL, new DragonAbility(
+                false,
                 new Activation(
                         Activation.Type.ACTIVE_SIMPLE,
                         Optional.of(LevelBasedValue.constant(1)),
@@ -112,7 +113,7 @@ public class CaveDragonAbilities {
                                         LevelBasedValue.constant(0),
                                         LevelBasedValue.constant(1)
                                 )),
-                                false
+                                AbilityTargeting.EntityTargetingMode.TARGET_ALL
                         )
                 ), false), LevelBasedValue.constant(1))),
                 new LevelBasedResource(List.of(
@@ -124,6 +125,7 @@ public class CaveDragonAbilities {
         ));
 
         context.register(NETHER_BREATH, new DragonAbility(
+                false,
                 new Activation(
                         Activation.Type.ACTIVE_CHANNELED,
                         Optional.empty(),
@@ -162,7 +164,7 @@ public class CaveDragonAbilities {
                                                         LevelBasedValue.constant(1)
                                                 )
                                         ),
-                                        false
+                                        AbilityTargeting.EntityTargetingMode.TARGET_ENEMIES
                                 )
                         ), LevelBasedValue.constant(1)), LevelBasedValue.constant(10)),
                         new ActionContainer(new DragonBreathTarget(Either.left(
@@ -181,7 +183,7 @@ public class CaveDragonAbilities {
                                                 new SmallFireParticleOption(37, true),
                                                 new LargeFireParticleOption(37, false)
                                         )),
-                                        true
+                                        AbilityTargeting.EntityTargetingMode.TARGET_ALL
                                 )
                         ), false), LevelBasedValue.constant(1))),
                 new LevelBasedResource(List.of(
@@ -193,6 +195,7 @@ public class CaveDragonAbilities {
         ));
 
         context.register(LAVA_VISION, new DragonAbility(
+                false,
                 new Activation(
                         Activation.Type.ACTIVE_SIMPLE,
                         Optional.of(LevelBasedValue.constant(1)),
@@ -222,7 +225,7 @@ public class CaveDragonAbilities {
                                         LevelBasedValue.perLevel(Functions.secondsToTicks(30)),
                                         LevelBasedValue.constant(1)
                                 )),
-                                true
+                                AbilityTargeting.EntityTargetingMode.TARGET_FRIENDLIES
                         )
                 ), false), LevelBasedValue.constant(1))),
                 new LevelBasedResource(List.of(
@@ -234,6 +237,7 @@ public class CaveDragonAbilities {
         ));
 
         context.register(TOUGH_SKIN, new DragonAbility(
+                false,
                 new Activation(
                         Activation.Type.ACTIVE_SIMPLE,
                         Optional.of(LevelBasedValue.constant(1)),
@@ -263,7 +267,7 @@ public class CaveDragonAbilities {
                                         List.of(new Modifier(Attributes.ARMOR, LevelBasedValue.constant(3), AttributeModifier.Operation.ADD_VALUE, Optional.empty())),
                                         LevelBasedValue.perLevel(Functions.secondsToTicks(60))
                                 )),
-                                true
+                                AbilityTargeting.EntityTargetingMode.TARGET_FRIENDLIES
                         )),
                         LevelBasedValue.constant(5)
                 ), LevelBasedValue.constant(1))),
@@ -277,6 +281,7 @@ public class CaveDragonAbilities {
 
     private static void registerPassiveAbilities(final BootstrapContext<DragonAbility> context) {
         context.register(CAVE_ATHLETICS, new DragonAbility(
+                false,
                 Activation.passive(),
                 Optional.of(new Upgrade(Upgrade.Type.MANUAL, 5, LevelBasedValue.perLevel(15))), // FIXME :: not the actual values
                 Optional.empty(),
@@ -289,7 +294,7 @@ public class CaveDragonAbilities {
                                         // FIXME :: not the final value
                                         List.of(new Modifier(Attributes.MOVEMENT_SPEED, LevelBasedValue.perLevel(0.02f), AttributeModifier.Operation.ADD_VALUE, Optional.empty())),
                                         LevelBasedValue.constant(ModifierWithDuration.INFINITE_DURATION)
-                                )), true)), true), LevelBasedValue.constant(1))),
+                                )), AbilityTargeting.EntityTargetingMode.TARGET_FRIENDLIES)), true), LevelBasedValue.constant(1))),
                 new LevelBasedResource(List.of(
                         new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/cave_athletics_1.png"), 1),
                         new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/cave_athletics_2.png"), 2),

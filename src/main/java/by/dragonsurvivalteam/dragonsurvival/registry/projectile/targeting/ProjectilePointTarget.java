@@ -1,18 +1,25 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.projectile.targeting;
 
+import com.mojang.datafixers.util.Either;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.phys.Vec3;
 
-public record ProjectilePointTarget(ProjectileTargeting.WorldTargeting target) implements ProjectileTargeting {
+public record ProjectilePointTarget(Either<Either<BlockTargeting, EntityTargeting>, ProjectileTargeting.WorldTargeting> target) implements ProjectileTargeting {
     public static final MapCodec<ProjectilePointTarget> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-            ProjectileTargeting.WorldTargeting.CODEC.fieldOf("target").forGetter(ProjectilePointTarget::target)
+            Codec.either(Codec.either(BlockTargeting.CODEC, EntityTargeting.CODEC), WorldTargeting.CODEC).fieldOf("target").forGetter(ProjectilePointTarget::target)
     ).apply(instance, ProjectilePointTarget::new));
 
     @Override
     public void apply(Projectile projectile, int projectileLevel) {
+        if(target.left().isPresent()) {
+            throw new IllegalStateException("Point target must be a world target");
+        }
+
+        WorldTargeting target = this.target.right().get();
         Vec3 position = projectile.position();
         ServerLevel level = (ServerLevel) projectile.level();
         if(level.getGameTime() % target.tickRate() != 0) {

@@ -34,6 +34,12 @@ public interface AbilityTargeting {
 
     Codec<AbilityTargeting> CODEC = REGISTRY.byNameCodec().dispatch("target_type", AbilityTargeting::codec, Function.identity());
 
+    enum EntityTargetingMode {
+        TARGET_ALL,
+        TARGET_ENEMIES,
+        TARGET_FRIENDLIES
+    }
+
     record BlockTargeting(Optional<BlockPredicate> targetConditions, List<AbilityBlockEffect> effect) {
         public static final Codec<BlockTargeting> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 BlockPredicate.CODEC.optionalFieldOf("target_conditions").forGetter(BlockTargeting::targetConditions),
@@ -41,12 +47,11 @@ public interface AbilityTargeting {
         ).apply(instance, BlockTargeting::new));
     }
 
-    record EntityTargeting(Optional<EntityPredicate> targetConditions, List<AbilityEntityEffect> effect, boolean targetFriendly) {
+    record EntityTargeting(Optional<EntityPredicate> targetConditions, List<AbilityEntityEffect> effect, EntityTargetingMode targetingMode) {
         public static final Codec<EntityTargeting> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 EntityPredicate.CODEC.optionalFieldOf("target_conditions").forGetter(EntityTargeting::targetConditions),
                 AbilityEntityEffect.CODEC.listOf().fieldOf("entity_effect").forGetter(EntityTargeting::effect),
-                // TODO :: let his be a more complex state? like 'target_any' / 'target_friendly' / 'target_only_friendly' etc.?
-                Codec.BOOL.optionalFieldOf("target_friendly", false).forGetter(EntityTargeting::targetFriendly)
+                Codec.STRING.xmap(EntityTargetingMode::valueOf, EntityTargetingMode::name).fieldOf("entity_targeting_mode").forGetter(EntityTargeting::targetingMode)
         ).apply(instance, EntityTargeting::new));
     }
 
@@ -71,11 +76,15 @@ public interface AbilityTargeting {
 
     @SuppressWarnings("RedundantIfStatement") // ignore for clarity
     default boolean isEntityRelevant(final ServerPlayer dragon, final EntityTargeting targeting, final Entity entity) {
-        if (!targeting.targetFriendly() && dragon == entity) {
+        if(targeting.targetingMode == EntityTargetingMode.TARGET_ALL) {
+            return true;
+        }
+
+        if (targeting.targetingMode == EntityTargetingMode.TARGET_ENEMIES && (dragon == entity || isFriendly(dragon, entity))) {
             return false;
         }
 
-        if (!targeting.targetFriendly() && isFriendly(dragon, entity)) {
+        if(targeting.targetingMode == EntityTargetingMode.TARGET_FRIENDLIES && !isFriendly(dragon, entity)) {
             return false;
         }
 

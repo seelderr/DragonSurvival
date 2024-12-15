@@ -3,9 +3,11 @@ package by.dragonsurvivalteam.dragonsurvival.registry.projectile.targeting;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.predicates.RandomPredicate;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.predicates.WeatherPredicate;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.targeting.AbilityTargeting;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.block_effects.ProjectileBlockEffect;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.entity_effects.ProjectileEntityEffect;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.world_effects.ProjectileWorldEffect;
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -76,5 +78,6 @@ public interface ProjectileTargeting {
     }
 
     void apply(final Projectile projectile, int projectileLevel);
+    Either<Either<ProjectileTargeting.BlockTargeting, ProjectileTargeting.EntityTargeting>, ProjectileTargeting.WorldTargeting> target();
     MapCodec<? extends ProjectileTargeting> codec();
 }

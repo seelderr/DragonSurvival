@@ -25,14 +25,14 @@
               ]
             }
           ],
+          "entity_targeting_mode": "TARGET_FRIENDLIES",
           "target_conditions": {
             "stepping_on": {
               "block": {
                 "blocks": "#dragonsurvival:speeds_up_cave_dragon"
               }
             }
-          },
-          "target_friendly": true
+          }
         },
         "remove_automatically": true,
         "target_type": "dragonsurvival:self"

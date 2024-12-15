@@ -15,7 +15,7 @@
               "effects": "dragonsurvival:lava_vision"
             }
           ],
-          "target_friendly": true
+          "entity_targeting_mode": "TARGET_FRIENDLIES"
         },
         "target_type": "dragonsurvival:self"
       },
