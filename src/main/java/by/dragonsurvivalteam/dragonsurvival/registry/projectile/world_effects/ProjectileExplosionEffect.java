@@ -1,14 +1,20 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.projectile.world_effects;
 
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 import net.minecraft.world.level.Level;
+
+import java.util.List;
 
 public record ProjectileExplosionEffect(Holder<DamageType> damageType, LevelBasedValue explosionPower, boolean fire, boolean breakBlocks, boolean canDamageSelf) implements ProjectileWorldEffect {
     public static final MapCodec<ProjectileExplosionEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
@@ -35,6 +41,11 @@ public record ProjectileExplosionEffect(Holder<DamageType> damageType, LevelBase
                 explosionPower.calculate(projectileLevel),
                 fire,
                 breakBlocks ? Level.ExplosionInteraction.BLOCK : Level.ExplosionInteraction.NONE);
+    }
+
+    @Override
+    public List<MutableComponent> getDescription(final Player dragon, final int level) {
+        return List.of(Component.translatable(LangKey.ABILITY_EXPLOSION_POWER, Component.translatable(LangKey.ABILITY_PROJECTILE), explosionPower().calculate(level)));
     }
 
     public MapCodec<? extends ProjectileWorldEffect> worldCodec() {

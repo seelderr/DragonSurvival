@@ -3,13 +3,19 @@ package by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.entity_effe
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.TargetDirection;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.GenericArrowEntity;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.GenericBallEntity;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.ProjectileData;
+import by.dragonsurvivalteam.dragonsurvival.registry.projectile.block_effects.ProjectileBlockEffect;
+import by.dragonsurvivalteam.dragonsurvival.registry.projectile.entity_effects.ProjectileEntityEffect;
+import by.dragonsurvivalteam.dragonsurvival.registry.projectile.targeting.ProjectileTargeting;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
@@ -19,6 +25,8 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.BiConsumer;
 
 public record ProjectileEffect(
@@ -138,6 +146,39 @@ public record ProjectileEffect(
         }
 
         return shootLogic;
+    }
+
+    @Override
+    public List<MutableComponent> getDescription(final Player dragon, final DragonAbilityInstance ability) {
+        List<MutableComponent> components = new ArrayList<>();
+        for(ProjectileEntityEffect entityHitEffect : projectileData().value().entityHitEffects()) {
+            List<MutableComponent> effectComponents = entityHitEffect.getDescription(dragon, ability.level());
+            components.addAll(effectComponents);
+        }
+
+        for(ProjectileBlockEffect blockHitEffect : projectileData().value().blockHitEffects()) {
+            List<MutableComponent> effectComponents = blockHitEffect.getDescription(dragon, ability.level());
+            components.addAll(effectComponents);
+        }
+
+        for(ProjectileTargeting tickingEffect : projectileData().value().tickingEffects()) {
+            List<MutableComponent> effectComponents = tickingEffect.getAllEffectDescriptions(dragon, ability.level());
+            components.addAll(effectComponents);
+        }
+
+        for(ProjectileTargeting commonEffect : projectileData().value().commonHitEffects()) {
+            List<MutableComponent> effectComponents = commonEffect.getAllEffectDescriptions(dragon, ability.level());
+            components.addAll(effectComponents);
+        }
+
+        if(projectileData().value().specificProjectileData().left().isPresent()) {
+            for(ProjectileTargeting onDestroyEffect : projectileData().value().specificProjectileData().left().get().onDestroyEffects()) {
+                List<MutableComponent> effectComponents = onDestroyEffect.getAllEffectDescriptions(dragon, ability.level());
+                components.addAll(effectComponents);
+            }
+        }
+
+        return components;
     }
 
     @Override

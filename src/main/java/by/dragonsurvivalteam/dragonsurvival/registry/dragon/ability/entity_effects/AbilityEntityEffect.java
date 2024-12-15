@@ -6,15 +6,20 @@ import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.common_effec
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Registry;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
+import org.spongepowered.asm.mixin.Mutable;
 
+import java.util.List;
 import java.util.function.Function;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
@@ -27,6 +32,7 @@ public interface AbilityEntityEffect {
     void apply(final ServerPlayer dragon, final DragonAbilityInstance ability, final Entity entity);
     MapCodec<? extends AbilityEntityEffect> entityCodec();
 
+    default List<MutableComponent> getDescription(final Player dragon, final DragonAbilityInstance ability) { return List.of(); }
     default void remove(final ServerPlayer dragon, final DragonAbilityInstance ability, final Entity entity) { /* Nothing to do */ }
 
     @SubscribeEvent

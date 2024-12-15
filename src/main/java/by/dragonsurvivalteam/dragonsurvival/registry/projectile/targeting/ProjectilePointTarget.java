@@ -1,10 +1,14 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.projectile.targeting;
 
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.phys.Vec3;
 
@@ -33,6 +37,15 @@ public record ProjectilePointTarget(Either<Either<BlockTargeting, EntityTargetin
         }
 
         target.effects().forEach(effect -> effect.apply(projectile, projectileLevel));
+    }
+
+    @Override
+    public MutableComponent getDescription(Player dragon, int level) {
+        MutableComponent description = Component.empty();
+        if(tickRate() > 1) {
+            description.append(Component.translatable(LangKey.ABILITY_X_SECONDS, tickRate() / 20.f));
+        }
+        return description;
     }
 
     @Override

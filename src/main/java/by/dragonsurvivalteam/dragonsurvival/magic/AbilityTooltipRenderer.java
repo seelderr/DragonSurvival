@@ -53,7 +53,8 @@ public class AbilityTooltipRenderer {
 
         FormattedText textContents = Component.empty();
 
-        for (Component component : ability.getInfo(Minecraft.getInstance().player)) {
+        List<Component> info = ability.getInfo(Minecraft.getInstance().player);
+        for (Component component : info) {
             textContents = FormattedText.composite(textContents, Component.empty().append("\n"));
             textContents = FormattedText.composite(textContents, component);
         }
@@ -66,9 +67,9 @@ public class AbilityTooltipRenderer {
         int backgroundWidth = 150 + 5;
         int backgroundHeight = 35 + 24 + description.size() * 9;
         int sideWidth = Screen.hasShiftDown() ? extraWidth : 15;
-        int sideHeight = Screen.hasShiftDown() ? Math.min(27 + text.size() * 9, 35 + 24 + description.size() * 9 - 10) : 27 + text.size() * 9;
+        int sideHeight = Screen.hasShiftDown() ? Math.max(27 + text.size() * 9, 35 + 24 + description.size() * 9 - 10) : 27 + description.size() * 9;
         ClientTooltipPositioner positioner = new AbilityTooltipPositioner(Screen.hasShiftDown() ? sideWidth : 0);
-        Vector2ic position = positioner.positionTooltip(guiGraphics.guiWidth(), guiGraphics.guiHeight(), x, y, backgroundWidth, backgroundHeight);
+        Vector2ic position = positioner.positionTooltip(guiGraphics.guiWidth(), guiGraphics.guiHeight(), x, y, backgroundWidth, Math.max(sideHeight, backgroundHeight));
         int trueX = position.x();
         int trueY = position.y();
 
@@ -110,7 +111,7 @@ public class AbilityTooltipRenderer {
             guiGraphics.drawString(Minecraft.getInstance().font, description.get(k1), trueX + 5, trueY + 47 + k1 * 9, -5592406);
         }
 
-        if (!ability.getInfo(Minecraft.getInstance().player).isEmpty()) {
+        if (!info.isEmpty()) {
             guiGraphics.drawCenteredString(Minecraft.getInstance().font, Component.translatable(INFO_SHIFT).withStyle(ChatFormatting.DARK_GRAY), trueX + 150 / 2, trueY + 47 + (description.size() - 1) * 9, 0);
         }
 

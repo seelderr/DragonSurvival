@@ -1,6 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.projectile.targeting;
 
 import by.dragonsurvivalteam.dragonsurvival.network.particle.SyncParticleTrail;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.targeting.AbilityTargeting;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -8,8 +10,11 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 import net.minecraft.world.level.entity.EntityTypeTest;
@@ -82,6 +87,15 @@ public record ProjectileAreaTarget(Either<Either<ProjectileTargeting.BlockTarget
                     }
             );
         });
+    }
+
+    @Override
+    public MutableComponent getDescription(Player dragon, int level) {
+        MutableComponent description = Component.translatable(LangKey.ABILITY_TO_TARGET_AREA, Component.translatable(LangKey.ABILITY_TARGET_ALL_ENTITIES), radius().calculate(level));
+        if(tickRate() > 1) {
+            description.append(Component.translatable(LangKey.ABILITY_X_SECONDS, tickRate() / 20.f));
+        }
+        return description;
     }
 
     @Override

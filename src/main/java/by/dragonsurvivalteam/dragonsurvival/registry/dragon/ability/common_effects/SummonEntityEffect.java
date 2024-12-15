@@ -9,6 +9,8 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.*;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -53,6 +55,11 @@ public record SummonEntityEffect(HolderSet<EntityType<?>> entities, List<Attribu
                 }
             }
         }
+    }
+
+    @Override
+    public List<MutableComponent> getDescription(Player dragon, DragonAbilityInstance ability) {
+        return List.of();
     }
 
     @Override

@@ -4,6 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.block_effects.AbilityBlockEffect;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.entity_effects.AbilityEntityEffect;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.entity_effects.ProjectileEffect;
 import com.mojang.datafixers.Products;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
@@ -12,6 +13,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.core.Registry;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -23,6 +25,7 @@ import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -105,9 +108,36 @@ public interface AbilityTargeting {
         return false;
     }
 
+    default List<MutableComponent> getAllEffectDescriptions(final Player dragon, final DragonAbilityInstance abilityInstance) {
+        List<MutableComponent> descriptions = new ArrayList<>();
+        MutableComponent targetDescription = getDescription(dragon, abilityInstance);
+        if (target().right().isPresent()) {
+            target().right().get().effect().forEach(effect -> {
+                List<MutableComponent> abilityEffectDescriptions = effect.getDescription(dragon, abilityInstance);
+                if(!effect.getDescription(dragon, abilityInstance).isEmpty()) {
+                    if(effect instanceof ProjectileEffect) {
+                        // Special case where we don't want to append the "self target" description for projectiles (as it doesn't make sense)
+                        descriptions.addAll(effect.getDescription(dragon, abilityInstance));
+                    } else {
+                        descriptions.addAll(abilityEffectDescriptions.stream().map(abilityEffectDescription -> abilityEffectDescription.append(targetDescription)).toList());
+                    }
+                }
+            });
+        } else if (target().left().isPresent()) {
+            target().left().get().effect().forEach(effect -> {
+                List<MutableComponent> abilityEffectDescriptions = effect.getDescription(dragon, abilityInstance);
+                if(!effect.getDescription(dragon, abilityInstance).isEmpty()) {
+                    descriptions.addAll(abilityEffectDescriptions.stream().map(abilityEffectDescription -> abilityEffectDescription.append(targetDescription)).toList());
+                }
+            });
+        }
+
+        return descriptions;
+    }
+
+
+    MutableComponent getDescription(final Player dragon, final DragonAbilityInstance ability);
     void apply(final ServerPlayer dragon, final DragonAbilityInstance ability);
-    default float getRange(final Player dragon, final DragonAbilityInstance ability) { return -1; }
-    default float getArea(final Player dragon, final DragonAbilityInstance ability) { return -1; }
     MapCodec<? extends AbilityTargeting> codec();
     Either<BlockTargeting, EntityTargeting> target();
 }

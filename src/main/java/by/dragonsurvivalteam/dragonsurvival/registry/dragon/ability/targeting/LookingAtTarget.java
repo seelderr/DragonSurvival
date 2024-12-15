@@ -1,9 +1,12 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.targeting;
 
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -47,6 +50,24 @@ public record LookingAtTarget(Either<BlockTargeting, EntityTargeting> target, Le
         });
     }
 
+    @Override
+    public MutableComponent getDescription(final Player dragon, final DragonAbilityInstance ability) {
+        MutableComponent targetingComponent = Component.empty();
+        if (target().right().isPresent()) {
+            switch (target().right().get().targetingMode()) {
+                case TARGET_ALL -> targetingComponent.append(Component.translatable(LangKey.ABILITY_TARGET_ALL_ENTITIES));
+                case TARGET_ENEMIES -> targetingComponent.append(Component.translatable(LangKey.ABILITY_TARGET_ENEMIES));
+                case TARGET_FRIENDLIES -> targetingComponent.append(Component.translatable(LangKey.ABILITY_TARGET_ALLIES));
+            }
+        }
+
+        if(!(targetingComponent.equals(Component.empty()))) {
+            return Component.translatable(LangKey.ABILITY_TO_TARGET_LOOKAT, targetingComponent, getRange(ability));
+        } else {
+            return Component.translatable(LangKey.ABILITY_LOOKAT, getRange(ability));
+        }
+    }
+
     public BlockHitResult getBlockHitResult(Player dragon, final DragonAbilityInstance ability) {
         Vec3 viewVector = dragon.getViewVector(0);
         return dragon.level().clip(new ClipContext(viewVector, viewVector.scale(range().calculate(ability.level())), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, CollisionContext.empty()));
@@ -56,7 +77,7 @@ public record LookingAtTarget(Either<BlockTargeting, EntityTargeting> target, Le
         return ProjectileUtil.getHitResultOnViewVector(dragon, filter, range().calculate(ability.level()));
     }
 
-    public float getRange(Player dragon, final DragonAbilityInstance ability) {
+    private float getRange(final DragonAbilityInstance ability) {
         return range().calculate(ability.level());
     }
 

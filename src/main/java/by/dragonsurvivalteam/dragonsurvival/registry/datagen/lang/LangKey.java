@@ -55,13 +55,22 @@ public class LangKey {
     @Translation(type = Translation.Type.MISC, comments = " to %s in a %s block cone")
     public static final String ABILITY_TO_TARGET_CONE = Translation.Type.ABILITY.wrap("general.ability_to_target_cone");
 
+    @Translation(type = Translation.Type.MISC, comments = " to %s being looked at ")
+    public static final String ABILITY_LOOKAT = Translation.Type.ABILITY.wrap("general.ability_lookat");
+
+    @Translation(type = Translation.Type.MISC, comments = " to %s within %s blocks being looked at")
+    public static final String ABILITY_TO_TARGET_LOOKAT = Translation.Type.ABILITY.wrap("general.ability_to_target_lookat");
+
+    @Translation(type = Translation.Type.MISC, comments = " every %s seconds")
+    public static final String ABILITY_X_SECONDS = Translation.Type.ABILITY.wrap("general.ability_x_seconds");
+
     @Translation(type = Translation.Type.MISC, comments = "Applies ")
     public static final String ABILITY_APPLIES = Translation.Type.ABILITY.wrap("general.applies");
 
-    @Translation(type = Translation.Type.MISC, comments = "§6■%sDamage:§r %s")
+    @Translation(type = Translation.Type.MISC, comments = "§6■%s§6Damage:§r %s")
     public static final String ABILITY_DAMAGE = Translation.Type.ABILITY.wrap("general.damage");
 
-    @Translation(type = Translation.Type.MISC, comments = "§6■%sExplosion Power:§r %s")
+    @Translation(type = Translation.Type.MISC, comments = "§6■%s§6Explosion Power:§r %s")
     public static final String ABILITY_EXPLOSION_POWER = Translation.Type.ABILITY.wrap("general.explosion_power");
 
     //@Translation(type = Translation.Type.MISC, comments = "§6■ Range:§r %s blocks")
@@ -96,11 +105,8 @@ public class LangKey {
 
     // --- Projectile effects --- //
 
-    @Translation(type = Translation.Type.MISC, comments = "§6Projectile ")
+    @Translation(type = Translation.Type.MISC, comments = " §6Projectile ")
     public static final String ABILITY_PROJECTILE = Translation.Type.ABILITY.wrap("general.projectile");
-
-    @Translation(type = Translation.Type.MISC, comments = "§6Ticking Projectile ")
-    public static final String ABILITY_TICKING_PROJECTILE = Translation.Type.ABILITY.wrap("general.ticking_projectile");
 
     // --- Misc --- //
 

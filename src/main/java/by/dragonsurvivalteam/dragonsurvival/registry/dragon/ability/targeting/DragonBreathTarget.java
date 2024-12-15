@@ -2,11 +2,14 @@ package by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.targeting;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -46,6 +49,24 @@ public record DragonBreathTarget(Either<BlockTargeting, EntityTargeting> target,
     }
 
     @Override
+    public MutableComponent getDescription(final Player dragon, final DragonAbilityInstance ability) {
+        MutableComponent targetingComponent = Component.empty();
+        if (target().right().isPresent()) {
+            switch (target().right().get().targetingMode()) {
+                case TARGET_ALL -> targetingComponent.append(Component.translatable(LangKey.ABILITY_TARGET_ALL_ENTITIES));
+                case TARGET_ENEMIES -> targetingComponent.append(Component.translatable(LangKey.ABILITY_TARGET_ENEMIES));
+                case TARGET_FRIENDLIES -> targetingComponent.append(Component.translatable(LangKey.ABILITY_TARGET_ALLIES));
+            }
+        }
+
+        if(!(targetingComponent.equals(Component.empty()))) {
+            return Component.translatable(LangKey.ABILITY_TO_TARGET_CONE, targetingComponent, getRange(dragon, ability));
+        } else {
+            return Component.translatable(LangKey.ABILITY_CONE, getRange(dragon, ability));
+        }
+    }
+
+    @Override
     public MapCodec<? extends AbilityTargeting> codec() {
         return CODEC;
     }
@@ -78,7 +99,7 @@ public record DragonBreathTarget(Either<BlockTargeting, EntityTargeting> target,
         return new AABB(dragon.position().subtract(min), dragon.position().add(max));
     }
 
-    public float getRange(final Player dragon, final DragonAbilityInstance ability) {
+    private float getRange(final Player dragon, final DragonAbilityInstance ability) {
         return (float) (rangeMultiplier.calculate(ability.level()) * dragon.getAttributeValue(DSAttributes.DRAGON_BREATH_RANGE));
     }
 

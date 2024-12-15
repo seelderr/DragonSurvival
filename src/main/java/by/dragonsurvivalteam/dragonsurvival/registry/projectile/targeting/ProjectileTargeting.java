@@ -15,14 +15,18 @@ import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.LocationPredicate;
 import net.minecraft.core.Registry;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
+import org.spongepowered.asm.mixin.Mutable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -77,7 +81,53 @@ public interface ProjectileTargeting {
         }
     }
 
+    default int tickRate() {
+        if (target().right().isPresent()) {
+            return target().right().get().tickRate();
+        } else if (target().left().isPresent()) {
+            if(target().left().get().left().isPresent()) {
+                return target().left().get().left().get().tickRate();
+            } else if(target().left().get().right().isPresent()) {
+                return target().left().get().right().get().tickRate();
+            }
+        }
+
+        return 1;
+    }
+
+    default List<MutableComponent> getAllEffectDescriptions(final Player dragon, final int level) {
+        List<MutableComponent> descriptions = new ArrayList<>();
+        MutableComponent targetDescription = getDescription(dragon, level);
+        if (target().right().isPresent()) {
+            target().right().get().effects().forEach(effect -> {
+                List<MutableComponent> abilityEffectDescriptions = effect.getDescription(dragon, level);
+                if(!effect.getDescription(dragon, level).isEmpty()) {
+                    descriptions.addAll(abilityEffectDescriptions.stream().map(abilityEffectDescription -> abilityEffectDescription.append(targetDescription)).toList());
+                }
+            });
+        } else if (target().left().isPresent()) {
+            if (target().left().get().left().isPresent()) {
+                target().left().get().left().get().effects().forEach(effect -> {
+                    List<MutableComponent> abilityEffectDescriptions = effect.getDescription(dragon, level);
+                    if(!effect.getDescription(dragon, level).isEmpty()) {
+                        descriptions.addAll(abilityEffectDescriptions.stream().map(abilityEffectDescription -> abilityEffectDescription.append(targetDescription)).toList());
+                    }
+                });
+            } else if (target().left().get().right().isPresent()) {
+                target().left().get().right().get().effects().forEach(effect -> {
+                    List<MutableComponent> abilityEffectDescriptions = effect.getDescription(dragon, level);
+                    if(!effect.getDescription(dragon, level).isEmpty()) {
+                        descriptions.addAll(abilityEffectDescriptions.stream().map(abilityEffectDescription -> abilityEffectDescription.append(targetDescription)).toList());
+                    }
+                });
+            }
+        }
+
+        return descriptions;
+    }
+
     void apply(final Projectile projectile, int projectileLevel);
+    MutableComponent getDescription(final Player dragon, final int level);
     Either<Either<ProjectileTargeting.BlockTargeting, ProjectileTargeting.EntityTargeting>, ProjectileTargeting.WorldTargeting> target();
     MapCodec<? extends ProjectileTargeting> codec();
 }

@@ -1,17 +1,25 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.entity_effects;
 
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public record PotionEffect(HolderSet<MobEffect> effects, LevelBasedValue amplifier, LevelBasedValue duration, LevelBasedValue probability) implements AbilityEntityEffect {
     public static final MapCodec<PotionEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
@@ -44,6 +52,31 @@ public record PotionEffect(HolderSet<MobEffect> effects, LevelBasedValue amplifi
                 }
             });
         }
+    }
+
+    @Override
+    public List<MutableComponent> getDescription(final Player dragon, final DragonAbilityInstance ability) {
+        List<MutableComponent> components = new ArrayList<>();
+        float duration = duration().calculate(ability.level()) / 20.f;
+        for (Holder<MobEffect> mobEffect : effects()) {
+            MutableComponent name = Component.literal("§6■ ").append(Component.translatable(LangKey.ABILITY_APPLIES).append(Component.translatable(mobEffect.value().getDescriptionId())).withColor(-219136));
+
+            int amplifier = (int) amplifier().calculate(ability.level());
+            if (amplifier > 0) {
+                name.append(Component.literal(Integer.toString(amplifier)).withColor(-219136));
+            }
+
+            name.append(Component.translatable(LangKey.ABILITY_EFFECT_DURATION, duration));
+
+            float probability = probability().calculate(ability.level());
+            if (probability < 1) {
+                name.append(Component.translatable(LangKey.ABILITY_EFFECT_CHANCE, probability));
+            }
+
+            components.add(name);
+        }
+
+        return components;
     }
 
     @Override
