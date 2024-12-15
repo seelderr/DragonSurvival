@@ -131,5 +131,10 @@ public record HarvestBonus(ResourceLocation id, HolderSet<Block> applicableTo, L
         public ResourceLocation getId() {
             return baseData().id();
         }
+
+        @Override
+        public boolean isVisible() {
+            return false;
+        }
     }
 }

@@ -10,6 +10,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.animation.Anim
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.animation.SimpleAbilityAnimation;
 import by.dragonsurvivalteam.dragonsurvival.common.particles.LargeFireParticleOption;
 import by.dragonsurvivalteam.dragonsurvival.common.particles.SmallFireParticleOption;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSSounds;
@@ -34,6 +35,7 @@ import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -70,6 +72,14 @@ public class CaveDragonAbilities {
     @Translation(type = Translation.Type.ABILITY, comments = "Sturdy Skin") // TODO :: strong leather, tough skin or sturdy skin?
     public static final ResourceKey<DragonAbility> TOUGH_SKIN = DragonAbilities.key("tough_skin");
 
+    // TODO :: These should be interpreted from the ResourceLocation instead of manually defined
+    @Translation(type = Translation.Type.MODIFIER, comments = "Cave Athletics", key = "cave_athletics")
+    public static final ResourceLocation CAVE_ATHLETICS_MODIFIER = DragonSurvival.res("cave_athletics");
+
+    // TODO :: These should be interpreted from the ResourceLocation instead of manually defined
+    @Translation(type = Translation.Type.MODIFIER, comments = "Sturdy Skin", key = "sturdy_skin")
+    public static final ResourceLocation STURDY_SKIN_MODIFIER = DragonSurvival.res("sturdy_skin");
+
     // --- Passive --- //
     @Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = "■ Standing on stone surfaces will increase your movement speed.")
     @Translation(type = Translation.Type.ABILITY, comments = "Cave Athletics")
@@ -83,6 +93,20 @@ public class CaveDragonAbilities {
     })
     @Translation(type = Translation.Type.ABILITY, comments = "Burn")
     public static final ResourceKey<DragonAbility> BURN = DragonAbilities.key("burn");
+
+    @Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = {
+            "■ Upgrading this ability increases your maximum mana pool. Cave dragon mana is restored by standing on hot blocks.\n",
+    })
+    @Translation(type = Translation.Type.ABILITY, comments = "Cave Magic")
+    public static final ResourceKey<DragonAbility> CAVE_MAGIC = DragonAbilities.key("cave_magic");
+
+
+    @Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = {
+            "■ You are resistant to Rain, snow and snowfall for: §2%s§rs\n",
+            "■ Water, potions and snowballs are still dangerous"
+    })
+    @Translation(type = Translation.Type.ABILITY, comments = "Contrast Shower")
+    public static final ResourceKey<DragonAbility> CONTRAST_SHOWER = DragonAbilities.key("contrast_shower");
 
     public static void registerAbilities(final BootstrapContext<DragonAbility> context) {
         registerActiveAbilities(context);
@@ -271,10 +295,11 @@ public class CaveDragonAbilities {
                         new AbilityTargeting.EntityTargeting(
                                 Optional.empty(),
                                 ModifierEffect.single(new ModifierWithDuration(
-                                        DragonSurvival.res("tough_leather"),
+                                        STURDY_SKIN_MODIFIER,
                                         DragonSurvival.res("textures/modifiers/strong_leather.png"),
                                         List.of(new Modifier(Attributes.ARMOR, LevelBasedValue.constant(3), AttributeModifier.Operation.ADD_VALUE, Optional.empty())),
-                                        LevelBasedValue.perLevel(Functions.secondsToTicks(60))
+                                        LevelBasedValue.perLevel(Functions.secondsToTicks(60)),
+                                        false
                                 )),
                                 AbilityTargeting.EntityTargetingMode.TARGET_FRIENDLIES
                         )),
@@ -298,11 +323,12 @@ public class CaveDragonAbilities {
                         new AbilityTargeting.EntityTargeting(
                                 Optional.of(Condition.onBlock(DSBlockTags.SPEEDS_UP_CAVE_DRAGON)),
                                 ModifierEffect.single(new ModifierWithDuration(
-                                        DragonSurvival.res("cave_athletics"),
+                                        CAVE_ATHLETICS_MODIFIER,
                                         /* FIXME */ DragonSurvival.res("textures/modifiers/strong_leather.png"),
                                         // FIXME :: not the final value
                                         List.of(new Modifier(Attributes.MOVEMENT_SPEED, LevelBasedValue.perLevel(0.02f), AttributeModifier.Operation.ADD_VALUE, Optional.empty())),
-                                        LevelBasedValue.constant(ModifierWithDuration.INFINITE_DURATION)
+                                        LevelBasedValue.constant(ModifierWithDuration.INFINITE_DURATION),
+                                        false
                                 )), AbilityTargeting.EntityTargetingMode.TARGET_FRIENDLIES)), true), LevelBasedValue.constant(1))),
                 new LevelBasedResource(List.of(
                         new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/cave_athletics_1.png"), 1),
@@ -335,6 +361,73 @@ public class CaveDragonAbilities {
                         new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/burn_2.png"), 2),
                         new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/burn_3.png"), 3),
                         new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/burn_4.png"), 4)
+                ))
+        ));
+
+        context.register(CAVE_MAGIC, new DragonAbility(
+                false,
+                Activation.passive(),
+                Optional.of(new Upgrade(Upgrade.Type.MANUAL, 10, LevelBasedValue.perLevel(15))),
+                Optional.empty(),
+                List.of(new ActionContainer(new SelfTarget(Either.right(
+                        new AbilityTargeting.EntityTargeting(
+                                Optional.empty(),
+                                List.of(new ModifierEffect(
+                                        List.of(
+                                                new ModifierWithDuration(
+                                                        DragonSurvival.res("cave_magic"),
+                                                        ModifierWithDuration.DEFAULT_MODIFIER_ICON,
+                                                        List.of(new Modifier(DSAttributes.MANA, LevelBasedValue.perLevel(1), AttributeModifier.Operation.ADD_VALUE, Optional.empty())),
+                                                        LevelBasedValue.constant(ModifierWithDuration.INFINITE_DURATION),
+                                                        true
+                                                )
+                                        )
+                                )),
+                                AbilityTargeting.EntityTargetingMode.TARGET_FRIENDLIES
+                        )
+                ), false), LevelBasedValue.constant(1))),
+                new LevelBasedResource(List.of(
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/cave_magic_1.png"), 1),
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/cave_magic_2.png"), 2),
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/cave_magic_3.png"), 3),
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/cave_magic_4.png"), 4),
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/cave_magic_5.png"), 5),
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/cave_magic_6.png"), 6),
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/cave_magic_7.png"), 7),
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/cave_magic_8.png"), 8),
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/cave_magic_9.png"), 9),
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/cave_magic_10.png"), 10)
+                ))
+        ));
+
+        context.register(CONTRAST_SHOWER, new DragonAbility(
+                false,
+                Activation.passive(),
+                Optional.of(new Upgrade(Upgrade.Type.MANUAL, 5, LevelBasedValue.perLevel(15))),
+                Optional.empty(),
+                List.of(new ActionContainer(new SelfTarget(Either.right(
+                        new AbilityTargeting.EntityTargeting(
+                                Optional.empty(),
+                                List.of(new ModifierEffect(
+                                        List.of(
+                                                new ModifierWithDuration(
+                                                        DragonSurvival.res("contrast_shower"),
+                                                        ModifierWithDuration.DEFAULT_MODIFIER_ICON,
+                                                        List.of(new Modifier(DSAttributes.PENALTY_RESISTANCE_TIME, LevelBasedValue.perLevel(30), AttributeModifier.Operation.ADD_VALUE, Optional.empty())),
+                                                        LevelBasedValue.perLevel(Functions.secondsToTicks(5)),
+                                                        true
+                                                )
+                                        )
+                                )),
+                                AbilityTargeting.EntityTargetingMode.TARGET_FRIENDLIES
+                        )
+                ), false), LevelBasedValue.constant(1))),
+                new LevelBasedResource(List.of(
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/contrast_shower_1.png"), 1),
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/contrast_shower_2.png"), 2),
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/contrast_shower_3.png"), 3),
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/contrast_shower_4.png"), 4),
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/contrast_shower_5.png"), 5)
                 ))
         ));
     }

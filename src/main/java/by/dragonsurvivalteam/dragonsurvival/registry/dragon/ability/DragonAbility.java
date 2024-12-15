@@ -108,7 +108,7 @@ public record DragonAbility(
         }
 
         if(ability.getCastTime() > 0) {
-            info.add(Component.translatable(LangKey.ABILITY_CAST_TIME, ability.getCastTime()));
+            info.add(Component.translatable(LangKey.ABILITY_CAST_TIME, ability.getCastTime() / 20));
         }
         if(ability.ability().value().getCooldown(ability.level()) > 0) {
             info.add(Component.translatable(LangKey.ABILITY_COOLDOWN, ability.ability().value().getCooldown(ability.level()) / 20));

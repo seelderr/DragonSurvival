@@ -105,6 +105,7 @@ public class EffectRenderingInventoryScreenMixin {
         List<ClientEffectProvider> providers = new ArrayList<>();
         providers.addAll(player.getExistingData(DSDataAttachments.MODIFIERS_WITH_DURATION).map(ModifiersWithDuration::all).orElse(List.of()));
         providers.addAll(player.getExistingData(DSDataAttachments.DAMAGE_MODIFICATIONS).map(DamageModifications::all).orElse(List.of()));
+        providers = providers.stream().filter(ClientEffectProvider::isVisible).toList();
         dragonSurvival$areasBlockedByModifierUIForJEI.clear();
 
         if (!providers.isEmpty() && width >= 32) {

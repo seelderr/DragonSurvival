@@ -28,14 +28,16 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import javax.annotation.Nullable;
 
-public record ModifierWithDuration(ResourceLocation id, ResourceLocation icon, List<Modifier> modifiers, LevelBasedValue duration) {
+public record ModifierWithDuration(ResourceLocation id, ResourceLocation icon, List<Modifier> modifiers, LevelBasedValue duration, boolean isHidden) {
     public static final int INFINITE_DURATION = -1;
+    public static final ResourceLocation DEFAULT_MODIFIER_ICON = ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/modifiers/default_modifier.png");
 
     public static final Codec<ModifierWithDuration> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ResourceLocation.CODEC.fieldOf("id").forGetter(ModifierWithDuration::id),
-            ResourceLocation.CODEC.optionalFieldOf("icon", ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/modifiers/default_modifier.png")).forGetter(ModifierWithDuration::icon),
+            ResourceLocation.CODEC.optionalFieldOf("icon", DEFAULT_MODIFIER_ICON).forGetter(ModifierWithDuration::icon),
             Modifier.CODEC.listOf().fieldOf("modifiers").forGetter(ModifierWithDuration::modifiers),
-            LevelBasedValue.CODEC.optionalFieldOf("duration", LevelBasedValue.constant(INFINITE_DURATION)).forGetter(ModifierWithDuration::duration)
+            LevelBasedValue.CODEC.optionalFieldOf("duration", LevelBasedValue.constant(INFINITE_DURATION)).forGetter(ModifierWithDuration::duration),
+            Codec.BOOL.optionalFieldOf("is_hidden", false).forGetter(ModifierWithDuration::isHidden)
     ).apply(instance, ModifierWithDuration::new));
 
     public void apply(final ServerPlayer dragon, final DragonAbilityInstance ability, final LivingEntity target) {
@@ -168,6 +170,11 @@ public record ModifierWithDuration(ResourceLocation id, ResourceLocation icon, L
         @Override
         public ResourceLocation getId() {
             return baseData().id();
+        }
+
+        @Override
+        public boolean isVisible() {
+            return !baseData().isHidden();
         }
     }
 }

@@ -1,7 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.magic;
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.AbilityTooltipPositioner;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Upgrade;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.ChatFormatting;
@@ -48,6 +50,12 @@ public class AbilityTooltipRenderer {
         FormattedText rawDescription = Component.translatable(Translation.Type.ABILITY_DESCRIPTION.wrap(ability.ability().getKey().location().getPath()));
 
         rawDescription = FormattedText.composite(rawDescription, Component.empty().append("\n\n"));
+
+        if(ability.value().upgrade().isPresent() && ability.value().upgrade().get().type() == Upgrade.Type.PASSIVE && ability.level() != ability.getMaxLevel()) {
+            int nextUpgradeLevel = (int) ability.value().upgrade().get().experienceOrLevelCost().calculate(ability.level() + 1);
+            rawDescription = FormattedText.composite(rawDescription, Component.translatable(LangKey.ABILITY_AUTO_UPGRADE, nextUpgradeLevel).withColor(Color.GREEN.getColor()));
+            rawDescription = FormattedText.composite(rawDescription, Component.empty().append("\n\n"));
+        }
 
         List<FormattedCharSequence> description = Minecraft.getInstance().font.split(rawDescription, 150 - 7);
 

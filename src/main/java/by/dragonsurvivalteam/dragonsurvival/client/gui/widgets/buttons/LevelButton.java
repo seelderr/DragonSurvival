@@ -4,6 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.AbilityScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ClickHoverButton;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Upgrade;
+import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncAbilityLevel;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MagicData;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import by.dragonsurvivalteam.dragonsurvival.util.ExperienceUtils;
@@ -12,6 +13,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -52,23 +54,18 @@ public class LevelButton extends ClickHoverButton {
             }
 
             LocalPlayer player = Objects.requireNonNull(Minecraft.getInstance().player);
+            MagicData data = MagicData.getData(player);
 
             switch (type) {
                 case DOWNGRADE -> {
-                    player.giveExperiencePoints(modification);
-                    ability.setLevel(ability.level() - 1);
+                    data.changeAbilityLevel(player, ability.key(), ability.level() - 1);
+                    PacketDistributor.sendToServer(new SyncAbilityLevel(ability.key(), ability.level()));
                 }
                 case UPGRADE -> {
-                    float availableExperience = ExperienceUtils.getTotalExperience(player);
-
-                    if (availableExperience >= modification) {
-                        player.giveExperiencePoints(modification);
-                        ability.setLevel(ability.level() + 1);
-                    }
+                    data.changeAbilityLevel(player, ability.key(), ability.level() + 1);
+                    PacketDistributor.sendToServer(new SyncAbilityLevel(ability.key(), ability.level()));
                 }
             }
-
-            // TODO :: send packet to server to update ability level
         }, type.click, type.hover, type.main);
 
         this.type = type;
@@ -96,6 +93,16 @@ public class LevelButton extends ClickHoverButton {
         //noinspection OptionalGetWithoutIsPresent -> upgrade is present
         Upgrade upgrade = ability.value().upgrade().get();
 
+        LocalPlayer player = Objects.requireNonNull(Minecraft.getInstance().player);
+        MagicData data = MagicData.getData(player);
+
+        // Check if you can afford to upgrade
+        if (type == Type.UPGRADE) {
+            if(ExperienceUtils.getTotalExperience(Minecraft.getInstance().player) < data.getCost(ability.key(), 0)) {
+                return false;
+            }
+        }
+
         return switch (type) {
             case DOWNGRADE -> ability.level() > DragonAbilityInstance.MIN_LEVEL;
             case UPGRADE -> ability.level() < upgrade.maximumLevel();
@@ -105,7 +112,6 @@ public class LevelButton extends ClickHoverButton {
     @Override
     public void renderWidget(@NotNull final GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         super.renderWidget(graphics, mouseX, mouseY, partialTick);
-
         if (Minecraft.getInstance().screen instanceof AbilityScreen abilityScreen && isHovered()) {
             abilityScreen.hoveredLevelButton = this;
         }

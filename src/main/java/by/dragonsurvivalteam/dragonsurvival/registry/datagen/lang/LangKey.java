@@ -28,6 +28,9 @@ public class LangKey {
 
     // --- Ability effects --- //
 
+    @Translation(type = Translation.Type.MISC, comments = "Next level will be unlocked at experience level %s")
+    public static final String ABILITY_AUTO_UPGRADE = Translation.Type.ABILITY.wrap("general.ability_auto_upgrade");
+
     @Translation(type = Translation.Type.MISC, comments = "self")
     public static final String ABILITY_TARGET_SELF = Translation.Type.ABILITY.wrap("general.ability_target_self");
 

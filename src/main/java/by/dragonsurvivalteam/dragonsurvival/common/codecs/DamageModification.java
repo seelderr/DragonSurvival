@@ -131,5 +131,10 @@ public record DamageModification(ResourceLocation id, HolderSet<DamageType> dama
         public ResourceLocation getId() {
             return baseData().id();
         }
+
+        @Override
+        public boolean isVisible() {
+            return false;
+        }
     }
 }

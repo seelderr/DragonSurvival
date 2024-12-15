@@ -5,7 +5,9 @@
     "dragonsurvival:lava_vision",
     "dragonsurvival:tough_skin",
     "dragonsurvival:cave_athletics",
-    "dragonsurvival:burn"
+    "dragonsurvival:burn",
+    "dragonsurvival:cave_magic",
+    "dragonsurvival:contrast_shower"
   ],
   "diet": [
     {

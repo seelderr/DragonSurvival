@@ -8,11 +8,11 @@ import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 import org.jetbrains.annotations.NotNull;
 
-public record Upgrade(Type type, int maximumLevel, LevelBasedValue experienceCost) {
+public record Upgrade(Type type, int maximumLevel, LevelBasedValue experienceOrLevelCost) {
     public static final Codec<Upgrade> CODEC = RecordCodecBuilder.create(instance -> instance.group(
         Type.CODEC.fieldOf("type").forGetter(Upgrade::type),
         ExtraCodecs.intRange(DragonAbilityInstance.MIN_LEVEL, DragonAbilityInstance.MAX_LEVEL).fieldOf("maximum_level").forGetter(Upgrade::maximumLevel),
-        LevelBasedValue.CODEC.fieldOf("experience_cost").forGetter(Upgrade::experienceCost)
+        LevelBasedValue.CODEC.fieldOf("experience_or_level_cost").forGetter(Upgrade::experienceOrLevelCost)
     ).apply(instance, Upgrade::new));
 
     public enum Type implements StringRepresentable {

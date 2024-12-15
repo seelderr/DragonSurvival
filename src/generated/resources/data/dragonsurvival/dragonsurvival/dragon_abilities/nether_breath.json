@@ -128,7 +128,7 @@
   },
   "upgrade": {
     "type": "passive",
-    "experience_cost": {
+    "experience_or_level_cost": {
       "type": "minecraft:lookup",
       "fallback": {
         "type": "minecraft:linear",

@@ -30,6 +30,7 @@ public interface ClientEffectProvider {
     int getDuration();
     int currentDuration();
     ResourceLocation getId();
+    boolean isVisible();
     default boolean isInfiniteDuration() {
         return getDuration() == -1;
     }

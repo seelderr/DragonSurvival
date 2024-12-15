@@ -52,7 +52,7 @@
   },
   "upgrade": {
     "type": "manual",
-    "experience_cost": {
+    "experience_or_level_cost": {
       "type": "minecraft:linear",
       "base": 15.0,
       "per_level_above_first": 15.0

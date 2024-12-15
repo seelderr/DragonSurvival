@@ -5,11 +5,11 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.hud.MagicHUD;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Activation;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Upgrade;
+import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncAbilityLevel;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncCooldownState;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
-import by.dragonsurvivalteam.dragonsurvival.util.ExperienceUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
@@ -20,10 +20,10 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.util.INBTSerializable;
-import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerXpEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -100,30 +100,17 @@ public class MagicData implements INBTSerializable<CompoundTag> {
         }
     }
 
-    // TODO :: xp change event can trigger the level change event
-    //  meaning we may check too often
-    //  other alternative would be to dynamically determine the level on the level() call
-    //  that would be even worse though performance-wise
-    //  other option would be to only allow setting levels for passive leveling
-    //  the 'experience_cost' field would have to be renamed though and it might be confusing
-    @SubscribeEvent
-    public static void handlePassiveLeveling(final PlayerXpEvent.XpChange event) {
-        handlePassiveLeveling(event.getEntity());
-    }
-
-    @SubscribeEvent
+    @SubscribeEvent(receiveCanceled = true, priority = EventPriority.LOWEST)
     public static void handlePassiveLeveling(final PlayerXpEvent.LevelChange event) {
-        handlePassiveLeveling(event.getEntity());
+        handlePassiveLeveling(event.getEntity(), event.getEntity().experienceLevel + event.getLevels());
     }
 
-    private static void handlePassiveLeveling(final Player player) {
+    private static void handlePassiveLeveling(final Player player, int levels) {
         if (!DragonStateProvider.isDragon(player)) {
             return;
         }
 
         MagicData magic = MagicData.getData(player);
-        int experience = ExperienceUtils.getTotalExperience(player);
-
         for (DragonAbilityInstance ability : magic.abilities.values()) {
             Upgrade upgrade = ability.value().upgrade().orElse(null);
 
@@ -131,17 +118,28 @@ public class MagicData implements INBTSerializable<CompoundTag> {
                 continue;
             }
 
+            int previousLevel = ability.level();
             for (int level = DragonAbilityInstance.MIN_LEVEL; level <= upgrade.maximumLevel(); level++) {
-                float required = upgrade.experienceCost().calculate(level);
+                float required = upgrade.experienceOrLevelCost().calculate(level);
 
-                if (experience < required) {
+                if (levels < required) {
                     ability.setLevel(level - 1);
                     break;
                 }
+
+                if (levels >= required) {
+                    ability.setLevel(level);
+                }
+            }
+
+            if(previousLevel != ability.level()) {
+                if(player.level().isClientSide) {
+                    PacketDistributor.sendToServer(new SyncAbilityLevel(ability.key(), ability.level()));
+                } else {
+                    PacketDistributor.sendToPlayer((ServerPlayer) player, new SyncAbilityLevel(ability.key(), ability.level()));
+                }
             }
         }
-
-        // TODO :: sync to client or does it already happen properly on both sides? it should if xp is synced between sides?
     }
 
     public @Nullable DragonAbilityInstance fromSlot(int slot) {
@@ -338,7 +336,7 @@ public class MagicData implements INBTSerializable<CompoundTag> {
         DragonAbilityInstance instance = abilities.get(key);
 
         return instance.value().upgrade()
-                .map(upgrade -> upgrade.experienceCost().calculate(instance.level() + delta))
+                .map(upgrade -> upgrade.experienceOrLevelCost().calculate(instance.level() + delta))
                 .orElse(0f);
     }
 
@@ -351,6 +349,29 @@ public class MagicData implements INBTSerializable<CompoundTag> {
         } else {
             hotbar.remove(currentSlot);
         }
+    }
+
+    public void changeAbilityLevel(final Player player, final ResourceKey<DragonAbility> key, int newLevel) {
+        DragonAbilityInstance instance = abilities.get(key);
+
+        if (instance == null) {
+            return;
+        }
+
+        int delta = newLevel - instance.level();
+
+        if (newLevel < DragonAbilityInstance.MIN_LEVEL || newLevel > instance.value().upgrade().get().maximumLevel()) {
+            return;
+        }
+
+        if(instance.value().upgrade().isPresent() && instance.value().upgrade().get().type() == Upgrade.Type.MANUAL) {
+            // Subtract the experience cost
+            float cost = getCost(key, delta == 1 ? 1 : 0);
+            cost = delta > 0 ? -cost : cost;
+            player.giveExperiencePoints((int) cost);
+        }
+
+        instance.setLevel(newLevel);
     }
 
     @Override

@@ -45,6 +45,10 @@ public class DSAttributes {
     @Translation(type = Translation.Type.ATTRIBUTE_DESCRIPTION, comments = "Determines the radius that you can break blocks when mining")
     public static final Holder<Attribute> BLOCK_BREAK_RADIUS = DS_ATTRIBUTES.register("block_break_radius", () -> new RangedAttribute(Translation.Type.ATTRIBUTE.wrap("block_break_radius"), 0, 0, 16).setSyncable(true));
 
+    @Translation(type = Translation.Type.ATTRIBUTE, comments = "Penalty Resistance Time")
+    @Translation(type = Translation.Type.ATTRIBUTE_DESCRIPTION, comments = "Increases the time before the dragon penalty effect is applied")
+    public static final Holder<Attribute> PENALTY_RESISTANCE_TIME = DS_ATTRIBUTES.register("penalty_resistance_time", () -> new RangedAttribute(Translation.Type.ATTRIBUTE.wrap("penalty_resistance_time"), 0, 0, 1024).setSyncable(true));
+
     @SubscribeEvent
     public static void attachAttributes(final EntityAttributeModificationEvent event) {
         event.add(EntityType.PLAYER, FLIGHT_STAMINA_COST);

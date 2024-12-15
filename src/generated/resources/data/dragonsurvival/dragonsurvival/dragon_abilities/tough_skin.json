@@ -14,7 +14,7 @@
                     "per_level_above_first": 1200.0
                   },
                   "icon": "dragonsurvival:textures/modifiers/strong_leather.png",
-                  "id": "dragonsurvival:tough_leather",
+                  "id": "dragonsurvival:sturdy_skin",
                   "modifiers": [
                     {
                       "amount": 3.0,
@@ -76,7 +76,7 @@
   },
   "upgrade": {
     "type": "passive",
-    "experience_cost": {
+    "experience_or_level_cost": {
       "type": "minecraft:lookup",
       "fallback": {
         "type": "minecraft:linear",

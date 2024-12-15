@@ -85,6 +85,7 @@ public class NetworkHandler {
         registrar.playToClient(SyncAbilityAnimation.TYPE, SyncAbilityAnimation.STREAM_CODEC, SyncAbilityAnimation::handleClient);
         registrar.playToClient(SyncModifierWithDuration.TYPE, SyncModifierWithDuration.STREAM_CODEC, SyncModifierWithDuration::handleClient);
         registrar.playToServer(SyncSlotAssignment.TYPE, SyncSlotAssignment.STREAM_CODEC, SyncSlotAssignment::handleServer);
+        registrar.playBidirectional(SyncAbilityLevel.TYPE, SyncAbilityLevel.STREAM_CODEC, new DirectionalPayloadHandler<>(SyncAbilityLevel::handleClient, SyncAbilityLevel::handleServer));
         // FIXME
         //registrar.playToServer(SyncSkillLevelChangeCost.TYPE, SyncSkillLevelChangeCost.STREAM_CODEC, SyncSkillLevelChangeCost::handleServer);
 
