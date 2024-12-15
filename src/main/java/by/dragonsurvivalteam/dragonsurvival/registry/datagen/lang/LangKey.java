@@ -99,6 +99,9 @@ public class LangKey {
     @Translation(type = Translation.Type.MISC, comments = "§6Projectile ")
     public static final String ABILITY_PROJECTILE = Translation.Type.ABILITY.wrap("general.projectile");
 
+    @Translation(type = Translation.Type.MISC, comments = "§6Ticking Projectile ")
+    public static final String ABILITY_TICKING_PROJECTILE = Translation.Type.ABILITY.wrap("general.ticking_projectile");
+
     // --- Misc --- //
 
     @Translation(type = Translation.Type.MISC, comments = "Kingdom Explorer Map")
