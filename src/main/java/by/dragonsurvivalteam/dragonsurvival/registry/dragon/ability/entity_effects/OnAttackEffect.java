@@ -50,6 +50,11 @@ public record OnAttackEffect(HolderSet<MobEffect> effects, LevelBasedValue ampli
     }
 
     @Override
+    public boolean shouldAppendSelfTargetingToDescription() {
+        return false;
+    }
+
+    @Override
     public List<MutableComponent> getDescription(final Player dragon, final DragonAbilityInstance ability) {
         List<MutableComponent> components = new ArrayList<>();
         float duration = duration().calculate(ability.level()) / 20.f;

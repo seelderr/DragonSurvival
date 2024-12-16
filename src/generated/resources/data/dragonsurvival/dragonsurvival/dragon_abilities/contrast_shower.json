@@ -8,11 +8,6 @@
               "effect_type": "dragonsurvival:modifier",
               "modifiers": [
                 {
-                  "duration": {
-                    "type": "minecraft:linear",
-                    "base": 100.0,
-                    "per_level_above_first": 100.0
-                  },
                   "id": "dragonsurvival:contrast_shower",
                   "is_hidden": true,
                   "modifiers": [

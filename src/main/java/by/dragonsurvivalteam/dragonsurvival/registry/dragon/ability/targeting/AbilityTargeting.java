@@ -116,8 +116,8 @@ public interface AbilityTargeting {
             target().right().get().effect().forEach(effect -> {
                 List<MutableComponent> abilityEffectDescriptions = effect.getDescription(dragon, abilityInstance);
                 if(!effect.getDescription(dragon, abilityInstance).isEmpty()) {
-                    if(effect instanceof ProjectileEffect || effect instanceof OnAttackEffect) {
-                        // Special case where we don't want to append the "self target" description for projectiles or OnAttackEffect (as it doesn't make sense)
+                    if(!effect.shouldAppendSelfTargetingToDescription() && this instanceof SelfTarget) {
+                        // Special case where we don't want to append the "self target" for certain effects
                         descriptions.addAll(effect.getDescription(dragon, abilityInstance));
                     } else {
                         descriptions.addAll(abilityEffectDescriptions.stream().map(abilityEffectDescription -> abilityEffectDescription.append(targetDescription)).toList());

@@ -102,7 +102,7 @@ public class CaveDragonAbilities {
 
 
     @Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = {
-            "■ You are resistant to Rain, snow and snowfall for: §2%s§rs\n",
+            "■ You can increase your resistance to rain, snow and snowfall by upgrading this ability\n",
             "■ Water, potions and snowballs are still dangerous"
     })
     @Translation(type = Translation.Type.ABILITY, comments = "Contrast Shower")
@@ -414,7 +414,7 @@ public class CaveDragonAbilities {
                                                         DragonSurvival.res("contrast_shower"),
                                                         ModifierWithDuration.DEFAULT_MODIFIER_ICON,
                                                         List.of(new Modifier(DSAttributes.PENALTY_RESISTANCE_TIME, LevelBasedValue.perLevel(30), AttributeModifier.Operation.ADD_VALUE, Optional.empty())),
-                                                        LevelBasedValue.perLevel(Functions.secondsToTicks(5)),
+                                                        LevelBasedValue.constant(ModifierWithDuration.INFINITE_DURATION),
                                                         true
                                                 )
                                         )
