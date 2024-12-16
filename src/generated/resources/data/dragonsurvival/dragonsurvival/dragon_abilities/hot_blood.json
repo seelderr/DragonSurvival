@@ -1,4 +1,106 @@
 {
+  "actions": [
+    {
+      "target_selection": {
+        "applied_effects": {
+          "entity_effect": [
+            {
+              "conditions": [
+                {
+                  "entity_conditions": {
+                    "location": {
+                      "can_see_sky": true
+                    }
+                  },
+                  "weather_conditions": {
+                    "is_raining": true
+                  }
+                },
+                {
+                  "entity_conditions": {
+                    "stepping_on": {
+                      "block": {
+                        "blocks": [
+                          "minecraft:snow",
+                          "minecraft:powder_snow",
+                          "minecraft:snow_block"
+                        ]
+                      }
+                    }
+                  }
+                }
+              ],
+              "effect": {
+                "type": "dragonsurvival:rain_burn",
+                "amount": 1.0,
+                "effect_type": "dragonsurvival:damage_penalty"
+              },
+              "effect_type": "dragonsurvival:penalty",
+              "trigger": {
+                "effect_type": "dragonsurvival:supply_trigger",
+                "id": "rain_supply",
+                "reduction_rate": 1.0,
+                "regeneration_rate": 0.013,
+                "trigger_rate": 40
+              }
+            },
+            {
+              "conditions": [
+                {
+                  "entity_conditions": {
+                    "location": {
+                      "fluid": {
+                        "fluids": [
+                          "minecraft:water",
+                          "minecraft:flowing_water"
+                        ]
+                      }
+                    }
+                  }
+                }
+              ],
+              "effect": {
+                "type": "dragonsurvival:water_burn",
+                "amount": 1.0,
+                "effect_type": "dragonsurvival:damage_penalty"
+              },
+              "effect_type": "dragonsurvival:penalty",
+              "trigger": {
+                "effect_type": "dragonsurvival:instant_trigger",
+                "trigger_rate": 10
+              }
+            },
+            {
+              "conditions": [
+                {
+                  "eye_in_fluid_conditions": {
+                    "fluid": "minecraft:lava"
+                  }
+                }
+              ],
+              "effect": {
+                "type": "minecraft:drown",
+                "amount": 2.0,
+                "effect_type": "dragonsurvival:damage_penalty"
+              },
+              "effect_type": "dragonsurvival:penalty",
+              "trigger": {
+                "attribute": "dragonsurvival:lava_oxygen_amount",
+                "effect_type": "dragonsurvival:supply_trigger",
+                "id": "lava_supply",
+                "reduction_rate": 1.0,
+                "regeneration_rate": 0.013,
+                "trigger_rate": 40
+              }
+            }
+          ],
+          "entity_targeting_mode": "TARGET_ALL"
+        },
+        "target_type": "dragonsurvival:self"
+      },
+      "trigger_rate": 1.0
+    }
+  ],
   "activation": {
     "type": "passive"
   },

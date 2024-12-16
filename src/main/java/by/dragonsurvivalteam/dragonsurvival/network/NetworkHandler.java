@@ -87,6 +87,10 @@ public class NetworkHandler {
         registrar.playToServer(SyncSlotAssignment.TYPE, SyncSlotAssignment.STREAM_CODEC, SyncSlotAssignment::handleServer);
         registrar.playBidirectional(SyncAbilityLevel.TYPE, SyncAbilityLevel.STREAM_CODEC, new DirectionalPayloadHandler<>(SyncAbilityLevel::handleClient, SyncAbilityLevel::handleServer));
         registrar.playToClient(SyncHarvestBonus.TYPE, SyncHarvestBonus.STREAM_CODEC, SyncHarvestBonus::handleClient);
+        registrar.playToClient(SyncAddPenaltySupply.TYPE, SyncAddPenaltySupply.STREAM_CODEC, SyncAddPenaltySupply::handleClient);
+        registrar.playToClient(SyncRemovePenaltySupply.TYPE, SyncRemovePenaltySupply.STREAM_CODEC, SyncRemovePenaltySupply::handleClient);
+        registrar.playToClient(SyncPenaltySupplyAmount.TYPE, SyncPenaltySupplyAmount.STREAM_CODEC, SyncPenaltySupplyAmount::handleClient);
+        registrar.playToClient(SyncPenaltySupply.TYPE, SyncPenaltySupply.STREAM_CODEC, SyncPenaltySupply::handleClient);
         // FIXME
         //registrar.playToServer(SyncSkillLevelChangeCost.TYPE, SyncSkillLevelChangeCost.STREAM_CODEC, SyncSkillLevelChangeCost::handleServer);
 

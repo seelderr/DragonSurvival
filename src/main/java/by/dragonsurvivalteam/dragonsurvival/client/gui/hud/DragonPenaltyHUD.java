@@ -1,11 +1,16 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.hud;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MagicData;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.PenaltySupply;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import net.neoforged.neoforge.client.GlStateBackup;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
@@ -20,6 +25,33 @@ public class DragonPenaltyHUD {
         }
 
         int rightHeight;
+
+        PenaltySupply penaltySupply = PenaltySupply.getData(localPlayer);
+        GlStateBackup backup = new GlStateBackup();
+        RenderSystem.backupGlState(backup);
+        for(String supplyType : penaltySupply.getSupplyTypes()) {
+            float supplyPercentage = penaltySupply.getPercentage(supplyType);
+            boolean hasSupply = penaltySupply.hasSupply(supplyType);
+            if(hasSupply && supplyPercentage < 1) {
+                RenderSystem.enableBlend();
+
+                rightHeight = gui.rightHeight;
+                gui.rightHeight += 10;
+
+                final int left = Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 + 91;
+                final int top = Minecraft.getInstance().getWindow().getGuiScaledHeight() - rightHeight;
+                final int full = Mth.floor(supplyPercentage * 10.0D);
+                final int partial = Mth.ceil(supplyPercentage * 10.0D) - full;
+                ResourceLocation supplyIcon = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/supply_icons/" + supplyType + ".png");
+                for (int i = 0; i < full + partial; ++i) {
+                    guiGraphics.blit(supplyIcon, left - i * 8 - 9, top, 9, 9,  i < full ? 0 : 9, 0, 9, 9, 18, 9);
+                }
+
+                RenderSystem.disableBlend();
+            }
+        }
+        RenderSystem.restoreGlState(backup);
+
 
         // TODO: SupplyTrigger handling
         /*if (handler.getType() instanceof SeaDragonType seaDragonType) {

@@ -11,7 +11,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
 
 public record MobEffectPenalty(HolderSet<MobEffect> effects, int amplifier, int duration) implements PenaltyEffect {
-    public static final Codec<MobEffectPenalty> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+    public static final MapCodec<MobEffectPenalty> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             RegistryCodecs.homogeneousList(BuiltInRegistries.MOB_EFFECT.key()).fieldOf("effects").forGetter(MobEffectPenalty::effects),
             Codec.INT.fieldOf("amplifier").forGetter(MobEffectPenalty::amplifier),
             Codec.INT.fieldOf("duration").forGetter(MobEffectPenalty::duration)
@@ -23,6 +23,6 @@ public record MobEffectPenalty(HolderSet<MobEffect> effects, int amplifier, int 
 
     @Override
     public MapCodec<? extends PenaltyEffect> codec() {
-        return null;
+        return CODEC;
     }
 }

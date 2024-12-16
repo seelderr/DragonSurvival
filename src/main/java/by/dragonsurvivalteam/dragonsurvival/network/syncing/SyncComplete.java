@@ -9,6 +9,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.RequestClientData;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAdvancementTriggers;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MagicData;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.PenaltySupply;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
 import net.minecraft.core.Holder;
 import net.minecraft.core.NonNullList;
@@ -83,10 +84,12 @@ public class SyncComplete implements IMessage<SyncComplete.Data> {
                     // When we are sending a complete sync to the client, the client has requested it. This happens in two cases:
                     // 1. When the player changes dragon type in the dragon selection screen
                     // 2. When the player reverts to human in the dragon altar screen
-                    // In both of these cases, we want to make sure to refresh the magic data if the server isn't set to save it
+                    // In both of these cases, we want to make sure to refresh the magic data and penalty supply if the server isn't set to save it
 
                     // TODO: This doesn't fully work with saveAllAbilities config. We'd need to make a mapping of dragon types to magicData instances.
                     if (previousType == null || (!ServerConfig.saveAllAbilities && !previousType.is(handler.getType()))) {
+                        PenaltySupply penaltySupply = PenaltySupply.getData(player);
+                        penaltySupply.clear();
                         MagicData magicData = MagicData.getData(player);
                         magicData.refresh(handler.getType(), player);
                     }

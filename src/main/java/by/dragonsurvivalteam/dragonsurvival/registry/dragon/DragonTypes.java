@@ -49,7 +49,6 @@ public class DragonTypes {
                         context.lookup(DragonAbility.REGISTRY).getOrThrow(CaveDragonAbilities.HOT_BLOOD)
                 ),
                 List.of(),
-                List.of(),
                 List.of(DietEntry.from("#minecraft:doors", new FoodProperties(2, 1, true, 1, Optional.empty(), List.of()))),
                 new MiscDragonTextures(
                         DragonSurvival.res("textures/gui/food_icons/cave_food_icons.png"),
@@ -89,7 +88,6 @@ public class DragonTypes {
                 HolderSet.direct(context.lookup(DragonAbility.REGISTRY).getOrThrow(SeaDragonAbilities.BALL_LIGHTNING)),
                 List.of(),
                 List.of(),
-                List.of(),
                 new MiscDragonTextures(
                         DragonSurvival.res("textures/gui/food_icons/cave_food_icons.png"),
                         DragonSurvival.res("textures/gui/mana_icons/cave_mana_icons.png"),
@@ -126,7 +124,6 @@ public class DragonTypes {
                 Optional.empty(),
                 HolderSet.empty(),
                 HolderSet.direct(context.lookup(DragonAbility.REGISTRY).getOrThrow(ForestDragonAbilities.FOREST_SPIKE)),
-                List.of(),
                 List.of(),
                 List.of(),
                 new MiscDragonTextures(

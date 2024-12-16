@@ -7,10 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.container.OpenDragonAltar;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncMagicData;
 import by.dragonsurvivalteam.dragonsurvival.network.sound.StopTickingSound;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.SyncComplete;
-import by.dragonsurvivalteam.dragonsurvival.registry.attachments.AltarData;
-import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachments;
-import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MagicData;
-import by.dragonsurvivalteam.dragonsurvival.registry.attachments.ModifiersWithDuration;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.*;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.body.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
@@ -48,13 +45,14 @@ public class PlayerLoginHandler {
                 PacketDistributor.sendToPlayer(player, new SyncComplete.Data(player.getId(), handler.serializeNBT(player.registryAccess())));
             });
 
-            // In this case we also need to send over the magic data, as the client that owns the abilities needs to know about them.
             MagicData magicData = MagicData.getData(player);
             PacketDistributor.sendToPlayer(player, new SyncMagicData.Data(player.getId(), magicData.serializeNBT(player.registryAccess())));
 
-            // Same for ModifiersWithDuration
             ModifiersWithDuration modifiers = player.getData(DSDataAttachments.MODIFIERS_WITH_DURATION);
             modifiers.syncModifiersToPlayer(player);
+
+            PenaltySupply penaltySupply = player.getData(DSDataAttachments.PENALTY_SUPPLY);
+            penaltySupply.syncPenaltySupplyToPlayer(player);
         }
     }
 
@@ -102,7 +100,7 @@ public class PlayerLoginHandler {
     @SubscribeEvent
     public static void onRespawn(PlayerEvent.PlayerRespawnEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            syncCompleteAll(player);
+           syncCompleteSingle(player);
         }
     }
 

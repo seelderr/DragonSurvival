@@ -144,11 +144,4 @@ public class ModifiersWithDuration implements INBTSerializable<CompoundTag> {
             livingEntity.getExistingData(DSDataAttachments.MODIFIERS_WITH_DURATION).ifPresent(data -> data.tick(livingEntity));
         }
     }
-
-    @SubscribeEvent
-    public static void removeModifiers(final PlayerEvent.Clone event) {
-        if (event.isWasDeath()) {
-            event.getOriginal().getExistingData(DSDataAttachments.MODIFIERS_WITH_DURATION).ifPresent(data -> data.removeAll(event.getEntity()));
-        }
-    }
 }

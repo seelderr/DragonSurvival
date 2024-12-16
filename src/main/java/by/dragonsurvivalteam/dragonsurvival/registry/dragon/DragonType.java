@@ -8,7 +8,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.codecs.ModifierType;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DataReloadHandler;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.body.DragonBody;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.penalty.DragonPenalty;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStage;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import com.mojang.serialization.Codec;
@@ -44,7 +43,6 @@ public class DragonType implements AttributeModifierSupplier {
             // No defined bodies means all are applicable
             RegistryCodecs.homogeneousList(DragonBody.REGISTRY).optionalFieldOf("bodies", HolderSet.empty()).forGetter(DragonType::bodies),
             RegistryCodecs.homogeneousList(DragonAbility.REGISTRY).optionalFieldOf("abilities", HolderSet.empty()).forGetter(DragonType::abilities),
-            DragonPenalty.CODEC.listOf().optionalFieldOf("penalties", List.of()).forGetter(DragonType::penalties),
             Modifier.CODEC.listOf().optionalFieldOf("modifiers", List.of()).forGetter(DragonType::modifiers),
             DietEntry.CODEC.listOf().optionalFieldOf("diet", List.of()).forGetter(DragonType::diet),
             MiscDragonTextures.CODEC.fieldOf("misc_resources").forGetter(DragonType::miscResources)
@@ -57,7 +55,6 @@ public class DragonType implements AttributeModifierSupplier {
     private final Optional<HolderSet<DragonStage>> stages;
     private final HolderSet<DragonBody> bodies;
     private final HolderSet<DragonAbility> abilities;
-    private final List<Holder<DragonPenalty>> penalties;
     private final List<Modifier> modifiers;
     private final List<DietEntry> dietEntries;
     private final MiscDragonTextures miscResources;
@@ -69,12 +66,11 @@ public class DragonType implements AttributeModifierSupplier {
     private @Nullable Map<ResourceLocation, FoodProperties> diet;
     private long lastDietUpdate;
 
-    public DragonType(final Optional<Double> startingSize, final Optional<HolderSet<DragonStage>> stages, final HolderSet<DragonBody> bodies, final HolderSet<DragonAbility> abilities, final List<Holder<DragonPenalty>> penalties, final List<Modifier> modifiers, final List<DietEntry> dietEntries, final MiscDragonTextures miscResources) {
+    public DragonType(final Optional<Double> startingSize, final Optional<HolderSet<DragonStage>> stages, final HolderSet<DragonBody> bodies, final HolderSet<DragonAbility> abilities, final List<Modifier> modifiers, final List<DietEntry> dietEntries, final MiscDragonTextures miscResources) {
         this.startingSize = startingSize;
         this.stages = stages;
         this.bodies = bodies;
         this.abilities = abilities;
-        this.penalties = penalties;
         this.modifiers = modifiers;
         this.dietEntries = dietEntries;
         this.miscResources = miscResources;
@@ -152,10 +148,6 @@ public class DragonType implements AttributeModifierSupplier {
 
     public HolderSet<DragonAbility> abilities() {
         return abilities;
-    }
-
-    public List<Holder<DragonPenalty>> penalties() {
-        return penalties;
     }
 
     public List<DietEntry> diet() {

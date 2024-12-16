@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.registry.dragon.penalty;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
 public record InstantTrigger(int triggerRate) implements PenaltyTrigger {
@@ -11,9 +12,12 @@ public record InstantTrigger(int triggerRate) implements PenaltyTrigger {
     ).apply(instance, InstantTrigger::new));
 
     @Override
-    public boolean matches(final Player dragon, final PenaltyInstance instance, boolean conditionMatched) {
-        // TODO :: check trigger_rate against player tickCount?
-        return conditionMatched;
+    public boolean matches(final ServerPlayer dragon, boolean conditionMatched) {
+        if(dragon.level().getGameTime() % triggerRate == 0) {
+            return conditionMatched;
+        } else {
+            return false;
+        }
     }
 
     @Override

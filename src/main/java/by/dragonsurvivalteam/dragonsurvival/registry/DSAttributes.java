@@ -49,6 +49,10 @@ public class DSAttributes {
     @Translation(type = Translation.Type.ATTRIBUTE_DESCRIPTION, comments = "Increases the time before the dragon penalty effect is applied")
     public static final Holder<Attribute> PENALTY_RESISTANCE_TIME = DS_ATTRIBUTES.register("penalty_resistance_time", () -> new RangedAttribute(Translation.Type.ATTRIBUTE.wrap("penalty_resistance_time"), 0, 0, 1024).setSyncable(true));
 
+    @Translation(type = Translation.Type.ATTRIBUTE, comments = "Lava Oxygen Amount")
+    @Translation(type = Translation.Type.ATTRIBUTE_DESCRIPTION, comments = "The amount of oxygen the dragon gets when swimming in lava")
+    public static final Holder<Attribute> LAVA_OXYGEN_AMOUNT = DS_ATTRIBUTES.register("lava_oxygen_amount", () -> new RangedAttribute(Translation.Type.ATTRIBUTE.wrap("lava_oxygen_bonus"), 3600, 0, 16384).setSyncable(true));
+
     @SubscribeEvent
     public static void attachAttributes(final EntityAttributeModificationEvent event) {
         event.add(EntityType.PLAYER, FLIGHT_STAMINA_COST);
@@ -57,6 +61,8 @@ public class DSAttributes {
         event.add(EntityType.PLAYER, EXPERIENCE);
         event.add(EntityType.PLAYER, DRAGON_BREATH_RANGE);
         event.add(EntityType.PLAYER, BLOCK_BREAK_RADIUS);
+        event.add(EntityType.PLAYER, PENALTY_RESISTANCE_TIME);
+        event.add(EntityType.PLAYER, LAVA_OXYGEN_AMOUNT);
         event.getTypes().forEach(type -> event.add(type, LAVA_SWIM_SPEED));
     }
 }

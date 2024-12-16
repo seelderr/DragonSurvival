@@ -8,6 +8,8 @@ import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.ManaCost;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Upgrade;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.animation.AnimationLayer;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.animation.SimpleAbilityAnimation;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.predicates.EyeInFluidPredicate;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.predicates.WeatherPredicate;
 import by.dragonsurvivalteam.dragonsurvival.common.particles.LargeFireParticleOption;
 import by.dragonsurvivalteam.dragonsurvival.common.particles.SmallFireParticleOption;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes;
@@ -24,10 +26,14 @@ import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.targeting.Ab
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.targeting.AreaTarget;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.targeting.DragonBreathTarget;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.targeting.SelfTarget;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.penalty.DamagePenalty;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.penalty.InstantTrigger;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.penalty.SupplyTrigger;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.ProjectileData;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.Projectiles;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.datafixers.util.Either;
+import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.FluidPredicate;
 import net.minecraft.advancements.critereon.LocationPredicate;
@@ -39,12 +45,17 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
+import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.fluids.FluidType;
 
 import java.util.List;
 import java.util.Optional;
@@ -446,7 +457,7 @@ public class CaveDragonAbilities {
                                                 new ModifierWithDuration(
                                                         DragonSurvival.res("contrast_shower"),
                                                         ModifierWithDuration.DEFAULT_MODIFIER_ICON,
-                                                        List.of(new Modifier(DSAttributes.PENALTY_RESISTANCE_TIME, LevelBasedValue.perLevel(30), AttributeModifier.Operation.ADD_VALUE, Optional.empty())),
+                                                        List.of(new Modifier(DSAttributes.PENALTY_RESISTANCE_TIME, LevelBasedValue.perLevel(Functions.secondsToTicks(30)), AttributeModifier.Operation.ADD_VALUE, Optional.empty())),
                                                         LevelBasedValue.constant(ModifierWithDuration.INFINITE_DURATION),
                                                         true
                                                 )
@@ -525,7 +536,77 @@ public class CaveDragonAbilities {
                 Activation.passive(),
                 Optional.empty(),
                 Optional.empty(),
-                List.of(),
+                List.of(new ActionContainer(
+                        new SelfTarget(
+                                Either.right(
+                                        new AbilityTargeting.EntityTargeting(
+                                                Optional.empty(),
+                                                List.of(new PenaltyAbilityEffect(
+                                                        List.of(
+                                                                new PenaltyAbilityEffect.Condition(
+                                                                        Optional.empty(),
+                                                                        Optional.of(EntityPredicate.Builder.entity().located(LocationPredicate.Builder.location().setCanSeeSky(true)).build()),
+                                                                        Optional.of(new WeatherPredicate(Optional.of(true), Optional.empty()))
+                                                                ),
+                                                                new PenaltyAbilityEffect.Condition(
+                                                                        Optional.empty(),
+                                                                        Optional.of(EntityPredicate.Builder.entity().steppingOn(LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(Blocks.SNOW, Blocks.POWDER_SNOW, Blocks.SNOW_BLOCK))).build()),
+                                                                        Optional.empty()
+                                                                )
+                                                        ),
+                                                        new DamagePenalty(
+                                                                context.lookup(Registries.DAMAGE_TYPE).getOrThrow(DSDamageTypes.RAIN_BURN),
+                                                                1.0f
+                                                        ),
+                                                        new SupplyTrigger(
+                                                                "rain_supply",
+                                                                DSAttributes.PENALTY_RESISTANCE_TIME,
+                                                                40,
+                                                                1.0f,
+                                                                0.013f
+                                                        )),
+                                                        new PenaltyAbilityEffect(
+                                                                List.of(
+                                                                        new PenaltyAbilityEffect.Condition(
+                                                                                Optional.empty(),
+                                                                                Optional.of(EntityPredicate.Builder.entity().located(LocationPredicate.Builder.location().setFluid(FluidPredicate.Builder.fluid().of(HolderSet.direct(Fluids.WATER.builtInRegistryHolder(), Fluids.FLOWING_WATER.builtInRegistryHolder())))).build()),
+                                                                                Optional.empty()
+                                                                        )
+                                                                ),
+                                                                new DamagePenalty(
+                                                                        context.lookup(Registries.DAMAGE_TYPE).getOrThrow(DSDamageTypes.WATER_BURN),
+                                                                        1.0f
+                                                                ),
+                                                                new InstantTrigger(
+                                                                        10
+                                                                )
+                                                        ),
+                                                        new PenaltyAbilityEffect(
+                                                                List.of(
+                                                                        new PenaltyAbilityEffect.Condition(
+                                                                                Optional.of(new EyeInFluidPredicate(NeoForgeMod.LAVA_TYPE)),
+                                                                                Optional.empty(),
+                                                                                Optional.empty()
+                                                                        )
+                                                                ),
+                                                                new DamagePenalty(
+                                                                        context.lookup(Registries.DAMAGE_TYPE).getOrThrow(DamageTypes.DROWN),
+                                                                        2.0f
+                                                                ),
+                                                                new SupplyTrigger(
+                                                                        "lava_supply",
+                                                                        DSAttributes.LAVA_OXYGEN_AMOUNT,
+                                                                        40,
+                                                                        1.0f,
+                                                                        0.013f
+                                                                )
+                                                        )
+                                                ),
+                                                AbilityTargeting.EntityTargetingMode.TARGET_ALL)
+                                        ), false),
+                                LevelBasedValue.constant(1)
+                        )
+                ),
                 new LevelBasedResource(List.of(
                         new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/hot_blood_1.png"), 1)
                 ))
