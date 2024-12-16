@@ -32,15 +32,19 @@ import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.FluidPredicate;
 import net.minecraft.advancements.critereon.LocationPredicate;
 import net.minecraft.core.HolderSet;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Fluids;
+import net.neoforged.neoforge.common.Tags;
 
 import java.util.List;
 import java.util.Optional;
@@ -108,9 +112,18 @@ public class CaveDragonAbilities {
     @Translation(type = Translation.Type.ABILITY, comments = "Contrast Shower")
     public static final ResourceKey<DragonAbility> CONTRAST_SHOWER = DragonAbilities.key("contrast_shower");
 
+
+    @Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = {
+            "■ Cave dragons §2can§r deal increased damage, and may mine stone blocks without tools. This ability gets stronger as you grow.\n",
+            "■ §cCannot§r ride horses and use several items."
+    })
+    @Translation(type = Translation.Type.ABILITY, comments = "Claws and Teeth")
+    public static final ResourceKey<DragonAbility> CAVE_CLAWS_AND_TEETH = DragonAbilities.key("cave_claws_and_teeth");
+
     public static void registerAbilities(final BootstrapContext<DragonAbility> context) {
         registerActiveAbilities(context);
         registerPassiveAbilities(context);
+        registerInnateAbilities(context);
     }
 
     private static void registerActiveAbilities(final BootstrapContext<DragonAbility> context) {
@@ -428,6 +441,39 @@ public class CaveDragonAbilities {
                         new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/contrast_shower_3.png"), 3),
                         new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/contrast_shower_4.png"), 4),
                         new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/contrast_shower_5.png"), 5)
+                ))
+        ));
+    }
+
+    private static void registerInnateAbilities(final BootstrapContext<DragonAbility> context) {
+        context.register(CAVE_CLAWS_AND_TEETH, new DragonAbility(
+                true,
+                Activation.passive(),
+                // TODO :: How do we actually handle this?
+                Optional.empty(),
+                Optional.empty(),
+                List.of(new ActionContainer(new SelfTarget(Either.right(
+                        new AbilityTargeting.EntityTargeting(
+                                Optional.empty(),
+                                List.of(new HarvestBonusEffect(
+                                        List.of(
+                                                new HarvestBonus(
+                                                        DragonSurvival.res("cave_claws_and_teeth"),
+                                                        // TODO :: How to define the block tags here? I don't think a HolderSet works
+                                                        HolderSet.empty(),
+                                                        LevelBasedValue.constant(1),
+                                                        LevelBasedValue.constant(ModifierWithDuration.INFINITE_DURATION)
+                                                )
+                                        )
+                                )),
+                                AbilityTargeting.EntityTargetingMode.TARGET_FRIENDLIES
+                        )
+                ), false), LevelBasedValue.constant(1))),
+                new LevelBasedResource(List.of(
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/cave_claws_and_teeth_1.png"), 1),
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/cave_claws_and_teeth_2.png"), 2),
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/cave_claws_and_teeth_3.png"), 3),
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/cave_claws_and_teeth_4.png"), 4)
                 ))
         ));
     }

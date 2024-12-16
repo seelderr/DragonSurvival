@@ -44,12 +44,15 @@ public class AbilityTooltipRenderer {
     private static final ResourceLocation BARS = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/widget_bars.png");
 
     public static void drawAbilityHover(@NotNull final GuiGraphics guiGraphics, int x, int y, final DragonAbilityInstance ability) {
-        int colorXPos = 0;
+        int colorXPos = ability.ability().value().isInnate() ? 20 : 0;
         int colorYPos = !ability.isPassive() ? 20 : 0;
 
         FormattedText rawDescription = Component.translatable(Translation.Type.ABILITY_DESCRIPTION.wrap(ability.ability().getKey().location().getPath()));
 
-        rawDescription = FormattedText.composite(rawDescription, Component.empty().append("\n\n"));
+        List<Component> info = ability.getInfo(Minecraft.getInstance().player);
+        if(!info.isEmpty()) {
+            rawDescription = FormattedText.composite(rawDescription, Component.empty().append("\n\n"));
+        }
 
         if(ability.value().upgrade().isPresent() && ability.value().upgrade().get().type() == Upgrade.Type.PASSIVE && ability.level() != ability.getMaxLevel()) {
             int nextUpgradeLevel = (int) ability.value().upgrade().get().experienceOrLevelCost().calculate(ability.level() + 1);
@@ -60,8 +63,6 @@ public class AbilityTooltipRenderer {
         List<FormattedCharSequence> description = Minecraft.getInstance().font.split(rawDescription, 150 - 7);
 
         FormattedText textContents = Component.empty();
-
-        List<Component> info = ability.getInfo(Minecraft.getInstance().player);
         for (Component component : info) {
             textContents = FormattedText.composite(textContents, Component.empty().append("\n"));
             textContents = FormattedText.composite(textContents, component);
@@ -81,18 +82,21 @@ public class AbilityTooltipRenderer {
         int trueX = position.x();
         int trueY = position.y();
 
-        // Backing for info tab
-        guiGraphics.blitWithBorder(BARS, trueX - (Screen.hasShiftDown() ? extraWidth : 10), trueY + 3, 40, 20, sideWidth, sideHeight, 20, 20, 3);
-        // Top bar for info tab
-        guiGraphics.blitWithBorder(BARS, trueX - (Screen.hasShiftDown() ? extraWidth : 10) + 3, trueY + 9, colorXPos, colorYPos, Screen.hasShiftDown() ? extraWidth : 15, 20, 20, 20, 3);
+        if(!info.isEmpty()) {
+            // Backing for info tab
+            guiGraphics.blitWithBorder(BARS, trueX - (Screen.hasShiftDown() ? extraWidth : 10), trueY + 3, 40, 20, sideWidth, sideHeight, 20, 20, 3);
+            // Top bar for info tab
+            guiGraphics.blitWithBorder(BARS, trueX - (Screen.hasShiftDown() ? extraWidth : 10) + 3, trueY + 9, colorXPos, colorYPos, Screen.hasShiftDown() ? extraWidth : 15, 20, 20, 20, 3);
 
-        if (Screen.hasShiftDown()) {
-            guiGraphics.drawString(Minecraft.getInstance().font, Component.translatable(INFO), trueX - extraWidth + 10, trueY + 15, -1);
+            if (Screen.hasShiftDown()) {
+                guiGraphics.drawString(Minecraft.getInstance().font, Component.translatable(INFO), trueX - extraWidth + 10, trueY + 15, -1);
 
-            for (int k1 = 0; k1 < text.size(); ++k1) {
-                guiGraphics.drawString(Minecraft.getInstance().font, text.get(k1), trueX - extraWidth + 5, trueY + 5 + 18 + k1 * 9, -5592406);
+                for (int k1 = 0; k1 < text.size(); ++k1) {
+                    guiGraphics.drawString(Minecraft.getInstance().font, text.get(k1), trueX - extraWidth + 5, trueY + 5 + 18 + k1 * 9, -5592406);
+                }
             }
         }
+
         // Background
         guiGraphics.blitWithBorder(BARS, trueX - 2, trueY - 4, 40, 20, backgroundWidth, backgroundHeight, 20, 20, 3, 3, 3, 3);
         // Top bar
@@ -100,12 +104,24 @@ public class AbilityTooltipRenderer {
         // Backing square for ability icon
         guiGraphics.blitWithBorder(BARS, trueX, trueY, 0, 100, 26, 26, 24, 24, 3);
 
-        String translationKey = ability.isPassive() ? PASSIVE : ACTIVE;
+        String translationKey;
+        if(ability.ability().value().isInnate()) {
+            translationKey = INNATE;
+        } else if(ability.isPassive()) {
+            translationKey = PASSIVE;
+        } else {
+            translationKey = ACTIVE;
+        }
 
-        // TODO: Handle this later
-        /*ability instanceof InnateDragonAbility ? Color.ofRGB(150, 56, 175)*/
+        Color tooltipBackgroundColor;
+        if(ability.ability().value().isInnate()) {
+            tooltipBackgroundColor = Color.ofRGB(150, 56, 175);
+        } else if(!ability.isPassive()) {
+            tooltipBackgroundColor = Color.ofRGB(200, 143, 31);
+        } else {
+            tooltipBackgroundColor = Color.ofRGB(127, 145, 46);
+        }
 
-        Color tooltipBackgroundColor = ability.isPassive() ? Color.ofRGB(200, 143, 31) : Color.ofRGB(127, 145, 46);
         guiGraphics.drawCenteredString(Minecraft.getInstance().font, Component.translatable(translationKey), trueX + 150 / 2, trueY + 30, tooltipBackgroundColor.getColor());
 
         if (ability.getMaxLevel() > DragonAbilityInstance.MIN_LEVEL) {

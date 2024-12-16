@@ -223,11 +223,6 @@ public class DragonStateHandler extends EntityStateHandler {
 
         int harvestLevel = 0;
 
-        // TODO
-        /*if (state == null || state.is(getType().harvestableBlocks())) {
-            harvestLevel = getStage().value().harvestLevelBonus();
-        }*/
-
         if (state != null) {
             harvestLevel += player.getExistingData(DSDataAttachments.HARVEST_BONUSES).map(data -> data.get(state)).orElse(0);
         }

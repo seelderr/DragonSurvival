@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.common.codecs;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
+import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncHarvestBonus;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachments;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.HarvestBonuses;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.ClientEffectProvider;
@@ -21,6 +22,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.Optional;
 import javax.annotation.Nullable;
@@ -51,12 +53,18 @@ public record HarvestBonus(ResourceLocation id, HolderSet<Block> applicableTo, L
         }
 
         ClientEffectProvider.ClientData clientData = new ClientEffectProvider.ClientData(ability.getIcon(), /* TODO */ Component.empty(), Optional.of(dragon.getUUID()));
-        data.add(new Instance(this, clientData, abilityLevel, newDuration));
-        // TODO :: send packet to client
+        Instance harvestBonus = new Instance(this, clientData, abilityLevel, newDuration);
+        data.add(harvestBonus);
+        if(target instanceof ServerPlayer player) {
+            PacketDistributor.sendToPlayer(player, new SyncHarvestBonus(player.getId(), harvestBonus, false));
+        }
     }
 
     public void remove(final LivingEntity target) {
         HarvestBonuses data = target.getData(DSDataAttachments.HARVEST_BONUSES);
+        if(target instanceof ServerPlayer player) {
+            PacketDistributor.sendToPlayer(player, new SyncHarvestBonus(player.getId(), data.get(this), true));
+        }
         data.remove(this);
     }
 

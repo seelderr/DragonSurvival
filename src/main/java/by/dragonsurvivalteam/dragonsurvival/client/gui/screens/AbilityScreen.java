@@ -234,9 +234,11 @@ public class AbilityScreen extends Screen {
         leftWindowWidgets.add(leftHelpButton);
         leftHelpButton.visible = leftWindowOpen;
 
+        List<DragonAbilityInstance> innate = data.getInnateAbilities();
         // Right panel (innate ablities)
         for(int i = 0; i < ABILITIES_PER_COLUMN; i++) {
-            AbstractWidget widget = new AbilityButton(guiLeft + 239, guiTop + i * 40, null, this);
+            DragonAbilityInstance instance = innate.size() > i ? innate.get(i) : null;
+            AbstractWidget widget = new AbilityButton(guiLeft + 239, guiTop + i * 40, instance, this);
             addRenderableWidget(widget);
             rightWindowWidgets.add(widget);
             widget.visible = rightWindowOpen;

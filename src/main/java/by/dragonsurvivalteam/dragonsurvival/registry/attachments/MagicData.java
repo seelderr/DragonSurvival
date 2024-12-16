@@ -321,13 +321,19 @@ public class MagicData implements INBTSerializable<CompoundTag> {
 
     public List<DragonAbilityInstance> getActiveAbilities() {
         return abilities.values().stream().filter(
-                instance -> instance.ability().value().activation().type() != Activation.Type.PASSIVE
+                instance -> instance.ability().value().activation().type() != Activation.Type.PASSIVE && !instance.ability().value().isInnate()
         ).toList();
     }
 
     public List<DragonAbilityInstance> getPassiveAbilities() {
         return abilities.values().stream().filter(
-                instance -> instance.ability().value().activation().type() == Activation.Type.PASSIVE
+                instance -> instance.ability().value().activation().type() == Activation.Type.PASSIVE && !instance.ability().value().isInnate()
+        ).toList();
+    }
+
+    public List<DragonAbilityInstance> getInnateAbilities() {
+        return abilities.values().stream().filter(
+                instance -> instance.ability().value().isInnate()
         ).toList();
     }
 
