@@ -484,6 +484,7 @@ public class CaveDragonAbilities {
                 true,
                 Activation.passive(),
                 // TODO :: How do we actually handle this?
+                //  handle what?
                 Optional.empty(),
                 Optional.empty(),
                 List.of(new ActionContainer(new SelfTarget(Either.right(
@@ -493,8 +494,7 @@ public class CaveDragonAbilities {
                                         List.of(
                                                 new HarvestBonus(
                                                         DragonSurvival.res("cave_claws_and_teeth"),
-                                                        // TODO :: How to define the block tags here? I don't think a HolderSet works
-                                                        HolderSet.empty(),
+                                                        context.lookup(Registries.BLOCK).getOrThrow(DSBlockTags.CAVE_DRAGON_HARVESTABLE),
                                                         LevelBasedValue.constant(1),
                                                         LevelBasedValue.constant(ModifierWithDuration.INFINITE_DURATION)
                                                 )

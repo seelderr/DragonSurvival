@@ -7,7 +7,7 @@
             {
               "bonuses": [
                 {
-                  "applicable_to": [],
+                  "applicable_to": "#dragonsurvival:cave_dragon_harvestable",
                   "bonus": 1.0,
                   "id": "dragonsurvival:cave_claws_and_teeth"
                 }

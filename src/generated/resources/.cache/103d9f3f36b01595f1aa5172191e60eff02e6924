@@ -1,4 +1,4 @@
-// 1.21.1	2024-12-16T11:46:36.7228105	Registries
+// 1.21.1	2024-12-16T13:07:12.1758544	Registries
 011b2ee382ec961722c100bbf059b4aa460f44b0 data/dragonsurvival/damage_type/anti_dragon.json
 afb20257741b4a8be55ecf8e013125f113a9d486 data/dragonsurvival/damage_type/cave_dragon_breath.json
 7a732909707be826e322901b5c204e548e48a12b data/dragonsurvival/damage_type/cave_dragon_burn.json
@@ -16,7 +16,7 @@ deed90b4724d21cdbf6bcc3d547ce88b8ebf220c data/dragonsurvival/damage_type/forest_
 d6e4d9d14f8ae82eefa594ae59fb2ce232281079 data/dragonsurvival/dragonsurvival/dragon_abilities/ball_lightning.json
 14bef74356981ebd46d576e79b47ab89fed099dd data/dragonsurvival/dragonsurvival/dragon_abilities/burn.json
 7365f12215212a14d5a8a8c74eebaa578b4aebd3 data/dragonsurvival/dragonsurvival/dragon_abilities/cave_athletics.json
-f267a26b1bbe74f57576abb1fe0ddaa8184b726e data/dragonsurvival/dragonsurvival/dragon_abilities/cave_claws_and_teeth.json
+06b987e96b1a4ce12081fe651abe4f3532ddf1e6 data/dragonsurvival/dragonsurvival/dragon_abilities/cave_claws_and_teeth.json
 676b48644758f80d6cf1e8a5649a94a5f9d99238 data/dragonsurvival/dragonsurvival/dragon_abilities/cave_dragon.json
 c1350863dced47dee2da214e1313068277a666bd data/dragonsurvival/dragonsurvival/dragon_abilities/cave_magic.json
 6b2e8aa02e92cec8847b6ea81f19adaa18aa704d data/dragonsurvival/dragonsurvival/dragon_abilities/cave_wings.json
