@@ -26,7 +26,7 @@
               ]
             }
           ],
-          "entity_targeting_mode": "TARGET_FRIENDLIES"
+          "entity_targeting_mode": "TARGET_ALLIES"
         },
         "radius": 5.0,
         "target_type": "dragonsurvival:area"
@@ -60,6 +60,10 @@
   },
   "icon": {
     "texture_entries": [
+      {
+        "from_level": 0,
+        "texture_resource": "dragonsurvival:textures/skills/cave/strong_leather_0.png"
+      },
       {
         "from_level": 1,
         "texture_resource": "dragonsurvival:textures/skills/cave/strong_leather_1.png"

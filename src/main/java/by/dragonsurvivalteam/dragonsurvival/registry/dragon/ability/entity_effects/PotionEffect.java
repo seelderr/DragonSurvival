@@ -2,6 +2,8 @@ package by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.entity_effe
 
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
+import by.dragonsurvivalteam.dragonsurvival.util.DSColors;
+import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
@@ -18,6 +20,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,20 +60,21 @@ public record PotionEffect(HolderSet<MobEffect> effects, LevelBasedValue amplifi
     @Override
     public List<MutableComponent> getDescription(final Player dragon, final DragonAbilityInstance ability) {
         List<MutableComponent> components = new ArrayList<>();
-        float duration = duration().calculate(ability.level()) / 20.f;
-        for (Holder<MobEffect> mobEffect : effects()) {
-            MutableComponent name = Component.literal("§6■ ").append(Component.translatable(LangKey.ABILITY_APPLIES).append(Component.translatable(mobEffect.value().getDescriptionId())).withColor(-219136));
+        double duration = Functions.ticksToSeconds((int) duration().calculate(ability.level()));
 
+        for (Holder<MobEffect> effect : effects) {
+            MutableComponent name = Component.literal("§6■ ").append(Component.translatable(LangKey.ABILITY_APPLIES).append(Component.translatable(effect.value().getDescriptionId())).withColor(DSColors.ORANGE));
             int amplifier = (int) amplifier().calculate(ability.level());
+
             if (amplifier > 0) {
-                name.append(Component.literal(Integer.toString(amplifier)).withColor(-219136));
+                name.append(Component.literal(Integer.toString(amplifier)).withColor(DSColors.ORANGE));
             }
 
-            name.append(Component.translatable(LangKey.ABILITY_EFFECT_DURATION, duration));
-
+            name.append(Component.translatable(LangKey.ABILITY_EFFECT_DURATION, DSColors.blue(duration)));
             float probability = probability().calculate(ability.level());
+
             if (probability < 1) {
-                name.append(Component.translatable(LangKey.ABILITY_EFFECT_CHANCE,  String.format("%.0f", probability * 100)));
+                name.append(Component.translatable(LangKey.ABILITY_EFFECT_CHANCE, DSColors.blue(NumberFormat.getPercentInstance().format(probability))));
             }
 
             components.add(name);

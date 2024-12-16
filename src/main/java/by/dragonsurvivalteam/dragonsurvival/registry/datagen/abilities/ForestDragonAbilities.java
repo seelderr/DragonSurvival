@@ -60,7 +60,7 @@ public class ForestDragonAbilities {
                 ), LevelBasedValue.constant(32)), LevelBasedValue.constant(1))),
                 new LevelBasedResource(
                         List.of(
-                                new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/icons/body_type_central.png"), 1)
+                                new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/icons/body_type_central.png"), 0)
                         )
                 )
         ));

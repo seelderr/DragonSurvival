@@ -1,11 +1,10 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.targeting;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.block_effects.AbilityBlockEffect;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.entity_effects.AbilityEntityEffect;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.entity_effects.OnAttackEffect;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.entity_effects.ProjectileEffect;
 import com.mojang.datafixers.Products;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
@@ -14,6 +13,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.core.Registry;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
@@ -28,6 +28,7 @@ import net.neoforged.neoforge.registries.RegistryBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -39,9 +40,16 @@ public interface AbilityTargeting {
     Codec<AbilityTargeting> CODEC = REGISTRY.byNameCodec().dispatch("target_type", AbilityTargeting::codec, Function.identity());
 
     enum EntityTargetingMode {
+        @Translation(type = Translation.Type.TARGET_MODE, comments = "all entities")
         TARGET_ALL,
+        @Translation(type = Translation.Type.TARGET_MODE, comments = "enemies")
         TARGET_ENEMIES,
-        TARGET_FRIENDLIES
+        @Translation(type = Translation.Type.TARGET_MODE, comments = "allies")
+        TARGET_ALLIES;
+
+        public Component translation() {
+            return Component.translatable(Translation.Type.TARGET_MODE.wrap(toString().toLowerCase(Locale.ENGLISH)));
+        }
     }
 
     record BlockTargeting(Optional<BlockPredicate> targetConditions, List<AbilityBlockEffect> effect) {
@@ -88,7 +96,7 @@ public interface AbilityTargeting {
             return false;
         }
 
-        if(targeting.targetingMode == EntityTargetingMode.TARGET_FRIENDLIES && !(dragon == entity || isFriendly(dragon, entity))) {
+        if(targeting.targetingMode == EntityTargetingMode.TARGET_ALLIES && !(dragon == entity || isFriendly(dragon, entity))) {
             return false;
         }
 
@@ -112,26 +120,27 @@ public interface AbilityTargeting {
     default List<MutableComponent> getAllEffectDescriptions(final Player dragon, final DragonAbilityInstance abilityInstance) {
         List<MutableComponent> descriptions = new ArrayList<>();
         MutableComponent targetDescription = getDescription(dragon, abilityInstance);
-        if (target().right().isPresent()) {
-            target().right().get().effect().forEach(effect -> {
-                List<MutableComponent> abilityEffectDescriptions = effect.getDescription(dragon, abilityInstance);
-                if(!effect.getDescription(dragon, abilityInstance).isEmpty()) {
-                    if(!effect.shouldAppendSelfTargetingToDescription() && this instanceof SelfTarget) {
-                        // Special case where we don't want to append the "self target" for certain effects
-                        descriptions.addAll(effect.getDescription(dragon, abilityInstance));
-                    } else {
-                        descriptions.addAll(abilityEffectDescriptions.stream().map(abilityEffectDescription -> abilityEffectDescription.append(targetDescription)).toList());
-                    }
+
+        target().ifLeft(blockTargeting -> blockTargeting.effect().forEach(effect -> {
+            List<MutableComponent> abilityEffectDescriptions = effect.getDescription(dragon, abilityInstance);
+
+            if (!effect.getDescription(dragon, abilityInstance).isEmpty()) {
+                descriptions.addAll(abilityEffectDescriptions.stream().map(description -> description.append(targetDescription)).toList());
+            }
+        })).ifRight(entityTargeting -> entityTargeting.effect().forEach(effect -> {
+            List<MutableComponent> abilityEffectDescriptions = effect.getDescription(dragon, abilityInstance);
+
+            if (!effect.getDescription(dragon, abilityInstance).isEmpty()) {
+                if (!effect.shouldAppendSelfTargetingToDescription() && this instanceof SelfTarget) {
+                    // Special case where we don't want to append the "self target" for certain effects
+                    // TODO :: why is that the case? this looks kinda clunky atm
+                    descriptions.addAll(effect.getDescription(dragon, abilityInstance));
+                } else {
+                    descriptions.addAll(abilityEffectDescriptions.stream().map(description -> description.append(targetDescription)).toList());
                 }
-            });
-        } else if (target().left().isPresent()) {
-            target().left().get().effect().forEach(effect -> {
-                List<MutableComponent> abilityEffectDescriptions = effect.getDescription(dragon, abilityInstance);
-                if(!effect.getDescription(dragon, abilityInstance).isEmpty()) {
-                    descriptions.addAll(abilityEffectDescriptions.stream().map(abilityEffectDescription -> abilityEffectDescription.append(targetDescription)).toList());
-                }
-            });
-        }
+            }
+
+        }));
 
         return descriptions;
     }

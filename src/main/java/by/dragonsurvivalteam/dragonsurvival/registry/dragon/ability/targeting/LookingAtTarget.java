@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.targeting;
 
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
+import by.dragonsurvivalteam.dragonsurvival.util.DSColors;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -52,19 +53,12 @@ public record LookingAtTarget(Either<BlockTargeting, EntityTargeting> target, Le
 
     @Override
     public MutableComponent getDescription(final Player dragon, final DragonAbilityInstance ability) {
-        MutableComponent targetingComponent = Component.empty();
-        if (target().right().isPresent()) {
-            switch (target().right().get().targetingMode()) {
-                case TARGET_ALL -> targetingComponent.append(Component.translatable(LangKey.ABILITY_TARGET_ALL_ENTITIES));
-                case TARGET_ENEMIES -> targetingComponent.append(Component.translatable(LangKey.ABILITY_TARGET_ENEMIES));
-                case TARGET_FRIENDLIES -> targetingComponent.append(Component.translatable(LangKey.ABILITY_TARGET_ALLIES));
-            }
-        }
+        Component targetingComponent = target.map(block -> null, entity -> entity.targetingMode().translation());
 
-        if(!(targetingComponent.equals(Component.empty()))) {
-            return Component.translatable(LangKey.ABILITY_TO_TARGET_LOOKAT, targetingComponent, getRange(ability));
+        if (targetingComponent == null) {
+            return Component.translatable(LangKey.ABILITY_LOOKAT, DSColors.blue(getRange(ability)));
         } else {
-            return Component.translatable(LangKey.ABILITY_LOOKAT, getRange(ability));
+            return Component.translatable(LangKey.ABILITY_TO_TARGET_LOOKAT, DSColors.blue(targetingComponent), DSColors.blue(getRange(ability)));
         }
     }
 

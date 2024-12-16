@@ -15,7 +15,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.util.INBTSerializable;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
@@ -144,4 +143,13 @@ public class ModifiersWithDuration implements INBTSerializable<CompoundTag> {
             livingEntity.getExistingData(DSDataAttachments.MODIFIERS_WITH_DURATION).ifPresent(data -> data.tick(livingEntity));
         }
     }
+
+    /* FIXME :: why was this removed? the modifiers are permanent and need to be removed on death
+    @SubscribeEvent
+    public static void removeModifiers(final PlayerEvent.Clone event) {
+        if (event.isWasDeath()) {
+            event.getOriginal().getExistingData(DSDataAttachments.MODIFIERS_WITH_DURATION).ifPresent(data -> data.removeAll(event.getEntity()));
+        }
+    }
+    */
 }

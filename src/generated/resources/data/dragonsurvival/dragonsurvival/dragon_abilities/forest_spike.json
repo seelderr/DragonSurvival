@@ -36,7 +36,7 @@
   "icon": {
     "texture_entries": [
       {
-        "from_level": 1,
+        "from_level": 0,
         "texture_resource": "dragonsurvival:textures/icons/body_type_central.png"
       }
     ]

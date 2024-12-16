@@ -3,7 +3,6 @@ package by.dragonsurvivalteam.dragonsurvival.registry.projectile.targeting;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.predicates.RandomPredicate;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.predicates.WeatherPredicate;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.targeting.AbilityTargeting;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.block_effects.ProjectileBlockEffect;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.entity_effects.ProjectileEntityEffect;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.world_effects.ProjectileWorldEffect;
@@ -24,7 +23,6 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
-import org.spongepowered.asm.mixin.Mutable;
 
 import java.util.ArrayList;
 import java.util.List;

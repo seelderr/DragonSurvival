@@ -90,11 +90,13 @@ public record ProjectileAreaTarget(Either<Either<ProjectileTargeting.BlockTarget
     }
 
     @Override
-    public MutableComponent getDescription(Player dragon, int level) {
-        MutableComponent description = Component.translatable(LangKey.ABILITY_TO_TARGET_AREA, Component.translatable(LangKey.ABILITY_TARGET_ALL_ENTITIES), radius().calculate(level));
-        if(tickRate() > 1) {
-            description.append(Component.translatable(LangKey.ABILITY_X_SECONDS, tickRate() / 20.f));
+    public MutableComponent getDescription(final Player dragon, int level) {
+        MutableComponent description = Component.translatable(LangKey.ABILITY_TO_TARGET_AREA, AbilityTargeting.EntityTargetingMode.TARGET_ALL.translation(), radius().calculate(level));
+
+        if (tickRate() > 1) {
+            description.append(Component.translatable(LangKey.ABILITY_X_SECONDS, tickRate() / 20f));
         }
+
         return description;
     }
 

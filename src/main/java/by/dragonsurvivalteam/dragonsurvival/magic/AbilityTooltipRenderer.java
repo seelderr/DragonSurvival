@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Upgrade;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
+import by.dragonsurvivalteam.dragonsurvival.util.DSColors;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -47,7 +48,7 @@ public class AbilityTooltipRenderer {
         int colorXPos = ability.ability().value().isInnate() ? 20 : 0;
         int colorYPos = !ability.isPassive() ? 20 : 0;
 
-        FormattedText rawDescription = Component.translatable(Translation.Type.ABILITY_DESCRIPTION.wrap(ability.ability().getKey().location().getPath()));
+        FormattedText rawDescription = Component.translatable(Translation.Type.ABILITY_DESCRIPTION.wrap(ability.location().getNamespace(), ability.location().getPath()));
 
         List<Component> info = ability.getInfo(Minecraft.getInstance().player);
         if(!info.isEmpty()) {
@@ -92,7 +93,7 @@ public class AbilityTooltipRenderer {
                 guiGraphics.drawString(Minecraft.getInstance().font, Component.translatable(INFO), trueX - extraWidth + 10, trueY + 15, -1);
 
                 for (int k1 = 0; k1 < text.size(); ++k1) {
-                    guiGraphics.drawString(Minecraft.getInstance().font, text.get(k1), trueX - extraWidth + 5, trueY + 5 + 18 + k1 * 9, -5592406);
+                    guiGraphics.drawString(Minecraft.getInstance().font, text.get(k1), trueX - extraWidth + 5, trueY + 5 + 18 + k1 * 9, DSColors.LIGHT_GRAY);
                 }
             }
         }

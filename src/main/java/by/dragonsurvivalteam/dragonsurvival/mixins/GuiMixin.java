@@ -5,13 +5,11 @@ import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DamageModificat
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.ModifiersWithDuration;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.ClientEffectProvider;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.util.Mth;
 import org.spongepowered.asm.mixin.Mixin;

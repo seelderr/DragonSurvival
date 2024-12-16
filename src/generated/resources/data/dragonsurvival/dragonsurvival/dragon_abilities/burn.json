@@ -33,6 +33,10 @@
   "icon": {
     "texture_entries": [
       {
+        "from_level": 0,
+        "texture_resource": "dragonsurvival:textures/skills/cave/burn_0.png"
+      },
+      {
         "from_level": 1,
         "texture_resource": "dragonsurvival:textures/skills/cave/burn_1.png"
       },

@@ -4,7 +4,6 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
 
 public record InstantTrigger(int triggerRate) implements PenaltyTrigger {
     public static final MapCodec<InstantTrigger> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(

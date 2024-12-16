@@ -4,6 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.codecs.OnAttackEffectInstance
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.OnAttackEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
+import by.dragonsurvivalteam.dragonsurvival.util.DSColors;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
@@ -18,11 +19,13 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 public record OnAttackEffect(HolderSet<MobEffect> effects, LevelBasedValue amplifier, LevelBasedValue duration, LevelBasedValue probability) implements AbilityEntityEffect {
     public static final MapCodec<OnAttackEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+            // TODO :: why not use 'FoodProperties.PossibleEffect.CODEC'
             RegistryCodecs.homogeneousList(BuiltInRegistries.MOB_EFFECT.key()).fieldOf("effects").forGetter(OnAttackEffect::effects),
             LevelBasedValue.CODEC.fieldOf("amplifier").forGetter(OnAttackEffect::amplifier),
             LevelBasedValue.CODEC.fieldOf("duration").forGetter(OnAttackEffect::duration),
@@ -57,24 +60,24 @@ public record OnAttackEffect(HolderSet<MobEffect> effects, LevelBasedValue ampli
     @Override
     public List<MutableComponent> getDescription(final Player dragon, final DragonAbilityInstance ability) {
         List<MutableComponent> components = new ArrayList<>();
-        float duration = duration().calculate(ability.level()) / 20.f;
-        for (Holder<MobEffect> mobEffect : effects()) {
-            MutableComponent name = Component.literal("§6■ ").append(Component.translatable(LangKey.ABILITY_APPLIES).append(Component.translatable(mobEffect.value().getDescriptionId())).withColor(-219136));
+        float duration = duration().calculate(ability.level()) / 20f;
 
+        for (Holder<MobEffect> effect : effects) {
+            MutableComponent name = Component.literal("§6■ ").append(Component.translatable(LangKey.ABILITY_APPLIES).append(Component.translatable(effect.value().getDescriptionId())).withColor(DSColors.ORANGE));
             int amplifier = (int) amplifier().calculate(ability.level());
+
             if (amplifier > 0) {
-                name.append(Component.literal(Integer.toString(amplifier)).withColor(-219136));
+                name.append(Component.literal(Integer.toString(amplifier)).withColor(DSColors.ORANGE));
             }
 
-            name.append(Component.translatable(LangKey.ABILITY_EFFECT_DURATION, duration));
-
+            name.append(Component.translatable(LangKey.ABILITY_EFFECT_DURATION, DSColors.blue(duration)));
             float probability = probability().calculate(ability.level());
+
             if (probability < 1) {
-                name.append(Component.translatable(LangKey.ABILITY_EFFECT_CHANCE, String.format("%.0f", probability * 100)));
+                name.append(Component.translatable(LangKey.ABILITY_EFFECT_CHANCE, DSColors.blue(NumberFormat.getPercentInstance().format(probability))));
             }
 
             name.append(Component.translatable(LangKey.ABILITY_ON_HIT));
-
             components.add(name);
         }
 

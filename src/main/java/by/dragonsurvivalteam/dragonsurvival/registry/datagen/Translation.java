@@ -14,7 +14,6 @@ import java.util.Locale;
  * - {@link String} annotated with the type {@link Type#MISC} will use its stored value, not wrapping anything <br>
  * - {@link Holder} will use {@link Holder#getKey()} -> {@link ResourceKey#location()} -> {@link ResourceLocation#getPath()} to determine the wrapped value <br>
  * - {@link ResourceKey} will use {@link ResourceKey#location()} -> {@link ResourceLocation#getPath()} to determine the wrapped value <br>
- * - {@link DragonAbility} will use {@link DragonAbility#getName()} to determine the wrapped value
  */
 @Target({ElementType.FIELD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
@@ -79,6 +78,8 @@ public @interface Translation {
         STAGE_DESCRIPTION(DragonSurvival.MODID + ".stage.", ".desc"),
 
         MODIFIER(DragonSurvival.MODID + ".modifier.", ""),
+
+        TARGET_MODE("target_mode." + DragonSurvival.MODID + ".", ""),
 
         /** When used on {@link String} and no specified key it's expected that the string contains the translation key */
         MISC("", "");

@@ -4,7 +4,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.codecs.predicates.EyeInFluidP
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.predicates.WeatherPredicate;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncAddPenaltySupply;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncRemovePenaltySupply;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachments;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.PenaltySupply;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;

@@ -27,18 +27,22 @@ public class ClientCastingHandler {
     @SubscribeEvent
     private static void handleCastingInputs(InputEvent.Key event) {
         Minecraft instance = Minecraft.getInstance();
-        if (instance.player == null || instance.level == null)
+
+        if (instance.screen != null || instance.player == null || instance.level == null) {
             return;
+        }
 
         Player player = instance.player;
-        if (player.isSpectator() || !DragonStateProvider.isDragon(player) || Minecraft.getInstance().screen != null)
-            return;
 
-        if(event.getAction() == InputConstants.PRESS) {
+        if (player.isSpectator() || !DragonStateProvider.isDragon(player)) {
+            return;
+        }
+
+        if (event.getAction() == InputConstants.PRESS) {
             handleVisibilityToggle(event, player);
             handleSlotSelection(event, player);
             handleCastingKey(event, player);
-        } else if(event.getAction() == InputConstants.RELEASE) {
+        } else if (event.getAction() == InputConstants.RELEASE) {
             handleCastingKeyRelease(event, player);
         }
     }

@@ -32,7 +32,7 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 
 public class DragonAbilityInstance {
-    public static final int MIN_LEVEL = 1;
+    public static final int MIN_LEVEL = 0;
     public static final int MAX_LEVEL = 255;
     public static final int NO_COOLDOWN = 0;
 
@@ -298,7 +298,7 @@ public class DragonAbilityInstance {
     }
 
     public Component getName() {
-        return Component.translatable(Translation.Type.ABILITY.wrap(ability().getKey().location().getPath()));
+        return Component.translatable(Translation.Type.ABILITY.wrap(location().getNamespace(), location().getPath()));
     }
 
     public ResourceKey<DragonAbility> key() {

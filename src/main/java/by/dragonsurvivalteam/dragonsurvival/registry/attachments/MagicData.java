@@ -100,17 +100,15 @@ public class MagicData implements INBTSerializable<CompoundTag> {
         }
     }
 
-    @SubscribeEvent(receiveCanceled = true, priority = EventPriority.LOWEST)
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void handlePassiveLeveling(final PlayerXpEvent.LevelChange event) {
-        handlePassiveLeveling(event.getEntity(), event.getEntity().experienceLevel + event.getLevels());
-    }
-
-    private static void handlePassiveLeveling(final Player player, int levels) {
-        if (!DragonStateProvider.isDragon(player)) {
+        if (!DragonStateProvider.isDragon(event.getEntity())) {
             return;
         }
 
-        MagicData magic = MagicData.getData(player);
+        MagicData magic = MagicData.getData(event.getEntity());
+        int newExperienceLevel = event.getEntity().experienceLevel + event.getLevels();
+
         for (DragonAbilityInstance ability : magic.abilities.values()) {
             Upgrade upgrade = ability.value().upgrade().orElse(null);
 
@@ -119,25 +117,28 @@ public class MagicData implements INBTSerializable<CompoundTag> {
             }
 
             int previousLevel = ability.level();
+
             for (int level = DragonAbilityInstance.MIN_LEVEL; level <= upgrade.maximumLevel(); level++) {
                 float required = upgrade.experienceOrLevelCost().calculate(level);
 
-                if (levels < required) {
+                if (newExperienceLevel < required) {
                     ability.setLevel(level - 1);
                     break;
                 }
 
-                if (levels >= required) {
+                if (newExperienceLevel >= required) {
                     ability.setLevel(level);
                 }
             }
 
-            if(previousLevel != ability.level()) {
-                if(player.level().isClientSide) {
-                    PacketDistributor.sendToServer(new SyncAbilityLevel(ability.key(), ability.level()));
-                } else {
-                    PacketDistributor.sendToPlayer((ServerPlayer) player, new SyncAbilityLevel(ability.key(), ability.level()));
-                }
+            if (previousLevel == ability.level()) {
+                return;
+            }
+
+            if (event.getEntity() instanceof ServerPlayer serverPlayer) {
+                PacketDistributor.sendToPlayer(serverPlayer, new SyncAbilityLevel(ability.key(), ability.level()));
+            } else {
+                PacketDistributor.sendToServer(new SyncAbilityLevel(ability.key(), ability.level()));
             }
         }
     }
@@ -357,6 +358,8 @@ public class MagicData implements INBTSerializable<CompoundTag> {
         }
     }
 
+    // TODO :: is this generic method really needed when we only interact with levels in two spots (1 for manual and 1 for passive)?
+    //  feels cleaner to leave it in these spots to have the dedicated passive and active leveling logic there
     public void changeAbilityLevel(final Player player, final ResourceKey<DragonAbility> key, int newLevel) {
         DragonAbilityInstance instance = abilities.get(key);
 

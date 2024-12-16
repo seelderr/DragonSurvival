@@ -155,7 +155,7 @@ public class DragonStateHandler extends EntityStateHandler {
 
         MagicData magicData = MagicData.getData(player);
         PenaltySupply penaltySupply = PenaltySupply.getData(player);
-        penaltySupply.clear();
+        penaltySupply.clear(); // FIXME :: why is this being called 3 times here
         if (type != null) {
             // TODO :: save abilities per type
             if (oldType == null || !oldType.is(type)) {

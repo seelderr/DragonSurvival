@@ -107,6 +107,10 @@
   "icon": {
     "texture_entries": [
       {
+        "from_level": 0,
+        "texture_resource": "dragonsurvival:textures/skills/cave/hot_blood_0.png"
+      },
+      {
         "from_level": 1,
         "texture_resource": "dragonsurvival:textures/skills/cave/hot_blood_1.png"
       }

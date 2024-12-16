@@ -34,15 +34,6 @@ public class LangKey {
     @Translation(type = Translation.Type.MISC, comments = "self")
     public static final String ABILITY_TARGET_SELF = Translation.Type.ABILITY.wrap("general.ability_target_self");
 
-    @Translation(type = Translation.Type.MISC, comments = "enemies")
-    public static final String ABILITY_TARGET_ENEMIES = Translation.Type.ABILITY.wrap("general.ability_target_enemies");
-
-    @Translation(type = Translation.Type.MISC, comments = "allies")
-    public static final String ABILITY_TARGET_ALLIES = Translation.Type.ABILITY.wrap("general.ability_target_allies");
-
-    @Translation(type = Translation.Type.MISC, comments = "all entities")
-    public static final String ABILITY_TARGET_ALL_ENTITIES = Translation.Type.ABILITY.wrap("general.ability_target_all_entities");
-
     @Translation(type = Translation.Type.MISC, comments = " to %s")
     public static final String ABILITY_TO_TARGET = Translation.Type.ABILITY.wrap("general.ability_to_target");
 
@@ -103,7 +94,7 @@ public class LangKey {
     @Translation(type = Translation.Type.MISC, comments = " for %s seconds")
     public static final String ABILITY_EFFECT_DURATION = Translation.Type.ABILITY.wrap("general.effect_duration");
 
-    @Translation(type = Translation.Type.MISC, comments = " with a %s%% chance")
+    @Translation(type = Translation.Type.MISC, comments = " with a %s chance")
     public static final String ABILITY_EFFECT_CHANCE = Translation.Type.ABILITY.wrap("general.effect_chance");
 
     @Translation(type = Translation.Type.MISC, comments = "§6■ Currently bound to:§r [%s]")

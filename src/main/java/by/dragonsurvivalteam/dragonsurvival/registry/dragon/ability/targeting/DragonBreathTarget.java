@@ -4,6 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
+import by.dragonsurvivalteam.dragonsurvival.util.DSColors;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -50,19 +51,12 @@ public record DragonBreathTarget(Either<BlockTargeting, EntityTargeting> target,
 
     @Override
     public MutableComponent getDescription(final Player dragon, final DragonAbilityInstance ability) {
-        MutableComponent targetingComponent = Component.empty();
-        if (target().right().isPresent()) {
-            switch (target().right().get().targetingMode()) {
-                case TARGET_ALL -> targetingComponent.append(Component.translatable(LangKey.ABILITY_TARGET_ALL_ENTITIES));
-                case TARGET_ENEMIES -> targetingComponent.append(Component.translatable(LangKey.ABILITY_TARGET_ENEMIES));
-                case TARGET_FRIENDLIES -> targetingComponent.append(Component.translatable(LangKey.ABILITY_TARGET_ALLIES));
-            }
-        }
+        Component targetingComponent = target.map(block -> null, entity -> entity.targetingMode().translation());
 
-        if(!(targetingComponent.equals(Component.empty()))) {
-            return Component.translatable(LangKey.ABILITY_TO_TARGET_CONE, targetingComponent, getRange(dragon, ability));
+        if (targetingComponent == null) {
+            return Component.translatable(LangKey.ABILITY_CONE, DSColors.blue(getRange(dragon, ability)));
         } else {
-            return Component.translatable(LangKey.ABILITY_CONE, getRange(dragon, ability));
+            return Component.translatable(LangKey.ABILITY_TO_TARGET_CONE, DSColors.blue(targetingComponent), DSColors.blue(getRange(dragon, ability)));
         }
     }
 

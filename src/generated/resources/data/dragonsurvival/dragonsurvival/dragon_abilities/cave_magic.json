@@ -25,7 +25,7 @@
               ]
             }
           ],
-          "entity_targeting_mode": "TARGET_FRIENDLIES"
+          "entity_targeting_mode": "TARGET_ALLIES"
         },
         "target_type": "dragonsurvival:self"
       },
@@ -37,6 +37,10 @@
   },
   "icon": {
     "texture_entries": [
+      {
+        "from_level": 0,
+        "texture_resource": "dragonsurvival:textures/skills/cave/cave_magic_0.png"
+      },
       {
         "from_level": 1,
         "texture_resource": "dragonsurvival:textures/skills/cave/cave_magic_1.png"

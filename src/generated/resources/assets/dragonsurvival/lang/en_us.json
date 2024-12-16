@@ -106,9 +106,6 @@
   "dragon_ability.dragonsurvival.general.ability_auto_upgrade": "Next level will be unlocked at experience level %s",
   "dragon_ability.dragonsurvival.general.ability_cone": " in a %s block cone",
   "dragon_ability.dragonsurvival.general.ability_lookat": " to %s being looked at ",
-  "dragon_ability.dragonsurvival.general.ability_target_all_entities": "all entities",
-  "dragon_ability.dragonsurvival.general.ability_target_allies": "allies",
-  "dragon_ability.dragonsurvival.general.ability_target_enemies": "enemies",
   "dragon_ability.dragonsurvival.general.ability_target_self": "self",
   "dragon_ability.dragonsurvival.general.ability_to_target": " to %s",
   "dragon_ability.dragonsurvival.general.ability_to_target_area": " to %s in a %s block radius",
@@ -122,7 +119,7 @@
   "dragon_ability.dragonsurvival.general.continuous_mana_cost": "§6■ Continuous mana cost:§r %s",
   "dragon_ability.dragonsurvival.general.cooldown": "§6■ Cooldown:§r %ss",
   "dragon_ability.dragonsurvival.general.damage": "§6■%s§6Damage:§r %s",
-  "dragon_ability.dragonsurvival.general.effect_chance": " with a %s%% chance",
+  "dragon_ability.dragonsurvival.general.effect_chance": " with a %s chance",
   "dragon_ability.dragonsurvival.general.effect_duration": " for %s seconds",
   "dragon_ability.dragonsurvival.general.explosion_power": "§6■%s§6Explosion Power:§r %s",
   "dragon_ability.dragonsurvival.general.info": "Info",
@@ -1601,5 +1598,8 @@
   "item.dragonsurvival.star_bone": "Star Bone",
   "item.dragonsurvival.star_heart": "Star Heart",
   "item.dragonsurvival.weak_dragon_heart": "Weak Dragon Heart",
-  "item.dragonsurvival.wing_grant": "Flight Grant"
+  "item.dragonsurvival.wing_grant": "Flight Grant",
+  "target_mode.dragonsurvival.target_all": "all entities",
+  "target_mode.dragonsurvival.target_allies": "allies",
+  "target_mode.dragonsurvival.target_enemies": "enemies"
 }

@@ -1,7 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.hud;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MagicData;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.PenaltySupply;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
