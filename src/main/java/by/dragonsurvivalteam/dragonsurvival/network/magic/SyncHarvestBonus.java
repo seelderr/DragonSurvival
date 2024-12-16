@@ -26,10 +26,11 @@ public record SyncHarvestBonus(int playerId, HarvestBonus.Instance harvestBonusI
         context.enqueueWork(() -> {
             if (context.player().level().getEntity(packet.playerId()) instanceof Player player) {
                 HarvestBonuses data = player.getData(DSDataAttachments.HARVEST_BONUSES);
-                if(packet.remove) {
-                    data.remove(packet.harvestBonusInstance().baseData());
+
+                if (packet.remove()) {
+                    data.remove(player, packet.harvestBonusInstance());
                 } else {
-                    data.add(packet.harvestBonusInstance());
+                    data.add(player, packet.harvestBonusInstance());
                 }
             }
         });

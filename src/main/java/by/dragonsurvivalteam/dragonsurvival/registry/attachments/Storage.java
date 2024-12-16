@@ -1,0 +1,104 @@
+package by.dragonsurvivalteam.dragonsurvival.registry.attachments;
+
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
+import net.neoforged.neoforge.common.util.INBTSerializable;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import javax.annotation.Nullable;
+
+public abstract class Storage<T extends StorageEntry> implements INBTSerializable<CompoundTag> {
+    public static final String STORAGE = "storage";
+
+    @Nullable protected Map<ResourceLocation, T> storage;
+
+    public void tick() {
+        if (storage != null) {
+            Set<ResourceLocation> finished = new HashSet<>();
+
+            storage.values().forEach(entry -> {
+                if (entry.tick()) {
+                    finished.add(entry.getId());
+                }
+            });
+
+            finished.forEach(id -> storage.remove(id));
+        }
+    }
+
+    public void add(final LivingEntity entity, final T entry) {
+        if (storage == null) {
+            storage = new HashMap<>();
+        }
+
+        storage.put(entry.getId(), entry);
+        entry.apply(entity);
+    }
+
+    public void remove(final LivingEntity entity, final T entry) {
+        if (storage == null) {
+            return;
+        }
+
+        storage.remove(entry.getId());
+        entry.remove(entity);
+    }
+
+    public @Nullable T get(final ResourceLocation id) {
+        if (storage == null) {
+            return null;
+        }
+
+        return storage.get(id);
+    }
+
+    public boolean isEmpty() {
+        if (storage == null) {
+            return true;
+        }
+
+        return storage.isEmpty();
+    }
+
+    @Override
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider) {
+        CompoundTag tag = new CompoundTag();
+
+        if (storage == null) {
+            return tag;
+        }
+
+        ListTag entries = new ListTag();
+        storage.values().forEach(entry -> entries.add(save(provider, entry)));
+        tag.put(STORAGE, entries);
+
+        return tag;
+    }
+
+    @Override
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag tag) {
+        Map<ResourceLocation, T> storage = new HashMap<>();
+        ListTag entries = tag.getList(STORAGE, ListTag.TAG_COMPOUND);
+
+        for (int i = 0; i < entries.size(); i++) {
+            T entry = load(provider, entries.getCompound(i));
+
+            if (entry != null) {
+                storage.put(entry.getId(), entry);
+            }
+        }
+
+        this.storage = !storage.isEmpty() ? storage : null;
+    }
+
+    abstract protected Tag save(@NotNull final HolderLookup.Provider provider, final T entry);
+    abstract protected T load(@NotNull final HolderLookup.Provider provider, final CompoundTag tag);
+}

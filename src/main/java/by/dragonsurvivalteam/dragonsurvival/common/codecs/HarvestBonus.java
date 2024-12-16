@@ -4,6 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncHarvestBonus;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachments;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.HarvestBonuses;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.StorageEntry;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.ClientEffectProvider;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import com.mojang.serialization.Codec;
@@ -42,33 +43,37 @@ public record HarvestBonus(ResourceLocation id, HolderSet<Block> applicableTo, L
         int newDuration = (int) duration().calculate(abilityLevel);
 
         HarvestBonuses data = target.getData(DSDataAttachments.HARVEST_BONUSES);
-        Instance instance = data.get(this);
+        Instance instance = data.get(id);
 
         if (instance != null && instance.currentDuration() == newDuration && instance.appliedAbilityLevel() == abilityLevel) {
             return;
         }
 
         if (instance != null) {
-            data.remove(this);
+            data.remove(target, instance);
         }
 
         ClientEffectProvider.ClientData clientData = new ClientEffectProvider.ClientData(ability.getIcon(), /* TODO */ Component.empty(), Optional.of(dragon.getUUID()));
-        Instance harvestBonus = new Instance(this, clientData, abilityLevel, newDuration);
-        data.add(harvestBonus);
-        if(target instanceof ServerPlayer player) {
-            PacketDistributor.sendToPlayer(player, new SyncHarvestBonus(player.getId(), harvestBonus, false));
+        instance = new Instance(this, clientData, abilityLevel, newDuration);
+        data.add(target, instance);
+
+        if (target instanceof ServerPlayer player) {
+            PacketDistributor.sendToPlayer(player, new SyncHarvestBonus(player.getId(), instance, false));
         }
     }
 
     public void remove(final LivingEntity target) {
         HarvestBonuses data = target.getData(DSDataAttachments.HARVEST_BONUSES);
-        if(target instanceof ServerPlayer player) {
-            PacketDistributor.sendToPlayer(player, new SyncHarvestBonus(player.getId(), data.get(this), true));
+        Instance instance = data.get(id);
+
+        if (instance != null && target instanceof ServerPlayer player) {
+            PacketDistributor.sendToPlayer(player, new SyncHarvestBonus(player.getId(), instance, true));
         }
-        data.remove(this);
+
+        data.remove(target, instance);
     }
 
-    public static class Instance implements ClientEffectProvider {
+    public static class Instance implements ClientEffectProvider, StorageEntry {
         public static final Codec<HarvestBonus.Instance> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 HarvestBonus.CODEC.fieldOf("base_data").forGetter(HarvestBonus.Instance::baseData),
                 ClientData.CODEC.fieldOf("client_data").forGetter(HarvestBonus.Instance::clientData),
@@ -96,6 +101,7 @@ public record HarvestBonus(ResourceLocation id, HolderSet<Block> applicableTo, L
             return CODEC.parse(NbtOps.INSTANCE, nbt).resultOrPartial(DragonSurvival.LOGGER::error).orElse(null);
         }
 
+        @Override
         public boolean tick() {
             if (currentDuration == INFINITE_DURATION) {
                 return false;
