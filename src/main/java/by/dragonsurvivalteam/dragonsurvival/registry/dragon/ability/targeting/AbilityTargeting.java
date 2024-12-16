@@ -88,7 +88,7 @@ public interface AbilityTargeting {
             return false;
         }
 
-        if(targeting.targetingMode == EntityTargetingMode.TARGET_FRIENDLIES && !isFriendly(dragon, entity)) {
+        if(targeting.targetingMode == EntityTargetingMode.TARGET_FRIENDLIES && !(dragon == entity || isFriendly(dragon, entity))) {
             return false;
         }
 

@@ -31,7 +31,7 @@ public class ClientCastingHandler {
             return;
 
         Player player = instance.player;
-        if (player.isSpectator() || !DragonStateProvider.isDragon(player))
+        if (player.isSpectator() || !DragonStateProvider.isDragon(player) || Minecraft.getInstance().screen != null)
             return;
 
         if(event.getAction() == InputConstants.PRESS) {
