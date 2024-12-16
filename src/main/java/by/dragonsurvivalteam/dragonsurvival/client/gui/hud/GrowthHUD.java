@@ -63,7 +63,7 @@ public class GrowthHUD {
         Holder<DragonStage> dragonStage = handler.getStage();
         double nextSize = dragonStage.value().sizeRange().max();
 
-        if (handler.getSize() == nextSize) {
+        if (handler.getSize() == nextSize || dragonStage.value().growthItems().stream().noneMatch(item -> item.items().contains(stack.getItemHolder()))) {
             return;
         }
 
