@@ -8,7 +8,10 @@
     "dragonsurvival:burn",
     "dragonsurvival:cave_magic",
     "dragonsurvival:contrast_shower",
-    "dragonsurvival:cave_claws_and_teeth"
+    "dragonsurvival:cave_dragon",
+    "dragonsurvival:cave_wings",
+    "dragonsurvival:cave_claws_and_teeth",
+    "dragonsurvival:hot_blood"
   ],
   "diet": [
     {

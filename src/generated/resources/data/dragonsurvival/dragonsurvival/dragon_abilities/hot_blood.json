@@ -1,0 +1,14 @@
+{
+  "activation": {
+    "type": "passive"
+  },
+  "icon": {
+    "texture_entries": [
+      {
+        "from_level": 1,
+        "texture_resource": "dragonsurvival:textures/skills/cave/hot_blood_1.png"
+      }
+    ]
+  },
+  "innate": true
+}

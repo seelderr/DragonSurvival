@@ -120,6 +120,26 @@ public class CaveDragonAbilities {
     @Translation(type = Translation.Type.ABILITY, comments = "Claws and Teeth")
     public static final ResourceKey<DragonAbility> CAVE_CLAWS_AND_TEETH = DragonAbilities.key("cave_claws_and_teeth");
 
+    @Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = {
+            "■ Dragons use §2levitation§r to fly, but are rarely born with that ability. Only one dragon in this world can share their power of flight with you.\n",
+    })
+    @Translation(type = Translation.Type.ABILITY, comments = "Cave Wings")
+    public static final ResourceKey<DragonAbility> CAVE_WINGS = DragonAbilities.key("cave_wings");
+
+    @Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = {
+            "■ Cave dragons take §cdamage from water§r, snow, rain and other liquids due to their fiery nature.\n",
+            "■ The skill «Contrast Shower» and effect «Cave Fire» §7could make your life easier.\n",
+    })
+    @Translation(type = Translation.Type.ABILITY, comments = "Hot Blood")
+    public static final ResourceKey<DragonAbility> HOT_BLOOD = DragonAbilities.key("hot_blood");
+
+    @Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = {
+            "■ Cave dragons have a netherite skeleton, and are made mostly of lava. Their diet includes charred meat and coal. Peaceful animals fear dragons.\n",
+            "■ They have innate §2immunity to fire§r and they feel best in the Nether."
+    })
+    @Translation(type = Translation.Type.ABILITY, comments = "Cave Dragon")
+    public static final ResourceKey<DragonAbility> CAVE_DRAGON_INFO = DragonAbilities.key("cave_dragon");
+
     public static void registerAbilities(final BootstrapContext<DragonAbility> context) {
         registerActiveAbilities(context);
         registerPassiveAbilities(context);
@@ -474,6 +494,40 @@ public class CaveDragonAbilities {
                         new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/cave_claws_and_teeth_2.png"), 2),
                         new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/cave_claws_and_teeth_3.png"), 3),
                         new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/cave_claws_and_teeth_4.png"), 4)
+                ))
+        ));
+
+        context.register(CAVE_WINGS, new DragonAbility(
+                true,
+                Activation.passive(),
+                Optional.empty(),
+                Optional.empty(),
+                List.of(),
+                new LevelBasedResource(List.of(
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/cave_wings_1.png"), 1)
+                ))
+        ));
+
+
+        context.register(CAVE_DRAGON_INFO, new DragonAbility(
+                true,
+                Activation.passive(),
+                Optional.empty(),
+                Optional.empty(),
+                List.of(),
+                new LevelBasedResource(List.of(
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/cave_dragon_1.png"), 1)
+                ))
+        ));
+
+        context.register(HOT_BLOOD, new DragonAbility(
+                true,
+                Activation.passive(),
+                Optional.empty(),
+                Optional.empty(),
+                List.of(),
+                new LevelBasedResource(List.of(
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/hot_blood_1.png"), 1)
                 ))
         ));
     }
