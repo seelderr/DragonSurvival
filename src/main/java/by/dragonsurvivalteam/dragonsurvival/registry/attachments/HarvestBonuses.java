@@ -47,11 +47,11 @@ public class HarvestBonuses extends Storage<HarvestBonus.Instance> {
 
     @Override
     protected Tag save(@NotNull final HolderLookup.Provider provider, final HarvestBonus.Instance entry) {
-        return entry.save();
+        return entry.save(provider);
     }
 
     @Override
     protected HarvestBonus.Instance load(@NotNull final HolderLookup.Provider provider, final CompoundTag tag) {
-        return HarvestBonus.Instance.load(tag);
+        return HarvestBonus.Instance.load(provider, tag);
     }
 }

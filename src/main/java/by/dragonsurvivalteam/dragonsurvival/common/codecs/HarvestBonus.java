@@ -10,6 +10,7 @@ import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilit
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;
 import net.minecraft.core.registries.Registries;
@@ -24,6 +25,7 @@ import net.minecraft.world.item.enchantment.LevelBasedValue;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.network.PacketDistributor;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 import javax.annotation.Nullable;
@@ -93,12 +95,12 @@ public record HarvestBonus(ResourceLocation id, HolderSet<Block> applicableTo, L
             this.currentDuration = currentDuration;
         }
 
-        public Tag save() {
-            return CODEC.encodeStart(NbtOps.INSTANCE, this).getOrThrow();
+        public Tag save(@NotNull final HolderLookup.Provider provider) {
+            return CODEC.encodeStart(provider.createSerializationContext(NbtOps.INSTANCE), this).getOrThrow();
         }
 
-        public static @Nullable HarvestBonus.Instance load(final CompoundTag nbt) {
-            return CODEC.parse(NbtOps.INSTANCE, nbt).resultOrPartial(DragonSurvival.LOGGER::error).orElse(null);
+        public static @Nullable HarvestBonus.Instance load(@NotNull final HolderLookup.Provider provider, final CompoundTag nbt) {
+            return CODEC.parse(provider.createSerializationContext(NbtOps.INSTANCE), nbt).resultOrPartial(DragonSurvival.LOGGER::error).orElse(null);
         }
 
         @Override
