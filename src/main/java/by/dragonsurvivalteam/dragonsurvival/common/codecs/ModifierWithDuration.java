@@ -164,8 +164,8 @@ public record ModifierWithDuration(ResourceLocation id, ResourceLocation icon, L
         }
 
         @Override
-        public boolean isVisible() {
-            return !baseData().isHidden();
+        public boolean isInvisible() {
+            return baseData().isHidden();
         }
     }
 }

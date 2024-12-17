@@ -94,10 +94,5 @@ public record DamageModification(ResourceLocation id, HolderSet<DamageType> dama
         public int getDuration() {
             return (int) baseData().duration().calculate(appliedAbilityLevel());
         }
-
-        @Override
-        public boolean isVisible() {
-            return false;
-        }
     }
 }

@@ -4,6 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachmen
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DamageModifications;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.ModifiersWithDuration;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.ClientEffectProvider;
+import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.DeltaTracker;
@@ -13,6 +14,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.util.Mth;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -23,52 +25,54 @@ import java.util.Objects;
 
 @Mixin(Gui.class)
 public class GuiMixin {
+    @Unique private final List<ClientEffectProvider> dragonSurvival$providers = new ArrayList<>();
 
     @ModifyExpressionValue(method = "renderEffects", at = @At(value = "INVOKE", target = "Ljava/util/Collection;isEmpty()Z"))
-    private boolean dragonSurvival$considerClientEffectsForIsEmpty(boolean originalReturnValue) {
+    private boolean dragonSurvival$considerClientEffectsForIsEmpty(boolean isEmpty) {
+        if (!isEmpty) {
+            return false;
+        }
+
         LocalPlayer player = Objects.requireNonNull(Minecraft.getInstance().player);
+        dragonSurvival$providers.clear();
 
-        List<ClientEffectProvider> providers = new ArrayList<>();
-        providers.addAll(player.getExistingData(DSDataAttachments.MODIFIERS_WITH_DURATION).map(ModifiersWithDuration::all).orElse(List.of()));
-        providers.addAll(player.getExistingData(DSDataAttachments.DAMAGE_MODIFICATIONS).map(DamageModifications::all).orElse(List.of()));
-        providers = providers.stream().filter(ClientEffectProvider::isVisible).toList();
+        dragonSurvival$providers.addAll(player.getExistingData(DSDataAttachments.MODIFIERS_WITH_DURATION).map(ModifiersWithDuration::all).orElse(List.of()));
+        dragonSurvival$providers.addAll(player.getExistingData(DSDataAttachments.DAMAGE_MODIFICATIONS).map(DamageModifications::all).orElse(List.of()));
+        dragonSurvival$providers.removeIf(ClientEffectProvider::isInvisible);
 
-        return originalReturnValue && providers.isEmpty();
+        return dragonSurvival$providers.isEmpty();
     }
 
     // TODO :: Do we care to determine if effects are beneficial or not? In this UI vanilla puts harmful effects below beneficial ones instead of beside them
     @Inject(method = "renderEffects", at = @At(value = "INVOKE", target = "Ljava/util/List;forEach(Ljava/util/function/Consumer;)V"))
-    private void dragonSurvival$renderAbilityEffects(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci, @Local(ordinal = 0) int numBeneficialEffectsAlreadyRendered) {
-        LocalPlayer player = Objects.requireNonNull(Minecraft.getInstance().player);
-
-        List<ClientEffectProvider> providers = new ArrayList<>();
-        providers.addAll(player.getExistingData(DSDataAttachments.MODIFIERS_WITH_DURATION).map(ModifiersWithDuration::all).orElse(List.of()));
-        providers.addAll(player.getExistingData(DSDataAttachments.DAMAGE_MODIFICATIONS).map(DamageModifications::all).orElse(List.of()));
-        providers = providers.stream().filter(ClientEffectProvider::isVisible).toList();
+    private void dragonSurvival$renderAbilityEffects(final GuiGraphics graphics, final DeltaTracker deltaTracker, final CallbackInfo callback, @Local(ordinal = 0) int renderedCount) {
         Gui self = (Gui) (Object) this;
+        int effectCount = renderedCount;
 
-        int numEffects = numBeneficialEffectsAlreadyRendered;
-        for (ClientEffectProvider provider : providers) {
-            int xPos = guiGraphics.guiWidth();
+        for (ClientEffectProvider provider : dragonSurvival$providers) {
+            int xPos = graphics.guiWidth();
             int yPos = 1;
+
             if (Minecraft.getInstance().isDemo()) {
                 yPos += 15;
             }
 
-            numEffects++;
-            xPos -= 25 * numEffects;
-            guiGraphics.blitSprite(((GuiAccessor)self).dragonSurvival$getEffectBackgroundSprite(), xPos, yPos, 24, 24);
+            effectCount++;
+            xPos -= 25 * effectCount;
+            graphics.blitSprite(((GuiAccessor) self).dragonSurvival$getEffectBackgroundSprite(), xPos, yPos, 24, 24);
 
-            float alpha = 1.0f;
+            float alpha = 1;
+
             if (!provider.isInfiniteDuration() && provider.currentDuration() < 200) {
-                int l = 10 - provider.currentDuration() / 20;
-                alpha = Mth.clamp((float)provider.currentDuration() / 10.0F / 5.0F * 0.5F, 0.0F, 0.5F)
-                        + Mth.cos((float)provider.currentDuration() * (float) Math.PI / 5.0F) * Mth.clamp((float)l / 10.0F * 0.25F, 0.0F, 0.25F);
+                int duration = (int) (10 - Functions.ticksToSeconds(provider.currentDuration()));
+
+                alpha = Mth.clamp((float) provider.currentDuration() / 10 / 5 * 0.5f, 0, 0.5f)
+                        + Mth.cos((float) provider.currentDuration() * (float) Math.PI / 5) * Mth.clamp((float) duration / 10 * 0.25f, 0, 0.25f);
             }
 
-            guiGraphics.setColor(1.0F, 1.0F, 1.0F, alpha);
-            guiGraphics.blit(provider.clientData().texture(), xPos + 3, yPos + 3, 0, 0, 0, 18, 18, 18, 18);
-            guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+            graphics.setColor(1, 1, 1, alpha);
+            graphics.blit(provider.clientData().texture(), xPos + 3, yPos + 3, 0, 0, 0, 18, 18, 18, 18);
+            graphics.setColor(1, 1, 1, 1);
         }
     }
 }

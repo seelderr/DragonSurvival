@@ -33,6 +33,7 @@ public abstract class DurationInstance<B> implements ClientEffectProvider, Stora
         );
     }
 
+    /** @return Whether the duration has reached its end or not */
     public boolean tick() {
         if (currentDuration == INFINITE_DURATION) {
             return false;
@@ -59,4 +60,7 @@ public abstract class DurationInstance<B> implements ClientEffectProvider, Stora
     public int appliedAbilityLevel() {
         return appliedAbilityLevel;
     }
+
+    @Override
+    abstract public int getDuration();
 }

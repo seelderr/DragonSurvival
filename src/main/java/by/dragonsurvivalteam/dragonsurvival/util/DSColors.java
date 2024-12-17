@@ -4,6 +4,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
 public class DSColors {
+    public static int WHITE = 16777215;
     public static int ORANGE = -219136;
     public static int LIGHT_GRAY = -5592406;
     /** {@link net.minecraft.ChatFormatting#BLUE} */

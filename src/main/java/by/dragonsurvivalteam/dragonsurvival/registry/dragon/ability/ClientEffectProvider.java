@@ -31,11 +31,13 @@ public interface ClientEffectProvider {
         return getDuration() == DurationInstance.INFINITE_DURATION;
     }
 
+    default boolean isInvisible() {
+        return false;
+    }
+
     ClientData clientData();
     ResourceLocation id();
 
     int getDuration();
     int currentDuration();
-
-    boolean isVisible();
 }
