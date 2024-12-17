@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability;
 
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.DurationInstance;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.UUIDUtil;
@@ -26,12 +27,15 @@ public interface ClientEffectProvider {
     ResourceLocation MISSING_TEXTURE = ResourceLocation.withDefaultNamespace("missingno");
     ClientData NONE = new ClientData(MISSING_TEXTURE, Component.empty(), Optional.empty());
 
+    default boolean isInfiniteDuration() {
+        return getDuration() == DurationInstance.INFINITE_DURATION;
+    }
+
     ClientData clientData();
+    ResourceLocation id();
+
     int getDuration();
     int currentDuration();
-    ResourceLocation getId();
+
     boolean isVisible();
-    default boolean isInfiniteDuration() {
-        return getDuration() == -1;
-    }
 }

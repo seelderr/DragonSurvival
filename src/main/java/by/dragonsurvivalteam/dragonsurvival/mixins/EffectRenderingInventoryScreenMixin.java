@@ -77,7 +77,7 @@ public class EffectRenderingInventoryScreenMixin {
         int topPos = ((AbstractContainerScreenAccessor)self).dragonSurvival$getTopPos() + initialYOffset;
 
         for (ClientEffectProvider provider : providers) {
-            Component name = Component.translatable(Translation.Type.MODIFIER.wrap(provider.getId().getPath()));
+            Component name = Component.translatable(Translation.Type.MODIFIER.wrap(provider.id().getPath()));
             graphics.drawString(((ScreenAccessor)self).dragonSurvival$getFont(), name, renderX + 10 + 18, topPos+ 6, /* ChatFormatting.WHITE */ 16777215);
             Component duration = dragonSurvival$formatDuration(provider, Minecraft.getInstance().level.tickRateManager().tickrate());
             graphics.drawString(((ScreenAccessor)self).dragonSurvival$getFont(), duration, renderX + 10 + 18, topPos + 6 + 10, 8355711);
@@ -156,7 +156,7 @@ public class EffectRenderingInventoryScreenMixin {
                 if (hoveredProvider != null) {
                     List<Component> list = new ArrayList<>();
                     if(isCompact) {
-                        list.add(Component.translatable(Translation.Type.MODIFIER.wrap(hoveredProvider.getId().getPath())));
+                        list.add(Component.translatable(Translation.Type.MODIFIER.wrap(hoveredProvider.id().getPath())));
                         list.add(dragonSurvival$formatDuration(hoveredProvider, Minecraft.getInstance().level.tickRateManager().tickrate()));
                     }
 

@@ -4,7 +4,6 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.network.modifiers.SyncModifierWithDuration;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachments;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.ModifiersWithDuration;
-import by.dragonsurvivalteam.dragonsurvival.registry.attachments.StorageEntry;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.AttributeModifierSupplier;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.ClientEffectProvider;
@@ -34,14 +33,13 @@ import java.util.*;
 import javax.annotation.Nullable;
 
 public record ModifierWithDuration(ResourceLocation id, ResourceLocation icon, List<Modifier> modifiers, LevelBasedValue duration, boolean isHidden) {
-    public static final int INFINITE_DURATION = -1;
     public static final ResourceLocation DEFAULT_MODIFIER_ICON = ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/modifiers/default_modifier.png");
 
     public static final Codec<ModifierWithDuration> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ResourceLocation.CODEC.fieldOf("id").forGetter(ModifierWithDuration::id),
             ResourceLocation.CODEC.optionalFieldOf("icon", DEFAULT_MODIFIER_ICON).forGetter(ModifierWithDuration::icon),
             Modifier.CODEC.listOf().fieldOf("modifiers").forGetter(ModifierWithDuration::modifiers),
-            LevelBasedValue.CODEC.optionalFieldOf("duration", LevelBasedValue.constant(INFINITE_DURATION)).forGetter(ModifierWithDuration::duration),
+            LevelBasedValue.CODEC.optionalFieldOf("duration", LevelBasedValue.constant(DurationInstance.INFINITE_DURATION)).forGetter(ModifierWithDuration::duration),
             Codec.BOOL.optionalFieldOf("is_hidden", false).forGetter(ModifierWithDuration::isHidden)
     ).apply(instance, ModifierWithDuration::new));
 
@@ -61,7 +59,7 @@ public record ModifierWithDuration(ResourceLocation id, ResourceLocation icon, L
         }
 
         ClientEffectProvider.ClientData clientData = new ClientEffectProvider.ClientData(icon, /* TODO */ Component.empty(), Optional.of(dragon.getUUID()));
-        instance = new ModifierWithDuration.Instance(this, new HashMap<>(), clientData, abilityLevel, newDuration);
+        instance = new ModifierWithDuration.Instance(this, clientData, abilityLevel, newDuration, new HashMap<>());
         data.add(target, instance);
 
         if (target instanceof ServerPlayer serverPlayer) {
@@ -83,35 +81,24 @@ public record ModifierWithDuration(ResourceLocation id, ResourceLocation icon, L
         }
     }
 
-    public static class Instance implements AttributeModifierSupplier, ClientEffectProvider, StorageEntry {
-        public static final Codec<Instance> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                ModifierWithDuration.CODEC.fieldOf("base_data").forGetter(Instance::baseData),
-                Codec.compoundList(BuiltInRegistries.ATTRIBUTE.holderByNameCodec(), ResourceLocation.CODEC.listOf()).xmap(pairs -> {
-                    Map<Holder<Attribute>, List<ResourceLocation>> ids = new HashMap<>();
-                    pairs.forEach(pair -> pair.getSecond().forEach(id -> ids.computeIfAbsent(pair.getFirst(), key -> new ArrayList<>()).add(id)));
-                    return ids;
-                }, ids -> {
-                    List<Pair<Holder<Attribute>, List<ResourceLocation>>> pairs = new ArrayList<>();
-                    ids.forEach((attribute, value) -> pairs.add(new Pair<>(attribute, value)));
-                    return pairs;
-                }).fieldOf("ids").forGetter(Instance::getStoredIds),
-                ClientData.CODEC.fieldOf("client_data").forGetter(Instance::clientData),
-                Codec.INT.fieldOf("applied_ability_level").forGetter(Instance::appliedAbilityLevel),
-                Codec.INT.fieldOf("current_duration").forGetter(Instance::currentDuration)
-        ).apply(instance, Instance::new));
+    public static class Instance extends DurationInstance<ModifierWithDuration> implements AttributeModifierSupplier {
+        public static final Codec<Instance> CODEC = RecordCodecBuilder.create(instance -> DurationInstance.codecStart(instance, () -> ModifierWithDuration.CODEC)
+                .and(Codec.compoundList(BuiltInRegistries.ATTRIBUTE.holderByNameCodec(), ResourceLocation.CODEC.listOf()).xmap(pairs -> {
+                            Map<Holder<Attribute>, List<ResourceLocation>> ids = new HashMap<>();
+                            pairs.forEach(pair -> pair.getSecond().forEach(id -> ids.computeIfAbsent(pair.getFirst(), key -> new ArrayList<>()).add(id)));
+                            return ids;
+                        }, ids -> {
+                            List<Pair<Holder<Attribute>, List<ResourceLocation>>> pairs = new ArrayList<>();
+                            ids.forEach((attribute, value) -> pairs.add(new Pair<>(attribute, value)));
+                            return pairs;
+                        }).fieldOf("ids").forGetter(Instance::getStoredIds)
+                ).apply(instance, Instance::new));
 
-        private final ModifierWithDuration baseData;
         private final Map<Holder<Attribute>, List<ResourceLocation>> ids;
-        private final ClientData clientData;
-        private final int appliedAbilityLevel;
-        private int currentDuration;
 
-        public Instance(final ModifierWithDuration baseData, final Map<Holder<Attribute>, List<ResourceLocation>> ids, final ClientData clientData, int appliedAbilityLevel, int currentDuration) {
-            this.baseData = baseData;
+        public Instance(final ModifierWithDuration baseData, final ClientData clientData, int appliedAbilityLevel, int currentDuration, final Map<Holder<Attribute>, List<ResourceLocation>> ids) {
+            super(baseData, clientData, appliedAbilityLevel, currentDuration);
             this.ids = ids;
-            this.clientData = clientData;
-            this.appliedAbilityLevel = appliedAbilityLevel;
-            this.currentDuration = currentDuration;
         }
 
         public Tag save(@NotNull final HolderLookup.Provider provider) {
@@ -123,17 +110,7 @@ public record ModifierWithDuration(ResourceLocation id, ResourceLocation icon, L
         }
 
         @Override
-        public boolean tick() {
-            if (currentDuration == INFINITE_DURATION) {
-                return false;
-            }
-
-            currentDuration--;
-            return currentDuration == 0;
-        }
-
-        @Override
-        public void apply(final Entity entity) {
+        public void onAddedToStorage(final Entity entity) {
             if (!(entity instanceof LivingEntity livingEntity)) {
                 return;
             }
@@ -144,33 +121,16 @@ public record ModifierWithDuration(ResourceLocation id, ResourceLocation icon, L
                 type = DragonUtils.getType(player);
             }
 
-            applyModifiers(livingEntity, type, appliedAbilityLevel);
+            applyModifiers(livingEntity, type, appliedAbilityLevel());
         }
 
         @Override
-        public void remove(final Entity entity) {
+        public void onRemovalFromStorage(final Entity entity) {
             if (!(entity instanceof LivingEntity livingEntity)) {
                 return;
             }
 
             removeModifiers(livingEntity);
-        }
-
-        public ModifierWithDuration baseData() {
-            return baseData;
-        }
-
-        public int appliedAbilityLevel() {
-            return appliedAbilityLevel;
-        }
-
-        public int currentDuration() {
-            return currentDuration;
-        }
-
-        @Override
-        public ClientData clientData() {
-            return clientData;
         }
 
         @Override
@@ -199,7 +159,7 @@ public record ModifierWithDuration(ResourceLocation id, ResourceLocation icon, L
         }
 
         @Override
-        public ResourceLocation getId() {
+        public ResourceLocation id() {
             return baseData().id();
         }
 

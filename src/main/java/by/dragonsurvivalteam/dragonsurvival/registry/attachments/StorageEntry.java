@@ -4,9 +4,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 
 public interface StorageEntry {
-    default void apply(final Entity entity) { /* Nothing to do */ }
-    default void remove(final Entity entity) { /* Nothing to do */ }
+    default void onAddedToStorage(final Entity entity) { /* Nothing to do */ }
+    default void onRemovalFromStorage(final Entity entity) { /* Nothing to do */ }
 
     boolean tick();
-    ResourceLocation getId();
+    ResourceLocation id();
 }

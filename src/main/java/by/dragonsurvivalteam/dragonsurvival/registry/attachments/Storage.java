@@ -23,7 +23,7 @@ public abstract class Storage<T extends StorageEntry> implements INBTSerializabl
 
             storage.values().forEach(entry -> {
                 if (entry.tick()) {
-                    finished.add(entry.getId());
+                    finished.add(entry.id());
                 }
             });
 
@@ -36,8 +36,8 @@ public abstract class Storage<T extends StorageEntry> implements INBTSerializabl
             storage = new HashMap<>();
         }
 
-        storage.put(entry.getId(), entry);
-        entry.apply(entity);
+        storage.put(entry.id(), entry);
+        entry.onAddedToStorage(entity);
     }
 
     public void remove(final Entity entity, final T entry) {
@@ -45,8 +45,8 @@ public abstract class Storage<T extends StorageEntry> implements INBTSerializabl
             return;
         }
 
-        storage.remove(entry.getId());
-        entry.remove(entity);
+        storage.remove(entry.id());
+        entry.onRemovalFromStorage(entity);
     }
 
     public @Nullable T get(final ResourceLocation id) {
@@ -105,7 +105,7 @@ public abstract class Storage<T extends StorageEntry> implements INBTSerializabl
             T entry = load(provider, entries.getCompound(i));
 
             if (entry != null) {
-                storage.put(entry.getId(), entry);
+                storage.put(entry.id(), entry);
             }
         }
 

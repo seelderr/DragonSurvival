@@ -370,7 +370,7 @@ public class CaveDragonAbilities {
                                         /* FIXME */ DragonSurvival.res("textures/modifiers/strong_leather.png"),
                                         // FIXME :: not the final value
                                         List.of(new Modifier(Attributes.MOVEMENT_SPEED, LevelBasedValue.perLevel(0.02f), AttributeModifier.Operation.ADD_VALUE, Optional.empty())),
-                                        LevelBasedValue.constant(ModifierWithDuration.INFINITE_DURATION),
+                                        LevelBasedValue.constant(DurationInstance.INFINITE_DURATION),
                                         false
                                 )), AbilityTargeting.EntityTargetingMode.TARGET_ALLIES)), true), LevelBasedValue.constant(1))),
                 new LevelBasedResource(List.of(
@@ -423,7 +423,7 @@ public class CaveDragonAbilities {
                                                         DragonSurvival.res("cave_magic"),
                                                         ModifierWithDuration.DEFAULT_MODIFIER_ICON,
                                                         List.of(new Modifier(DSAttributes.MANA, LevelBasedValue.perLevel(1), AttributeModifier.Operation.ADD_VALUE, Optional.empty())),
-                                                        LevelBasedValue.constant(ModifierWithDuration.INFINITE_DURATION),
+                                                        LevelBasedValue.constant(DurationInstance.INFINITE_DURATION),
                                                         true
                                                 )
                                         )
@@ -460,7 +460,7 @@ public class CaveDragonAbilities {
                                                         DragonSurvival.res("contrast_shower"),
                                                         ModifierWithDuration.DEFAULT_MODIFIER_ICON,
                                                         List.of(new Modifier(DSAttributes.PENALTY_RESISTANCE_TIME, LevelBasedValue.perLevel(Functions.secondsToTicks(30)), AttributeModifier.Operation.ADD_VALUE, Optional.empty())),
-                                                        LevelBasedValue.constant(ModifierWithDuration.INFINITE_DURATION),
+                                                        LevelBasedValue.constant(DurationInstance.INFINITE_DURATION),
                                                         true
                                                 )
                                         )
@@ -496,7 +496,7 @@ public class CaveDragonAbilities {
                                                         DragonSurvival.res("cave_claws_and_teeth"),
                                                         context.lookup(Registries.BLOCK).getOrThrow(DSBlockTags.CAVE_DRAGON_HARVESTABLE),
                                                         LevelBasedValue.constant(1),
-                                                        LevelBasedValue.constant(ModifierWithDuration.INFINITE_DURATION)
+                                                        LevelBasedValue.constant(DurationInstance.INFINITE_DURATION)
                                                 )
                                         )
                                 )),

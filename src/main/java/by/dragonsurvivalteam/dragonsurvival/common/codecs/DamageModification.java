@@ -3,7 +3,6 @@ package by.dragonsurvivalteam.dragonsurvival.common.codecs;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachments;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DamageModifications;
-import by.dragonsurvivalteam.dragonsurvival.registry.attachments.StorageEntry;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.ClientEffectProvider;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import com.mojang.serialization.Codec;
@@ -29,13 +28,11 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 
 public record DamageModification(ResourceLocation id, HolderSet<DamageType> damageTypes, LevelBasedValue multiplier, LevelBasedValue duration) {
-    public static final int INFINITE_DURATION = -1;
-
     public static final Codec<DamageModification> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ResourceLocation.CODEC.fieldOf("id").forGetter(DamageModification::id),
             RegistryCodecs.homogeneousList(Registries.DAMAGE_TYPE).fieldOf("types").forGetter(DamageModification::damageTypes),
             LevelBasedValue.CODEC.fieldOf("multiplier").forGetter(DamageModification::multiplier),
-            LevelBasedValue.CODEC.optionalFieldOf("duration", LevelBasedValue.constant(INFINITE_DURATION)).forGetter(DamageModification::duration)
+            LevelBasedValue.CODEC.optionalFieldOf("duration", LevelBasedValue.constant(DurationInstance.INFINITE_DURATION)).forGetter(DamageModification::duration)
     ).apply(instance, DamageModification::new));
 
     public void apply(final ServerPlayer dragon, final Entity entity, final DragonAbilityInstance ability) {
@@ -63,25 +60,11 @@ public record DamageModification(ResourceLocation id, HolderSet<DamageType> dama
         data.remove(target, data.get(id));
     }
 
-    // TODO :: these instance classes could also use a superclass that implements the client effect provider etc.
-    public static class Instance implements ClientEffectProvider, StorageEntry {
-        public static final Codec<Instance> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                DamageModification.CODEC.fieldOf("base_data").forGetter(Instance::baseData),
-                ClientData.CODEC.fieldOf("client_data").forGetter(Instance::clientData),
-                Codec.INT.fieldOf("applied_ability_level").forGetter(Instance::appliedAbilityLevel),
-                Codec.INT.fieldOf("current_duration").forGetter(Instance::currentDuration)
-        ).apply(instance, Instance::new));
-
-        private final DamageModification baseData;
-        private final ClientData clientData;
-        private final int appliedAbilityLevel;
-        private int currentDuration;
+    public static class Instance extends DurationInstance<DamageModification> {
+        public static final Codec<Instance> CODEC = RecordCodecBuilder.create(instance -> DurationInstance.codecStart(instance, () -> DamageModification.CODEC).apply(instance, Instance::new));
 
         public Instance(final DamageModification baseData, final ClientData clientData, int appliedAbilityLevel, int currentDuration) {
-            this.baseData = baseData;
-            this.currentDuration = currentDuration;
-            this.appliedAbilityLevel = appliedAbilityLevel;
-            this.clientData = clientData;
+            super(baseData, clientData, appliedAbilityLevel, currentDuration);
         }
 
         public Tag save(@NotNull final HolderLookup.Provider provider) {
@@ -90,15 +73,6 @@ public record DamageModification(ResourceLocation id, HolderSet<DamageType> dama
 
         public static @Nullable Instance load(@NotNull final HolderLookup.Provider provider, final CompoundTag nbt) {
             return CODEC.parse(provider.createSerializationContext(NbtOps.INSTANCE), nbt).resultOrPartial(DragonSurvival.LOGGER::error).orElse(null);
-        }
-
-        public boolean tick() {
-            if (currentDuration == INFINITE_DURATION) {
-                return false;
-            }
-
-            currentDuration--;
-            return currentDuration == 0;
         }
 
         public float calculate(final Holder<DamageType> damageType, float damageAmount) {
@@ -111,31 +85,14 @@ public record DamageModification(ResourceLocation id, HolderSet<DamageType> dama
             return damageAmount * modification;
         }
 
-        public DamageModification baseData() {
-            return baseData;
-        }
-
-        public int currentDuration() {
-            return currentDuration;
-        }
-
-        public int appliedAbilityLevel() {
-            return appliedAbilityLevel;
-        }
-
         @Override
-        public ClientData clientData() {
-            return clientData;
+        public ResourceLocation id() {
+            return baseData().id();
         }
 
         @Override
         public int getDuration() {
             return (int) baseData().duration().calculate(appliedAbilityLevel());
-        }
-
-        @Override
-        public ResourceLocation getId() {
-            return baseData().id();
         }
 
         @Override
