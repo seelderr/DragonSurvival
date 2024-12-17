@@ -5,14 +5,11 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Entity;
 import net.neoforged.neoforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import javax.annotation.Nullable;
 
 public abstract class Storage<T extends StorageEntry> implements INBTSerializable<CompoundTag> {
@@ -34,7 +31,7 @@ public abstract class Storage<T extends StorageEntry> implements INBTSerializabl
         }
     }
 
-    public void add(final LivingEntity entity, final T entry) {
+    public void add(final Entity entity, final T entry) {
         if (storage == null) {
             storage = new HashMap<>();
         }
@@ -43,8 +40,8 @@ public abstract class Storage<T extends StorageEntry> implements INBTSerializabl
         entry.apply(entity);
     }
 
-    public void remove(final LivingEntity entity, final T entry) {
-        if (storage == null) {
+    public void remove(final Entity entity, final T entry) {
+        if (storage == null || entry == null) {
             return;
         }
 
@@ -58,6 +55,22 @@ public abstract class Storage<T extends StorageEntry> implements INBTSerializabl
         }
 
         return storage.get(id);
+    }
+
+    public Collection<T> all() {
+        if (storage == null) {
+            return List.of();
+        }
+
+        return storage.values();
+    }
+
+    public int size() {
+        if (storage == null) {
+            return 0;
+        }
+
+        return storage.size();
     }
 
     public boolean isEmpty() {

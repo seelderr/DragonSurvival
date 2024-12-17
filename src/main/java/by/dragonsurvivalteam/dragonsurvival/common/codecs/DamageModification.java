@@ -3,11 +3,13 @@ package by.dragonsurvivalteam.dragonsurvival.common.codecs;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachments;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DamageModifications;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.StorageEntry;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.ClientEffectProvider;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;
 import net.minecraft.core.registries.Registries;
@@ -21,6 +23,7 @@ import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 import javax.annotation.Nullable;
@@ -37,7 +40,7 @@ public record DamageModification(ResourceLocation id, HolderSet<DamageType> dama
 
     public void apply(final ServerPlayer dragon, final Entity entity, final DragonAbilityInstance ability) {
         DamageModifications data = entity.getData(DSDataAttachments.DAMAGE_MODIFICATIONS);
-        Instance instance = data.get(this);
+        Instance instance = data.get(id);
 
         int abilityLevel = ability.level();
         int newDuration = (int) duration().calculate(abilityLevel);
@@ -46,19 +49,22 @@ public record DamageModification(ResourceLocation id, HolderSet<DamageType> dama
             return;
         }
 
-        data.remove(entity, this);
+        data.remove(entity, instance);
 
         ClientEffectProvider.ClientData clientData = new ClientEffectProvider.ClientData(ability.getIcon(), /* TODO */ Component.empty(), Optional.of(dragon.getUUID()));
-        data.add(new Instance(this, clientData, abilityLevel, newDuration));
+        instance = new Instance(this, clientData, abilityLevel, newDuration);
+        data.add(entity, instance);
+
         // TODO :: send packet to client
     }
 
     public void remove(final LivingEntity target) {
         DamageModifications data = target.getData(DSDataAttachments.DAMAGE_MODIFICATIONS);
-        data.remove(target, this);
+        data.remove(target, data.get(id));
     }
 
-    public static class Instance implements ClientEffectProvider {
+    // TODO :: these instance classes could also use a superclass that implements the client effect provider etc.
+    public static class Instance implements ClientEffectProvider, StorageEntry {
         public static final Codec<Instance> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 DamageModification.CODEC.fieldOf("base_data").forGetter(Instance::baseData),
                 ClientData.CODEC.fieldOf("client_data").forGetter(Instance::clientData),
@@ -78,12 +84,12 @@ public record DamageModification(ResourceLocation id, HolderSet<DamageType> dama
             this.clientData = clientData;
         }
 
-        public Tag save() {
-            return CODEC.encodeStart(NbtOps.INSTANCE, this).getOrThrow();
+        public Tag save(@NotNull final HolderLookup.Provider provider) {
+            return CODEC.encodeStart(provider.createSerializationContext(NbtOps.INSTANCE), this).getOrThrow();
         }
 
-        public static @Nullable Instance load(final CompoundTag nbt) {
-            return CODEC.parse(NbtOps.INSTANCE, nbt).resultOrPartial(DragonSurvival.LOGGER::error).orElse(null);
+        public static @Nullable Instance load(@NotNull final HolderLookup.Provider provider, final CompoundTag nbt) {
+            return CODEC.parse(provider.createSerializationContext(NbtOps.INSTANCE), nbt).resultOrPartial(DragonSurvival.LOGGER::error).orElse(null);
         }
 
         public boolean tick() {

@@ -29,7 +29,7 @@ public interface AttributeModifierSupplier {
         }));
     }
 
-    default void applyModifiers(final LivingEntity entity, final Holder<DragonType> dragonType, double level) {
+    default void applyModifiers(final LivingEntity entity, @Nullable final Holder<DragonType> dragonType, double level) {
         modifiers().forEach(modifier -> {
             AttributeInstance instance = entity.getAttribute(modifier.attribute());
             applyModifier(modifier, instance, dragonType, level);
@@ -57,8 +57,8 @@ public interface AttributeModifierSupplier {
         return instance.getValue();
     }
 
-    private void applyModifier(final Modifier modifier, @Nullable final AttributeInstance instance, final Holder<DragonType> dragonType, double level) {
-        if (instance == null || modifier.dragonType().isPresent() && !dragonType.is(modifier.dragonType().get())) {
+    private void applyModifier(final Modifier modifier, @Nullable final AttributeInstance instance, @Nullable final Holder<DragonType> dragonType, double level) {
+        if (instance == null || modifier.dragonType().isPresent() && (dragonType == null || !dragonType.is(modifier.dragonType().get()))) {
             return;
         }
 

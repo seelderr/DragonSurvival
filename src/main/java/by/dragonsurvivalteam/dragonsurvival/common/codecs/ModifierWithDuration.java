@@ -4,9 +4,12 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.network.modifiers.SyncModifierWithDuration;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachments;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.ModifiersWithDuration;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.StorageEntry;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.AttributeModifierSupplier;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.ClientEffectProvider;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -19,8 +22,10 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
@@ -45,7 +50,7 @@ public record ModifierWithDuration(ResourceLocation id, ResourceLocation icon, L
         int newDuration = (int) duration().calculate(abilityLevel);
 
         ModifiersWithDuration data = target.getData(DSDataAttachments.MODIFIERS_WITH_DURATION);
-        Instance instance = data.get(this);
+        Instance instance = data.get(id);
 
         if (instance != null && instance.currentDuration() == newDuration && instance.appliedAbilityLevel() == abilityLevel) {
             return;
@@ -56,28 +61,29 @@ public record ModifierWithDuration(ResourceLocation id, ResourceLocation icon, L
         }
 
         ClientEffectProvider.ClientData clientData = new ClientEffectProvider.ClientData(icon, /* TODO */ Component.empty(), Optional.of(dragon.getUUID()));
-        Instance newModifier = new ModifierWithDuration.Instance(this, new HashMap<>(), clientData, abilityLevel, newDuration);
-        data.add(target, newModifier);
+        instance = new ModifierWithDuration.Instance(this, new HashMap<>(), clientData, abilityLevel, newDuration);
+        data.add(target, instance);
 
         if (target instanceof ServerPlayer serverPlayer) {
             // TODO :: just sync client data in one generic packet so it can be re-used?
-            PacketDistributor.sendToPlayer(serverPlayer, new SyncModifierWithDuration(serverPlayer.getId(), newModifier, false));
+            PacketDistributor.sendToPlayer(serverPlayer, new SyncModifierWithDuration(serverPlayer.getId(), instance, false));
         }
     }
 
     public void remove(final LivingEntity target) {
         ModifiersWithDuration data = target.getData(DSDataAttachments.MODIFIERS_WITH_DURATION);
-        Instance instance = data.get(this);
+        Instance instance = data.get(id);
 
         if (instance != null) {
             data.remove(target, instance);
+
             if (target instanceof ServerPlayer serverPlayer) {
                 PacketDistributor.sendToPlayer(serverPlayer, new SyncModifierWithDuration(serverPlayer.getId(), instance, true));
             }
         }
     }
 
-    public static class Instance implements AttributeModifierSupplier, ClientEffectProvider {
+    public static class Instance implements AttributeModifierSupplier, ClientEffectProvider, StorageEntry {
         public static final Codec<Instance> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 ModifierWithDuration.CODEC.fieldOf("base_data").forGetter(Instance::baseData),
                 Codec.compoundList(BuiltInRegistries.ATTRIBUTE.holderByNameCodec(), ResourceLocation.CODEC.listOf()).xmap(pairs -> {
@@ -116,6 +122,7 @@ public record ModifierWithDuration(ResourceLocation id, ResourceLocation icon, L
             return CODEC.parse(provider.createSerializationContext(NbtOps.INSTANCE), nbt).resultOrPartial(DragonSurvival.LOGGER::error).orElse(null);
         }
 
+        @Override
         public boolean tick() {
             if (currentDuration == INFINITE_DURATION) {
                 return false;
@@ -123,6 +130,30 @@ public record ModifierWithDuration(ResourceLocation id, ResourceLocation icon, L
 
             currentDuration--;
             return currentDuration == 0;
+        }
+
+        @Override
+        public void apply(final Entity entity) {
+            if (!(entity instanceof LivingEntity livingEntity)) {
+                return;
+            }
+
+            Holder<DragonType> type = null;
+
+            if (entity instanceof Player player) {
+                type = DragonUtils.getType(player);
+            }
+
+            applyModifiers(livingEntity, type, appliedAbilityLevel);
+        }
+
+        @Override
+        public void remove(final Entity entity) {
+            if (!(entity instanceof LivingEntity livingEntity)) {
+                return;
+            }
+
+            removeModifiers(livingEntity);
         }
 
         public ModifierWithDuration baseData() {

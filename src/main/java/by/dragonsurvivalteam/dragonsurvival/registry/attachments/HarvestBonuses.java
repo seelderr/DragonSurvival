@@ -12,6 +12,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import org.jetbrains.annotations.NotNull;
 
+
 public class HarvestBonuses extends Storage<HarvestBonus.Instance> {
     public int get(final BlockState state) {
         if (storage == null) {
