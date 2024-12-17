@@ -1,8 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins;
 
-import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachments;
-import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DamageModifications;
-import by.dragonsurvivalteam.dragonsurvival.registry.attachments.ModifiersWithDuration;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.ClientEffectProvider;
 import by.dragonsurvivalteam.dragonsurvival.util.DSColors;
@@ -30,17 +27,12 @@ import java.util.*;
 
 @Mixin(EffectRenderingInventoryScreen.class)
 public class EffectRenderingInventoryScreenMixin {
-    @Unique private final List<ClientEffectProvider> dragonSurvival$providers = new ArrayList<>();
+    @Unique private List<ClientEffectProvider> dragonSurvival$providers = List.of();
     @Unique private List<Rect2i> dragonSurvival$areasBlockedByModifierUIForJEI = new ArrayList<>();
 
     @Inject(method = "renderEffects", at = @At("HEAD"))
-    private void dragonSurvival$collectEffects(final GuiGraphics graphics, int mouseX, int mouseY, final CallbackInfo callback) {
-        LocalPlayer player = Objects.requireNonNull(Minecraft.getInstance().player);
-        dragonSurvival$providers.clear();
-
-        dragonSurvival$providers.addAll(player.getExistingData(DSDataAttachments.MODIFIERS_WITH_DURATION).map(ModifiersWithDuration::all).orElse(List.of()));
-        dragonSurvival$providers.addAll(player.getExistingData(DSDataAttachments.DAMAGE_MODIFICATIONS).map(DamageModifications::all).orElse(List.of()));
-        dragonSurvival$providers.removeIf(ClientEffectProvider::isInvisible);
+    private void dragonSurvival$storeProviders(final GuiGraphics graphics, int mouseX, int mouseY, final CallbackInfo callback) {
+        dragonSurvival$providers = ClientEffectProvider.getProviders();
     }
 
     @ModifyExpressionValue(method = "renderEffects", at = @At(value = "INVOKE", target = "Ljava/util/Collection;size()I"))

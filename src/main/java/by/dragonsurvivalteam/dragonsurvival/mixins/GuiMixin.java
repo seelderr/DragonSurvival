@@ -1,8 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins;
 
-import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachments;
-import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DamageModifications;
-import by.dragonsurvivalteam.dragonsurvival.registry.attachments.ModifiersWithDuration;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.ClientEffectProvider;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
@@ -11,7 +8,6 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.util.Mth;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -19,28 +15,20 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Mixin(Gui.class)
 public class GuiMixin {
-    @Unique private final List<ClientEffectProvider> dragonSurvival$providers = new ArrayList<>();
+    @Unique private List<ClientEffectProvider> dragonSurvival$providers = List.of();
+
+    @Inject(method = "renderEffects", at = @At("HEAD"))
+    private void dragonSurvival$storeProviders(final GuiGraphics graphics, final DeltaTracker deltaTracker, final CallbackInfo callback) {
+        dragonSurvival$providers = ClientEffectProvider.getProviders();
+    }
 
     @ModifyExpressionValue(method = "renderEffects", at = @At(value = "INVOKE", target = "Ljava/util/Collection;isEmpty()Z"))
     private boolean dragonSurvival$considerClientEffectsForIsEmpty(boolean isEmpty) {
-        if (!isEmpty) {
-            return false;
-        }
-
-        LocalPlayer player = Objects.requireNonNull(Minecraft.getInstance().player);
-        dragonSurvival$providers.clear();
-
-        dragonSurvival$providers.addAll(player.getExistingData(DSDataAttachments.MODIFIERS_WITH_DURATION).map(ModifiersWithDuration::all).orElse(List.of()));
-        dragonSurvival$providers.addAll(player.getExistingData(DSDataAttachments.DAMAGE_MODIFICATIONS).map(DamageModifications::all).orElse(List.of()));
-        dragonSurvival$providers.removeIf(ClientEffectProvider::isInvisible);
-
-        return dragonSurvival$providers.isEmpty();
+        return isEmpty && dragonSurvival$providers.isEmpty();
     }
 
     // TODO :: Do we care to determine if effects are beneficial or not? In this UI vanilla puts harmful effects below beneficial ones instead of beside them
