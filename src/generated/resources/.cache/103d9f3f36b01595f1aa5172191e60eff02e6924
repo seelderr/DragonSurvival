@@ -1,4 +1,4 @@
-// 1.21.1	2024-12-19T21:20:41.6698771	Registries
+// 1.21.1	2024-12-20T01:25:59.7119351	Registries
 011b2ee382ec961722c100bbf059b4aa460f44b0 data/dragonsurvival/damage_type/anti_dragon.json
 afb20257741b4a8be55ecf8e013125f113a9d486 data/dragonsurvival/damage_type/cave_dragon_breath.json
 7a732909707be826e322901b5c204e548e48a12b data/dragonsurvival/damage_type/cave_dragon_burn.json
@@ -21,7 +21,7 @@ c1350863dced47dee2da214e1313068277a666bd data/dragonsurvival/dragonsurvival/drag
 7c34ce0795ba81da9ff0c04a1f64f212c5fe424f data/dragonsurvival/dragonsurvival/dragon_abilities/cave_wings.json
 667310659e1d1a3054b0c41ec604450c0f89712b data/dragonsurvival/dragonsurvival/dragon_abilities/contrast_shower.json
 761b9ae9ff2d4ef73527a5008f74c30b46e7b605 data/dragonsurvival/dragonsurvival/dragon_abilities/fire_ball.json
-ec6686ed5fae4965bb4fdeab1d44b1f71d6a166b data/dragonsurvival/dragonsurvival/dragon_abilities/fire_immunity.json
+73e7c5dc545ab3be9bc9ed55852e81eea9ec5b45 data/dragonsurvival/dragonsurvival/dragon_abilities/fire_immunity.json
 6bfcac34b1a6fd2489cdefb6eac074f6ed5e2097 data/dragonsurvival/dragonsurvival/dragon_abilities/forest_spike.json
 94477c04c2cd206569a69bd2a4d1023edd1e42c8 data/dragonsurvival/dragonsurvival/dragon_abilities/lava_vision.json
 d293b57dec0aa68538d136a45f686b84c08bb658 data/dragonsurvival/dragonsurvival/dragon_abilities/nether_breath.json

@@ -2,9 +2,8 @@ package by.dragonsurvivalteam.dragonsurvival.mixins;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.DragonBonusConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachments;
-import by.dragonsurvivalteam.dragonsurvival.registry.attachments.Immunities;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DamageModifications;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MovementData;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSEntityTypeTags;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonTypes;
@@ -141,7 +140,7 @@ public abstract class EntityMixin {
             return true;
         }
 
-        return Immunities.getData((Entity) (Object) this).isFireImmune();
+        return DamageModifications.getData((Entity) (Object) this).isFireImmune();
     }
 
     @Shadow public abstract double getX();

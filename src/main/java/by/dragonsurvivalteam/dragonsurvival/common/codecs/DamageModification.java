@@ -1,10 +1,12 @@
 package by.dragonsurvivalteam.dragonsurvival.common.codecs;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
+import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncDamageModification;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachments;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DamageModifications;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.ClientEffectProvider;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
+import com.jcraft.jogg.Packet;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
@@ -19,9 +21,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -52,12 +56,22 @@ public record DamageModification(ResourceLocation id, HolderSet<DamageType> dama
         instance = new Instance(this, clientData, abilityLevel, newDuration);
         data.add(entity, instance);
 
-        // TODO :: send packet to client
+        if(entity instanceof ServerPlayer player) {
+            PacketDistributor.sendToPlayer(player, new SyncDamageModification(player.getId(), instance, false));
+        }
     }
 
     public void remove(final LivingEntity target) {
         DamageModifications data = target.getData(DSDataAttachments.DAMAGE_MODIFICATIONS);
+        if(target instanceof ServerPlayer player) {
+            PacketDistributor.sendToPlayer(player, new SyncDamageModification(player.getId(), data.get(id), true));
+        }
+
         data.remove(target, data.get(id));
+    }
+
+    public boolean isFireImmune(int appliedAbilityLevel) {
+        return damageTypes().stream().anyMatch(type -> type.is(DamageTypes.ON_FIRE) || type.is(DamageTypes.IN_FIRE) || type.is(DamageTypes.LAVA) && multiplier().calculate(appliedAbilityLevel) == 0);
     }
 
     public static class Instance extends DurationInstance<DamageModification> {
@@ -93,6 +107,15 @@ public record DamageModification(ResourceLocation id, HolderSet<DamageType> dama
         @Override
         public int getDuration() {
             return (int) baseData().duration().calculate(appliedAbilityLevel());
+        }
+
+        @Override
+        public boolean isInvisible() {
+            return true;
+        }
+
+        public boolean isFireImmune() {
+            return baseData().isFireImmune(appliedAbilityLevel());
         }
     }
 }

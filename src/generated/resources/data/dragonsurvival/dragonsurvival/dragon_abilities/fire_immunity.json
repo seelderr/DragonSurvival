@@ -5,19 +5,16 @@
         "applied_effects": {
           "entity_effect": [
             {
-              "effect_type": "dragonsurvival:immunity",
-              "immunities": [
+              "effect_type": "dragonsurvival:damage_modification",
+              "modifications": [
                 {
-                  "id": "dragonsurvival:fire_damage_immunity",
-                  "immunities_or_fire_immune": [
+                  "id": "dragonsurvival:fire_immunity",
+                  "multiplier": 0.0,
+                  "types": [
                     "minecraft:lava",
                     "minecraft:in_fire",
                     "minecraft:on_fire"
                   ]
-                },
-                {
-                  "id": "dragonsurvival:fire_immunity",
-                  "immunities_or_fire_immune": true
                 }
               ]
             }

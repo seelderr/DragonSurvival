@@ -52,7 +52,6 @@ public interface AbilityEntityEffect {
             event.register(REGISTRY_KEY, DragonSurvival.res("ignite"), () -> IgniteEffect.CODEC);
             event.register(REGISTRY_KEY, DragonSurvival.res("harvest_bonus"), () -> HarvestBonusEffect.CODEC);
             event.register(REGISTRY_KEY, DragonSurvival.res("on_attack"), () -> OnAttackEffect.CODEC);
-            event.register(REGISTRY_KEY, DragonSurvival.res("immunity"), () -> ImmunityEffect.CODEC);
         }
     }
 }

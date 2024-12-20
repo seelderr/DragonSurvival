@@ -6,6 +6,9 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.entity.EntityInvulnerabilityCheckEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
@@ -14,6 +17,18 @@ import org.jetbrains.annotations.NotNull;
 
 
 public class DamageModifications extends Storage<DamageModification.Instance> {
+    public static DamageModifications getData(final Entity entity) {
+        return entity.getData(DSDataAttachments.DAMAGE_MODIFICATIONS);
+    }
+
+    public boolean isFireImmune() {
+        if(storage == null) {
+            return false;
+        }
+
+        return storage.values().stream().anyMatch(DamageModification.Instance::isFireImmune);
+    }
+
     public float calculate(final Holder<DamageType> damageType, float damageAmount) {
         if (storage == null) {
             return damageAmount;

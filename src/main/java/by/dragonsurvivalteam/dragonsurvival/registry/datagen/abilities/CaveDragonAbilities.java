@@ -516,16 +516,12 @@ public class CaveDragonAbilities {
                                 Either.right(
                                         new AbilityTargeting.EntityTargeting(
                                                 Optional.empty(),
-                                                List.of(new ImmunityEffect(
+                                                List.of(new DamageModificationEffect(
                                                         List.of(
-                                                                new Immunity(
-                                                                        DragonSurvival.res("fire_damage_immunity"),
-                                                                        Either.left(HolderSet.direct(context.lookup(Registries.DAMAGE_TYPE).getOrThrow(DamageTypes.LAVA), context.lookup(Registries.DAMAGE_TYPE).getOrThrow(DamageTypes.IN_FIRE), context.lookup(Registries.DAMAGE_TYPE).getOrThrow(DamageTypes.ON_FIRE))),
-                                                                        LevelBasedValue.constant(DurationInstance.INFINITE_DURATION)
-                                                                ),
-                                                                new Immunity(
+                                                                new DamageModification(
                                                                         DragonSurvival.res("fire_immunity"),
-                                                                        Either.right(true),
+                                                                        HolderSet.direct(context.lookup(Registries.DAMAGE_TYPE).getOrThrow(DamageTypes.LAVA), context.lookup(Registries.DAMAGE_TYPE).getOrThrow(DamageTypes.IN_FIRE), context.lookup(Registries.DAMAGE_TYPE).getOrThrow(DamageTypes.ON_FIRE)),
+                                                                        LevelBasedValue.constant(0),
                                                                         LevelBasedValue.constant(DurationInstance.INFINITE_DURATION)
                                                                 )
                                                         )
