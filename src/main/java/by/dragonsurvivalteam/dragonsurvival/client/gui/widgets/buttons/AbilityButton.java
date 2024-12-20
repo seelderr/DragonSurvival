@@ -206,7 +206,7 @@ public class AbilityButton extends Button {
             guiGraphics.blit(ACTIVE_BACKGROUND, getX() - 2, getY() - 2, 0, 0, ORNAMENTATION_SIZE, ORNAMENTATION_SIZE, ORNAMENTATION_SIZE, ORNAMENTATION_SIZE);
         }
 
-        if (ability.ability().value().upgrade().map(Upgrade::type).orElse(null) == Upgrade.Type.PASSIVE) {
+        if (!ability.isManuallyUpgraded()) {
             guiGraphics.blit(AUTOUPGRADE_ORNAMENTATION, getX() - 2, getY() - 2, 0, 0, ORNAMENTATION_SIZE, ORNAMENTATION_SIZE, ORNAMENTATION_SIZE, ORNAMENTATION_SIZE);
         }
 

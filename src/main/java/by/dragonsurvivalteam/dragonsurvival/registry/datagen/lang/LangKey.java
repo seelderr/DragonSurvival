@@ -29,7 +29,10 @@ public class LangKey {
     // --- Ability effects --- //
 
     @Translation(type = Translation.Type.MISC, comments = "Next level will be unlocked at experience level %s")
-    public static final String ABILITY_AUTO_UPGRADE = Translation.Type.ABILITY.wrap("general.ability_auto_upgrade");
+    public static final String ABILITY_LEVEL_AUTO_UPGRADE = Translation.Type.ABILITY.wrap("general.ability_level_auto_upgrade");
+
+    @Translation(type = Translation.Type.MISC, comments = "Next level will be unlocked at size %s")
+    public static final String ABILITY_GROWTH_AUTO_UPGRADE = Translation.Type.ABILITY.wrap("general.ability_growth_auto_upgrade");
 
     @Translation(type = Translation.Type.MISC, comments = "self")
     public static final String ABILITY_TARGET_SELF = Translation.Type.ABILITY.wrap("general.ability_target_self");
@@ -70,17 +73,8 @@ public class LangKey {
     @Translation(type = Translation.Type.MISC, comments = "§6■%s§6Explosion Power:§r %s")
     public static final String ABILITY_EXPLOSION_POWER = Translation.Type.ABILITY.wrap("general.explosion_power");
 
-    //@Translation(type = Translation.Type.MISC, comments = "§6■ Range:§r %s blocks")
-    //public static final String ABILITY_RANGE = Translation.Type.ABILITY.wrap("general.range_blocks");
-
-    //@Translation(type = Translation.Type.MISC, comments = "§6■ Radius:§r %s")
-   // public static final String ABILITY_AOE = Translation.Type.ABILITY.wrap("general.aoe");
-
     @Translation(type = Translation.Type.MISC, comments = "§6■ Cooldown:§r %ss")
     public static final String ABILITY_COOLDOWN = Translation.Type.ABILITY.wrap("general.cooldown");
-
-    @Translation(type = Translation.Type.MISC, comments = "§6■ Chance: §c%s%%§r")
-    public static final String ABILITY_CHANCE = Translation.Type.ABILITY.wrap("general.chance");
 
     @Translation(type = Translation.Type.MISC, comments = "§6■ Initial mana cost:§r %s")
     public static final String ABILITY_INITIAL_MANA_COST = Translation.Type.ABILITY.wrap("general.initial_mana_cost");
@@ -97,8 +91,14 @@ public class LangKey {
     @Translation(type = Translation.Type.MISC, comments = " with a %s chance")
     public static final String ABILITY_EFFECT_CHANCE = Translation.Type.ABILITY.wrap("general.effect_chance");
 
-    @Translation(type = Translation.Type.MISC, comments = "§6■ Currently bound to:§r [%s]")
-    public static final String ABILITY_KEYBIND = Translation.Type.ABILITY.wrap("general.keybind");
+    @Translation(type = Translation.Type.MISC, comments = "§6■ Harvest Level Bonus:§r %s")
+    public static final String ABILITY_HARVEST_LEVEL_BONUS = Translation.Type.ABILITY.wrap("general.harvest_level_bonus");
+
+    @Translation(type = Translation.Type.MISC, comments = "§6Fire immunity§r")
+    public static final String ABILITY_FIRE_IMMUNITY = Translation.Type.ABILITY.wrap("general.fire_immunity");
+
+    @Translation(type = Translation.Type.MISC, comments = "§6Immune§r to various damage types")
+    public static final String ABILITY_GENERIC_IMMUNITY = Translation.Type.ABILITY.wrap("general.immunity");
 
     // --- Projectile effects --- //
 

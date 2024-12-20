@@ -34,6 +34,8 @@ import javax.annotation.Nullable;
 
 public class DragonAbilityInstance {
     public static final int MIN_LEVEL = 0;
+    // LevelBasedValues do not support using 0 as a level. In our system, level 0 = disabled
+    public static final int MIN_LEVEL_FOR_CALCULATIONS = 1;
     public static final int MAX_LEVEL = 255;
     public static final int NO_COOLDOWN = 0;
 
@@ -328,5 +330,9 @@ public class DragonAbilityInstance {
 
     public boolean isManuallyUpgraded() {
         return value().upgrade().map(upgrade -> upgrade.type() == Upgrade.Type.MANUAL).orElse(false);
+    }
+
+    public Optional<Upgrade.Type> upgradeType() {
+        return value().upgrade().map(Upgrade::type);
     }
 }

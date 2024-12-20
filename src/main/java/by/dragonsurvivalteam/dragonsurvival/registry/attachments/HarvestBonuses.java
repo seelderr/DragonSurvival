@@ -9,10 +9,11 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import org.jetbrains.annotations.NotNull;
 
-
+@EventBusSubscriber
 public class HarvestBonuses extends Storage<HarvestBonus.Instance> {
     public int get(final BlockState state) {
         if (storage == null) {

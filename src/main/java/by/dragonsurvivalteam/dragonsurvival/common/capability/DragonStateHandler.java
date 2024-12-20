@@ -92,7 +92,7 @@ public class DragonStateHandler extends EntityStateHandler {
     public void setSize(@Nullable final Player player, double size) {
         double oldSize = this.size;
         Holder<DragonStage> oldStage = dragonStage;
-        updateSizeAndStage(player != null ? player.registryAccess() : null, size);
+        updateSizeAndStage(player != null ? player.registryAccess() : null, size, player);
 
         if (player == null) {
             return;
@@ -120,7 +120,7 @@ public class DragonStateHandler extends EntityStateHandler {
         player.refreshDimensions();
     }
 
-    private void updateSizeAndStage(@Nullable final HolderLookup.Provider provider, double size) {
+    private void updateSizeAndStage(@Nullable final HolderLookup.Provider provider, double size, @Nullable final Player player) {
         if (size == NO_SIZE) {
             dragonStage = null;
             this.size = NO_SIZE;
@@ -129,7 +129,12 @@ public class DragonStateHandler extends EntityStateHandler {
 
         double newSize = DragonStage.getValidSize(size);
         dragonStage = DragonStage.getStage(dragonType.value().getStages(provider), newSize);
-        this.size = dragonStage.value().getBoundedSize(newSize);
+        newSize = dragonStage.value().getBoundedSize(newSize);
+        if(player != null) {
+            MagicData magicData = MagicData.getData(player);
+            magicData.handleSizeBasedPassiveLeveling(newSize);
+        }
+        this.size = newSize;
     }
 
     // TODO :: use optional for these?

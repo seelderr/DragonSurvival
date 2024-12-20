@@ -14,13 +14,15 @@ public record Upgrade(Type type, int maximumLevel, LevelBasedValue experienceOrL
         ExtraCodecs.intRange(DragonAbilityInstance.MIN_LEVEL, DragonAbilityInstance.MAX_LEVEL).fieldOf("maximum_level").forGetter(Upgrade::maximumLevel),
         /* FIXME :: that name is not clear since it's not level costs but level requirements
             We should find a better name or use Codec.either and have dedicated methods in here so that the outer classes don't need to interact with that 'either' entry
+            FIXME x2 :: This problem just got worse since we also have growth costs now
         */
         LevelBasedValue.CODEC.fieldOf("experience_or_level_cost").forGetter(Upgrade::experienceOrLevelCost)
     ).apply(instance, Upgrade::new));
 
     public enum Type implements StringRepresentable {
         MANUAL("manual"),
-        PASSIVE("passive");
+        PASSIVE_LEVEL("passive_level"),
+        PASSIVE_GROWTH("passive_growth"),;
 
         public static final Codec<Type> CODEC = StringRepresentable.fromEnum(Type::values);
 

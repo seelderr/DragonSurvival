@@ -24,6 +24,8 @@ import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.targeting.Ab
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.targeting.AreaTarget;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.targeting.DragonBreathTarget;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.targeting.SelfTarget;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStage;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStages;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.ProjectileData;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.Projectiles;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
@@ -111,8 +113,7 @@ public class CaveDragonAbilities {
 
 
     @Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = {
-            "■ Cave dragons §2can§r deal increased damage, and may mine stone blocks without tools. This ability gets stronger as you grow.\n",
-            "■ §cCannot§r ride horses and use several items."
+            "■ Cave dragons can mine stone blocks and various ores without tools. This ability gets stronger as you grow.\n"
     })
     @Translation(type = Translation.Type.ABILITY, comments = "Claws and Teeth")
     public static final ResourceKey<DragonAbility> CAVE_CLAWS_AND_TEETH = DragonAbilities.key("cave_claws_and_teeth");
@@ -155,7 +156,7 @@ public class CaveDragonAbilities {
                                 Optional.empty()
                         ))
                 ),
-                Optional.of(new Upgrade(Upgrade.Type.PASSIVE, 4, LevelBasedValue.lookup(List.of(0f, 20f, 40f, 45f), LevelBasedValue.perLevel(15)))),
+                Optional.of(new Upgrade(Upgrade.Type.PASSIVE_LEVEL, 4, LevelBasedValue.lookup(List.of(0f, 20f, 40f, 45f), LevelBasedValue.perLevel(15)))),
                 Optional.of(EntityPredicate.Builder.entity().located(LocationPredicate.Builder.location().setFluid(FluidPredicate.Builder.fluid().of(Fluids.WATER))).build()),
                 List.of(new ActionContainer(new SelfTarget(Either.right(
                         new AbilityTargeting.EntityTargeting(
@@ -198,7 +199,7 @@ public class CaveDragonAbilities {
                                 Optional.empty()
                         ))
                 ),
-                Optional.of(new Upgrade(Upgrade.Type.PASSIVE, 4, LevelBasedValue.lookup(List.of(0f, 10f, 30f, 50f), LevelBasedValue.perLevel(15)))),
+                Optional.of(new Upgrade(Upgrade.Type.PASSIVE_LEVEL, 4, LevelBasedValue.lookup(List.of(0f, 10f, 30f, 50f), LevelBasedValue.perLevel(15)))),
                 Optional.of(EntityPredicate.Builder.entity().located(LocationPredicate.Builder.location().setFluid(FluidPredicate.Builder.fluid().of(Fluids.WATER))).build()),
                 List.of(new ActionContainer(new DragonBreathTarget(Either.right(
                                 new AbilityTargeting.EntityTargeting(
@@ -268,7 +269,7 @@ public class CaveDragonAbilities {
                                 Optional.of(new SimpleAbilityAnimation("self_buff", AnimationLayer.BASE, 0, true, false))
                         ))
                 ),
-                Optional.of(new Upgrade(Upgrade.Type.PASSIVE, 4, LevelBasedValue.lookup(List.of(0f, 25f, 45f, 60f), LevelBasedValue.perLevel(15)))),
+                Optional.of(new Upgrade(Upgrade.Type.PASSIVE_LEVEL, 4, LevelBasedValue.lookup(List.of(0f, 25f, 45f, 60f), LevelBasedValue.perLevel(15)))),
                 Optional.empty(),
                 List.of(new ActionContainer(new SelfTarget(Either.right(
                         new AbilityTargeting.EntityTargeting(
@@ -310,7 +311,7 @@ public class CaveDragonAbilities {
                                 Optional.of(new SimpleAbilityAnimation("mass_buff", AnimationLayer.BASE, 0, true, true))
                         ))
                 ),
-                Optional.of(new Upgrade(Upgrade.Type.PASSIVE, 3, LevelBasedValue.lookup(List.of(0f, 15f, 35f), LevelBasedValue.perLevel(15)))),
+                Optional.of(new Upgrade(Upgrade.Type.PASSIVE_LEVEL, 3, LevelBasedValue.lookup(List.of(0f, 15f, 35f), LevelBasedValue.perLevel(15)))),
                 Optional.empty(),
                 List.of(new ActionContainer(new AreaTarget(Either.right(
                         new AbilityTargeting.EntityTargeting(
@@ -454,10 +455,20 @@ public class CaveDragonAbilities {
                         new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/contrast_shower_5.png"), 5)
                 ))
         ));
+
         context.register(CAVE_CLAWS_AND_TEETH, new DragonAbility(
                 Activation.passive(),
-                // TODO :: How do we handle the upgradability of this ability? I believe before the icon upgraded based off of size or something?
-                Optional.empty(),
+                Optional.of(new Upgrade(
+                        Upgrade.Type.PASSIVE_GROWTH,
+                        4,
+                        LevelBasedValue.lookup(
+                                // FIXME :: This lookup throws an error during datagen. Why? We generate the DragonStages before abilities...
+                                List.of(0f,
+                                        25f,//(float)context.lookup(DragonStage.REGISTRY).getOrThrow(DragonStages.young).value().sizeRange().min(),
+                                        40f,//(float)context.lookup(DragonStage.REGISTRY).getOrThrow(DragonStages.young).value().sizeRange().max(),
+                                        60f),//(float)context.lookup(DragonStage.REGISTRY).getOrThrow(DragonStages.adult).value().sizeRange().max()),
+                                LevelBasedValue.perLevel(15)
+                ))),
                 Optional.empty(),
                 List.of(new ActionContainer(new SelfTarget(Either.right(
                         new AbilityTargeting.EntityTargeting(
@@ -483,8 +494,10 @@ public class CaveDragonAbilities {
                         new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/cave_claws_and_teeth_4.png"), 4)
                 ))
         ));
+
         context.register(CAVE_WINGS, new DragonAbility(
                 Activation.passive(),
+                // TODO :: Need yet another upgrade type, this time predicated on an item? Or going to the end?
                 Optional.empty(),
                 Optional.empty(),
                 List.of(),
@@ -493,7 +506,6 @@ public class CaveDragonAbilities {
                         new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/cave_wings_1.png"), 1)
                 ))
         ));
-
 
         context.register(FIRE_IMMUNITY, new DragonAbility(
                 Activation.passive(),
@@ -505,7 +517,18 @@ public class CaveDragonAbilities {
                                         new AbilityTargeting.EntityTargeting(
                                                 Optional.empty(),
                                                 List.of(new ImmunityEffect(
-                                                        HolderSet.direct(context.lookup(Registries.DAMAGE_TYPE).getOrThrow(DamageTypes.LAVA), context.lookup(Registries.DAMAGE_TYPE).getOrThrow(DamageTypes.IN_FIRE), context.lookup(Registries.DAMAGE_TYPE).getOrThrow(DamageTypes.ON_FIRE))
+                                                        List.of(
+                                                                new Immunity(
+                                                                        DragonSurvival.res("fire_damage_immunity"),
+                                                                        Either.left(HolderSet.direct(context.lookup(Registries.DAMAGE_TYPE).getOrThrow(DamageTypes.LAVA), context.lookup(Registries.DAMAGE_TYPE).getOrThrow(DamageTypes.IN_FIRE), context.lookup(Registries.DAMAGE_TYPE).getOrThrow(DamageTypes.ON_FIRE))),
+                                                                        LevelBasedValue.constant(DurationInstance.INFINITE_DURATION)
+                                                                ),
+                                                                new Immunity(
+                                                                        DragonSurvival.res("fire_immunity"),
+                                                                        Either.right(true),
+                                                                        LevelBasedValue.constant(DurationInstance.INFINITE_DURATION)
+                                                                )
+                                                        )
                                                 )),
                                                 AbilityTargeting.EntityTargetingMode.TARGET_ALL
                                         )

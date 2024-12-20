@@ -101,7 +101,7 @@ public class MagicData implements INBTSerializable<CompoundTag> {
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void handlePassiveLeveling(final PlayerXpEvent.LevelChange event) {
+    public static void handleLevelBasedPassiveLeveling(final PlayerXpEvent.LevelChange event) {
         if (!DragonStateProvider.isDragon(event.getEntity())) {
             return;
         }
@@ -112,13 +112,13 @@ public class MagicData implements INBTSerializable<CompoundTag> {
         for (DragonAbilityInstance ability : magic.abilities.values()) {
             Upgrade upgrade = ability.value().upgrade().orElse(null);
 
-            if (upgrade == null || upgrade.type() != Upgrade.Type.PASSIVE) {
+            if (upgrade == null || upgrade.type() != Upgrade.Type.PASSIVE_LEVEL) {
                 continue;
             }
 
             int previousLevel = ability.level();
 
-            for (int level = DragonAbilityInstance.MIN_LEVEL; level <= upgrade.maximumLevel(); level++) {
+            for (int level = DragonAbilityInstance.MIN_LEVEL_FOR_CALCULATIONS; level <= upgrade.maximumLevel(); level++) {
                 float required = upgrade.experienceOrLevelCost().calculate(level);
 
                 if (newExperienceLevel < required) {
@@ -139,6 +139,29 @@ public class MagicData implements INBTSerializable<CompoundTag> {
                 PacketDistributor.sendToPlayer(serverPlayer, new SyncAbilityLevel(ability.key(), ability.level()));
             } else {
                 PacketDistributor.sendToServer(new SyncAbilityLevel(ability.key(), ability.level()));
+            }
+        }
+    }
+
+    public void handleSizeBasedPassiveLeveling(double newSize) {
+        for (DragonAbilityInstance ability : abilities.values()) {
+            Upgrade upgrade = ability.value().upgrade().orElse(null);
+
+            if (upgrade == null || upgrade.type() != Upgrade.Type.PASSIVE_GROWTH) {
+                continue;
+            }
+
+            for (int level = DragonAbilityInstance.MIN_LEVEL_FOR_CALCULATIONS; level <= upgrade.maximumLevel(); level++) {
+                float required = upgrade.experienceOrLevelCost().calculate(level);
+
+                if (newSize < required) {
+                    ability.setLevel(level - 1);
+                    break;
+                }
+
+                if (newSize >= required) {
+                    ability.setLevel(level);
+                }
             }
         }
     }
@@ -336,9 +359,13 @@ public class MagicData implements INBTSerializable<CompoundTag> {
     public float getCost(final ResourceKey<DragonAbility> key, int delta) {
         DragonAbilityInstance instance = abilities.get(key);
 
-        return instance.value().upgrade()
-                .map(upgrade -> upgrade.experienceOrLevelCost().calculate(instance.level() + delta))
-                .orElse(0f);
+        if(instance.level() + delta >= DragonAbilityInstance.MIN_LEVEL_FOR_CALCULATIONS) {
+            return instance.value().upgrade()
+                    .map(upgrade -> upgrade.experienceOrLevelCost().calculate(instance.level() + delta))
+                    .orElse(0f);
+        } else {
+            return 0;
+        }
     }
 
     public void moveAbilityToSlot(final ResourceKey<DragonAbility> key, int newSlot) {

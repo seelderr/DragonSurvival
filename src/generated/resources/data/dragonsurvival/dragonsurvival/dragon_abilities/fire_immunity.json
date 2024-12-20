@@ -7,9 +7,18 @@
             {
               "effect_type": "dragonsurvival:immunity",
               "immunities": [
-                "minecraft:lava",
-                "minecraft:in_fire",
-                "minecraft:on_fire"
+                {
+                  "id": "dragonsurvival:fire_damage_immunity",
+                  "immunities_or_fire_immune": [
+                    "minecraft:lava",
+                    "minecraft:in_fire",
+                    "minecraft:on_fire"
+                  ]
+                },
+                {
+                  "id": "dragonsurvival:fire_immunity",
+                  "immunities_or_fire_immune": true
+                }
               ]
             }
           ],

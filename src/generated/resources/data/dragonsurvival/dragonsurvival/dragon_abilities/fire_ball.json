@@ -70,7 +70,7 @@
     ]
   },
   "upgrade": {
-    "type": "passive",
+    "type": "passive_level",
     "experience_or_level_cost": {
       "type": "minecraft:lookup",
       "fallback": {

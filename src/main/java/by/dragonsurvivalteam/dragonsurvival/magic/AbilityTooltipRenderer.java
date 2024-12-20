@@ -55,9 +55,13 @@ public class AbilityTooltipRenderer {
             rawDescription = FormattedText.composite(rawDescription, Component.empty().append("\n\n"));
         }
 
-        if(ability.value().upgrade().isPresent() && ability.value().upgrade().get().type() == Upgrade.Type.PASSIVE && ability.level() != ability.getMaxLevel()) {
+        if(ability.upgradeType().isPresent() && ability.upgradeType().get() == Upgrade.Type.PASSIVE_LEVEL && ability.level() != ability.getMaxLevel()) {
             int nextUpgradeLevel = (int) ability.value().upgrade().get().experienceOrLevelCost().calculate(ability.level() + 1);
-            rawDescription = FormattedText.composite(rawDescription, Component.translatable(LangKey.ABILITY_AUTO_UPGRADE, nextUpgradeLevel).withColor(Color.GREEN.getColor()));
+            rawDescription = FormattedText.composite(rawDescription, Component.translatable(LangKey.ABILITY_LEVEL_AUTO_UPGRADE, nextUpgradeLevel).withColor(Color.GREEN.getColor()));
+            rawDescription = FormattedText.composite(rawDescription, Component.empty().append("\n\n"));
+        } else if(ability.upgradeType().isPresent() && ability.upgradeType().get() == Upgrade.Type.PASSIVE_GROWTH && ability.level() != ability.getMaxLevel()) {
+            int nextUpgradeSize = (int) ability.value().upgrade().get().experienceOrLevelCost().calculate(ability.level() + 1);
+            rawDescription = FormattedText.composite(rawDescription, Component.translatable(LangKey.ABILITY_GROWTH_AUTO_UPGRADE, nextUpgradeSize).withColor(Color.GREEN.getColor()));
             rawDescription = FormattedText.composite(rawDescription, Component.empty().append("\n\n"));
         }
 
