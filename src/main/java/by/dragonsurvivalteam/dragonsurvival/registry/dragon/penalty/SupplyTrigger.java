@@ -4,6 +4,8 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachments;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.PenaltySupply;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
+import by.dragonsurvivalteam.dragonsurvival.util.DSColors;
+import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -14,8 +16,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
-
-import java.util.List;
 
 public record SupplyTrigger(String id, Holder<Attribute> attributeToUseAsBase, int triggerRate, float reductionRateMultiplier, float regenerationRate) implements PenaltyTrigger {
     public static final MapCodec<SupplyTrigger> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
@@ -28,14 +28,15 @@ public record SupplyTrigger(String id, Holder<Attribute> attributeToUseAsBase, i
 
     public boolean matches(final ServerPlayer dragon, boolean conditionMatched) {
         PenaltySupply penaltySupply = dragon.getData(DSDataAttachments.PENALTY_SUPPLY);
+
         if (conditionMatched) {
-            penaltySupply.reduce(dragon, id());
+            penaltySupply.reduce(dragon, id);
         } else {
-            penaltySupply.regenerate(dragon, id());
+            penaltySupply.regenerate(dragon, id);
         }
 
-        if(dragon.level().getGameTime() % triggerRate() == 0) {
-            return !penaltySupply.hasSupply(id());
+        if (dragon.level().getGameTime() % triggerRate() == 0) {
+            return !penaltySupply.hasSupply(id);
         } else {
             return false;
         }
@@ -43,17 +44,13 @@ public record SupplyTrigger(String id, Holder<Attribute> attributeToUseAsBase, i
 
     @Override
     public MutableComponent getDescription(Player dragon) {
-        AttributeInstance attribute = dragon.getAttribute(attributeToUseAsBase());
-        if(attribute == null) {
+        AttributeInstance attribute = dragon.getAttribute(attributeToUseAsBase);
+
+        if (attribute == null) {
             return Component.empty();
         } else {
-            return Component.translatable(LangKey.PENALTY_SUPPLY_TRIGGER, String.format("%.1f", attribute.getValue() / 20));
+            return Component.translatable(LangKey.PENALTY_SUPPLY_TRIGGER, DSColors.blue(String.format("%.1f", Functions.ticksToSeconds((int) attribute.getValue()))));
         }
-    }
-
-    @Override
-    public String id() {
-        return id;
     }
 
     @Override

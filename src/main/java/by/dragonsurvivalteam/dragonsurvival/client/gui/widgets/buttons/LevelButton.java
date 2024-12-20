@@ -97,6 +97,7 @@ public class LevelButton extends ClickHoverButton {
         };
     }
 
+    @SuppressWarnings("RedundantIfStatement") // ignore for clarity
     public boolean canModify() {
         //noinspection OptionalGetWithoutIsPresent -> upgrade is present
         Upgrade upgrade = ability.value().upgrade().get();
@@ -104,17 +105,21 @@ public class LevelButton extends ClickHoverButton {
         LocalPlayer player = Objects.requireNonNull(Minecraft.getInstance().player);
         MagicData data = MagicData.getData(player);
 
-        // Check if you can afford to upgrade
-        if (type == Type.UPGRADE) {
-            if(ExperienceUtils.getTotalExperience(Minecraft.getInstance().player) < data.getUpgradeCost(ability.key())) {
-                return false;
-            }
-        }
-
-        return switch (type) {
+        boolean reachedLevelCap = switch (type) {
             case DOWNGRADE -> ability.level() > DragonAbilityInstance.MIN_LEVEL;
             case UPGRADE -> ability.level() < upgrade.maximumLevel();
         };
+
+        if (reachedLevelCap) {
+            return false;
+        }
+
+        // Check if you can afford to upgrade
+        if (type == Type.UPGRADE && ExperienceUtils.getTotalExperience(Minecraft.getInstance().player) < data.getUpgradeCost(ability.key())) {
+            return false;
+        }
+
+        return true;
     }
 
     @Override

@@ -23,6 +23,8 @@ import java.util.List;
 public record ModifierEffect(List<ModifierWithDuration> modifiers, boolean displayTooltipAsSeconds) implements AbilityEntityEffect {
     public static final MapCodec<ModifierEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             ModifierWithDuration.CODEC.listOf().fieldOf("modifiers").forGetter(ModifierEffect::modifiers),
+            // TODO :: it seems kind of weird to have this as a field in the modifier itself
+            //  which then can vary per effect, sth. the user may not know and get confused about - the tooltip time should be consistent across effects
             Codec.BOOL.optionalFieldOf("display_tooltip_as_seconds", false).forGetter(ModifierEffect::displayTooltipAsSeconds)
     ).apply(instance, ModifierEffect::new));
 

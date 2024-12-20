@@ -27,13 +27,13 @@ public record ProjectileDamageEffect(Holder<DamageType> damageType, LevelBasedVa
     public void apply(final Projectile projectile, final Entity target, final int level) {
         // TODO :: also apply damage to entities (e.g. items, boats or experience)?
         if (target instanceof LivingEntity) {
-            target.hurt(new DamageSource(damageType(), projectile.getOwner()), amount().calculate(level));
+            target.hurt(new DamageSource(damageType, projectile.getOwner()), amount.calculate(level));
         }
     }
 
     @Override
     public List<MutableComponent> getDescription(final Player dragon, final int level) {
-        return List.of(Component.translatable(LangKey.ABILITY_DAMAGE, Component.translatable(LangKey.ABILITY_PROJECTILE), amount().calculate(level)));
+        return List.of(Component.translatable(LangKey.ABILITY_DAMAGE, Component.translatable(LangKey.ABILITY_PROJECTILE), amount.calculate(level)));
     }
 
     @Override

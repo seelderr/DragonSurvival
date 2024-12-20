@@ -6,7 +6,6 @@ import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachmen
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DamageModifications;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.ClientEffectProvider;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
-import com.jcraft.jogg.Packet;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
@@ -20,6 +19,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
@@ -56,14 +56,15 @@ public record DamageModification(ResourceLocation id, HolderSet<DamageType> dama
         instance = new Instance(this, clientData, abilityLevel, newDuration);
         data.add(entity, instance);
 
-        if(entity instanceof ServerPlayer player) {
+        if (entity instanceof ServerPlayer player) {
             PacketDistributor.sendToPlayer(player, new SyncDamageModification(player.getId(), instance, false));
         }
     }
 
     public void remove(final LivingEntity target) {
         DamageModifications data = target.getData(DSDataAttachments.DAMAGE_MODIFICATIONS);
-        if(target instanceof ServerPlayer player) {
+
+        if (target instanceof ServerPlayer player) {
             PacketDistributor.sendToPlayer(player, new SyncDamageModification(player.getId(), data.get(id), true));
         }
 
@@ -71,7 +72,21 @@ public record DamageModification(ResourceLocation id, HolderSet<DamageType> dama
     }
 
     public boolean isFireImmune(int appliedAbilityLevel) {
-        return damageTypes().stream().anyMatch(type -> type.is(DamageTypes.ON_FIRE) || type.is(DamageTypes.IN_FIRE) || type.is(DamageTypes.LAVA) && multiplier().calculate(appliedAbilityLevel) == 0);
+        if (multiplier.calculate(appliedAbilityLevel) != 0) {
+            return false;
+        }
+
+        if (damageTypes instanceof HolderSet.Named<DamageType> named && named.key() == DamageTypeTags.IS_FIRE) {
+            return true;
+        }
+
+        for (Holder<DamageType> damageType : damageTypes) {
+            if (damageType.is(DamageTypes.ON_FIRE) || damageType.is(DamageTypes.IN_FIRE) || damageType.is(DamageTypes.LAVA)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public static class Instance extends DurationInstance<DamageModification> {

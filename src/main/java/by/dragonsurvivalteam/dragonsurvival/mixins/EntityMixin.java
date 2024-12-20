@@ -140,7 +140,8 @@ public abstract class EntityMixin {
             return true;
         }
 
-        return DamageModifications.getData((Entity) (Object) this).isFireImmune();
+        return ((Entity) (Object) this).getExistingData(DSDataAttachments.DAMAGE_MODIFICATIONS)
+                .map(DamageModifications::isFireImmune).orElse(false);
     }
 
     @Shadow public abstract double getX();

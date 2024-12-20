@@ -364,6 +364,7 @@ public class MagicData implements INBTSerializable<CompoundTag> {
         ).sorted((a, b) -> Boolean.compare(b.isManuallyUpgraded(), a.isManuallyUpgraded())).toList();
     }
 
+    // TODO :: Do we really have to clutter this class with methods that get used in 1 (or 2 at max) places?
     public float getUpgradeCost(final ResourceKey<DragonAbility> key) {
         return getCost(key, 1);
     }

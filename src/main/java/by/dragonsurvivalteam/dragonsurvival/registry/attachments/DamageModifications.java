@@ -6,23 +6,22 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.damagesource.DamageType;
-import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.EntityInvulnerabilityCheckEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import org.jetbrains.annotations.NotNull;
 
-
+@EventBusSubscriber
 public class DamageModifications extends Storage<DamageModification.Instance> {
     public static DamageModifications getData(final Entity entity) {
         return entity.getData(DSDataAttachments.DAMAGE_MODIFICATIONS);
     }
 
     public boolean isFireImmune() {
-        if(storage == null) {
+        if (storage == null) {
             return false;
         }
 

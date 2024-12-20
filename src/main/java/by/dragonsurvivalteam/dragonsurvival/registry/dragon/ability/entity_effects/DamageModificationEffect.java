@@ -4,6 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.codecs.DamageModification;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import by.dragonsurvivalteam.dragonsurvival.util.DSColors;
+import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.chat.Component;
@@ -38,14 +39,18 @@ public record DamageModificationEffect(List<DamageModification> modifications) i
         List<MutableComponent> components = new ArrayList<>();
 
         for (DamageModification damageModification : modifications) {
-            float duration = damageModification.duration().calculate(ability.level()) / 20.f;
-            MutableComponent name = Component.empty();
+            double duration = Functions.ticksToSeconds((int) damageModification.duration().calculate(ability.level()));
+            MutableComponent name;
 
-            if(damageModification.isFireImmune(ability.level())) {
-                name = name.append(Component.translatable(LangKey.ABILITY_FIRE_IMMUNITY)).append("\n");
+            if (damageModification.isFireImmune(ability.level())) {
+                name = Component.translatable(LangKey.ABILITY_FIRE_IMMUNITY).append("\n");
+            } else {
+                name = Component.empty();
             }
 
             // Vanilla doesn't have translation keys for its damage types, so we'll just have to use a generic translation key for now (unless we want to add our own even for vanilla types just for this tooltip)
+            // TODO :: since we seem to intend to use it in 'LangKey.ABILITY_DAMAGE' we should probably add the translations?
+            //  in either case 'immunity' might be the wrong word here since in normally its a damage multiplier (reducing or increasing the damage)
             name = name.append(Component.translatable(LangKey.ABILITY_GENERIC_IMMUNITY));
 
             if (duration > 0) {
