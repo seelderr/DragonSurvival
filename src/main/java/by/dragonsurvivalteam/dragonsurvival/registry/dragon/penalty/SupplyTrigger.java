@@ -33,6 +33,7 @@ public record SupplyTrigger(String id, Holder<Attribute> attributeToUseAsBase, i
             penaltySupply.reduce(dragon, id);
         } else {
             penaltySupply.regenerate(dragon, id);
+            return false;
         }
 
         if (dragon.level().getGameTime() % triggerRate() == 0) {
