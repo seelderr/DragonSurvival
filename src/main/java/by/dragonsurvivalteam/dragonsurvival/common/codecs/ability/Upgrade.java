@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 public record Upgrade(Type type, int maximumLevel, LevelBasedValue requirementOrCost) {
     public static final Codec<Upgrade> CODEC = RecordCodecBuilder.create(instance -> instance.group(
         Type.CODEC.fieldOf("type").forGetter(Upgrade::type),
-        ExtraCodecs.intRange(DragonAbilityInstance.MIN_LEVEL, DragonAbilityInstance.MAX_LEVEL).fieldOf("maximum_level").forGetter(Upgrade::maximumLevel),Re
+        ExtraCodecs.intRange(DragonAbilityInstance.MIN_LEVEL, DragonAbilityInstance.MAX_LEVEL).fieldOf("maximum_level").forGetter(Upgrade::maximumLevel),
         LevelBasedValue.CODEC.fieldOf("requirement_or_cost").forGetter(Upgrade::requirementOrCost)
     ).apply(instance, Upgrade::new));
 

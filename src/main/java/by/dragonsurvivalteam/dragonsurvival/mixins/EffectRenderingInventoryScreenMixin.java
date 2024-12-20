@@ -46,8 +46,7 @@ public class EffectRenderingInventoryScreenMixin {
         storedEvent.set(event);
     }
 
-    @Unique
-    private void dragonSurvival$renderAbilityBackgrounds(final GuiGraphics graphics, int renderX, int yOffset, int initialYOffset, int providerAmount, boolean isCompact) {
+    @Unique private void dragonSurvival$renderAbilityBackgrounds(final GuiGraphics graphics, int renderX, int yOffset, int initialYOffset, int providerAmount, boolean isCompact) {
         EffectRenderingInventoryScreen<?> self = (EffectRenderingInventoryScreen<?>) (Object) this;
         int topPos = ((AbstractContainerScreenAccessor) self).dragonSurvival$getTopPos() + initialYOffset;
         int width = isCompact ? 32 : 120;
@@ -59,8 +58,7 @@ public class EffectRenderingInventoryScreenMixin {
         }
     }
 
-    @Unique
-    private void dragonSurvival$renderAbilityIcons(final GuiGraphics graphics, int renderX, int yOffset, int initialYOffset, final List<ClientEffectProvider> providers, boolean isCompact) {
+    @Unique private void dragonSurvival$renderAbilityIcons(final GuiGraphics graphics, int renderX, int yOffset, int initialYOffset, final List<ClientEffectProvider> providers, boolean isCompact) {
         EffectRenderingInventoryScreen<?> self = (EffectRenderingInventoryScreen<?>) (Object) this;
         int topPos = ((AbstractContainerScreenAccessor) self).dragonSurvival$getTopPos() + initialYOffset;
 
@@ -70,8 +68,7 @@ public class EffectRenderingInventoryScreenMixin {
         }
     }
 
-    @Unique
-    private void dragonSurvival$renderAbilityLabels(final GuiGraphics graphics, int renderX, int yOffset, int initialYOffset, final List<ClientEffectProvider> providers) {
+    @Unique private void dragonSurvival$renderAbilityLabels(final GuiGraphics graphics, int renderX, int yOffset, int initialYOffset, final List<ClientEffectProvider> providers) {
         EffectRenderingInventoryScreen<?> self = (EffectRenderingInventoryScreen<?>) (Object) this;
         int topPos = ((AbstractContainerScreenAccessor) self).dragonSurvival$getTopPos() + initialYOffset;
 
@@ -85,8 +82,7 @@ public class EffectRenderingInventoryScreenMixin {
         }
     }
 
-    @Unique
-    private static Component dragonSurvival$formatDuration(final ClientEffectProvider effect, float ticksPerSecond) {
+    @Unique private static Component dragonSurvival$formatDuration(final ClientEffectProvider effect, float ticksPerSecond) {
         if (effect.isInfiniteDuration()) {
             return Component.translatable("effect.duration.infinite");
         } else {
