@@ -98,6 +98,8 @@ public class DragonStateHandler extends EntityStateHandler {
             return;
         }
 
+        player.refreshDimensions();
+
         if (dragonStage == null) {
             DSModifiers.updateSizeModifiers(player, this);
             return;
@@ -116,8 +118,6 @@ public class DragonStateHandler extends EntityStateHandler {
         if (player.level().isClientSide()) {
             ClientProxy.sendClientData();
         }
-
-        player.refreshDimensions();
     }
 
     private void updateSizeAndStage(@Nullable final HolderLookup.Provider provider, double size, @Nullable final Player player) {
