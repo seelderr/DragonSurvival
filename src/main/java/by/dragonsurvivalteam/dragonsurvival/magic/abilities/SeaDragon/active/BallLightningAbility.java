@@ -144,11 +144,11 @@ public class BallLightningAbility extends ChargeCastAbility {
     @Override
     public ResourceLocation[] getSkillTextures() {
         return new ResourceLocation[]{
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/ball_lightning_0.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/ball_lightning_1.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/ball_lightning_2.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/ball_lightning_3.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/ball_lightning_4.png")
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/ball_lightning_0"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/ball_lightning_1"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/ball_lightning_2"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/ball_lightning_3"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/ball_lightning_4")
         };
     }
 

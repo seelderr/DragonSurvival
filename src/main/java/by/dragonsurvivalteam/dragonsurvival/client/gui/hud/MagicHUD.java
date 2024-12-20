@@ -152,7 +152,7 @@ public class MagicHUD {
         }
     }
 
-    public static void renderAbilityHUD(final Player player, final GuiGraphics guiGraphics, int width, int height) {
+    public static void renderAbilityHUD(final Player player, final GuiGraphics graphics, int width, int height) {
         if (player == null || player.isSpectator()) {
             return;
         }
@@ -169,14 +169,14 @@ public class MagicHUD {
 
         MagicData magicData = MagicData.getData(player);
         if (magicData.shouldRenderAbilities()) {
-            guiGraphics.blit(VANILLA_WIDGETS, posX, posY - 2, 0, 0, 0, 41, 22, 256, 256);
-            guiGraphics.blit(VANILLA_WIDGETS, posX + 41, posY - 2, 0, 141, 0, 41, 22, 256, 256);
+            graphics.blit(VANILLA_WIDGETS, posX, posY - 2, 0, 0, 0, 41, 22, 256, 256);
+            graphics.blit(VANILLA_WIDGETS, posX + 41, posY - 2, 0, 141, 0, 41, 22, 256, 256);
 
             for (int x = 0; x < MagicData.MAX_ACTIVE; x++) {
                 DragonAbilityInstance ability = magicData.fromSlot(x);
 
                 if (ability != null) {
-                    guiGraphics.blit(ability.getIcon(), posX + x * sizeX + 3, posY + 1, 0, 0, 16, 16, 16, 16);
+                    graphics.blitSprite(ability.getIcon(), posX + x * sizeX + 3, posY + 1, 0, 16, 16);
 
                     float skillCooldown = ability.value().getCooldown(ability.level());
                     float currentCooldown = ability.getCooldown() - Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false);
@@ -188,12 +188,12 @@ public class MagicHUD {
                         int offset = 16 - (int)(16 - (f * 16));
                         int color = new Color(0.15F, 0.15F, 0.15F, 0.75F).getRGB();
                         int fColor = errorTicks > 0 ? new Color(1F, 0F, 0F, 0.75F).getRGB() : color;
-                        guiGraphics.fill(boxX, boxY, boxX + 16, boxY + offset, fColor);
+                        graphics.fill(boxX, boxY, boxX + 16, boxY + offset, fColor);
                     }
                 }
             }
 
-            guiGraphics.blit(VANILLA_WIDGETS, posX + sizeX * magicData.getSelectedAbilitySlot() - 1, posY - 3, 2, 0, 22, 24, 24, 256, 256);
+            graphics.blit(VANILLA_WIDGETS, posX + sizeX * magicData.getSelectedAbilitySlot() - 1, posY - 3, 2, 0, 22, 24, 24, 256, 256);
 
             // Don't render more than two rows (1 icon = 1 mana point)
             // This makes the mana bars also stop just before the emote button when the chat window is open
@@ -224,7 +224,7 @@ public class MagicHUD {
                         }
 
                         float rescale = 2.15F;
-                        guiGraphics.blit(manaIcons, manaX + point * (int) (18 / rescale), manaY - 12 - row * ((int) (18 / rescale) + 1), xPos / rescale, 0, (int) (18 / rescale), (int) (18 / rescale), (int) (256 / rescale), (int) (256 / rescale));
+                        graphics.blit(manaIcons, manaX + point * (int) (18 / rescale), manaY - 12 - row * ((int) (18 / rescale) + 1), xPos / rescale, 0, (int) (18 / rescale), (int) (18 / rescale), (int) (256 / rescale), (int) (256 / rescale));
                     }
                 }
             }
@@ -235,8 +235,8 @@ public class MagicHUD {
             float currentCastTime = magicData.getClientCastTimer() - Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false);
             int skillCastTime = ability.getCastTime();
             if (skillCastTime > 0) {
-                guiGraphics.pose().pushPose();
-                guiGraphics.pose().scale(0.5F, 0.5F, 0);
+                graphics.pose().pushPose();
+                graphics.pose().scale(0.5F, 0.5F, 0);
 
 
                 float perc = Math.clamp(1 - currentCastTime / (float) skillCastTime, 0, 1);
@@ -244,24 +244,24 @@ public class MagicHUD {
                 int startX = width / 2 - 49 + castbarXOffset;
                 int startY = height - 96 + castbarYOffset;
 
-                guiGraphics.pose().translate(startX, startY, 0);
+                graphics.pose().translate(startX, startY, 0);
 
                 DragonStateHandler handler = DragonStateProvider.getData(player);
-                guiGraphics.blit(handler.getDragonType().value().miscResources().castBar(), startX, startY, 0, 0, 196, 47, 196, 47);
+                graphics.blit(handler.getDragonType().value().miscResources().castBar(), startX, startY, 0, 0, 196, 47, 196, 47);
 
                 software.bernie.geckolib.util.Color color = new software.bernie.geckolib.util.Color(handler.getType().value().miscResources().primaryColor().rgba());
-                guiGraphics.setColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(), 1F);
-                guiGraphics.blit(CAST_BAR_FILL, startX + 2, startY + 41, 0, 0, (int) (191 * perc), 4, 191, 4);
-                guiGraphics.setColor(1F, 1F, 1F, 1F);
+                graphics.setColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(), 1F);
+                graphics.blit(CAST_BAR_FILL, startX + 2, startY + 41, 0, 0, (int) (191 * perc), 4, 191, 4);
+                graphics.setColor(1F, 1F, 1F, 1F);
 
-                guiGraphics.blit(ability.getIcon(), startX + 78, startY + 3, 0, 0, 36, 36, 36, 36);
+                graphics.blitSprite(ability.getIcon(), startX + 78, startY + 3, 0, 36, 36);
 
-                guiGraphics.pose().popPose();
+                graphics.pose().popPose();
             }
         }
 
         if (errorTicks > 0) {
-            guiGraphics.drawString(Minecraft.getInstance().font, errorMessage.getVisualOrderText(), (int) (width / 2f - Minecraft.getInstance().font.width(errorMessage) / 2f), height - 70, 0);
+            graphics.drawString(Minecraft.getInstance().font, errorMessage.getVisualOrderText(), (int) (width / 2f - Minecraft.getInstance().font.width(errorMessage) / 2f), height - 70, 0);
         }
     }
 }

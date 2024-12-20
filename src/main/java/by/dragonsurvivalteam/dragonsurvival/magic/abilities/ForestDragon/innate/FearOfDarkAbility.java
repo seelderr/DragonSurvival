@@ -21,8 +21,8 @@ public class FearOfDarkAbility extends InnateDragonAbility {
     @Override
     public ResourceLocation[] getSkillTextures() {
         return new ResourceLocation[]{
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/fear_of_dark_0.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/fear_of_dark_1.png")
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/fear_of_dark_0"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/fear_of_dark_1")
         };
     }
 

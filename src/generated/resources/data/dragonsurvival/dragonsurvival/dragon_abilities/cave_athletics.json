@@ -47,27 +47,27 @@
     "texture_entries": [
       {
         "from_level": 0,
-        "texture_resource": "dragonsurvival:textures/skills/cave/cave_athletics_0.png"
+        "texture_resource": "dragonsurvival:abilities/cave/cave_athletics_0"
       },
       {
         "from_level": 1,
-        "texture_resource": "dragonsurvival:textures/skills/cave/cave_athletics_1.png"
+        "texture_resource": "dragonsurvival:abilities/cave/cave_athletics_1"
       },
       {
         "from_level": 2,
-        "texture_resource": "dragonsurvival:textures/skills/cave/cave_athletics_2.png"
+        "texture_resource": "dragonsurvival:abilities/cave/cave_athletics_2"
       },
       {
         "from_level": 3,
-        "texture_resource": "dragonsurvival:textures/skills/cave/cave_athletics_3.png"
+        "texture_resource": "dragonsurvival:abilities/cave/cave_athletics_3"
       },
       {
         "from_level": 4,
-        "texture_resource": "dragonsurvival:textures/skills/cave/cave_athletics_4.png"
+        "texture_resource": "dragonsurvival:abilities/cave/cave_athletics_4"
       },
       {
         "from_level": 5,
-        "texture_resource": "dragonsurvival:textures/skills/cave/cave_athletics_5.png"
+        "texture_resource": "dragonsurvival:abilities/cave/cave_athletics_5"
       }
     ]
   },

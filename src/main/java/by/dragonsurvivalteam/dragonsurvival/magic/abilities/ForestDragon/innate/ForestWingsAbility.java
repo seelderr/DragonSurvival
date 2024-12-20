@@ -21,8 +21,8 @@ public class ForestWingsAbility extends DragonWingAbility {
     @Override
     public ResourceLocation[] getSkillTextures() {
         return new ResourceLocation[]{
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_wings_0.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_wings_1.png")
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/forest_wings_0"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/forest_wings_1")
         };
     }
 

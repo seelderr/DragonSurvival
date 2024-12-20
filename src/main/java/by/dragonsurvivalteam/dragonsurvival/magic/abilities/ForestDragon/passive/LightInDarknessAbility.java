@@ -32,15 +32,15 @@ public class LightInDarknessAbility extends PassiveDragonAbility {
     @Override
     public ResourceLocation[] getSkillTextures() {
         return new ResourceLocation[]{
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/light_in_darkness_0.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/light_in_darkness_1.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/light_in_darkness_2.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/light_in_darkness_3.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/light_in_darkness_4.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/light_in_darkness_5.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/light_in_darkness_6.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/light_in_darkness_7.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/light_in_darkness_8.png")
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/light_in_darkness_0"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/light_in_darkness_1"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/light_in_darkness_2"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/light_in_darkness_3"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/light_in_darkness_4"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/light_in_darkness_5"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/light_in_darkness_6"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/light_in_darkness_7"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/light_in_darkness_8")
         };
     }
 

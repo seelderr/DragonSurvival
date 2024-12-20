@@ -69,11 +69,11 @@ public class ForestBreathAbility extends BreathAbility {
     @Override
     public ResourceLocation[] getSkillTextures() {
         return new ResourceLocation[]{
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/poisonous_breath_0.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/poisonous_breath_1.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/poisonous_breath_2.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/poisonous_breath_3.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/poisonous_breath_4.png")
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/poisonous_breath_0"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/poisonous_breath_1"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/poisonous_breath_2"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/poisonous_breath_3"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/poisonous_breath_4")
         };
     }
 

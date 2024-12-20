@@ -42,11 +42,11 @@ public class BurnAbility extends PassiveDragonAbility {
     @Override
     public ResourceLocation[] getSkillTextures() {
         return new ResourceLocation[]{
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/burn_0.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/burn_1.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/burn_2.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/burn_3.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/burn_4.png")
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/cave/burn_0"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/cave/burn_1"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/cave/burn_2"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/cave/burn_3"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/cave/burn_4")
         };
     }
 

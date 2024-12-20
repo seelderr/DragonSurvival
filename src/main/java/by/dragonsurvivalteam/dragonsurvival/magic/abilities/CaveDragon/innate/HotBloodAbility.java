@@ -37,8 +37,8 @@ public class HotBloodAbility extends InnateDragonAbility {
     @Override
     public ResourceLocation[] getSkillTextures() {
         return new ResourceLocation[]{
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/hot_blood_0.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/hot_blood_1.png")
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/cave/hot_blood_0"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/cave/hot_blood_1")
         };
     }
 

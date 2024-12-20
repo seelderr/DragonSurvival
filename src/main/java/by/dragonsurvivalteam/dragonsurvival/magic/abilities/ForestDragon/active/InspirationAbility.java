@@ -50,11 +50,11 @@ public class InspirationAbility extends AoeBuffAbility {
     @Override
     public ResourceLocation[] getSkillTextures() {
         return new ResourceLocation[]{
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/inspiration_0.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/inspiration_1.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/inspiration_2.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/inspiration_3.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/inspiration_4.png")
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/inspiration_0"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/inspiration_1"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/inspiration_2"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/inspiration_3"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/inspiration_4")
         };
     }
 

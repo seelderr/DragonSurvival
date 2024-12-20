@@ -45,7 +45,7 @@ public class AbilityAndPenaltyTooltipRenderer {
 
     private static final ResourceLocation BARS = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/widget_bars.png");
 
-    public static void drawTooltip(@NotNull final GuiGraphics guiGraphics, int x, int y, List<Component> info, List<FormattedCharSequence> description, int colorXPos, int colorYPos, String headerTranslationKey, Component name, Color tooltipBackgroundColor, int maxLevel, int level, ResourceLocation icon) {
+    public static void drawTooltip(@NotNull final GuiGraphics graphics, int x, int y, List<Component> info, List<FormattedCharSequence> description, int colorXPos, int colorYPos, String headerTranslationKey, Component name, Color tooltipBackgroundColor, int maxLevel, int level, ResourceLocation icon) {
         FormattedText textContents = Component.empty();
         for (Component component : info) {
             textContents = FormattedText.composite(textContents, Component.empty().append("\n"));
@@ -62,50 +62,50 @@ public class AbilityAndPenaltyTooltipRenderer {
         int sideWidth = Screen.hasShiftDown() ? extraWidth : 15;
         int sideHeight = Screen.hasShiftDown() ? 27 + text.size() * 9 : backgroundHeight - 10;
         ClientTooltipPositioner positioner = new AbilityTooltipPositioner(Screen.hasShiftDown() ? sideWidth : 0);
-        Vector2ic position = positioner.positionTooltip(guiGraphics.guiWidth(), guiGraphics.guiHeight(), x, y, backgroundWidth, Math.max(sideHeight, backgroundHeight));
+        Vector2ic position = positioner.positionTooltip(graphics.guiWidth(), graphics.guiHeight(), x, y, backgroundWidth, Math.max(sideHeight, backgroundHeight));
         int trueX = position.x();
         int trueY = position.y();
 
         if(!info.isEmpty()) {
             // Backing for info tab
-            guiGraphics.blitWithBorder(BARS, trueX - (Screen.hasShiftDown() ? extraWidth : 10), trueY + 3, 40, 20, sideWidth, sideHeight, 20, 20, 3);
+            graphics.blitWithBorder(BARS, trueX - (Screen.hasShiftDown() ? extraWidth : 10), trueY + 3, 40, 20, sideWidth, sideHeight, 20, 20, 3);
             // Top bar for info tab
-            guiGraphics.blitWithBorder(BARS, trueX - (Screen.hasShiftDown() ? extraWidth : 10) + 3, trueY + 9, colorXPos, colorYPos, Screen.hasShiftDown() ? extraWidth : 15, 20, 20, 20, 3);
+            graphics.blitWithBorder(BARS, trueX - (Screen.hasShiftDown() ? extraWidth : 10) + 3, trueY + 9, colorXPos, colorYPos, Screen.hasShiftDown() ? extraWidth : 15, 20, 20, 20, 3);
 
             if (Screen.hasShiftDown()) {
-                guiGraphics.drawString(Minecraft.getInstance().font, Component.translatable(INFO), trueX - extraWidth + 10, trueY + 15, -1);
+                graphics.drawString(Minecraft.getInstance().font, Component.translatable(INFO), trueX - extraWidth + 10, trueY + 15, -1);
 
                 for (int k1 = 0; k1 < text.size(); ++k1) {
-                    guiGraphics.drawString(Minecraft.getInstance().font, text.get(k1), trueX - extraWidth + 5, trueY + 5 + 18 + k1 * 9, DSColors.LIGHT_GRAY);
+                    graphics.drawString(Minecraft.getInstance().font, text.get(k1), trueX - extraWidth + 5, trueY + 5 + 18 + k1 * 9, DSColors.LIGHT_GRAY);
                 }
             }
         }
 
         // Background
-        guiGraphics.blitWithBorder(BARS, trueX - 2, trueY - 4, 40, 20, backgroundWidth, backgroundHeight, 20, 20, 3, 3, 3, 3);
+        graphics.blitWithBorder(BARS, trueX - 2, trueY - 4, 40, 20, backgroundWidth, backgroundHeight, 20, 20, 3, 3, 3, 3);
         // Top bar
-        guiGraphics.blitWithBorder(BARS, trueX, trueY + 3, colorXPos, colorYPos, 150, 20, 20, 20, 3);
+        graphics.blitWithBorder(BARS, trueX, trueY + 3, colorXPos, colorYPos, 150, 20, 20, 20, 3);
         // Backing square for ability icon
-        guiGraphics.blitWithBorder(BARS, trueX, trueY, 0, 100, 26, 26, 24, 24, 3);
+        graphics.blitWithBorder(BARS, trueX, trueY, 0, 100, 26, 26, 24, 24, 3);
 
-        guiGraphics.drawCenteredString(Minecraft.getInstance().font, Component.translatable(headerTranslationKey), trueX + 150 / 2, trueY + 30, tooltipBackgroundColor.getColor());
+        graphics.drawCenteredString(Minecraft.getInstance().font, Component.translatable(headerTranslationKey), trueX + 150 / 2, trueY + 30, tooltipBackgroundColor.getColor());
 
         if (maxLevel > DragonAbilityInstance.MIN_LEVEL) {
-            guiGraphics.drawCenteredString(Minecraft.getInstance().font, Component.empty().append(level + "/" + maxLevel), trueX + 150 - 18, trueY + 9, -1);
-            guiGraphics.drawCenteredString(Minecraft.getInstance().font, name, trueX + 150 / 2, trueY + 9, -1);
+            graphics.drawCenteredString(Minecraft.getInstance().font, Component.empty().append(level + "/" + maxLevel), trueX + 150 - 18, trueY + 9, -1);
+            graphics.drawCenteredString(Minecraft.getInstance().font, name, trueX + 150 / 2, trueY + 9, -1);
         } else {
-            guiGraphics.drawCenteredString(Minecraft.getInstance().font, name, trueX + 150 / 2 + 10, trueY + 9, -1);
+            graphics.drawCenteredString(Minecraft.getInstance().font, name, trueX + 150 / 2 + 10, trueY + 9, -1);
         }
 
         for (int k1 = 0; k1 < description.size(); ++k1) {
-            guiGraphics.drawString(Minecraft.getInstance().font, description.get(k1), trueX + 5, trueY + 47 + k1 * 9, -5592406);
+            graphics.drawString(Minecraft.getInstance().font, description.get(k1), trueX + 5, trueY + 47 + k1 * 9, -5592406);
         }
 
         if (!info.isEmpty()) {
-            guiGraphics.drawCenteredString(Minecraft.getInstance().font, Component.translatable(INFO_SHIFT).withStyle(ChatFormatting.DARK_GRAY), trueX + 150 / 2, trueY + 47 + (description.size() - 1) * 9, 0);
+            graphics.drawCenteredString(Minecraft.getInstance().font, Component.translatable(INFO_SHIFT).withStyle(ChatFormatting.DARK_GRAY), trueX + 150 / 2, trueY + 47 + (description.size() - 1) * 9, 0);
         }
 
-        guiGraphics.blit(icon, trueX + 5, trueY + 5, 0, 0, 16, 16, 16, 16);
+        graphics.blitSprite(icon, trueX + 5, trueY + 5, 16, 16);
     }
 
     public static void drawAbilityTooltip(@NotNull final GuiGraphics guiGraphics, int x, int y, final DragonAbilityInstance ability) {

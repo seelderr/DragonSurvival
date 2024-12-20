@@ -120,11 +120,11 @@ public class SeaEyesAbility extends ChargeCastAbility {
     @Override
     public ResourceLocation[] getSkillTextures() {
         return new ResourceLocation[]{
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_eyes_0.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_eyes_1.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_eyes_2.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_eyes_3.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_eyes_4.png")
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/sea_eyes_0"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/sea_eyes_1"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/sea_eyes_2"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/sea_eyes_3"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/sea_eyes_4")
         };
     }
 

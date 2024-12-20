@@ -29,7 +29,7 @@
     "amount": 1.0,
     "effect_type": "dragonsurvival:damage_penalty"
   },
-  "icon": "dragonsurvival:textures/skills/cave/hot_blood_0.png",
+  "icon": "dragonsurvival:abilities/cave/hot_blood_0",
   "trigger": {
     "effect_type": "dragonsurvival:supply_trigger",
     "id": "rain_supply",

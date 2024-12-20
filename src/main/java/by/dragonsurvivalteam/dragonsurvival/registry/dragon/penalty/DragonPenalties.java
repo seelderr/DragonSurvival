@@ -46,7 +46,7 @@ public class DragonPenalties {
 
     public static void registerPenalties(final BootstrapContext<DragonPenalty> context) {
         context.register(SNOW_AND_RAIN_WEAKNESS, new DragonPenalty(
-                DragonSurvival.res("textures/skills/cave/hot_blood_0.png"),
+                DragonSurvival.res("abilities/cave/hot_blood_0"),
                 List.of(
                         new DragonPenalty.Condition(
                                 Optional.empty(),
@@ -73,7 +73,7 @@ public class DragonPenalties {
         );
 
         context.register(WATER_WEAKNESS, new DragonPenalty(
-                DragonSurvival.res("textures/skills/cave/hot_blood_0.png"),
+                DragonSurvival.res("abilities/cave/hot_blood_0"),
                 List.of(
                         new DragonPenalty.Condition(
                                 Optional.empty(),
@@ -92,7 +92,7 @@ public class DragonPenalties {
         ));
 
         context.register(LAVA_SWIMMING, new DragonPenalty(
-                DragonSurvival.res("textures/skills/cave/hot_blood_0.png"),
+                DragonSurvival.res("abilities/cave/hot_blood_0"),
                 List.of(
                         new DragonPenalty.Condition(
                                 Optional.of(new EyeInFluidPredicate(NeoForgeMod.LAVA_TYPE)),

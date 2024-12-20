@@ -56,11 +56,11 @@ public class SpikeAbility extends InstantCastAbility {
     @Override
     public ResourceLocation[] getSkillTextures() {
         return new ResourceLocation[]{
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/spike_0.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/spike_1.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/spike_2.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/spike_3.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/spike_4.png")
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/spike_0"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/spike_1"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/spike_2"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/spike_3"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/spike_4")
         };
     }
 

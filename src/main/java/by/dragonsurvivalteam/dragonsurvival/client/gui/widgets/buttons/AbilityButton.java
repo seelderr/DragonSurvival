@@ -22,9 +22,9 @@ import javax.annotation.Nullable;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class AbilityButton extends Button {
-    public static final ResourceLocation ACTIVE_BACKGROUND = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/ability_screen/skill_main.png");
-    public static final ResourceLocation PASSIVE_BACKGROUND = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/ability_screen/skill_other.png");
-    public static final ResourceLocation AUTOUPGRADE_ORNAMENTATION = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/ability_screen/skill_autoupgrade.png");
+    public static final ResourceLocation ACTIVE_BACKGROUND = ResourceLocation.fromNamespaceAndPath(MODID, "ability_screen/skill_main");
+    public static final ResourceLocation PASSIVE_BACKGROUND = ResourceLocation.fromNamespaceAndPath(MODID, "ability_screen/skill_other");
+    public static final ResourceLocation AUTOUPGRADE_ORNAMENTATION = ResourceLocation.fromNamespaceAndPath(MODID, "ability_screen/skill_autoupgrade");
 
     private static final int SIZE = 34;
     private static final int ORNAMENTATION_SIZE = 38;
@@ -37,12 +37,12 @@ public class AbilityButton extends Button {
     private float scale;
     private Vec3 offset = new Vec3(0, 0, 0);
     private boolean isInteractable = true;
-    private LevelButton leftLevelButton;
-    private LevelButton rightLevelButton;
+    private @Nullable LevelButton leftLevelButton;
+    private @Nullable LevelButton rightLevelButton;
 
     public AbilityButton(int x, int y, @Nullable final DragonAbilityInstance ability, final AbilityScreen screen, float scale) {
         // Don't actually change the scale of the button itself based on the scale value; this is because we only rescale the button when it is
-        // on the sides of the column, in which case it can't be interacted with anyways. Minecraft's GUI doesn't offer a clean way to adjust
+        // on the sides of the column, in which case it can't be interacted with anyway. Minecraft's GUI doesn't offer a clean way to adjust
         // the button's bounds dynamically, so this is the best we can do.
         super(x, y, 34, 34, Component.empty(), button -> { /* Nothing to do */ }, DEFAULT_NARRATION);
         this.screen = screen;
@@ -179,7 +179,7 @@ public class AbilityButton extends Button {
     }
 
     @Override
-    public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void renderWidget(@NotNull final GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         if (isHotbar) {
             // Currently the easiest way to track assignments (and not end up with duplicate icons)
             // Alternative would be to go through all buttons and remove the ability that matches the swapped ability (in 'onRelease')
@@ -187,53 +187,59 @@ public class AbilityButton extends Button {
             ability = MagicData.getData(Minecraft.getInstance().player).fromSlot(slot);
         }
 
-        guiGraphics.pose().pushPose();
+        graphics.pose().pushPose();
         // Scale about the center of the button
-        guiGraphics.pose().translate(getX(), getY(), 0);
-        guiGraphics.pose().scale(scale, scale, 1);
-        guiGraphics.pose().translate(-getX(), -getY(), 0);
+        graphics.pose().translate(getX(), getY(), 0);
+        graphics.pose().scale(scale, scale, 1);
+        graphics.pose().translate(-getX(), -getY(), 0);
         float scaleXDiff = (scale - 1) * SIZE / 2;
         float scaleYDiff = (scale - 1) * SIZE / 2;
-        guiGraphics.pose().translate(offset.x - scaleXDiff, offset.y - scaleYDiff, offset.z);
+        graphics.pose().translate(offset.x - scaleXDiff, offset.y - scaleYDiff, offset.z);
+
         if (ability == null) {
-            guiGraphics.blit(PASSIVE_BACKGROUND, getX() - 2, getY() - 2, 0, 0, ORNAMENTATION_SIZE, ORNAMENTATION_SIZE, ORNAMENTATION_SIZE, ORNAMENTATION_SIZE);
+            blit(graphics, PASSIVE_BACKGROUND, getX() - 2, getY() - 2, ORNAMENTATION_SIZE);
             return;
         }
 
         if (ability.isPassive()) {
-            guiGraphics.blit(PASSIVE_BACKGROUND, getX() - 2, getY() - 2, 0, 0, ORNAMENTATION_SIZE, ORNAMENTATION_SIZE, ORNAMENTATION_SIZE, ORNAMENTATION_SIZE);
+            blit(graphics, PASSIVE_BACKGROUND, getX() - 2, getY() - 2, ORNAMENTATION_SIZE);
         } else {
-            guiGraphics.blit(ACTIVE_BACKGROUND, getX() - 2, getY() - 2, 0, 0, ORNAMENTATION_SIZE, ORNAMENTATION_SIZE, ORNAMENTATION_SIZE, ORNAMENTATION_SIZE);
+            blit(graphics, ACTIVE_BACKGROUND, getX() - 2, getY() - 2, ORNAMENTATION_SIZE);
         }
 
         if (!ability.isManuallyUpgraded()) {
-            guiGraphics.blit(AUTOUPGRADE_ORNAMENTATION, getX() - 2, getY() - 2, 0, 0, ORNAMENTATION_SIZE, ORNAMENTATION_SIZE, ORNAMENTATION_SIZE, ORNAMENTATION_SIZE);
+            blit(graphics, AUTOUPGRADE_ORNAMENTATION, getX() - 2, getY() - 2, ORNAMENTATION_SIZE);
         }
 
-        guiGraphics.pose().pushPose();
-        guiGraphics.pose().translate(0, 0, 50);
+        graphics.pose().pushPose();
+        graphics.pose().translate(0, 0, 50);
 
         if (isDragging) {
-            guiGraphics.pose().pushPose();
-            guiGraphics.pose().translate(0, 0, 100);
-            guiGraphics.blit(ability.getIcon(), mouseX - SIZE / 2, mouseY - SIZE / 2, 0, 0, SIZE, SIZE, SIZE, SIZE);
-            guiGraphics.pose().popPose();
+            graphics.pose().pushPose();
+            graphics.pose().translate(0, 0, 100);
+            blit(graphics, ability.getIcon(), mouseX - SIZE / 2, mouseY - SIZE / 2, SIZE);
+            graphics.pose().popPose();
         }
 
         if (!isHotbar || !isDragging) {
-            guiGraphics.blit(ability.getIcon(), getX(), getY(), 0, 0, SIZE, SIZE, SIZE, SIZE);
+            blit(graphics, ability.getIcon(), getX(), getY(), SIZE);
         }
 
-        guiGraphics.pose().popPose();
+        graphics.pose().popPose();
 
         if (isHovered() && shouldShowDescription()) {
-            guiGraphics.pose().pushPose();
+            graphics.pose().pushPose();
             // Render above the other UI elements
-            guiGraphics.pose().translate(0, 0, 150);
-            AbilityAndPenaltyTooltipRenderer.drawAbilityTooltip(guiGraphics, mouseX, mouseY, ability);
-            guiGraphics.pose().popPose();
+            graphics.pose().translate(0, 0, 150);
+            AbilityAndPenaltyTooltipRenderer.drawAbilityTooltip(graphics, mouseX, mouseY, ability);
+            graphics.pose().popPose();
         }
-        guiGraphics.pose().popPose();
+
+        graphics.pose().popPose();
+    }
+
+    private void blit(final GuiGraphics graphics, final ResourceLocation texture, int x, int y, int size) {
+        graphics.blit(x, y, 0, size, size, Minecraft.getInstance().getGuiSprites().getSprite(texture), 1, 1, 1, alpha);
     }
 
     /** If the player is dragging any button the buttons shouldn't show their description */
@@ -244,10 +250,8 @@ public class AbilityButton extends Button {
 
         if (!ability.isPassive()) {
             for (Renderable renderable : screen.renderables) {
-                if (renderable instanceof AbilityButton button && button.ability != null) {
-                    if (button != this && !button.ability.isPassive() && button.isDragging) {
-                        return false;
-                    }
+                if (renderable instanceof AbilityButton button && button.isDragging) {
+                    return false;
                 }
             }
         }

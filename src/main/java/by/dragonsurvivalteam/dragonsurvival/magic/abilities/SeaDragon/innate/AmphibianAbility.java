@@ -32,8 +32,8 @@ public class AmphibianAbility extends InnateDragonAbility {
     @Override
     public ResourceLocation[] getSkillTextures() {
         return new ResourceLocation[]{
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/amphibian_0.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/amphibian_1.png")
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/amphibian_0"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/amphibian_1")
         };
     }
 
