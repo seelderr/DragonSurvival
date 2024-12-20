@@ -115,13 +115,10 @@ public class AbilityAndPenaltyTooltipRenderer {
         FormattedText rawDescription = Component.translatable(Translation.Type.ABILITY_DESCRIPTION.wrap(ability.location().getNamespace(), ability.location().getPath()));
         List<Component> info = ability.getInfo(Minecraft.getInstance().player);
 
-        if (!info.isEmpty()) {
-            rawDescription = FormattedText.composite(rawDescription, Component.empty().append("\n\n"));
-        }
-
         Upgrade upgrade = ability.value().upgrade().orElse(null);
 
         if (upgrade != null) {
+            rawDescription = FormattedText.composite(rawDescription, Component.empty().append("\n\n"));
             int requirement = (int) upgrade.experienceOrLevelCost().calculate(ability.level() + 1);
 
             MutableComponent upgradeComponent = switch (upgrade.type()) {
@@ -132,6 +129,9 @@ public class AbilityAndPenaltyTooltipRenderer {
             };
 
             rawDescription = FormattedText.composite(rawDescription, upgradeComponent.withColor(Color.GREEN.getColor()));
+        }
+
+        if(!info.isEmpty()) {
             rawDescription = FormattedText.composite(rawDescription, Component.empty().append("\n\n"));
         }
 
