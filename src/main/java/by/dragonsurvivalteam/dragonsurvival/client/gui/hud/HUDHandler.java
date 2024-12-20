@@ -58,7 +58,7 @@ public class HUDHandler {
             }
 
             // Render dragon specific hud elements (e.g. time in rain for cave dragons or time without water for sea dragons)
-            DragonPenaltyHUD.renderDragonPenaltyHUD(handler, Minecraft.getInstance().gui, event.getGuiGraphics());
+            DragonPenaltyHUD.renderDragonPenaltyHUD(Minecraft.getInstance().gui, event.getGuiGraphics());
             // Renders the abilities
             MagicHUD.renderAbilityHUD(minecraft.player, event.getGuiGraphics(), screenWidth, screenHeight);
             // Renders the growth icon above the experience bar when an item is selected which grants growth
