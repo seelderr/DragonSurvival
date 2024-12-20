@@ -92,8 +92,8 @@ public class LevelButton extends ClickHoverButton {
 
         return switch (type) {
             // TODO :: is -1 correct? for lookup yes but other scaling?
-            case DOWNGRADE -> (int) MagicData.getData(Minecraft.getInstance().player).getCost(ability.key(), -1);
-            case UPGRADE -> (int) -MagicData.getData(Minecraft.getInstance().player).getCost(ability.key(), 0);
+            case DOWNGRADE -> (int) MagicData.getData(Minecraft.getInstance().player).getDowngradeCost(ability.key());
+            case UPGRADE -> (int) -MagicData.getData(Minecraft.getInstance().player).getUpgradeCost(ability.key());
         };
     }
 
@@ -106,7 +106,7 @@ public class LevelButton extends ClickHoverButton {
 
         // Check if you can afford to upgrade
         if (type == Type.UPGRADE) {
-            if(ExperienceUtils.getTotalExperience(Minecraft.getInstance().player) < data.getCost(ability.key(), 0)) {
+            if(ExperienceUtils.getTotalExperience(Minecraft.getInstance().player) < data.getUpgradeCost(ability.key())) {
                 return false;
             }
         }

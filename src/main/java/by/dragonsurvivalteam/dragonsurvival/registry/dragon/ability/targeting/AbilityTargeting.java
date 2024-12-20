@@ -118,6 +118,11 @@ public interface AbilityTargeting {
     }
 
     default List<MutableComponent> getAllEffectDescriptions(final Player dragon, final DragonAbilityInstance abilityInstance) {
+        // Don't try to generate a description for an ability that is disabled; it will be level 0, which causes LevelBasedValues to throw an exception when using a lookup table
+        if(!abilityInstance.isEnabled()) {
+            return List.of();
+        }
+
         List<MutableComponent> descriptions = new ArrayList<>();
         MutableComponent targetDescription = getDescription(dragon, abilityInstance);
 

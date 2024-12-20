@@ -141,11 +141,5 @@ public class AbilityTooltipRenderer {
         }
 
         guiGraphics.blit(ability.getIcon(), trueX + 5, trueY + 5, 0, 0, 16, 16, 16, 16);
-
-        if (!ability.isEnabled()) {
-            RenderSystem.enableBlend();
-            guiGraphics.blit(INVALID_ICON, trueX + 5, trueY + 5, 0, 0, 16, 16, 16, 16);
-            RenderSystem.disableBlend();
-        }
     }
 }

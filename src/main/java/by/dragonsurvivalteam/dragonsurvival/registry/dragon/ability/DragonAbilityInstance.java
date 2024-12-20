@@ -41,15 +41,11 @@ public class DragonAbilityInstance {
 
     public static Codec<DragonAbilityInstance> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             DragonAbility.CODEC.fieldOf("ability").forGetter(DragonAbilityInstance::ability),
-            Codec.INT.fieldOf("level").forGetter(DragonAbilityInstance::level),
-            Codec.BOOL.fieldOf("is_enabled").forGetter(DragonAbilityInstance::isEnabled)
+            Codec.INT.fieldOf("level").forGetter(DragonAbilityInstance::level)
     ).apply(instance, DragonAbilityInstance::new));
 
     private final Holder<DragonAbility> ability;
     private int level;
-    // TODO :: disabled icon -> grayscale icon of min_level?
-    //  otherwise it's kinda annoying to validate the lists so that an entry for level 0 exists (0 meaning disabled)
-    private boolean isEnabled;
 
     // TODO :: values which will not be saved
     private boolean isActive;
@@ -64,7 +60,6 @@ public class DragonAbilityInstance {
     public DragonAbilityInstance(final Holder<DragonAbility> ability, int level, boolean isEnabled) {
         this.ability = ability;
         this.level = level;
-        this.isEnabled = isEnabled;
 
         if (isEnabled && value().activation().type() == Activation.Type.PASSIVE) {
             this.isActive = true;
@@ -206,7 +201,7 @@ public class DragonAbilityInstance {
     }
 
     public boolean canBeCast() {
-        return isEnabled && cooldown == NO_COOLDOWN;
+        return isEnabled() && cooldown == NO_COOLDOWN;
     }
 
     public ResourceLocation getIcon() {
@@ -267,14 +262,6 @@ public class DragonAbilityInstance {
         return value().getMaxLevel();
     }
 
-    public void enable() {
-        isEnabled = true;
-    }
-
-    public void disable() {
-        isEnabled = false;
-    }
-
     // TODO: These need to be synced in some way for MagicHUD?
     //  technically no since it just adds 1 per tick while the ability is active
     //  this can be done on both sides
@@ -325,7 +312,7 @@ public class DragonAbilityInstance {
     }
 
     public boolean isEnabled() {
-        return isEnabled;
+        return level != 0;
     }
 
     public boolean isManuallyUpgraded() {

@@ -107,7 +107,7 @@ public class MagicData implements INBTSerializable<CompoundTag> {
         }
 
         MagicData magic = MagicData.getData(event.getEntity());
-        int newExperienceLevel = event.getEntity().experienceLevel + event.getLevels();
+        int newExperienceLevel = Math.max(0, event.getEntity().experienceLevel + event.getLevels());
 
         for (DragonAbilityInstance ability : magic.abilities.values()) {
             Upgrade upgrade = ability.value().upgrade().orElse(null);
@@ -332,7 +332,12 @@ public class MagicData implements INBTSerializable<CompoundTag> {
         int slot = 0;
 
         for (Holder<DragonAbility> ability : type.value().abilities()) {
-            DragonAbilityInstance instance = new DragonAbilityInstance(ability, DragonAbilityInstance.MIN_LEVEL);
+            DragonAbilityInstance instance;
+            if(ability.value().upgrade().isEmpty()) {
+                instance = new DragonAbilityInstance(ability, 1);
+            } else {
+                instance = new DragonAbilityInstance(ability, DragonAbilityInstance.MIN_LEVEL);
+            }
 
             if (slot < MAX_ACTIVE && ability.value().activation().type() != Activation.Type.PASSIVE) {
                 hotbar.put(slot, ability.getKey());
@@ -341,6 +346,10 @@ public class MagicData implements INBTSerializable<CompoundTag> {
 
             abilities.put(ability.getKey(), instance);
         }
+
+        // Check for passive levelling abilities
+        handleSizeBasedPassiveLeveling(DragonStateProvider.getData(player).getSize());
+        handleLevelBasedPassiveLeveling(new PlayerXpEvent.LevelChange(player, player.experienceLevel));
     }
 
     public List<DragonAbilityInstance> getActiveAbilities() {
@@ -355,8 +364,16 @@ public class MagicData implements INBTSerializable<CompoundTag> {
         ).sorted((a, b) -> Boolean.compare(b.isManuallyUpgraded(), a.isManuallyUpgraded())).toList();
     }
 
+    public float getUpgradeCost(final ResourceKey<DragonAbility> key) {
+        return getCost(key, 1);
+    }
+
+    public float getDowngradeCost(final ResourceKey<DragonAbility> key) {
+        return -getCost(key, 0);
+    }
+
     /** Returns the amount of experience gained / lost when down- or upgrading the ability */
-    public float getCost(final ResourceKey<DragonAbility> key, int delta) {
+    private float getCost(final ResourceKey<DragonAbility> key, int delta) {
         DragonAbilityInstance instance = abilities.get(key);
 
         if(instance.level() + delta >= DragonAbilityInstance.MIN_LEVEL_FOR_CALCULATIONS) {
@@ -384,7 +401,7 @@ public class MagicData implements INBTSerializable<CompoundTag> {
     public void changeAbilityLevel(final Player player, final ResourceKey<DragonAbility> key, int newLevel) {
         DragonAbilityInstance instance = abilities.get(key);
 
-        if (instance == null) {
+        if (instance == null || instance.value().upgrade().isEmpty()) {
             return;
         }
 
