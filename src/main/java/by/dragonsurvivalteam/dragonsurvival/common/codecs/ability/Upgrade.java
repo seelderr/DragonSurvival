@@ -22,7 +22,7 @@ public record Upgrade(Type type, int maximumLevel, LevelBasedValue experienceOrL
     public enum Type implements StringRepresentable {
         MANUAL("manual"),
         PASSIVE_LEVEL("passive_level"),
-        PASSIVE_GROWTH("passive_growth"),;
+        PASSIVE_GROWTH("passive_growth");
 
         public static final Codec<Type> CODEC = StringRepresentable.fromEnum(Type::values);
 
