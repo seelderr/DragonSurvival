@@ -100,6 +100,9 @@ public class LangKey {
     @Translation(type = Translation.Type.MISC, comments = "§6■ Immune§r to various damage types")
     public static final String ABILITY_GENERIC_IMMUNITY = Translation.Type.ABILITY.wrap("general.immunity");
 
+    @Translation(type = Translation.Type.MISC, comments = " after %s seconds")
+    public static final String PENALTY_SUPPLY_TRIGGER = Translation.Type.PENALTY.wrap("general.supply_trigger");
+
     // --- Projectile effects --- //
 
     @Translation(type = Translation.Type.MISC, comments = " §6Projectile ")

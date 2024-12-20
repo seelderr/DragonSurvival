@@ -4,8 +4,11 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Registry;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
@@ -23,6 +26,7 @@ public interface PenaltyTrigger {
 
     boolean matches(final ServerPlayer dragon, boolean conditionMatched);
     MapCodec<? extends PenaltyTrigger> codec();
+    default MutableComponent getDescription(Player player) { return Component.empty(); }
     default String id() { return ""; }
 
     @SubscribeEvent

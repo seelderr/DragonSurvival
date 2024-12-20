@@ -5,13 +5,14 @@ import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Upgrade;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.penalty.DragonPenalty;
 import by.dragonsurvivalteam.dragonsurvival.util.DSColors;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositioner;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.resources.ResourceLocation;
@@ -24,15 +25,15 @@ import java.util.List;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
-public class AbilityTooltipRenderer {
+public class AbilityAndPenaltyTooltipRenderer {
     @Translation(type = Translation.Type.MISC, comments = "Active Ability")
     private static final String ACTIVE = Translation.Type.ABILITY.wrap("general.active");
 
     @Translation(type = Translation.Type.MISC, comments = "Passive Ability")
     private static final String PASSIVE = Translation.Type.ABILITY.wrap("general.passive");
 
-    @Translation(type = Translation.Type.MISC, comments = "Innate Ability")
-    private static final String INNATE = Translation.Type.ABILITY.wrap("general.innate");
+    @Translation(type = Translation.Type.MISC, comments = "Penalty")
+    private static final String PENALTY = Translation.Type.ABILITY.wrap("general.innate");
 
     @Translation(type = Translation.Type.MISC, comments = "Info")
     private static final String INFO = Translation.Type.ABILITY.wrap("general.info");
@@ -40,33 +41,9 @@ public class AbilityTooltipRenderer {
     @Translation(type = Translation.Type.MISC, comments = "Hold ‘Shift’ for info")
     private static final String INFO_SHIFT = Translation.Type.ABILITY.wrap("general.info_shift");
 
-    public static final ResourceLocation INVALID_ICON = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/disabled.png");
-
     private static final ResourceLocation BARS = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/widget_bars.png");
 
-    public static void drawAbilityHover(@NotNull final GuiGraphics guiGraphics, int x, int y, final DragonAbilityInstance ability) {
-        int colorXPos = 0;
-        int colorYPos = !ability.isPassive() ? 20 : 0;
-
-        FormattedText rawDescription = Component.translatable(Translation.Type.ABILITY_DESCRIPTION.wrap(ability.location().getNamespace(), ability.location().getPath()));
-
-        List<Component> info = ability.getInfo(Minecraft.getInstance().player);
-        if(!info.isEmpty()) {
-            rawDescription = FormattedText.composite(rawDescription, Component.empty().append("\n\n"));
-        }
-
-        if(ability.upgradeType().isPresent() && ability.upgradeType().get() == Upgrade.Type.PASSIVE_LEVEL && ability.level() != ability.getMaxLevel()) {
-            int nextUpgradeLevel = (int) ability.value().upgrade().get().experienceOrLevelCost().calculate(ability.level() + 1);
-            rawDescription = FormattedText.composite(rawDescription, Component.translatable(LangKey.ABILITY_LEVEL_AUTO_UPGRADE, nextUpgradeLevel).withColor(Color.GREEN.getColor()));
-            rawDescription = FormattedText.composite(rawDescription, Component.empty().append("\n\n"));
-        } else if(ability.upgradeType().isPresent() && ability.upgradeType().get() == Upgrade.Type.PASSIVE_GROWTH && ability.level() != ability.getMaxLevel()) {
-            int nextUpgradeSize = (int) ability.value().upgrade().get().experienceOrLevelCost().calculate(ability.level() + 1);
-            rawDescription = FormattedText.composite(rawDescription, Component.translatable(LangKey.ABILITY_GROWTH_AUTO_UPGRADE, nextUpgradeSize).withColor(Color.GREEN.getColor()));
-            rawDescription = FormattedText.composite(rawDescription, Component.empty().append("\n\n"));
-        }
-
-        List<FormattedCharSequence> description = Minecraft.getInstance().font.split(rawDescription, 150 - 7);
-
+    public static void drawTooltip(@NotNull final GuiGraphics guiGraphics, int x, int y, List<Component> info, List<FormattedCharSequence> description, int colorXPos, int colorYPos, String headerTranslationKey, Component name, Color tooltipBackgroundColor, int maxLevel, int level, ResourceLocation icon) {
         FormattedText textContents = Component.empty();
         for (Component component : info) {
             textContents = FormattedText.composite(textContents, Component.empty().append("\n"));
@@ -109,27 +86,13 @@ public class AbilityTooltipRenderer {
         // Backing square for ability icon
         guiGraphics.blitWithBorder(BARS, trueX, trueY, 0, 100, 26, 26, 24, 24, 3);
 
-        String translationKey;
-        if(ability.isPassive()) {
-            translationKey = PASSIVE;
-        } else {
-            translationKey = ACTIVE;
-        }
+        guiGraphics.drawCenteredString(Minecraft.getInstance().font, Component.translatable(headerTranslationKey), trueX + 150 / 2, trueY + 30, tooltipBackgroundColor.getColor());
 
-        Color tooltipBackgroundColor;
-        if(!ability.isPassive()) {
-            tooltipBackgroundColor = Color.ofRGB(200, 143, 31);
+        if (maxLevel > DragonAbilityInstance.MIN_LEVEL) {
+            guiGraphics.drawCenteredString(Minecraft.getInstance().font, Component.empty().append(level + "/" + maxLevel), trueX + 150 - 18, trueY + 9, -1);
+            guiGraphics.drawCenteredString(Minecraft.getInstance().font, name, trueX + 150 / 2, trueY + 9, -1);
         } else {
-            tooltipBackgroundColor = Color.ofRGB(127, 145, 46);
-        }
-
-        guiGraphics.drawCenteredString(Minecraft.getInstance().font, Component.translatable(translationKey), trueX + 150 / 2, trueY + 30, tooltipBackgroundColor.getColor());
-
-        if (ability.getMaxLevel() > DragonAbilityInstance.MIN_LEVEL) {
-            guiGraphics.drawCenteredString(Minecraft.getInstance().font, Component.empty().append(ability.level() + "/" + ability.getMaxLevel()), trueX + 150 - 18, trueY + 9, -1);
-            guiGraphics.drawCenteredString(Minecraft.getInstance().font, ability.getName(), trueX + 150 / 2, trueY + 9, -1);
-        } else {
-            guiGraphics.drawCenteredString(Minecraft.getInstance().font, ability.getName(), trueX + 150 / 2 + 10, trueY + 9, -1);
+            guiGraphics.drawCenteredString(Minecraft.getInstance().font, name, trueX + 150 / 2 + 10, trueY + 9, -1);
         }
 
         for (int k1 = 0; k1 < description.size(); ++k1) {
@@ -140,6 +103,48 @@ public class AbilityTooltipRenderer {
             guiGraphics.drawCenteredString(Minecraft.getInstance().font, Component.translatable(INFO_SHIFT).withStyle(ChatFormatting.DARK_GRAY), trueX + 150 / 2, trueY + 47 + (description.size() - 1) * 9, 0);
         }
 
-        guiGraphics.blit(ability.getIcon(), trueX + 5, trueY + 5, 0, 0, 16, 16, 16, 16);
+        guiGraphics.blit(icon, trueX + 5, trueY + 5, 0, 0, 16, 16, 16, 16);
+    }
+
+    public static void drawAbilityTooltip(@NotNull final GuiGraphics guiGraphics, int x, int y, final DragonAbilityInstance ability) {
+        int colorXPos = 0;
+        int colorYPos = !ability.isPassive() ? 20 : 0;
+
+        FormattedText rawDescription = Component.translatable(Translation.Type.ABILITY_DESCRIPTION.wrap(ability.location().getNamespace(), ability.location().getPath()));
+
+        List<Component> info = ability.getInfo(Minecraft.getInstance().player);
+        if(!info.isEmpty()) {
+            rawDescription = FormattedText.composite(rawDescription, Component.empty().append("\n\n"));
+        }
+
+        if(ability.upgradeType().isPresent() && ability.upgradeType().get() == Upgrade.Type.PASSIVE_LEVEL && ability.level() != ability.getMaxLevel()) {
+            int nextUpgradeLevel = (int) ability.value().upgrade().get().experienceOrLevelCost().calculate(ability.level() + 1);
+            rawDescription = FormattedText.composite(rawDescription, Component.translatable(LangKey.ABILITY_LEVEL_AUTO_UPGRADE, nextUpgradeLevel).withColor(Color.GREEN.getColor()));
+            rawDescription = FormattedText.composite(rawDescription, Component.empty().append("\n\n"));
+        } else if(ability.upgradeType().isPresent() && ability.upgradeType().get() == Upgrade.Type.PASSIVE_GROWTH && ability.level() != ability.getMaxLevel()) {
+            int nextUpgradeSize = (int) ability.value().upgrade().get().experienceOrLevelCost().calculate(ability.level() + 1);
+            rawDescription = FormattedText.composite(rawDescription, Component.translatable(LangKey.ABILITY_GROWTH_AUTO_UPGRADE, nextUpgradeSize).withColor(Color.GREEN.getColor()));
+            rawDescription = FormattedText.composite(rawDescription, Component.empty().append("\n\n"));
+        }
+
+        List<FormattedCharSequence> description = Minecraft.getInstance().font.split(rawDescription, 150 - 7);
+
+        drawTooltip(guiGraphics, x, y, info, description, colorXPos, colorYPos, ability.isPassive() ? PASSIVE : ACTIVE, ability.getName(), ability.isPassive() ? Color.ofRGB(127, 145, 46) : Color.ofRGB(200, 143, 31), ability.getMaxLevel(), ability.level(), ability.getIcon());
+    }
+
+
+    public static void drawPenaltyHover(@NotNull final GuiGraphics guiGraphics, int x, int y, final Holder<DragonPenalty> penalty) {
+        int colorXPos = 20;
+        int colorYPos = 0;
+
+        FormattedText rawDescription = Component.translatable(Translation.Type.PENALTY_DESCRIPTION.wrap(penalty.getKey().location().getNamespace(), penalty.getKey().location().getPath()));
+
+        List<Component> info = List.of(penalty.value().getDescription(Minecraft.getInstance().player));
+        rawDescription = FormattedText.composite(rawDescription, Component.empty().append("\n\n"));
+
+        List<FormattedCharSequence> description = Minecraft.getInstance().font.split(rawDescription, 150 - 7);
+
+        Component name = Component.translatable(Translation.Type.PENALTY.wrap(penalty.getKey().location().getNamespace(), penalty.getKey().location().getPath()));
+        drawTooltip(guiGraphics, x, y, info, description, colorXPos, colorYPos, PENALTY, name, Color.ofRGB(145, 46, 46), -1, -1, penalty.value().icon());
     }
 }

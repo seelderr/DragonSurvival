@@ -2,7 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons;
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.AbilityScreen;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Upgrade;
-import by.dragonsurvivalteam.dragonsurvival.magic.AbilityTooltipRenderer;
+import by.dragonsurvivalteam.dragonsurvival.magic.AbilityAndPenaltyTooltipRenderer;
 import by.dragonsurvivalteam.dragonsurvival.mixins.client.ScreenAccessor;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncSlotAssignment;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MagicData;
@@ -230,7 +230,7 @@ public class AbilityButton extends Button {
             guiGraphics.pose().pushPose();
             // Render above the other UI elements
             guiGraphics.pose().translate(0, 0, 150);
-            AbilityTooltipRenderer.drawAbilityHover(guiGraphics, mouseX, mouseY, ability);
+            AbilityAndPenaltyTooltipRenderer.drawAbilityTooltip(guiGraphics, mouseX, mouseY, ability);
             guiGraphics.pose().popPose();
         }
         guiGraphics.pose().popPose();

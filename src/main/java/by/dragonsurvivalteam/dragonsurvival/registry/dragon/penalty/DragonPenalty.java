@@ -7,17 +7,21 @@ import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncAddPenaltySupply;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncRemovePenaltySupply;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachments;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.PenaltySupply;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.RegistryFixedCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -78,6 +82,10 @@ public record DragonPenalty(ResourceLocation icon, List<Condition> conditions, P
             penaltySupply.remove(supplyTrigger.id());
             PacketDistributor.sendToPlayer(dragon, new SyncRemovePenaltySupply(supplyTrigger.id()));
         }
+    }
+
+    public MutableComponent getDescription(Player dragon) {
+        return effect.getDescription().append(trigger.getDescription(dragon));
     }
 
     @SubscribeEvent

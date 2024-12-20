@@ -65,6 +65,11 @@ public record ImmunityEffect(List<Immunity> immunities) implements AbilityEntity
     }
 
     @Override
+    public boolean shouldAppendSelfTargetingToDescription() {
+        return false;
+    }
+
+    @Override
     public MapCodec<? extends AbilityEntityEffect> entityCodec() {
         return CODEC;
     }
