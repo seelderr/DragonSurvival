@@ -21,8 +21,8 @@ public class CaveWingsAbility extends DragonWingAbility {
     @Override
     public ResourceLocation[] getSkillTextures() {
         return new ResourceLocation[]{
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_wings_0.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_wings_1.png")
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/cave/cave_wings_0"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/cave/cave_wings_1")
         };
     }
 

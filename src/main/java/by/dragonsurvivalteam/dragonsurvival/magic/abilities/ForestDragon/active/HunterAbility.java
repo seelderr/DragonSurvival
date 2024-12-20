@@ -149,11 +149,11 @@ public class HunterAbility extends ChargeCastAbility {
     @Override
     public ResourceLocation[] getSkillTextures() {
         return new ResourceLocation[]{
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/hunter_0.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/hunter_1.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/hunter_2.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/hunter_3.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/hunter_4.png")
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/hunter_0"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/hunter_1"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/hunter_2"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/hunter_3"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/hunter_4")
         };
     }
 

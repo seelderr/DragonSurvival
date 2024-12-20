@@ -20,7 +20,7 @@ public class SeaDragonInfoAbility extends InnateDragonAbility {
 
     @Override
     public ResourceLocation[] getSkillTextures() {
-        return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_dragon_1.png")};
+        return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/sea_dragon_1")};
     }
 
     @Override

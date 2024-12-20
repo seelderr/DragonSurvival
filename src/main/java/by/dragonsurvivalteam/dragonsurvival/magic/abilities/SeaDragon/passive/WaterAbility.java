@@ -35,14 +35,14 @@ public class WaterAbility extends PassiveDragonAbility {
     @Override
     public ResourceLocation[] getSkillTextures() {
         return new ResourceLocation[]{
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/water_0.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/water_1.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/water_2.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/water_3.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/water_4.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/water_5.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/water_6.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/water_7.png")};
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/water_0"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/water_1"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/water_2"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/water_3"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/water_4"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/water_5"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/water_6"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/water_7")};
     }
 
 

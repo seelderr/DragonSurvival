@@ -118,10 +118,10 @@ public class ToughSkinAbility extends AoeBuffAbility {
     @Override
     public ResourceLocation[] getSkillTextures() {
         return new ResourceLocation[]{
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/strong_leather_0.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/strong_leather_1.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/strong_leather_2.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/strong_leather_3.png")
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/cave/strong_leather_0"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/cave/strong_leather_1"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/cave/strong_leather_2"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/cave/strong_leather_3")
         };
     }
 

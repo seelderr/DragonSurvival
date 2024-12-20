@@ -66,11 +66,11 @@ public class RevealingTheSoulAbility extends AoeBuffAbility {
     @Override
     public ResourceLocation[] getSkillTextures() {
         return new ResourceLocation[]{
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/revealing_the_soul_0.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/revealing_the_soul_1.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/revealing_the_soul_2.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/revealing_the_soul_3.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/revealing_the_soul_4.png")
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/revealing_the_soul_0"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/revealing_the_soul_1"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/revealing_the_soul_2"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/revealing_the_soul_3"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/revealing_the_soul_4")
         };
     }
 

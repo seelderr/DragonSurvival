@@ -20,7 +20,7 @@ public class CaveDragonInfoAbility extends InnateDragonAbility {
 
     @Override
     public ResourceLocation[] getSkillTextures() {
-        return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_dragon_1.png")};
+        return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "abilities/cave/cave_dragon_1")};
     }
 
     @Override

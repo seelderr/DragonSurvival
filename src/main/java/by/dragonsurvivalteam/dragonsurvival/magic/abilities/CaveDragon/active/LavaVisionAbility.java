@@ -99,11 +99,11 @@ public class LavaVisionAbility extends ChargeCastAbility {
     @Override
     public ResourceLocation[] getSkillTextures() {
         return new ResourceLocation[]{
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/lava_vision_0.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/lava_vision_1.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/lava_vision_2.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/lava_vision_3.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/lava_vision_4.png")
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/cave/lava_vision_0"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/cave/lava_vision_1"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/cave/lava_vision_2"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/cave/lava_vision_3"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/cave/lava_vision_4")
         };
     }
 

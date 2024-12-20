@@ -20,7 +20,7 @@ public class ForestDragonInfoAbility extends InnateDragonAbility {
 
     @Override
     public ResourceLocation[] getSkillTextures() {
-        return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_dragon_1.png")};
+        return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/forest_dragon_1")};
     }
 
     @Override

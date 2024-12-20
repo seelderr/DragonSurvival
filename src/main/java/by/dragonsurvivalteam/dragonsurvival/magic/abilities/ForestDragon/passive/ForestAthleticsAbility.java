@@ -30,12 +30,12 @@ public class ForestAthleticsAbility extends AthleticsAbility {
     @Override
     public ResourceLocation[] getSkillTextures() {
         return new ResourceLocation[]{
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_athletics_0.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_athletics_1.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_athletics_2.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_athletics_3.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_athletics_4.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_athletics_5.png")
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/forest_athletics_0"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/forest_athletics_1"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/forest_athletics_2"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/forest_athletics_3"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/forest_athletics_4"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/forest_athletics_5")
         };
     }
 

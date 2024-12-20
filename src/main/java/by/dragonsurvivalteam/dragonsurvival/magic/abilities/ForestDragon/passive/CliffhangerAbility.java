@@ -36,13 +36,13 @@ public class CliffhangerAbility extends PassiveDragonAbility {
 
     @Override
     public ResourceLocation[] getSkillTextures() {
-        return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/cliffhanger_0.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/cliffhanger_1.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/cliffhanger_2.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/cliffhanger_3.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/cliffhanger_4.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/cliffhanger_5.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/cliffhanger_6.png")};
+        return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/cliffhanger_0"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/cliffhanger_1"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/cliffhanger_2"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/cliffhanger_3"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/cliffhanger_4"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/cliffhanger_5"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/cliffhanger_6")};
     }
 
     public int getHeight() {

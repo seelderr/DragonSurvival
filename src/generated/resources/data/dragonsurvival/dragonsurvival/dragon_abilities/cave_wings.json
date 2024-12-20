@@ -6,11 +6,11 @@
     "texture_entries": [
       {
         "from_level": 0,
-        "texture_resource": "dragonsurvival:textures/skills/cave/cave_wings_0.png"
+        "texture_resource": "dragonsurvival:abilities/cave/cave_wings_0"
       },
       {
         "from_level": 1,
-        "texture_resource": "dragonsurvival:textures/skills/cave/cave_wings_1.png"
+        "texture_resource": "dragonsurvival:abilities/cave/cave_wings_1"
       }
     ]
   }

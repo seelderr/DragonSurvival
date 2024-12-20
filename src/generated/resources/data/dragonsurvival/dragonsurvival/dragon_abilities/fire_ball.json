@@ -49,23 +49,23 @@
     "texture_entries": [
       {
         "from_level": 0,
-        "texture_resource": "dragonsurvival:textures/skills/cave/fireball_0.png"
+        "texture_resource": "dragonsurvival:abilities/cave/fireball_0"
       },
       {
         "from_level": 1,
-        "texture_resource": "dragonsurvival:textures/skills/cave/fireball_1.png"
+        "texture_resource": "dragonsurvival:abilities/cave/fireball_1"
       },
       {
         "from_level": 2,
-        "texture_resource": "dragonsurvival:textures/skills/cave/fireball_2.png"
+        "texture_resource": "dragonsurvival:abilities/cave/fireball_2"
       },
       {
         "from_level": 3,
-        "texture_resource": "dragonsurvival:textures/skills/cave/fireball_3.png"
+        "texture_resource": "dragonsurvival:abilities/cave/fireball_3"
       },
       {
         "from_level": 4,
-        "texture_resource": "dragonsurvival:textures/skills/cave/fireball_4.png"
+        "texture_resource": "dragonsurvival:abilities/cave/fireball_4"
       }
     ]
   },

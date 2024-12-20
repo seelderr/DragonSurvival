@@ -11,7 +11,7 @@
     "amount": 2.0,
     "effect_type": "dragonsurvival:damage_penalty"
   },
-  "icon": "dragonsurvival:textures/skills/cave/hot_blood_0.png",
+  "icon": "dragonsurvival:abilities/cave/hot_blood_0",
   "trigger": {
     "attribute": "dragonsurvival:lava_oxygen_amount",
     "effect_type": "dragonsurvival:supply_trigger",

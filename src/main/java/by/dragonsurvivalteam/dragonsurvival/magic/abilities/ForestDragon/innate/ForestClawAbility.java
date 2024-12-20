@@ -21,14 +21,14 @@ public class ForestClawAbility extends DragonClawsAbility {
     @Override
     public ResourceLocation[] getSkillTextures() {
         return new ResourceLocation[]{
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_claws_and_teeth_0.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_claws_and_teeth_1.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_claws_and_teeth_2.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_claws_and_teeth_3.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_claws_and_teeth_4.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_claws_and_teeth_5.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_claws_and_teeth_6.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_claws_and_teeth_7.png")
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/forest_claws_and_teeth_0"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/forest_claws_and_teeth_1"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/forest_claws_and_teeth_2"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/forest_claws_and_teeth_3"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/forest_claws_and_teeth_4"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/forest_claws_and_teeth_5"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/forest_claws_and_teeth_6"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/forest/forest_claws_and_teeth_7")
         };
     }
 }*/

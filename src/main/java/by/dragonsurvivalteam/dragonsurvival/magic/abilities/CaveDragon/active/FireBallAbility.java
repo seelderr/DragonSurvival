@@ -88,11 +88,11 @@ public class FireBallAbility extends ChargeCastAbility {
     @Override
     public ResourceLocation[] getSkillTextures() {
         return new ResourceLocation[]{
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/fireball_0.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/fireball_1.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/fireball_2.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/fireball_3.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/fireball_4.png")
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/cave/fireball_0"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/cave/fireball_1"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/cave/fireball_2"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/cave/fireball_3"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/cave/fireball_4")
         };
     }
 

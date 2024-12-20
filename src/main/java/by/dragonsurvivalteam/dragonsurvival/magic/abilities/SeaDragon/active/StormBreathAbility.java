@@ -243,11 +243,11 @@ public class StormBreathAbility extends BreathAbility {
     @Override
     public ResourceLocation[] getSkillTextures() {
         return new ResourceLocation[]{
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/storm_breath_0.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/storm_breath_1.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/storm_breath_2.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/storm_breath_3.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/storm_breath_4.png")
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/storm_breath_0"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/storm_breath_1"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/storm_breath_2"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/storm_breath_3"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/storm_breath_4")
         };
     }
 

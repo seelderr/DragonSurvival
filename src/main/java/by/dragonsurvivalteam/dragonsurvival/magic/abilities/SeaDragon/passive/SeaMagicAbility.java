@@ -38,27 +38,27 @@ public class SeaMagicAbility extends MagicAbility {
     @Override
     public ResourceLocation[] getSkillTextures() {
         return new ResourceLocation[]{
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_magic_0.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_magic_1.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_magic_2.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_magic_3.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_magic_4.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_magic_5.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_magic_6.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_magic_7.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_magic_8.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_magic_9.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_magic_10.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_magic_11.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_magic_12.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_magic_13.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_magic_14.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_magic_15.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_magic_16.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_magic_17.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_magic_18.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_magic_19.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_magic_20.png")
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/sea_magic_0"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/sea_magic_1"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/sea_magic_2"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/sea_magic_3"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/sea_magic_4"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/sea_magic_5"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/sea_magic_6"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/sea_magic_7"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/sea_magic_8"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/sea_magic_9"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/sea_magic_10"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/sea_magic_11"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/sea_magic_12"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/sea_magic_13"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/sea_magic_14"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/sea_magic_15"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/sea_magic_16"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/sea_magic_17"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/sea_magic_18"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/sea_magic_19"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/sea_magic_20")
         };
     }
 }*/

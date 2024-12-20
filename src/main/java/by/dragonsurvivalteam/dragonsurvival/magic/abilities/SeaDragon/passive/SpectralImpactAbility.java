@@ -37,10 +37,10 @@ public class SpectralImpactAbility extends PassiveDragonAbility {
     @Override
     public ResourceLocation[] getSkillTextures() {
         return new ResourceLocation[]{
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/spectral_impact_0.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/spectral_impact_1.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/spectral_impact_2.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/spectral_impact_3.png")};
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/spectral_impact_0"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/spectral_impact_1"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/spectral_impact_2"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "abilities/sea/spectral_impact_3")};
     }
 
     public int getChance() {
