@@ -8,8 +8,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.ManaCost;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Upgrade;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.animation.AnimationLayer;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.animation.SimpleAbilityAnimation;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.predicates.EyeInFluidPredicate;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.predicates.WeatherPredicate;
 import by.dragonsurvivalteam.dragonsurvival.common.particles.LargeFireParticleOption;
 import by.dragonsurvivalteam.dragonsurvival.common.particles.SmallFireParticleOption;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes;
@@ -26,14 +24,10 @@ import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.targeting.Ab
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.targeting.AreaTarget;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.targeting.DragonBreathTarget;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.targeting.SelfTarget;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.penalty.DamagePenalty;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.penalty.InstantTrigger;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.penalty.SupplyTrigger;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.ProjectileData;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.Projectiles;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.datafixers.util.Either;
-import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.FluidPredicate;
 import net.minecraft.advancements.critereon.LocationPredicate;
@@ -43,13 +37,12 @@ import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Fluids;
-import net.neoforged.neoforge.common.NeoForgeMod;
 
 import java.util.List;
 import java.util.Optional;
@@ -132,18 +125,11 @@ public class CaveDragonAbilities {
     public static final ResourceKey<DragonAbility> CAVE_WINGS = DragonAbilities.key("cave_wings");
 
     @Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = {
-            "■ Cave dragons take §cdamage from water§r, snow, rain and other liquids due to their fiery nature.\n",
-            "■ The skill «Contrast Shower» and effect «Cave Fire» §7could make your life easier.\n",
-    })
-    @Translation(type = Translation.Type.ABILITY, comments = "Hot Blood")
-    public static final ResourceKey<DragonAbility> HOT_BLOOD = DragonAbilities.key("hot_blood");
-
-    @Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = {
-            "■ Cave dragons have a netherite skeleton, and are made mostly of lava. Their diet includes charred meat and coal. Peaceful animals fear dragons.\n",
-            "■ They have innate §2immunity to fire§r and they feel best in the Nether."
+            "■ Cave dragons have a netherite skeleton, and are made mostly of lava.\n",
+            "■ They have innate §2immunity to fire§r."
     })
     @Translation(type = Translation.Type.ABILITY, comments = "Cave Dragon")
-    public static final ResourceKey<DragonAbility> CAVE_DRAGON_INFO = DragonAbilities.key("cave_dragon");
+    public static final ResourceKey<DragonAbility> FIRE_IMMUNITY = DragonAbilities.key("fire_immunity");
 
     public static void registerAbilities(final BootstrapContext<DragonAbility> context) {
         registerActiveAbilities(context);
@@ -154,7 +140,6 @@ public class CaveDragonAbilities {
 
     private static void registerActiveAbilities(final BootstrapContext<DragonAbility> context) {
         context.register(FIRE_BALL, new DragonAbility(
-                false,
                 new Activation(
                         Activation.Type.ACTIVE_SIMPLE,
                         Optional.of(LevelBasedValue.constant(1)),
@@ -198,7 +183,6 @@ public class CaveDragonAbilities {
         ));
 
         context.register(NETHER_BREATH, new DragonAbility(
-                false,
                 new Activation(
                         Activation.Type.ACTIVE_CHANNELED,
                         Optional.empty(),
@@ -269,7 +253,6 @@ public class CaveDragonAbilities {
         ));
 
         context.register(LAVA_VISION, new DragonAbility(
-                false,
                 new Activation(
                         Activation.Type.ACTIVE_SIMPLE,
                         Optional.of(LevelBasedValue.constant(1)),
@@ -312,7 +295,6 @@ public class CaveDragonAbilities {
         ));
 
         context.register(TOUGH_SKIN, new DragonAbility(
-                false,
                 new Activation(
                         Activation.Type.ACTIVE_SIMPLE,
                         Optional.of(LevelBasedValue.constant(1)),
@@ -342,7 +324,7 @@ public class CaveDragonAbilities {
                                         List.of(new Modifier(Attributes.ARMOR, LevelBasedValue.constant(3), AttributeModifier.Operation.ADD_VALUE, Optional.empty())),
                                         LevelBasedValue.perLevel(Functions.secondsToTicks(60)),
                                         false
-                                )),
+                                ), false),
                                 AbilityTargeting.EntityTargetingMode.TARGET_ALLIES
                         )),
                         LevelBasedValue.constant(5)
@@ -358,7 +340,6 @@ public class CaveDragonAbilities {
 
     private static void registerPassiveAbilities(final BootstrapContext<DragonAbility> context) {
         context.register(CAVE_ATHLETICS, new DragonAbility(
-                false,
                 Activation.passive(),
                 Optional.of(new Upgrade(Upgrade.Type.MANUAL, 5, LevelBasedValue.perLevel(15))), // FIXME :: not the actual values
                 Optional.empty(),
@@ -372,7 +353,7 @@ public class CaveDragonAbilities {
                                         List.of(new Modifier(Attributes.MOVEMENT_SPEED, LevelBasedValue.perLevel(0.02f), AttributeModifier.Operation.ADD_VALUE, Optional.empty())),
                                         LevelBasedValue.constant(DurationInstance.INFINITE_DURATION),
                                         false
-                                )), AbilityTargeting.EntityTargetingMode.TARGET_ALLIES)), true), LevelBasedValue.constant(1))),
+                                ), false), AbilityTargeting.EntityTargetingMode.TARGET_ALLIES)), true), LevelBasedValue.constant(1))),
                 new LevelBasedResource(List.of(
                         new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/cave_athletics_0.png"), 0),
                         new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/cave_athletics_1.png"), 1),
@@ -384,7 +365,6 @@ public class CaveDragonAbilities {
         ));
 
         context.register(BURN, new DragonAbility(
-                false,
                 Activation.passive(),
                 Optional.of(new Upgrade(Upgrade.Type.MANUAL, 4, LevelBasedValue.perLevel(15))),
                 Optional.empty(),
@@ -410,7 +390,6 @@ public class CaveDragonAbilities {
         ));
 
         context.register(CAVE_MAGIC, new DragonAbility(
-                false,
                 Activation.passive(),
                 Optional.of(new Upgrade(Upgrade.Type.MANUAL, 10, LevelBasedValue.perLevel(15))),
                 Optional.empty(),
@@ -426,7 +405,8 @@ public class CaveDragonAbilities {
                                                         LevelBasedValue.constant(DurationInstance.INFINITE_DURATION),
                                                         true
                                                 )
-                                        )
+                                        ),
+                                        false
                                 )),
                                 AbilityTargeting.EntityTargetingMode.TARGET_ALLIES
                         )
@@ -447,7 +427,6 @@ public class CaveDragonAbilities {
         ));
 
         context.register(CONTRAST_SHOWER, new DragonAbility(
-                false,
                 Activation.passive(),
                 Optional.of(new Upgrade(Upgrade.Type.MANUAL, 5, LevelBasedValue.perLevel(15))),
                 Optional.empty(),
@@ -463,7 +442,8 @@ public class CaveDragonAbilities {
                                                         LevelBasedValue.constant(DurationInstance.INFINITE_DURATION),
                                                         true
                                                 )
-                                        )
+                                        ),
+                                        true
                                 )),
                                 AbilityTargeting.EntityTargetingMode.TARGET_ALLIES
                         )
@@ -481,10 +461,8 @@ public class CaveDragonAbilities {
 
     private static void registerInnateAbilities(final BootstrapContext<DragonAbility> context) {
         context.register(CAVE_CLAWS_AND_TEETH, new DragonAbility(
-                true,
                 Activation.passive(),
-                // TODO :: How do we actually handle this?
-                //  handle what?
+                // TODO :: How do we handle the upgradability of this ability? I believe before the icon upgraded based off of size or something?
                 Optional.empty(),
                 Optional.empty(),
                 List.of(new ActionContainer(new SelfTarget(Either.right(
@@ -513,7 +491,6 @@ public class CaveDragonAbilities {
         ));
 
         context.register(CAVE_WINGS, new DragonAbility(
-                true,
                 Activation.passive(),
                 Optional.empty(),
                 Optional.empty(),
@@ -525,97 +502,27 @@ public class CaveDragonAbilities {
         ));
 
 
-        context.register(CAVE_DRAGON_INFO, new DragonAbility(
-                true,
+        context.register(FIRE_IMMUNITY, new DragonAbility(
                 Activation.passive(),
                 Optional.empty(),
                 Optional.empty(),
-                List.of(),
-                new LevelBasedResource(List.of(
-                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/cave_dragon_0.png"), 0),
-                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/cave_dragon_1.png"), 1)
-                ))
-        ));
-
-        context.register(HOT_BLOOD, new DragonAbility(
-                true,
-                Activation.passive(),
-                Optional.empty(),
-                Optional.empty(),
-                List.of(new ActionContainer(
-                        new SelfTarget(
+                List.of(
+                        new ActionContainer(new SelfTarget(
                                 Either.right(
                                         new AbilityTargeting.EntityTargeting(
                                                 Optional.empty(),
-                                                List.of(new PenaltyAbilityEffect(
-                                                        List.of(
-                                                                new PenaltyAbilityEffect.Condition(
-                                                                        Optional.empty(),
-                                                                        Optional.of(EntityPredicate.Builder.entity().located(LocationPredicate.Builder.location().setCanSeeSky(true)).build()),
-                                                                        Optional.of(new WeatherPredicate(Optional.of(true), Optional.empty()))
-                                                                ),
-                                                                new PenaltyAbilityEffect.Condition(
-                                                                        Optional.empty(),
-                                                                        Optional.of(EntityPredicate.Builder.entity().steppingOn(LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(Blocks.SNOW, Blocks.POWDER_SNOW, Blocks.SNOW_BLOCK))).build()),
-                                                                        Optional.empty()
-                                                                )
-                                                        ),
-                                                        new DamagePenalty(
-                                                                context.lookup(Registries.DAMAGE_TYPE).getOrThrow(DSDamageTypes.RAIN_BURN),
-                                                                1.0f
-                                                        ),
-                                                        new SupplyTrigger(
-                                                                "rain_supply",
-                                                                DSAttributes.PENALTY_RESISTANCE_TIME,
-                                                                40,
-                                                                1.0f,
-                                                                0.013f
-                                                        )),
-                                                        new PenaltyAbilityEffect(
-                                                                List.of(
-                                                                        new PenaltyAbilityEffect.Condition(
-                                                                                Optional.empty(),
-                                                                                Optional.of(EntityPredicate.Builder.entity().located(LocationPredicate.Builder.location().setFluid(FluidPredicate.Builder.fluid().of(HolderSet.direct(Fluids.WATER.builtInRegistryHolder(), Fluids.FLOWING_WATER.builtInRegistryHolder())))).build()),
-                                                                                Optional.empty()
-                                                                        )
-                                                                ),
-                                                                new DamagePenalty(
-                                                                        context.lookup(Registries.DAMAGE_TYPE).getOrThrow(DSDamageTypes.WATER_BURN),
-                                                                        1.0f
-                                                                ),
-                                                                new InstantTrigger(
-                                                                        10
-                                                                )
-                                                        ),
-                                                        new PenaltyAbilityEffect(
-                                                                List.of(
-                                                                        new PenaltyAbilityEffect.Condition(
-                                                                                Optional.of(new EyeInFluidPredicate(NeoForgeMod.LAVA_TYPE)),
-                                                                                Optional.empty(),
-                                                                                Optional.empty()
-                                                                        )
-                                                                ),
-                                                                new DamagePenalty(
-                                                                        context.lookup(Registries.DAMAGE_TYPE).getOrThrow(DamageTypes.DROWN),
-                                                                        2.0f
-                                                                ),
-                                                                new SupplyTrigger(
-                                                                        "lava_supply",
-                                                                        DSAttributes.LAVA_OXYGEN_AMOUNT,
-                                                                        40,
-                                                                        1.0f,
-                                                                        0.013f
-                                                                )
-                                                        )
-                                                ),
-                                                AbilityTargeting.EntityTargetingMode.TARGET_ALL)
-                                        ), false),
-                                LevelBasedValue.constant(1)
-                        )
+                                                List.of(new ImmunityEffect(
+                                                        HolderSet.direct(context.lookup(Registries.DAMAGE_TYPE).getOrThrow(DamageTypes.LAVA), context.lookup(Registries.DAMAGE_TYPE).getOrThrow(DamageTypes.IN_FIRE), context.lookup(Registries.DAMAGE_TYPE).getOrThrow(DamageTypes.ON_FIRE))
+                                                )),
+                                                AbilityTargeting.EntityTargetingMode.TARGET_ALL
+                                        )
+                                ),
+                                false
+                        ), LevelBasedValue.constant(1))
                 ),
                 new LevelBasedResource(List.of(
-                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/hot_blood_0.png"), 0),
-                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/hot_blood_1.png"), 1)
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/cave_dragon_0.png"), 0),
+                        new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/cave_dragon_1.png"), 1)
                 ))
         ));
     }

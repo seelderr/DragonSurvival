@@ -33,7 +33,6 @@ public class ForestDragonAbilities {
 
     private static void registerActiveAbilities(final BootstrapContext<DragonAbility> context) {
         context.register(FOREST_SPIKE, new DragonAbility(
-                false,
                 new Activation(
                         Activation.Type.ACTIVE_SIMPLE,
                         Optional.empty(),

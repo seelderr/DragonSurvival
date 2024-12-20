@@ -58,6 +58,9 @@ public @interface Translation {
         ABILITY("dragon_ability." + DragonSurvival.MODID + ".", ""),
         ABILITY_DESCRIPTION("dragon_ability." + DragonSurvival.MODID + ".", ".desc"),
 
+        PENALTY("dragon_penalty." + DragonSurvival.MODID + ".", ""),
+        PENALTY_DESCRIPTION("dragon_penalty." + DragonSurvival.MODID + ".", ".desc"),
+
         PROJECTILE(DragonSurvival.MODID + ".projectile.", ""),
 
         ADVANCEMENT(DragonSurvival.MODID + ".advancement.", ""),

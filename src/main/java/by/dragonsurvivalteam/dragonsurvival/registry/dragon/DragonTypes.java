@@ -9,6 +9,8 @@ import by.dragonsurvivalteam.dragonsurvival.registry.datagen.abilities.ForestDra
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.abilities.SeaDragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.datapacks.AncientDatapack;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.penalty.DragonPenalties;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.penalty.DragonPenalty;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStages;
 import net.minecraft.core.HolderSet;
 import net.minecraft.data.worldgen.BootstrapContext;
@@ -43,10 +45,14 @@ public class DragonTypes {
                         context.lookup(DragonAbility.REGISTRY).getOrThrow(CaveDragonAbilities.CAVE_MAGIC),
                         context.lookup(DragonAbility.REGISTRY).getOrThrow(CaveDragonAbilities.CONTRAST_SHOWER),
                         // Innate
-                        context.lookup(DragonAbility.REGISTRY).getOrThrow(CaveDragonAbilities.CAVE_DRAGON_INFO),
+                        context.lookup(DragonAbility.REGISTRY).getOrThrow(CaveDragonAbilities.FIRE_IMMUNITY),
                         context.lookup(DragonAbility.REGISTRY).getOrThrow(CaveDragonAbilities.CAVE_WINGS),
-                        context.lookup(DragonAbility.REGISTRY).getOrThrow(CaveDragonAbilities.CAVE_CLAWS_AND_TEETH),
-                        context.lookup(DragonAbility.REGISTRY).getOrThrow(CaveDragonAbilities.HOT_BLOOD)
+                        context.lookup(DragonAbility.REGISTRY).getOrThrow(CaveDragonAbilities.CAVE_CLAWS_AND_TEETH)
+                ),
+                HolderSet.direct(
+                        context.lookup(DragonPenalty.REGISTRY).getOrThrow(DragonPenalties.SNOW_AND_RAIN_WEAKNESS),
+                        context.lookup(DragonPenalty.REGISTRY).getOrThrow(DragonPenalties.WATER_WEAKNESS),
+                        context.lookup(DragonPenalty.REGISTRY).getOrThrow(DragonPenalties.LAVA_SWIMMING)
                 ),
                 List.of(),
                 List.of(DietEntry.from("#minecraft:doors", new FoodProperties(2, 1, true, 1, Optional.empty(), List.of()))),
@@ -86,6 +92,7 @@ public class DragonTypes {
                 Optional.empty(),
                 HolderSet.empty(),
                 HolderSet.direct(context.lookup(DragonAbility.REGISTRY).getOrThrow(SeaDragonAbilities.BALL_LIGHTNING)),
+                HolderSet.empty(),
                 List.of(),
                 List.of(),
                 new MiscDragonTextures(
@@ -124,6 +131,7 @@ public class DragonTypes {
                 Optional.empty(),
                 HolderSet.empty(),
                 HolderSet.direct(context.lookup(DragonAbility.REGISTRY).getOrThrow(ForestDragonAbilities.FOREST_SPIKE)),
+                HolderSet.empty(),
                 List.of(),
                 List.of(),
                 new MiscDragonTextures(

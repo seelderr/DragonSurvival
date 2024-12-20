@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins;
 
+import by.dragonsurvivalteam.dragonsurvival.mixins.client.ScreenAccessor;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.ClientEffectProvider;
 import by.dragonsurvivalteam.dragonsurvival.util.DSColors;

@@ -1,0 +1,23 @@
+{
+  "conditions": [
+    {
+      "eye_in_fluid_conditions": {
+        "fluid": "minecraft:lava"
+      }
+    }
+  ],
+  "effect": {
+    "type": "minecraft:drown",
+    "amount": 2.0,
+    "effect_type": "dragonsurvival:damage_penalty"
+  },
+  "icon": "dragonsurvival:textures/skills/cave/hot_blood_0.png",
+  "trigger": {
+    "attribute": "dragonsurvival:lava_oxygen_amount",
+    "effect_type": "dragonsurvival:supply_trigger",
+    "id": "lava_supply",
+    "reduction_rate": 1.0,
+    "regeneration_rate": 0.013,
+    "trigger_rate": 40
+  }
+}

@@ -40,7 +40,6 @@
     "EffectRenderingInventoryScreenMixin",
     "GuiAccessor",
     "GuiMixin",
-    "ScreenAccessor",
     "client.AbstractContainerEventHandlerMixin",
     "client.ClientLevelMixin",
     "client.EntityRenderDispatcherMixin",

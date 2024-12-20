@@ -45,7 +45,7 @@ public class AbilityTooltipRenderer {
     private static final ResourceLocation BARS = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/widget_bars.png");
 
     public static void drawAbilityHover(@NotNull final GuiGraphics guiGraphics, int x, int y, final DragonAbilityInstance ability) {
-        int colorXPos = ability.ability().value().isInnate() ? 20 : 0;
+        int colorXPos = 0;
         int colorYPos = !ability.isPassive() ? 20 : 0;
 
         FormattedText rawDescription = Component.translatable(Translation.Type.ABILITY_DESCRIPTION.wrap(ability.location().getNamespace(), ability.location().getPath()));
@@ -106,18 +106,14 @@ public class AbilityTooltipRenderer {
         guiGraphics.blitWithBorder(BARS, trueX, trueY, 0, 100, 26, 26, 24, 24, 3);
 
         String translationKey;
-        if(ability.ability().value().isInnate()) {
-            translationKey = INNATE;
-        } else if(ability.isPassive()) {
+        if(ability.isPassive()) {
             translationKey = PASSIVE;
         } else {
             translationKey = ACTIVE;
         }
 
         Color tooltipBackgroundColor;
-        if(ability.ability().value().isInnate()) {
-            tooltipBackgroundColor = Color.ofRGB(150, 56, 175);
-        } else if(!ability.isPassive()) {
+        if(!ability.isPassive()) {
             tooltipBackgroundColor = Color.ofRGB(200, 143, 31);
         } else {
             tooltipBackgroundColor = Color.ofRGB(127, 145, 46);

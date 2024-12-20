@@ -35,6 +35,11 @@ public record SupplyTrigger(String id, Holder<Attribute> attributeToUseAsBase, i
     }
 
     @Override
+    public String id() {
+        return id;
+    }
+
+    @Override
     public MapCodec<? extends PenaltyTrigger> codec() {
         return CODEC;
     }

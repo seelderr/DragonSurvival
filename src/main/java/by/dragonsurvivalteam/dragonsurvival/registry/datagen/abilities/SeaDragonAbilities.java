@@ -33,7 +33,6 @@ public class SeaDragonAbilities {
 
     private static void registerActiveAbilities(final BootstrapContext<DragonAbility> context) {
         context.register(BALL_LIGHTNING, new DragonAbility(
-                false,
                 new Activation(
                         Activation.Type.ACTIVE_SIMPLE,
                         Optional.empty(),

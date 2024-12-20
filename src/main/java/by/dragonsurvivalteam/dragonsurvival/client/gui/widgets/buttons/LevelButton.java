@@ -27,6 +27,9 @@ public class LevelButton extends ClickHoverButton {
     private static final ResourceLocation UPGRADE_HOVER = DragonSurvival.res( "textures/gui/ability_screen/arrow_right_upgrade_hover.png");
     private static final ResourceLocation UPGRADE_MAIN = DragonSurvival.res( "textures/gui/ability_screen/arrow_right_upgrade_main.png");
 
+    private static final int WIDTH = 9;
+    private static final int HEIGHT = 14;
+
     private final Type type;
     private final DragonAbilityInstance ability;
 
@@ -45,8 +48,13 @@ public class LevelButton extends ClickHoverButton {
         }
     }
 
+    public void resetDimensions() {
+        this.width = WIDTH;
+        this.height = HEIGHT;
+    }
+
     public LevelButton(final Type type, final DragonAbilityInstance ability, int xPos, int yPos) {
-        super(xPos, yPos, 9, 14, 0, 0, 16, 16, Component.empty(), button -> {
+        super(xPos, yPos, WIDTH, HEIGHT, 0, 0, 16, 16, Component.empty(), button -> {
             int modification = ((LevelButton) button).getExperienceModification();
 
             if (modification == 0) {

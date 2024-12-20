@@ -1,0 +1,26 @@
+{
+  "conditions": [
+    {
+      "entity_conditions": {
+        "location": {
+          "fluid": {
+            "fluids": [
+              "minecraft:water",
+              "minecraft:flowing_water"
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "effect": {
+    "type": "dragonsurvival:water_burn",
+    "amount": 1.0,
+    "effect_type": "dragonsurvival:damage_penalty"
+  },
+  "icon": "dragonsurvival:textures/skills/cave/hot_blood_0.png",
+  "trigger": {
+    "effect_type": "dragonsurvival:instant_trigger",
+    "trigger_rate": 10
+  }
+}

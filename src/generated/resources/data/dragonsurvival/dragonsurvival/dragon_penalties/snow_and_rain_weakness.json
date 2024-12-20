@@ -1,0 +1,40 @@
+{
+  "conditions": [
+    {
+      "entity_conditions": {
+        "location": {
+          "can_see_sky": true
+        }
+      },
+      "weather_conditions": {
+        "is_raining": true
+      }
+    },
+    {
+      "entity_conditions": {
+        "stepping_on": {
+          "block": {
+            "blocks": [
+              "minecraft:snow",
+              "minecraft:powder_snow",
+              "minecraft:snow_block"
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "effect": {
+    "type": "dragonsurvival:rain_burn",
+    "amount": 1.0,
+    "effect_type": "dragonsurvival:damage_penalty"
+  },
+  "icon": "dragonsurvival:textures/skills/cave/hot_blood_0.png",
+  "trigger": {
+    "effect_type": "dragonsurvival:supply_trigger",
+    "id": "rain_supply",
+    "reduction_rate": 1.0,
+    "regeneration_rate": 0.013,
+    "trigger_rate": 40
+  }
+}

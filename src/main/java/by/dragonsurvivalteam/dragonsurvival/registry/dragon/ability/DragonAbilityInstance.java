@@ -4,6 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.hud.MagicHUD;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Activation;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.ManaCost;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Upgrade;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ManaHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncStopCast;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MagicData;
@@ -323,5 +324,9 @@ public class DragonAbilityInstance {
 
     public boolean isEnabled() {
         return isEnabled;
+    }
+
+    public boolean isManuallyUpgraded() {
+        return value().upgrade().map(upgrade -> upgrade.type() == Upgrade.Type.MANUAL).orElse(false);
     }
 }

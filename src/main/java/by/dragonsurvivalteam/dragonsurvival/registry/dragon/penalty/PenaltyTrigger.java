@@ -23,6 +23,7 @@ public interface PenaltyTrigger {
 
     boolean matches(final ServerPlayer dragon, boolean conditionMatched);
     MapCodec<? extends PenaltyTrigger> codec();
+    default String id() { return ""; }
 
     @SubscribeEvent
     static void register(final NewRegistryEvent event) {

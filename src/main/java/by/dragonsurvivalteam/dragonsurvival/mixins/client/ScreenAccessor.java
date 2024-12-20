@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins.client;
 
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
@@ -12,6 +13,9 @@ import java.util.List;
 
 @Mixin(Screen.class)
 public interface ScreenAccessor {
+    @Accessor("font")
+    Font dragonSurvival$getFont();
+
     @Accessor("children")
     List<GuiEventListener> dragonSurvival$children();
 

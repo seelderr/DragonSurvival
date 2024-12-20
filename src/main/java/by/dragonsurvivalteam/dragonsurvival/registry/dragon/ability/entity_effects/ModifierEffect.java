@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.codecs.ModifierWithDuration;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import by.dragonsurvivalteam.dragonsurvival.util.DSColors;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.chat.Component;
@@ -19,9 +20,10 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public record ModifierEffect(List<ModifierWithDuration> modifiers) implements AbilityEntityEffect {
+public record ModifierEffect(List<ModifierWithDuration> modifiers, boolean displayTooltipAsSeconds) implements AbilityEntityEffect {
     public static final MapCodec<ModifierEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-            ModifierWithDuration.CODEC.listOf().fieldOf("modifiers").forGetter(ModifierEffect::modifiers)
+            ModifierWithDuration.CODEC.listOf().fieldOf("modifiers").forGetter(ModifierEffect::modifiers),
+            Codec.BOOL.optionalFieldOf("display_tooltip_as_seconds", false).forGetter(ModifierEffect::displayTooltipAsSeconds)
     ).apply(instance, ModifierEffect::new));
 
     @Override
@@ -58,7 +60,11 @@ public record ModifierEffect(List<ModifierWithDuration> modifiers) implements Ab
                 if (modifier.attribute().value() instanceof PercentageAttribute) {
                     number += NumberFormat.getPercentInstance().format(amount);
                 } else {
-                    number += String.format("%.2f", amount);
+                    if(displayTooltipAsSeconds) {
+                        number += String.format("%.0f", amount / 20.f) + "s";
+                    } else {
+                        number += String.format("%.2f", amount);
+                    }
                 }
 
                 Component value = Component.literal("§6: ").append(Component.literal(number).withStyle(modifier.attribute().value().getStyle(amount > 0)));
@@ -75,8 +81,8 @@ public record ModifierEffect(List<ModifierWithDuration> modifiers) implements Ab
         return components;
     }
 
-    public static List<AbilityEntityEffect> single(final ModifierWithDuration modifier) {
-        return List.of(new ModifierEffect(List.of(modifier)));
+    public static List<AbilityEntityEffect> single(final ModifierWithDuration modifier, final boolean displayTooltipAsSeconds) {
+        return List.of(new ModifierEffect(List.of(modifier), displayTooltipAsSeconds));
     }
 
     @Override

@@ -322,20 +322,14 @@ public class MagicData implements INBTSerializable<CompoundTag> {
 
     public List<DragonAbilityInstance> getActiveAbilities() {
         return abilities.values().stream().filter(
-                instance -> instance.ability().value().activation().type() != Activation.Type.PASSIVE && !instance.ability().value().isInnate()
+                instance -> instance.ability().value().activation().type() != Activation.Type.PASSIVE
         ).toList();
     }
 
     public List<DragonAbilityInstance> getPassiveAbilities() {
         return abilities.values().stream().filter(
-                instance -> instance.ability().value().activation().type() == Activation.Type.PASSIVE && !instance.ability().value().isInnate()
-        ).toList();
-    }
-
-    public List<DragonAbilityInstance> getInnateAbilities() {
-        return abilities.values().stream().filter(
-                instance -> instance.ability().value().isInnate()
-        ).toList();
+                instance -> instance.ability().value().activation().type() == Activation.Type.PASSIVE
+        ).sorted((a, b) -> Boolean.compare(b.isManuallyUpgraded(), a.isManuallyUpgraded())).toList();
     }
 
     /** Returns the amount of experience gained / lost when down- or upgrading the ability */

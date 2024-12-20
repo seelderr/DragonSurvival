@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.LevelButt
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.TabButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ClickHoverButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.components.AbilityColumnsComponent;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MagicData;
@@ -12,6 +13,7 @@ import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import by.dragonsurvivalteam.dragonsurvival.util.ExperienceUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -19,6 +21,9 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.InputEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -72,11 +77,8 @@ public class AbilityScreen extends Screen {
     private static final ResourceLocation LEFT_PANEL_ARROW_CLICK = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/ability_screen/addition_arrow_left_click.png");
     private static final ResourceLocation LEFT_PANEL_ARROW_HOVER = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/ability_screen/addition_arrow_left_hover.png");
     private static final ResourceLocation LEFT_PANEL_ARROW_MAIN = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/ability_screen/addition_arrow_left_main.png");
-    private static final ResourceLocation RIGHT_PANEL_ARROW_CLICK = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/ability_screen/addition_arrow_right_click.png");
-    private static final ResourceLocation RIGHT_PANEL_ARROW_HOVER = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/ability_screen/addition_arrow_right_hover.png");
-    private static final ResourceLocation RIGHT_PANEL_ARROW_MAIN = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/ability_screen/addition_arrow_right_main.png");
 
-    private static int ABILITIES_PER_COLUMN = 4;
+    private static final int ABILITIES_ON_HOTBAR = 4;
 
     public Screen sourceScreen;
     public LevelButton hoveredLevelButton;
@@ -88,11 +90,11 @@ public class AbilityScreen extends Screen {
     private boolean leftWindowOpen;
     private final List<AbstractWidget> leftWindowWidgets = new ArrayList<>();
 
-    private boolean rightWindowOpen;
-    private final List<AbstractWidget> rightWindowWidgets = new ArrayList<>();
+    private AbilityColumnsComponent activeAbilityColumns;
+    private AbilityColumnsComponent passiveAbilityColumns;
 
     public AbilityScreen(Screen sourceScreen) {
-        super(Component.empty().append("AbilityScreen")); // FIXME :: what is this component used for
+        super(Component.empty());
         this.sourceScreen = sourceScreen;
     }
 
@@ -101,10 +103,24 @@ public class AbilityScreen extends Screen {
     }
 
     @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+        if(activeAbilityColumns.isHoveringOverButton(mouseX, mouseY)) {
+            activeAbilityColumns.scroll(scrollY > 0);
+        } else if(passiveAbilityColumns.isHoveringOverButton(mouseX, mouseY)) {
+            passiveAbilityColumns.scroll(scrollY > 0);
+        }
+
+        return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+    }
+
+    @Override
     public void render(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         if (minecraft == null || minecraft.player == null) {
             return;
         }
+
+        activeAbilityColumns.update();
+        passiveAbilityColumns.update();
 
         this.renderBlurredBackground(partialTick);
 
@@ -116,10 +132,6 @@ public class AbilityScreen extends Screen {
         }
 
         guiGraphics.blit(BACKGROUND_MAIN, startX, startY, 0, 0, 256, 256);
-
-        if (rightWindowOpen) {
-            guiGraphics.blit(BACKGROUND_SIDE, startX + 207, startY, 0, 0, 48, 203);
-        }
 
         if (type != null) {
             // Draw XP bars
@@ -211,18 +223,11 @@ public class AbilityScreen extends Screen {
         List<DragonAbilityInstance> actives = data.getActiveAbilities();
         List<DragonAbilityInstance> passives = data.getPassiveAbilities();
 
-        for (int i = 0; i < ABILITIES_PER_COLUMN; i++) {
-            DragonAbilityInstance instance = actives.size() > i ? actives.get(i) : null;
-            addRenderableWidget(new AbilityButton((int) (guiLeft + BACKGROUND_BEZEL_WIDTH + (INNER_BACKGROUND_WIDTH / 3.7f)), guiTop + i * 40, instance, this));
-        }
-
-        for (int i = 0; i < ABILITIES_PER_COLUMN; i++) {
-            DragonAbilityInstance instance = passives.size() > i ? passives.get(i) : null;
-            addRenderableWidget(new AbilityButton((int) (guiLeft + BACKGROUND_BEZEL_WIDTH + (INNER_BACKGROUND_WIDTH / 1.23f)), guiTop + i * 40, instance, this));
-        }
+        activeAbilityColumns = new AbilityColumnsComponent(this, (int) (guiLeft + BACKGROUND_BEZEL_WIDTH + (INNER_BACKGROUND_WIDTH / 3.7f)), guiTop, 40, 20, 0.8f, 0.5f, actives);
+        passiveAbilityColumns = new AbilityColumnsComponent(this, (int) (guiLeft + BACKGROUND_BEZEL_WIDTH + (INNER_BACKGROUND_WIDTH / 1.23f)), guiTop, 40, 20, 0.8f, 0.5f, passives);
 
         // Left panel (hotbar)
-        for(int i = 0; i < ABILITIES_PER_COLUMN; i++) {
+        for(int i = 0; i < ABILITIES_ON_HOTBAR; i++) {
             AbstractWidget widget = new AbilityButton(guiLeft - 18, guiTop + i * 40, data.fromSlot(i), this, true, i);
             addRenderableWidget(widget);
             leftWindowWidgets.add(widget);
@@ -234,21 +239,6 @@ public class AbilityScreen extends Screen {
         leftWindowWidgets.add(leftHelpButton);
         leftHelpButton.visible = leftWindowOpen;
 
-        List<DragonAbilityInstance> innate = data.getInnateAbilities();
-        // Right panel (innate ablities)
-        for(int i = 0; i < ABILITIES_PER_COLUMN; i++) {
-            DragonAbilityInstance instance = innate.size() > i ? innate.get(i) : null;
-            AbstractWidget widget = new AbilityButton(guiLeft + 239, guiTop + i * 40, instance, this);
-            addRenderableWidget(widget);
-            rightWindowWidgets.add(widget);
-            widget.visible = rightWindowOpen;
-        }
-
-        AbstractWidget rightHelpButton = new HelpButton(guiLeft + 250, startY - 25, 13, 13, HELP_INNATE);
-        addRenderableWidget(rightHelpButton);
-        rightWindowWidgets.add(rightHelpButton);
-        rightHelpButton.visible = rightWindowOpen;
-
         addRenderableWidget(new ClickHoverButton(guiLeft + 17, guiTop + 69, 10, 17, 0, 1, 18, 18, Component.empty(), button -> {
             leftWindowOpen = !leftWindowOpen;
             for(AbstractWidget widget : leftWindowWidgets) {
@@ -256,41 +246,19 @@ public class AbilityScreen extends Screen {
             }
         }, LEFT_PANEL_ARROW_CLICK, LEFT_PANEL_ARROW_HOVER, LEFT_PANEL_ARROW_MAIN));
 
-        addRenderableWidget(new ClickHoverButton(guiLeft + 228, guiTop + 69, 10, 17, 0, 1, 18, 18, Component.empty(), button -> {
-            rightWindowOpen = !rightWindowOpen;
-            for(AbstractWidget widget : rightWindowWidgets) {
-                widget.visible = rightWindowOpen;
-            }
-        }, RIGHT_PANEL_ARROW_CLICK, RIGHT_PANEL_ARROW_HOVER, RIGHT_PANEL_ARROW_MAIN));
-
         addRenderableWidget(new HelpButton(guiLeft + BACKGROUND_BEZEL_WIDTH + (INNER_BACKGROUND_WIDTH / 2) + 19, startY + 263 / 2 + 24, 13, 13, HELP_PASSIVE_ACTIVE));
     }
 
 
     @Override
     public void tick() {
-        // FIXME
         //noinspection DataFlowIssue -> players should be present
         DragonStateHandler data = DragonStateProvider.getData(minecraft.player);
-        //unlockableAbilities.clear();
-        type = data.getType();
-
-        /*for (ActiveDragonAbility ability : data.getMagicData().getActiveAbilities()) {
-            int level = DragonAbilities.getAbility(minecraft.player, ability.getClass()).map(ActiveDragonAbility::getLevel).orElse(ability.level);
-
-            for (int i = level; i < ability.getMaxLevel(); i++) {
-                try {
-                    ActiveDragonAbility instance = ability.getClass().getDeclaredConstructor().newInstance();
-                    instance.setLevel(i + 1);
-                    unlockableAbilities.add(instance);
-                } catch (ReflectiveOperationException exception) {
-                    throw new RuntimeException(exception);
-                }
-            }
-        }*/
-
-        // Show abilities with the lowest required experience level first
-       // unlockableAbilities.sort(Comparator.comparingInt(ActiveDragonAbility::getCurrentRequiredLevel));
+        if(type != data.getType()) {
+            type = data.getType();
+            clearWidgets();
+            init();
+        }
     }
 
     @Override

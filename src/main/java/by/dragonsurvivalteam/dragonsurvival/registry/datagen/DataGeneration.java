@@ -13,6 +13,8 @@ import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilit
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.body.DragonBodies;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.body.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.datapacks.AncientDatapack;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.penalty.DragonPenalties;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.penalty.DragonPenalty;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStage;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStages;
 import by.dragonsurvivalteam.dragonsurvival.registry.projectile.ProjectileData;
@@ -70,6 +72,7 @@ public class DataGeneration {
         builder.add(DragonStage.REGISTRY, DragonStages::registerStages);
         builder.add(DragonAbility.REGISTRY, DragonAbilities::registerAbilities);
         builder.add(ProjectileData.REGISTRY, Projectiles::registerProjectiles);
+        builder.add(DragonPenalty.REGISTRY, DragonPenalties::registerPenalties);
         builder.add(DragonType.REGISTRY, DragonTypes::registerTypes);
         DatapackBuiltinEntriesProvider datapackProvider = new DatapackBuiltinEntriesProvider(output, lookup, builder, Set.of(DragonSurvival.MODID));
         generator.addProvider(event.includeServer(), datapackProvider);

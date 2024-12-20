@@ -32,9 +32,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public record DragonAbility(
-        // FIXME :: why is this here? innate abilities are not a thing anymore - there are only active and passive abilities
-        //  "innate" has no meaning, all abilities are innate to the specific dragon type and can level manually or passively depending on how they're defined
-        boolean isInnate,
         Activation activation,
         Optional<Upgrade> upgrade,
         Optional<EntityPredicate> usageBlocked,
@@ -44,7 +41,6 @@ public record DragonAbility(
     public static final ResourceKey<Registry<DragonAbility>> REGISTRY = ResourceKey.createRegistryKey(DragonSurvival.res("dragon_abilities"));
 
     public static final Codec<DragonAbility> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Codec.BOOL.optionalFieldOf("innate", false).forGetter(DragonAbility::isInnate),
             Activation.codec().fieldOf("activation").forGetter(DragonAbility::activation),
             Upgrade.CODEC.optionalFieldOf("upgrade").forGetter(DragonAbility::upgrade),
             EntityPredicate.CODEC.optionalFieldOf("usage_blocked").forGetter(DragonAbility::usageBlocked),
@@ -71,17 +67,7 @@ public record DragonAbility(
         StringBuilder validationError = new StringBuilder("The following stages are incorrectly defined:");
         AtomicBoolean areStagesValid = new AtomicBoolean(true);
 
-        ResourceHelper.keys(access, REGISTRY).forEach(key -> {
-            //noinspection OptionalGetWithoutIsPresent -> ignore
-            Holder.Reference<DragonAbility> ability = ResourceHelper.get(access, key).get();
-
-            if(ability.value().activation().type() != Activation.Type.PASSIVE) {
-                if(ability.value().isInnate()) {
-                    validationError.append("\n- ").append(key.location()).append(" is marked as innate but is not passive");
-                    areStagesValid.set(false);
-                }
-            }
-        });
+        ResourceHelper.keys(access, REGISTRY).forEach(key -> {});
 
         if(!areStagesValid.get()) {
             throw new IllegalStateException(validationError.toString());

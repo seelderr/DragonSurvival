@@ -1,20 +1,54 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.attachments;
 
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncPenaltySupply;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncPenaltySupplyAmount;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.penalty.DragonPenalty;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.util.INBTSerializable;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.List;
 
+@EventBusSubscriber
 public class PenaltySupply implements INBTSerializable<CompoundTag> {
     private final HashMap<String, Data> supplyData = new HashMap<>();
+
+    @SubscribeEvent
+    public static void applyPenalties(final PlayerTickEvent.Post event) {
+        if(event.getEntity().level().isClientSide()) {
+            return;
+        }
+
+        Player player = event.getEntity();
+        DragonStateHandler handler = DragonStateProvider.getData(player);
+
+        PenaltySupply data = getData(player);
+        if(handler.isDragon()) {
+            for(Holder<DragonPenalty> penalty : handler.getDragonType().value().penalties()) {
+                penalty.value().apply((ServerPlayer) player);
+            }
+
+            // Remove any penalties the player no longer has
+            for(String id : data.getSupplyTypes()) {
+                if(handler.getDragonType().value().penalties().stream().noneMatch(penalty -> penalty.value().trigger().id().equals(id))) {
+                    data.remove(id);
+                }
+            }
+        } else {
+            data.clear();
+        }
+    }
 
     public static PenaltySupply getData(final Player player) {
         return player.getData(DSDataAttachments.PENALTY_SUPPLY);
