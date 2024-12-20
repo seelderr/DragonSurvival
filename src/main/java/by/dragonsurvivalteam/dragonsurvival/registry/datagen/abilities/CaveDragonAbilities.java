@@ -133,8 +133,6 @@ public class CaveDragonAbilities {
     public static void registerAbilities(final BootstrapContext<DragonAbility> context) {
         registerActiveAbilities(context);
         registerPassiveAbilities(context);
-        // FIXME :: innate is not a thing anymore - we should remove all references to it
-        registerInnateAbilities(context);
     }
 
     private static void registerActiveAbilities(final BootstrapContext<DragonAbility> context) {
@@ -456,9 +454,6 @@ public class CaveDragonAbilities {
                         new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/contrast_shower_5.png"), 5)
                 ))
         ));
-    }
-
-    private static void registerInnateAbilities(final BootstrapContext<DragonAbility> context) {
         context.register(CAVE_CLAWS_AND_TEETH, new DragonAbility(
                 Activation.passive(),
                 // TODO :: How do we handle the upgradability of this ability? I believe before the icon upgraded based off of size or something?
@@ -488,7 +483,6 @@ public class CaveDragonAbilities {
                         new LevelBasedResource.TextureEntry(DragonSurvival.res("textures/skills/cave/cave_claws_and_teeth_4.png"), 4)
                 ))
         ));
-
         context.register(CAVE_WINGS, new DragonAbility(
                 Activation.passive(),
                 Optional.empty(),
