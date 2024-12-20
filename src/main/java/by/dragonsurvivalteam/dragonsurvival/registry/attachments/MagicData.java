@@ -119,7 +119,7 @@ public class MagicData implements INBTSerializable<CompoundTag> {
             int previousLevel = ability.level();
 
             for (int level = DragonAbilityInstance.MIN_LEVEL_FOR_CALCULATIONS; level <= upgrade.maximumLevel(); level++) {
-                float required = upgrade.experienceOrLevelCost().calculate(level);
+                float required = upgrade.requirementOrCost().calculate(level);
 
                 if (newExperienceLevel < required) {
                     ability.setLevel(level - 1);
@@ -152,7 +152,7 @@ public class MagicData implements INBTSerializable<CompoundTag> {
             }
 
             for (int level = DragonAbilityInstance.MIN_LEVEL_FOR_CALCULATIONS; level <= upgrade.maximumLevel(); level++) {
-                float required = upgrade.experienceOrLevelCost().calculate(level);
+                float required = upgrade.requirementOrCost().calculate(level);
 
                 if (newSize < required) {
                     ability.setLevel(level - 1);
@@ -379,7 +379,7 @@ public class MagicData implements INBTSerializable<CompoundTag> {
 
         if(instance.level() + delta >= DragonAbilityInstance.MIN_LEVEL_FOR_CALCULATIONS) {
             return instance.value().upgrade()
-                    .map(upgrade -> upgrade.experienceOrLevelCost().calculate(instance.level() + delta))
+                    .map(upgrade -> upgrade.requirementOrCost().calculate(instance.level() + delta))
                     .orElse(0f);
         } else {
             return 0;

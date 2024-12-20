@@ -8,15 +8,11 @@ import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 import org.jetbrains.annotations.NotNull;
 
-public record Upgrade(Type type, int maximumLevel, LevelBasedValue experienceOrLevelCost) {
+public record Upgrade(Type type, int maximumLevel, LevelBasedValue requirementOrCost) {
     public static final Codec<Upgrade> CODEC = RecordCodecBuilder.create(instance -> instance.group(
         Type.CODEC.fieldOf("type").forGetter(Upgrade::type),
-        ExtraCodecs.intRange(DragonAbilityInstance.MIN_LEVEL, DragonAbilityInstance.MAX_LEVEL).fieldOf("maximum_level").forGetter(Upgrade::maximumLevel),
-        /* FIXME :: that name is not clear since it's not level costs but level requirements
-            We should find a better name or use Codec.either and have dedicated methods in here so that the outer classes don't need to interact with that 'either' entry
-            FIXME x2 :: This problem just got worse since we also have growth costs now
-        */
-        LevelBasedValue.CODEC.fieldOf("experience_or_level_cost").forGetter(Upgrade::experienceOrLevelCost)
+        ExtraCodecs.intRange(DragonAbilityInstance.MIN_LEVEL, DragonAbilityInstance.MAX_LEVEL).fieldOf("maximum_level").forGetter(Upgrade::maximumLevel),Re
+        LevelBasedValue.CODEC.fieldOf("requirement_or_cost").forGetter(Upgrade::requirementOrCost)
     ).apply(instance, Upgrade::new));
 
     public enum Type implements StringRepresentable {

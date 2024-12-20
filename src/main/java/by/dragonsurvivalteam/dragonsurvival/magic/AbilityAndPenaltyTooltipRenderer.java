@@ -119,7 +119,7 @@ public class AbilityAndPenaltyTooltipRenderer {
 
         if (upgrade != null) {
             rawDescription = FormattedText.composite(rawDescription, Component.empty().append("\n\n"));
-            int requirement = (int) upgrade.experienceOrLevelCost().calculate(ability.level() + 1);
+            int requirement = (int) upgrade.requirementOrCost().calculate(ability.level() + 1);
 
             MutableComponent upgradeComponent = switch (upgrade.type()) {
                 // TODO :: added manual just to keep in line with the others - unsure if it should be kept

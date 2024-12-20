@@ -72,7 +72,8 @@
   },
   "upgrade": {
     "type": "passive_level",
-    "experience_or_level_cost": {
+    "maximum_level": 4,
+    "requirement_or_cost": {
       "type": "minecraft:lookup",
       "fallback": {
         "type": "minecraft:linear",
@@ -85,7 +86,6 @@
         45.0,
         60.0
       ]
-    },
-    "maximum_level": 4
+    }
   }
 }

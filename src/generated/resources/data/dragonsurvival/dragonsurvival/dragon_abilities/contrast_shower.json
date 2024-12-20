@@ -66,11 +66,11 @@
   },
   "upgrade": {
     "type": "manual",
-    "experience_or_level_cost": {
+    "maximum_level": 5,
+    "requirement_or_cost": {
       "type": "minecraft:linear",
       "base": 15.0,
       "per_level_above_first": 15.0
-    },
-    "maximum_level": 5
+    }
   }
 }
