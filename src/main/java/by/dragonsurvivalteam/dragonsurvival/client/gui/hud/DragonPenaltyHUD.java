@@ -37,10 +37,16 @@ public class DragonPenaltyHUD {
                 rightHeight = gui.rightHeight;
                 gui.rightHeight += 10;
 
+
+                // See renderAirLevel in vanilla to understand this value
+                final float vanillaSupplyPercentageOffset = (float) 2 / 360;
+
                 final int left = Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 + 91;
-                final int top = Minecraft.getInstance().getWindow().getGuiScaledHeight() - rightHeight;
-                final int full = Mth.floor(supplyPercentage * 10.0D);
-                final int partial = Mth.ceil(supplyPercentage * 10.0D) - full;
+                int top =  Minecraft.getInstance().getWindow().getGuiScaledHeight() - rightHeight;
+                int full = Mth.ceil((supplyPercentage - vanillaSupplyPercentageOffset) * 10.0);
+                int partial = Mth.ceil(supplyPercentage * 10.0D) - full;
+                RenderSystem.enableBlend();
+
                 ResourceLocation supplyIcon = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/supply_icons/" + supplyType + ".png");
                 for (int i = 0; i < full + partial; ++i) {
                     guiGraphics.blit(supplyIcon, left - i * 8 - 9, top, 9, 9,  i < full ? 0 : 9, 0, 9, 9, 18, 9);
