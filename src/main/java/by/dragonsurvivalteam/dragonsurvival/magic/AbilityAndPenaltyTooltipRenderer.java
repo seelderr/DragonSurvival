@@ -7,6 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.penalty.DragonPenalty;
 import by.dragonsurvivalteam.dragonsurvival.util.DSColors;
+import by.dragonsurvivalteam.dragonsurvival.util.ExperienceUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -15,6 +16,7 @@ import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositione
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import org.jetbrains.annotations.NotNull;
@@ -111,24 +113,29 @@ public class AbilityAndPenaltyTooltipRenderer {
         int colorYPos = !ability.isPassive() ? 20 : 0;
 
         FormattedText rawDescription = Component.translatable(Translation.Type.ABILITY_DESCRIPTION.wrap(ability.location().getNamespace(), ability.location().getPath()));
-
         List<Component> info = ability.getInfo(Minecraft.getInstance().player);
-        if(!info.isEmpty()) {
+
+        if (!info.isEmpty()) {
             rawDescription = FormattedText.composite(rawDescription, Component.empty().append("\n\n"));
         }
 
-        if(ability.upgradeType().isPresent() && ability.upgradeType().get() == Upgrade.Type.PASSIVE_LEVEL && ability.level() != ability.getMaxLevel()) {
-            int nextUpgradeLevel = (int) ability.value().upgrade().get().experienceOrLevelCost().calculate(ability.level() + 1);
-            rawDescription = FormattedText.composite(rawDescription, Component.translatable(LangKey.ABILITY_LEVEL_AUTO_UPGRADE, nextUpgradeLevel).withColor(Color.GREEN.getColor()));
-            rawDescription = FormattedText.composite(rawDescription, Component.empty().append("\n\n"));
-        } else if(ability.upgradeType().isPresent() && ability.upgradeType().get() == Upgrade.Type.PASSIVE_GROWTH && ability.level() != ability.getMaxLevel()) {
-            int nextUpgradeSize = (int) ability.value().upgrade().get().experienceOrLevelCost().calculate(ability.level() + 1);
-            rawDescription = FormattedText.composite(rawDescription, Component.translatable(LangKey.ABILITY_GROWTH_AUTO_UPGRADE, nextUpgradeSize).withColor(Color.GREEN.getColor()));
+        Upgrade upgrade = ability.value().upgrade().orElse(null);
+
+        if (upgrade != null) {
+            int requirement = (int) upgrade.experienceOrLevelCost().calculate(ability.level() + 1);
+
+            MutableComponent upgradeComponent = switch (upgrade.type()) {
+                // TODO :: added manual just to keep in line with the others - unsure if it should be kept
+                case MANUAL -> Component.translatable(LangKey.ABILITY_LEVEL_MANUAL_UPGRADE, requirement, ExperienceUtils.getLevel(requirement));
+                case PASSIVE_LEVEL -> Component.translatable(LangKey.ABILITY_LEVEL_AUTO_UPGRADE, requirement);
+                case PASSIVE_GROWTH -> Component.translatable(LangKey.ABILITY_GROWTH_AUTO_UPGRADE, requirement);
+            };
+
+            rawDescription = FormattedText.composite(rawDescription, upgradeComponent.withColor(Color.GREEN.getColor()));
             rawDescription = FormattedText.composite(rawDescription, Component.empty().append("\n\n"));
         }
 
         List<FormattedCharSequence> description = Minecraft.getInstance().font.split(rawDescription, 150 - 7);
-
         drawTooltip(guiGraphics, x, y, info, description, colorXPos, colorYPos, ability.isPassive() ? PASSIVE : ACTIVE, ability.getName(), ability.isPassive() ? Color.ofRGB(127, 145, 46) : Color.ofRGB(200, 143, 31), ability.getMaxLevel(), ability.level(), ability.getIcon());
     }
 
