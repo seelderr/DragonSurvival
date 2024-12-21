@@ -1,6 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.projectile.entity_effects;
 
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
+import by.dragonsurvivalteam.dragonsurvival.util.DSColors;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
@@ -33,7 +35,7 @@ public record ProjectileDamageEffect(Holder<DamageType> damageType, LevelBasedVa
 
     @Override
     public List<MutableComponent> getDescription(final Player dragon, final int level) {
-        return List.of(Component.translatable(LangKey.ABILITY_DAMAGE, Component.translatable(LangKey.ABILITY_PROJECTILE), amount.calculate(level)));
+        return List.of(Component.translatable(LangKey.ABILITY_PROJECTILE_DAMAGE, Component.translatable(Translation.Type.DAMAGE_TYPE.wrap(damageType.getKey().location().getNamespace(), damageType.getKey().location().getPath())).withColor(DSColors.ORANGE), amount.calculate(level)));
     }
 
     @Override

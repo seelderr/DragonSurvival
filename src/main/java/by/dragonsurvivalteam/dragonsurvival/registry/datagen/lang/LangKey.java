@@ -97,9 +97,6 @@ public class LangKey {
     @Translation(type = Translation.Type.MISC, comments = "§6■ Harvest Level Bonus:§r %s")
     public static final String ABILITY_HARVEST_LEVEL_BONUS = Translation.Type.ABILITY.wrap("general.harvest_level_bonus");
 
-    @Translation(type = Translation.Type.MISC, comments = "§6■ Fire immunity§r")
-    public static final String ABILITY_FIRE_IMMUNITY = Translation.Type.ABILITY.wrap("general.fire_immunity");
-
     @Translation(type = Translation.Type.MISC, comments = "§6■ Immune§r to ")
     public static final String ABILITY_IMMUNITY = Translation.Type.ABILITY.wrap("general.immunity");
 
@@ -122,6 +119,10 @@ public class LangKey {
 
     @Translation(type = Translation.Type.MISC, comments = " §6Projectile ")
     public static final String ABILITY_PROJECTILE = Translation.Type.ABILITY.wrap("general.projectile");
+
+    // Needed because of formatting messiness when combining type and projectile together
+    @Translation(type = Translation.Type.MISC, comments = "§6■ %s §6Projectile Damage:§r %s")
+    public static final String ABILITY_PROJECTILE_DAMAGE = Translation.Type.ABILITY.wrap("general.projectile_damage");
 
     // --- Misc --- //
 

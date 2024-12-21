@@ -45,13 +45,7 @@ public record DamageModificationEffect(List<DamageModification> modifications) i
 
         for (DamageModification damageModification : modifications) {
             double duration = Functions.ticksToSeconds((int) damageModification.duration().calculate(ability.level()));
-            MutableComponent name;
-
-            if (damageModification.isFireImmune(ability.level())) {
-                name = Component.translatable(LangKey.ABILITY_FIRE_IMMUNITY).append("\n");
-            } else {
-                name = Component.empty();
-            }
+            MutableComponent name = Component.empty();
 
             float amount = damageModification.multiplier().calculate(ability.level());
 
