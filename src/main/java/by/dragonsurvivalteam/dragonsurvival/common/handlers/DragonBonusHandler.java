@@ -89,11 +89,11 @@ public class DragonBonusHandler {
     }
 
     @SubscribeEvent
-    public static void addFireProtectionToCaveDragonDrops(BlockDropsEvent dropsEvent) {
+    public static void addFireProtectionToDragonDrops(BlockDropsEvent dropsEvent) {
         if (dropsEvent.getBreaker() == null) return;
 
         // TODO :: also handle experience? would need a hook in 'CommonHooks#handleBlockDrops' to store some context and then modify the experience orb in 'ExperienceOrb#award'
-        if (DragonUtils.isType(dropsEvent.getBreaker(), DragonTypes.CAVE)) {
+        if (dropsEvent.getBreaker().fireImmune() && DragonStateProvider.isDragon(dropsEvent.getBreaker())) {
             dropsEvent.getDrops().forEach(drop -> drop.getData(DSDataAttachments.ENTITY_HANDLER).isFireImmune = true);
         }
     }
