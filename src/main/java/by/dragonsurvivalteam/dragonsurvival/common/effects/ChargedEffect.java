@@ -40,46 +40,43 @@ public class ChargedEffect extends ModifiableMobEffect {
     @ConfigOption(side = ConfigSide.SERVER, category = {"effects", "charged"}, key = "charged_effect_max_chain_targets")
     public static Integer maxChainTargets = 2;
 
-    @ConfigRange(min = 0.f, max = 100.f)
+    @ConfigRange(min = 0, max = 100)
     @Translation(key = "charged_effect_spread_radius", type = Translation.Type.CONFIGURATION, comments = "Determines the radius of the charged effect spread")
     @ConfigOption(side = ConfigSide.SERVER, category = {"effects", "charged"}, key = "charged_effect_spread_radius")
     public static Float spreadRadius = 3.f;
 
-    @ConfigRange(min = 0.f, max = 100.f)
+    @ConfigRange(min = 0, max = 100)
     @Translation(key = "charged_effect_damage", type = Translation.Type.CONFIGURATION, comments = "Determines the damage dealt by the charged effect")
     @ConfigOption(side = ConfigSide.SERVER, category = {"effects", "charged"}, key = "charged_effect_damage")
-    public static Float damage = 1.f;
+    public static Float damage = 1f;
 
-    private int duration;
-
-    public ChargedEffect(MobEffectCategory type, int color, boolean incurable) {
+    public ChargedEffect(final MobEffectCategory type, int color, boolean incurable) {
         super(type, color, incurable);
     }
 
     @Override
     public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
-        this.duration = duration;
-        return true;
+        return duration % 20 == 0;
     }
 
     @Override
-    public boolean applyEffectTick(@NotNull LivingEntity livingEntity, int amplifier) {
-        if(duration % 20 == 0) {
-            livingEntity.hurt(new DamageSource(DSDamageTypes.get(livingEntity.level(), DSDamageTypes.ELECTRIC)), damage);
-            if(!DragonStateProvider.isDragon(livingEntity)) {
-                ParticleOptions particle = new SmallLightningParticleOption(37F, false);
-                for (int i = 0; i < 4; i++) {
-                    EffectHandler.renderEffectParticle(livingEntity, particle);
-                }
+    public boolean applyEffectTick(final LivingEntity entity, int amplifier) {
+        entity.hurt(new DamageSource(DSDamageTypes.get(entity.level(), DSDamageTypes.ELECTRIC)), damage);
+
+        if (!DragonStateProvider.isDragon(entity)) {
+            ParticleOptions particle = new SmallLightningParticleOption(37F, false);
+
+            for (int i = 0; i < 4; i++) {
+                EffectHandler.renderEffectParticle(entity, particle);
             }
-            chargedEffectChain(livingEntity, damage);
         }
 
-        return super.applyEffectTick(livingEntity, amplifier);
+        chargedEffectChain(entity, damage);
+        return super.applyEffectTick(entity, amplifier);
     }
 
     public static void drawParticleLine(LivingEntity source, LivingEntity target) {
-        if(source.level().isClientSide()) {
+        if (source.level().isClientSide()) {
             return;
         }
 
@@ -96,9 +93,10 @@ public class ChargedEffect extends ModifiableMobEffect {
                 new SyncParticleTrail(start.toVector3f(), end.toVector3f(), new LargeLightningParticleOption(37F, false)));
     }
 
-    public static void chargedEffectChain(LivingEntity source, float damage) {
+    public static void chargedEffectChain(final LivingEntity source, float damage) {
         List<LivingEntity> secondaryTargets = source.level().getNearbyEntities(LivingEntity.class, TargetingConditions.forCombat(), source, source.getBoundingBox().inflate(spreadRadius));
         secondaryTargets.sort((c1, c2) -> Boolean.compare(c1.hasEffect(DSEffects.CHARGED), c2.hasEffect(DSEffects.CHARGED))); // Prioritize non-charged entities
+
         if (secondaryTargets.size() > maxChainTargets) {
             secondaryTargets = secondaryTargets.subList(0, maxChainTargets);
         }

@@ -39,8 +39,8 @@ public class DragonBodyButton extends Button {
     }
 
     private DragonBodyButton(Screen screen, int x, int y, int xSize, int ySize, Holder<DragonBody> dragonBody, ResourceLocation location, boolean locked, OnPress action) {
-        super(x, y, xSize, ySize, Component.translatable(Translation.Type.BODY.wrap(location.getNamespace(), location.getPath())), action, DEFAULT_NARRATION);
-        setTooltip(Tooltip.create(Component.translatable(Translation.Type.BODY_DESCRIPTION.wrap(location.getNamespace(), location.getPath()))));
+        super(x, y, xSize, ySize, Component.translatable(Translation.Type.BODY.wrap(location)), action, DEFAULT_NARRATION);
+        setTooltip(Tooltip.create(Component.translatable(Translation.Type.BODY_DESCRIPTION.wrap(location))));
 
         String iconLocationSuffix;
 

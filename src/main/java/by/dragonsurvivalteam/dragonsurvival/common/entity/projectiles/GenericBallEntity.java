@@ -357,7 +357,7 @@ public class GenericBallEntity extends AbstractHurtingProjectile implements GeoE
             return super.getTypeName();
         }
 
-        return Component.translatable(Translation.Type.PROJECTILE.wrap(name.get().getNamespace(), name.get().getPath()));
+        return Component.translatable(Translation.Type.PROJECTILE.wrap(name.get()));
     }
 
     @Override

@@ -50,7 +50,7 @@ public class DSLanguageProvider extends LanguageProvider {
 
     private void handleDamageTypes() {
         for (ResourceKey<DamageType> damageType : ResourceHelper.keys(lookup.join(), Registries.DAMAGE_TYPE)) {
-            add(Translation.Type.DAMAGE_TYPE.wrap(damageType.location().getNamespace(), damageType.location().getPath()), capitalize(damageType.location().getPath().split("_")));
+            add(Translation.Type.DAMAGE_TYPE.wrap(damageType.location()), capitalize(damageType.location().getPath()));
         }
     }
 
@@ -96,8 +96,7 @@ public class DSLanguageProvider extends LanguageProvider {
                         continue;
                     }
 
-                    if (ResourceLocation.class.isAssignableFrom(field.getType()))
-                    {
+                    if (ResourceLocation.class.isAssignableFrom(field.getType())) {
                         ResourceLocation resourceLocation = (ResourceLocation) field.get(null);
                         add(type.wrap(resourceLocation.getPath()), format(comments));
 
@@ -159,7 +158,7 @@ public class DSLanguageProvider extends LanguageProvider {
             }
 
             if (type == Translation.Type.CONFIGURATION) {
-                String capitalized = capitalize(key.split("_"));
+                String capitalized = capitalize(key);
 
                 if (capitalized.length() > 25) {
                     DragonSurvival.LOGGER.warn("Translation [{}] for the key [{}] might be too long for the configuration screen", capitalized, key);
@@ -193,7 +192,7 @@ public class DSLanguageProvider extends LanguageProvider {
 
                 categoriesAdded.add(category);
                 String key = LangKey.CATEGORY_PREFIX + category;
-                add(key, capitalize(category.split("_")));
+                add(key, capitalize(category));
             });
         }
     }
@@ -215,6 +214,7 @@ public class DSLanguageProvider extends LanguageProvider {
         return List.of();
     }
 
+    /** See {@link DSLanguageProvider#format(String...)} */
     private String format(final List<String> comments) {
         return format(comments.toArray(new String[0]));
     }
@@ -235,6 +235,12 @@ public class DSLanguageProvider extends LanguageProvider {
         return comment.toString();
     }
 
+    /** See {@link DSLanguageProvider#capitalize(String...)} */
+    private String capitalize(final String snakeCaseString) {
+        return capitalize(snakeCaseString.split("_"));
+    }
+
+    /** Formats the parts from 'some, string, parts' into 'Some String Parts' */
     @SuppressWarnings("deprecation") // ignore
     private String capitalize(final String... components) {
         if (components.length == 1) {

@@ -47,32 +47,7 @@ public class AltarTypeButton extends Button {
     })
     private static final String HUMAN = Translation.Type.GUI.wrap("altar.info.human");
 
-    @Translation(type = Translation.Type.MISC, comments = {
-            "§c■ Cave dragon.§r",
-            "§2■ Features:§f§r fire resistance, pickaxe claws, fire magic, faster movement on stone and magma blocks.",
-            "§4■ Weakness:§r water.",
-            "§6■ Diet:§r"
-    })
-    private static final String CAVE_DRAGON = Translation.Type.GUI.wrap("altar.info.cave");
-
-    @Translation(type = Translation.Type.MISC, comments = {
-            "§3■ Sea dragon.§r",
-            "§2■ Features:§f§r underwater breathing, shovel claws, electric magic, faster movement on ice and beach blocks.",
-            "§4■ Weakness:§r dehydration.",
-            "§6■ Diet:§r"
-    })
-    private static final String SEA_DRAGON = Translation.Type.GUI.wrap("altar.info.sea");
-
-    @Translation(type = Translation.Type.MISC, comments = {
-            "§a■ Forest dragon.§r",
-            "§2■ Features:§f§r soft fall, axe claws, poison magic, faster movement on wooden and grass blocks.",
-            "§4■ Weakness:§r dark caves.",
-            "§6■ Diet:§r"
-    })
-    private static final String FOREST_DRAGON = Translation.Type.GUI.wrap("altar.info.forest");
-
     public Holder<DragonType> type;
-
     private final DragonAltarScreen parent;
 
     private static final int MAX_SHOWN = 5;
@@ -123,18 +98,10 @@ public class AltarTypeButton extends Button {
 
                 int max = Math.min(foods.size(), scroll + MAX_SHOWN);
 
-                // FIXME
-                /*String translationKey = switch (type) {
-                    case ForestDragonType ignored -> FOREST_DRAGON;
-                    case CaveDragonType ignored -> CAVE_DRAGON;
-                    case SeaDragonType ignored -> SEA_DRAGON;
-                    default -> throw new IllegalArgumentException("Invalid dragon type [" + type + "]");
-                };*/
-
-                // TODO : could append a scroll-icon here?
                 // Using the color codes in the translation doesn't seem to apply the color to the entire text - therefor we create the [shown / max_items] tooltip part here
                 MutableComponent shownFoods = Component.literal(" [" + Math.min(foods.size(), scroll + MAX_SHOWN) + " / " + foods.size() + "]").withStyle(ChatFormatting.DARK_GRAY);
-                components.addFirst(Either.left(Component.translatable(CAVE_DRAGON).append(shownFoods)));
+                //noinspection DataFlowIssue -> key is present
+                components.addFirst(Either.left(Component.translatable(Translation.Type.DRAGON_TYPE_DESCRIPTION.wrap(type.getKey().location())).append(shownFoods)));
 
                 for (int i = scroll; i < max; i++) {
                     components.add(Either.right(new DietComponent(type, foods.get(i))));

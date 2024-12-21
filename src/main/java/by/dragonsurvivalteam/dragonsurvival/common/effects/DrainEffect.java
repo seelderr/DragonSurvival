@@ -18,39 +18,34 @@ import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class DrainEffect extends ModifiableMobEffect {
-    @ConfigRange(min = 0.f, max = 100.f)
+    @ConfigRange(min = 0, max = 100)
     @Translation(key = "drain_effect_damage", type = Translation.Type.CONFIGURATION, comments = "Determines the damage dealt by the drain effect")
     @ConfigOption(side = ConfigSide.SERVER, category = {"effects", "drain"}, key = "drain_effect_damage")
-    public static Float damage = 1.f;
+    public static Float damage = 1f;
 
-    private int duration;
-
-
-    public DrainEffect(MobEffectCategory type, int color, boolean incurable) {
+    public DrainEffect(final MobEffectCategory type, int color, boolean incurable) {
         super(type, color, incurable);
     }
 
     @Override
     public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
-        this.duration = duration;
-        return true;
+        return duration % 20 == 0;
     }
 
     @Override
-    public boolean applyEffectTick(@NotNull LivingEntity livingEntity, int amplifier) {
-        if(duration % 20 == 0) {
+    public boolean applyEffectTick(@NotNull final LivingEntity entity, int amplifier) {
+        if (!DragonStateProvider.isDragon(entity)) {
             ParticleOptions particle = new SmallPoisonParticleOption(37F, false);
-            if(!DragonStateProvider.isDragon(livingEntity)) {
-                for (int i = 0; i < 4; i++) {
-                    EffectHandler.renderEffectParticle(livingEntity, particle);
-                }
-            }
 
-            EntityStateHandler data = livingEntity.getData(DSDataAttachments.ENTITY_HANDLER);
-            Player player = livingEntity.level().getEntity(data.lastAfflicted) instanceof Player ? (Player) livingEntity.level().getEntity(data.lastAfflicted) : null;
-            livingEntity.hurt(new DamageSource(DSDamageTypes.get(livingEntity.level(), DSDamageTypes.FOREST_DRAGON_DRAIN), player), damage);
+            for (int i = 0; i < 4; i++) {
+                EffectHandler.renderEffectParticle(entity, particle);
+            }
         }
 
-        return super.applyEffectTick(livingEntity, amplifier);
+        EntityStateHandler data = entity.getData(DSDataAttachments.ENTITY_HANDLER);
+        Player player = entity.level().getEntity(data.lastAfflicted) instanceof Player ? (Player) entity.level().getEntity(data.lastAfflicted) : null;
+        entity.hurt(new DamageSource(DSDamageTypes.get(entity.level(), DSDamageTypes.FOREST_DRAGON_DRAIN), player), damage);
+
+        return super.applyEffectTick(entity, amplifier);
     }
 }

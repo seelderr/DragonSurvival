@@ -176,7 +176,7 @@ public record DragonStage(
     }
 
     public static Component translatableName(final ResourceKey<DragonStage> dragonStage) {
-        return Component.translatable(Translation.Type.STAGE.wrap(dragonStage.location().getNamespace(), dragonStage.location().getPath()));
+        return Component.translatable(Translation.Type.STAGE.wrap(dragonStage.location()));
     }
 
     public double getBoundedSize(double size) {

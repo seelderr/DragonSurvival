@@ -110,7 +110,7 @@ public class AbilityAndPenaltyTooltipRenderer {
         int colorXPos = 0;
         int colorYPos = !ability.isPassive() ? 20 : 0;
 
-        FormattedText rawDescription = Component.translatable(Translation.Type.ABILITY_DESCRIPTION.wrap(ability.location().getNamespace(), ability.location().getPath()));
+        FormattedText rawDescription = Component.translatable(Translation.Type.ABILITY_DESCRIPTION.wrap(ability.location()));
         List<Component> info = ability.getInfo(Minecraft.getInstance().player);
 
         Upgrade upgrade = ability.value().upgrade().orElse(null);
@@ -133,14 +133,15 @@ public class AbilityAndPenaltyTooltipRenderer {
         int colorXPos = 20;
         int colorYPos = 0;
 
-        FormattedText rawDescription = Component.translatable(Translation.Type.PENALTY_DESCRIPTION.wrap(penalty.getKey().location().getNamespace(), penalty.getKey().location().getPath()));
+        //noinspection DataFlowIssue -> key is present
+        FormattedText rawDescription = Component.translatable(Translation.Type.PENALTY_DESCRIPTION.wrap(penalty.getKey().location()));
 
         List<Component> info = List.of(penalty.value().getDescription(Minecraft.getInstance().player));
         rawDescription = FormattedText.composite(rawDescription, Component.empty().append("\n\n"));
 
         List<FormattedCharSequence> description = Minecraft.getInstance().font.split(rawDescription, 150 - 7);
 
-        Component name = Component.translatable(Translation.Type.PENALTY.wrap(penalty.getKey().location().getNamespace(), penalty.getKey().location().getPath()));
+        Component name = Component.translatable(Translation.Type.PENALTY.wrap(penalty.getKey().location()));
         drawTooltip(guiGraphics, x, y, info, description, colorXPos, colorYPos, PENALTY, name, Color.ofRGB(145, 46, 46), -1, -1, penalty.value().icon());
     }
 }

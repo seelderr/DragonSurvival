@@ -48,13 +48,15 @@ public record DamageModificationEffect(List<DamageModification> modifications) i
             MutableComponent name = Component.empty();
 
             float amount = damageModification.multiplier().calculate(ability.level());
+            String difference = NumberFormat.getPercentInstance().format(Math.abs(amount - 1));
+            // TODO :: skip tooltip if amount equals 1?
 
             if (amount == 0) {
                 name = name.append(Component.translatable(LangKey.ABILITY_IMMUNITY));
             } else if (amount < 1) {
-                name = name.append(Component.translatable(LangKey.ABILITY_DAMAGE_REDUCTION, DSColors.blue(NumberFormat.getPercentInstance().format(amount))));
+                name = name.append(Component.translatable(LangKey.ABILITY_DAMAGE_REDUCTION, DSColors.blue(difference)));
             } else {
-                name = name.append(Component.translatable(LangKey.ABILITY_DAMAGE_INCREASE, DSColors.blue(NumberFormat.getPercentInstance().format(amount))));
+                name = name.append(Component.translatable(LangKey.ABILITY_DAMAGE_INCREASE, DSColors.blue(difference)));
             }
 
             int numTypes = damageModification.damageTypes().size();
@@ -62,8 +64,7 @@ public record DamageModificationEffect(List<DamageModification> modifications) i
 
             for (Holder<DamageType> damageType : damageModification.damageTypes()) {
                 //noinspection DataFlowIssue -> key is present
-                ResourceLocation location = damageType.getKey().location();
-                name = name.append(Component.translatable(Translation.Type.DAMAGE_TYPE.wrap(location.getNamespace(), location.getPath())).withColor(DSColors.BLUE));
+                name = name.append(Component.translatable(Translation.Type.DAMAGE_TYPE.wrap(damageType.getKey().location())).withColor(DSColors.BLUE));
                 count++;
 
                 if (count == numTypes - 1) {

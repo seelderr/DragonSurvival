@@ -4,6 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.DietEntry;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.GrowthIcon;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.MiscDragonTextures;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.abilities.CaveDragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.abilities.ForestDragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.abilities.SeaDragonAbilities;
@@ -23,9 +24,31 @@ import java.util.List;
 import java.util.Optional;
 
 public class DragonTypes {
-    // TODO: Translation key here, also handle translation keys now for this data type
+    @Translation(type = Translation.Type.DRAGON_TYPE_DESCRIPTION, comments = {
+            "§c■ Cave dragon.§r",
+            "§2■ Features:§f§r fire resistance, pickaxe claws, fire magic, faster movement on stone and magma blocks.",
+            "§4■ Weakness:§r water.",
+            "§6■ Diet:§r"
+    })
+    @Translation(type = Translation.Type.DRAGON_TYPE, comments = "Cave Dragon")
     public static final ResourceKey<DragonType> CAVE = key("cave");
+
+    @Translation(type = Translation.Type.DRAGON_TYPE_DESCRIPTION, comments = {
+            "§a■ Forest dragon.§r",
+            "§2■ Features:§f§r soft fall, axe claws, poison magic, faster movement on wooden and grass blocks.",
+            "§4■ Weakness:§r dark caves.",
+            "§6■ Diet:§r"
+    })
+    @Translation(type = Translation.Type.DRAGON_TYPE, comments = "Forest Dragon")
     public static final ResourceKey<DragonType> FOREST = key("forest");
+
+    @Translation(type = Translation.Type.DRAGON_TYPE_DESCRIPTION, comments = {
+            "§3■ Sea dragon.§r",
+            "§2■ Features:§f§r underwater breathing, shovel claws, electric magic, faster movement on ice and beach blocks.",
+            "§4■ Weakness:§r dehydration.",
+            "§6■ Diet:§r"
+    })
+    @Translation(type = Translation.Type.DRAGON_TYPE, comments = "Sea Dragon")
     public static final ResourceKey<DragonType> SEA = key("sea");
 
     public static void registerTypes(final BootstrapContext<DragonType> context) {

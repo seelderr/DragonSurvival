@@ -14,6 +14,7 @@ import java.util.Locale;
  * - {@link String} annotated with the type {@link Type#MISC} will use its stored value, not wrapping anything <br>
  * - {@link Holder} will use {@link Holder#getKey()} -> {@link ResourceKey#location()} -> {@link ResourceLocation#getPath()} to determine the wrapped value <br>
  * - {@link ResourceKey} will use {@link ResourceKey#location()} -> {@link ResourceLocation#getPath()} to determine the wrapped value <br>
+ * - {@link ResourceLocation} will use {@link ResourceLocation#getPath()} to determine the wrapped value <br>
  */
 @Target({ElementType.FIELD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
@@ -60,6 +61,9 @@ public @interface Translation {
         ABILITY("dragon_ability." + DragonSurvival.MODID + ".", ""),
         ABILITY_DESCRIPTION("dragon_ability." + DragonSurvival.MODID + ".", ".desc"),
 
+        DRAGON_TYPE("dragon_type." + DragonSurvival.MODID + ".", ""),
+        DRAGON_TYPE_DESCRIPTION("dragon_type." + DragonSurvival.MODID + ".", ".desc"),
+
         PENALTY("dragon_penalty." + DragonSurvival.MODID + ".", ""),
         PENALTY_DESCRIPTION("dragon_penalty." + DragonSurvival.MODID + ".", ".desc"),
 
@@ -99,6 +103,11 @@ public @interface Translation {
 
         public String wrap(final String key) {
             return prefix + key + suffix;
+        }
+
+        /** See {@link Translation.Type#wrap(String, String)} */
+        public String wrap(final ResourceLocation location) {
+            return wrap(location.getNamespace(), location.getPath());
         }
 
         /** To replace the default {@link DragonSurvival#MODID} with an external one */

@@ -288,7 +288,7 @@ public class DragonAbilityInstance {
     }
 
     public Component getName() {
-        return Component.translatable(Translation.Type.ABILITY.wrap(location().getNamespace(), location().getPath()));
+        return Component.translatable(Translation.Type.ABILITY.wrap(location()));
     }
 
     public ResourceKey<DragonAbility> key() {

@@ -10,56 +10,54 @@ import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectCategory;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.common.NeoForgeMod;
 
 public class BurnEffect extends ModifiableMobEffect {
-    private int duration;
-
-    public BurnEffect(MobEffectCategory type, int color, boolean incurable) {
+    public BurnEffect(final MobEffectCategory type, int color, boolean incurable) {
         super(type, color, incurable);
     }
 
     @Override
     public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
-        this.duration = duration;
-        return true;
+        return duration % 20 == 0;
     }
 
     @Override
-    public boolean applyEffectTick(LivingEntity livingEntity, int amplifier) {
-        if (livingEntity.isEyeInFluidType(NeoForgeMod.WATER_TYPE.value()) || livingEntity.isInWaterRainOrBubble()) {
+    public boolean applyEffectTick(final LivingEntity entity, int amplifier) {
+        if (entity.fireImmune() || entity.isEyeInFluidType(NeoForgeMod.WATER_TYPE.value()) || entity.isInWaterRainOrBubble()) {
             return false;
         }
 
-        if(duration % 20 == 0) {
-            EntityStateHandler data = livingEntity.getData(DSDataAttachments.ENTITY_HANDLER);
-            if (!livingEntity.fireImmune()) {
-                if(!DragonStateProvider.isDragon(livingEntity)) {
-                    ParticleOptions particle = new SmallFireParticleOption(37F, false);
-                    for (int i = 0; i < 4; i++) {
-                        EffectHandler.renderEffectParticle(livingEntity, particle);
-                    }
-                }
+        EntityStateHandler data = entity.getData(DSDataAttachments.ENTITY_HANDLER);
 
-                if (data.lastPos != null) {
-                    double distance = livingEntity.distanceToSqr(data.lastPos);
-                    float damage = (amplifier + 1) * Mth.clamp((float) distance, 0, 10);
+        if (!DragonStateProvider.isDragon(entity)) {
+            ParticleOptions particle = new SmallFireParticleOption(37F, false);
 
-                    if (damage > 0) {
-                        if (!livingEntity.isOnFire()) {
-                            // Short enough fire duration to not cause fire damage but still drop cooked items
-                            livingEntity.setRemainingFireTicks(1);
-                        }
-
-                        Player player = livingEntity.level().getEntity(data.lastAfflicted) instanceof Player ? (Player) livingEntity.level().getEntity(data.lastAfflicted) : null;
-                        livingEntity.hurt(new DamageSource(DSDamageTypes.get(livingEntity.level(), DSDamageTypes.CAVE_DRAGON_BURN), player), damage);
-                    }
-                }
+            for (int i = 0; i < 4; i++) {
+                EffectHandler.renderEffectParticle(entity, particle);
             }
         }
 
-        return super.applyEffectTick(livingEntity, amplifier);
+        if (data.lastPos != null) {
+            double distance = entity.distanceToSqr(data.lastPos);
+            float damage = (amplifier + 1) * Mth.clamp((float) distance, 0, 10);
+
+            if (damage > 0) {
+                if (!entity.isOnFire()) {
+                    // Short enough fire duration to not cause fire damage but still drop cooked items
+                    entity.setRemainingFireTicks(1);
+                }
+
+                // TODO :: specifically store the entity which applied this instance of the effect (same for charged / drain)
+                //  probably needs additional data stored in the effect instance?
+                Entity player = entity.level().getEntity(data.lastAfflicted) instanceof Player ? entity : null;
+                entity.hurt(new DamageSource(DSDamageTypes.get(entity.level(), DSDamageTypes.CAVE_DRAGON_BURN), player), damage);
+            }
+        }
+
+        return super.applyEffectTick(entity, amplifier);
     }
 }
