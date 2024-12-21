@@ -53,6 +53,8 @@ public @interface Translation {
         DESCRIPTION(DragonSurvival.MODID + ".description.", ""),
         DESCRIPTION_ADDITION(DragonSurvival.MODID + ".description.addition.", ""),
 
+        DAMAGE_TYPE(DragonSurvival.MODID + ".damage_type.", ""),
+
         CONFIGURATION(DragonSurvival.MODID + ".configuration.", ".tooltip"),
 
         ABILITY("dragon_ability." + DragonSurvival.MODID + ".", ""),

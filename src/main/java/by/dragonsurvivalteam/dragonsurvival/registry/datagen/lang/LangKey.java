@@ -100,8 +100,11 @@ public class LangKey {
     @Translation(type = Translation.Type.MISC, comments = "§6■ Fire immunity§r")
     public static final String ABILITY_FIRE_IMMUNITY = Translation.Type.ABILITY.wrap("general.fire_immunity");
 
-    @Translation(type = Translation.Type.MISC, comments = "§6■ Immune§r to various damage types")
-    public static final String ABILITY_GENERIC_IMMUNITY = Translation.Type.ABILITY.wrap("general.immunity");
+    @Translation(type = Translation.Type.MISC, comments = "§6■ Immune§r to ")
+    public static final String ABILITY_IMMUNITY = Translation.Type.ABILITY.wrap("general.immunity");
+
+    @Translation(type = Translation.Type.MISC, comments = "§6■ %s% §r less damage from")
+    public static final String ABILITY_DAMAGE_REDUCTION = Translation.Type.ABILITY.wrap("general.damage_reduction");
 
     @Translation(type = Translation.Type.MISC, comments = "§6■ Can use flight")
     public static final String ABILITY_FLIGHT = Translation.Type.ABILITY.wrap("general.flight");

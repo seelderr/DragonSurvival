@@ -105,12 +105,12 @@ public class LevelButton extends ClickHoverButton {
         LocalPlayer player = Objects.requireNonNull(Minecraft.getInstance().player);
         MagicData data = MagicData.getData(player);
 
-        boolean reachedLevelCap = switch (type) {
+        boolean isLevelCapped = switch (type) {
             case DOWNGRADE -> ability.level() > DragonAbilityInstance.MIN_LEVEL;
             case UPGRADE -> ability.level() < upgrade.maximumLevel();
         };
 
-        if (reachedLevelCap) {
+        if (!isLevelCapped) {
             return false;
         }
 

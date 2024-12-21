@@ -1,19 +1,23 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.entity_effects;
 
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.DamageModification;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import by.dragonsurvivalteam.dragonsurvival.util.DSColors;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,10 +52,33 @@ public record DamageModificationEffect(List<DamageModification> modifications) i
                 name = Component.empty();
             }
 
-            // Vanilla doesn't have translation keys for its damage types, so we'll just have to use a generic translation key for now (unless we want to add our own even for vanilla types just for this tooltip)
-            // TODO :: since we seem to intend to use it in 'LangKey.ABILITY_DAMAGE' we should probably add the translations?
-            //  in either case 'immunity' might be the wrong word here since in normally its a damage multiplier (reducing or increasing the damage)
-            name = name.append(Component.translatable(LangKey.ABILITY_GENERIC_IMMUNITY));
+            if(damageModification.multiplier().calculate(ability.level()) == 0) {
+                name = name.append(Component.translatable(LangKey.ABILITY_IMMUNITY));
+                int numTypes = damageModification.damageTypes().size();
+                int count = 0;
+                for(Holder<DamageType> damageType : damageModification.damageTypes()) {
+                    name = name.append(Component.translatable(Translation.Type.DAMAGE_TYPE.wrap(damageType.getKey().location().getNamespace(), damageType.getKey().location().getPath())).withColor(DSColors.BLUE));
+                    count++;
+                    if(count == numTypes - 1) {
+                        name = name.append(" and ");
+                    } else if(count < numTypes - 1) {
+                        name = name.append(", ");
+                    }
+                }
+            } else {
+                name = name.append(Component.translatable(LangKey.ABILITY_DAMAGE_REDUCTION, NumberFormat.getPercentInstance().format(damageModification.multiplier().calculate(ability.level()))));
+                int numTypes = damageModification.damageTypes().size();
+                int count = 0;
+                for(Holder<DamageType> damageType : damageModification.damageTypes()) {
+                    name = name.append(Component.translatable(Translation.Type.DAMAGE_TYPE.wrap(damageType.getKey().location().getNamespace(), damageType.getKey().location().getPath())).withColor(DSColors.BLUE));
+                    count++;
+                    if(count == numTypes - 1) {
+                        name = name.append(" and ");
+                    } else if(count < numTypes - 1) {
+                        name = name.append(", ");
+                    }
+                }
+            }
 
             if (duration > 0) {
                 name = name.append(Component.translatable(LangKey.ABILITY_EFFECT_DURATION, DSColors.blue(duration)));

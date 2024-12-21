@@ -3,9 +3,13 @@ package by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.damagesource.DamageType;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.modscan.ModAnnotation;
 import net.neoforged.neoforge.common.data.LanguageProvider;
@@ -19,12 +23,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 public class DSLanguageProvider extends LanguageProvider {
     private final String locale;
+    private CompletableFuture<HolderLookup.Provider> lookup;
 
-    public DSLanguageProvider(final PackOutput output, final String locale) {
+    public DSLanguageProvider(final PackOutput output, final CompletableFuture<HolderLookup.Provider> lookup, final String locale) {
         super(output, DragonSurvival.MODID, locale);
+        this.lookup = lookup;
         this.locale = locale;
     }
 
@@ -35,8 +42,28 @@ public class DSLanguageProvider extends LanguageProvider {
 
         handleTranslationAnnotations(annotationDataSet);
         handleConfigCategories(annotationDataSet);
+        handleDamageTypes();
 
         handleParts();
+    }
+
+    private String toCamelCase(String string) {
+        String[] parts = string.split("_");
+        StringBuilder camelCaseString = new StringBuilder();
+        for (int i = 0; i < parts.length; i++) {
+            camelCaseString.append(parts[i].substring(0, 1).toUpperCase()).append(parts[i].substring(1).toLowerCase());
+            if(i < parts.length - 1) {
+                camelCaseString.append(" ");
+            }
+        }
+
+        return camelCaseString.toString();
+    }
+
+    private void handleDamageTypes() {
+        for (ResourceKey<DamageType> damageType : ResourceHelper.keys(lookup.join(), Registries.DAMAGE_TYPE)) {
+            add(Translation.Type.DAMAGE_TYPE.wrap(damageType.location().getNamespace(), damageType.location().getPath()), toCamelCase(damageType.location().getPath()));
+        }
     }
 
     private void handleTranslationAnnotations(final Set<ModFileScanData.AnnotationData> annotationDataSet) {

@@ -1,7 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.entity_effects;
 
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
+import by.dragonsurvivalteam.dragonsurvival.util.DSColors;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
@@ -30,7 +32,7 @@ public record DamageEffect(Holder<DamageType> type, LevelBasedValue amount) impl
     @Override
     public List<MutableComponent> getDescription(final Player dragon, final DragonAbilityInstance ability) {
         //noinspection DataFlowIssue -> key is present
-        return List.of(Component.translatable(LangKey.ABILITY_DAMAGE, Component.translatable(type.getKey().location().toLanguageKey()), amount.calculate(ability.level())));
+        return List.of(Component.translatable(LangKey.ABILITY_DAMAGE, Component.literal(" ").append(Component.translatable(Translation.Type.DAMAGE_TYPE.wrap(type.getKey().location().getNamespace(), type.getKey().location().getPath())).withColor(DSColors.ORANGE)).append(" "), amount.calculate(ability.level())));
     }
 
     @Override

@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.registry;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
@@ -16,19 +17,46 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class DSDamageTypes {
     // We don't need to use a DeferredRegister for DamageTypes, as they are fully data driven.
+    @Translation(type = Translation.Type.DAMAGE_TYPE, comments = "Anti-Dragon")
     public static final ResourceKey<DamageType> ANTI_DRAGON = key("anti_dragon");
+
+    @Translation(type = Translation.Type.DAMAGE_TYPE, comments = "Cave Dragon Breath")
     public static final ResourceKey<DamageType> CAVE_DRAGON_BREATH = key("cave_dragon_breath");
+
+    @Translation(type = Translation.Type.DAMAGE_TYPE, comments = "Cave Dragon Burn")
     public static final ResourceKey<DamageType> CAVE_DRAGON_BURN = key("cave_dragon_burn");
+
+    @Translation(type = Translation.Type.DAMAGE_TYPE, comments = "Crushed")
     public static final ResourceKey<DamageType> CRUSHED = key("crushed");
+
+    @Translation(type = Translation.Type.DAMAGE_TYPE, comments = "Dehydration")
     public static final ResourceKey<DamageType> DEHYDRATION = key("dehydration");
+
+    @Translation(type = Translation.Type.DAMAGE_TYPE, comments = "Dragon Ball Lightning")
     public static final ResourceKey<DamageType> DRAGON_BALL_LIGHTNING = key("dragon_ball_lightning");
+
+    @Translation(type = Translation.Type.DAMAGE_TYPE, comments = "Dragon Breath")
     public static final ResourceKey<DamageType> DRAGON_BREATH = key("dragon_breath");
+
+    @Translation(type = Translation.Type.DAMAGE_TYPE, comments = "Forest Dragon Breath")
     public static final ResourceKey<DamageType> FOREST_DRAGON_BREATH = key("forest_dragon_breath");
+
+    @Translation(type = Translation.Type.DAMAGE_TYPE, comments = "Forest Dragon Drain")
     public static final ResourceKey<DamageType> FOREST_DRAGON_DRAIN = key("forest_dragon_drain");
+
+    @Translation(type = Translation.Type.DAMAGE_TYPE, comments = "Rain Burn")
     public static final ResourceKey<DamageType> RAIN_BURN = key("rain_burn");
+
+    @Translation(type = Translation.Type.DAMAGE_TYPE, comments = "Sea Dragon Breath")
     public static final ResourceKey<DamageType> SEA_DRAGON_BREATH = key("sea_dragon_breath");
+
+    @Translation(type = Translation.Type.DAMAGE_TYPE, comments = "Spectral Impact")
     public static final ResourceKey<DamageType> SPECTRAL_IMPACT = key("spectral_impact");
+
+    @Translation(type = Translation.Type.DAMAGE_TYPE, comments = "Water Burn")
     public static final ResourceKey<DamageType> WATER_BURN = key("water_burn");
+
+    @Translation(type = Translation.Type.DAMAGE_TYPE, comments = "Forest Dragon Spike")
     public static final ResourceKey<DamageType> FOREST_DRAGON_SPIKE = key("forest_dragon_spike");
 
     public static Holder<DamageType> get(final Level level, final ResourceKey<DamageType> damageType) {
