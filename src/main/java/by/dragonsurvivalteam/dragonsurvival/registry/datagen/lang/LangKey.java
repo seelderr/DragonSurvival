@@ -103,6 +103,12 @@ public class LangKey {
     @Translation(type = Translation.Type.MISC, comments = "§6■ Immune§r to various damage types")
     public static final String ABILITY_GENERIC_IMMUNITY = Translation.Type.ABILITY.wrap("general.immunity");
 
+    @Translation(type = Translation.Type.MISC, comments = "§6■ Can use flight")
+    public static final String ABILITY_FLIGHT = Translation.Type.ABILITY.wrap("general.flight");
+
+    @Translation(type = Translation.Type.MISC, comments = "§6■ Can use spin")
+    public static final String ABILITY_SPIN = Translation.Type.ABILITY.wrap("general.spin");
+
     @Translation(type = Translation.Type.MISC, comments = " after %s seconds")
     public static final String PENALTY_SUPPLY_TRIGGER = Translation.Type.PENALTY.wrap("general.supply_trigger");
 

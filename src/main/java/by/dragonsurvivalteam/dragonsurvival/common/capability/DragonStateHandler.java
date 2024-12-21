@@ -71,8 +71,6 @@ public class DragonStateHandler extends EntityStateHandler {
     private Holder<DragonStage> dragonStage;
 
     private int passengerId = -1;
-    private boolean hasFlight;
-    private boolean areWingsSpread;
     private double size = NO_SIZE;
     private boolean destructionEnabled;
 
@@ -243,17 +241,10 @@ public class DragonStateHandler extends EntityStateHandler {
         this.passengerId = passengerId;
     }
 
-    public void setWingsSpread(boolean areWingsSpread) {
-        this.areWingsSpread = areWingsSpread;
-    }
-
     public void setDestructionEnabled(boolean destructionEnabled) {
         this.destructionEnabled = destructionEnabled;
     }
 
-    public void setHasFlight(boolean hasFlight) {
-        this.hasFlight = hasFlight;
-    }
 
     public double getSize() {
         return size;
@@ -279,14 +270,6 @@ public class DragonStateHandler extends EntityStateHandler {
         return skinData;
     }
 
-    public boolean hasFlight() {
-        return hasFlight;
-    }
-
-    public boolean isWingsSpread() {
-        return hasFlight && areWingsSpread;
-    }
-
     public CompoundTag serializeNBT(HolderLookup.Provider provider, boolean isSavingForSoul) {
         CompoundTag tag = new CompoundTag();
         tag.putString(DRAGON_BODY, dragonBody != null ? Objects.requireNonNull(dragonBody.getKey()).location().toString() : "none");
@@ -298,12 +281,6 @@ public class DragonStateHandler extends EntityStateHandler {
             tag.putBoolean("destructionEnabled", getDestructionEnabled());
             tag.putBoolean(IS_GROWING, isGrowing);
             tag.putInt(STAR_HEART_STATE, starHeartState.ordinal());
-
-            tag.putBoolean("isFlying", isWingsSpread());
-        }
-
-        if (isDragon() || ServerConfig.saveAllAbilities) {
-            tag.putBoolean("hasWings", hasFlight());
         }
 
         if (isSavingForSoul && getType() != null) {
@@ -372,17 +349,9 @@ public class DragonStateHandler extends EntityStateHandler {
 
             // Makes sure that the set size matches the previously set stage
             setSize(null, tag.getDouble(SIZE));
-
-            setWingsSpread(tag.getBoolean("isFlying"));
             setDestructionEnabled(tag.getBoolean("destructionEnabled"));
             isGrowing = !tag.contains(IS_GROWING) || tag.getBoolean(IS_GROWING);
             starHeartState = StarHeartItem.State.values()[tag.getInt(STAR_HEART_STATE)];
-        }
-
-        if (isDragon() || ServerConfig.saveAllAbilities) {
-            // TODO: How do we replicate this behavior in DragonSpinData?
-            //getMovementData().spinLearned = tag.getBoolean("spinLearned");
-            setHasFlight(tag.getBoolean("hasWings"));
         }
 
         if (isLoadingForSoul && dragonType != null) {
@@ -465,11 +434,6 @@ public class DragonStateHandler extends EntityStateHandler {
         setType(null);
         setBody(null, player);
         setSize(player, NO_SIZE);
-
-        if (!ServerConfig.saveAllAbilities) {
-            SpinData.getData(player).hasSpin = false;
-            this.setHasFlight(false);
-        }
 
         AltarData altarData = AltarData.getData(player);
         altarData.altarCooldown = Functions.secondsToTicks(ServerConfig.altarUsageCooldown);

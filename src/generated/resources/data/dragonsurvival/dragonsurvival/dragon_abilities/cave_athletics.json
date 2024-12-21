@@ -72,12 +72,14 @@
     ]
   },
   "upgrade": {
-    "type": "manual",
-    "maximum_level": 5,
-    "requirement_or_cost": {
-      "type": "minecraft:linear",
-      "base": 15.0,
-      "per_level_above_first": 15.0
+    "upgrade": {
+      "type": "manual",
+      "maximum_level": 5,
+      "requirement_or_cost": {
+        "type": "minecraft:linear",
+        "base": 15.0,
+        "per_level_above_first": 15.0
+      }
     }
   }
 }

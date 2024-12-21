@@ -9,11 +9,12 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
+import by.dragonsurvivalteam.dragonsurvival.network.flight.SpinDurationAndCooldown;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SpinStatus;
-import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncFlyingStatus;
+import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncWingsSpread;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
-import by.dragonsurvivalteam.dragonsurvival.registry.attachments.SpinData;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.FlightData;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStage;
@@ -193,7 +194,7 @@ public class ClientFlightHandler {
             return;
         }
 
-        SpinData spin = SpinData.getData(player);
+        FlightData spin = FlightData.getData(player);
         if (spin.hasSpin && spin.cooldown > 0) {
             if (event.getName() == VanillaGuiLayers.AIR_LEVEL) {
                 Window window = Minecraft.getInstance().getWindow();
@@ -217,7 +218,7 @@ public class ClientFlightHandler {
     @SubscribeEvent
     public static void flightParticles(PlayerTickEvent.Post event) {
         Player player = event.getEntity();
-        SpinData spin = SpinData.getData(player);
+        FlightData spin = FlightData.getData(player);
 
         if (!DragonStateProvider.isDragon(player) || spin.duration <= 0) {
             return;
@@ -292,7 +293,7 @@ public class ClientFlightHandler {
                             ay = player.getDeltaMovement().y;
                         }
 
-                        if (handler.isWingsSpread()) {
+                        if (FlightData.getData(player).isWingsSpread()) {
                             Input movement = player.input;
 
                             if (!hasEnoughFoodToStartFlight(player) || player.isCreative()) {
@@ -473,8 +474,9 @@ public class ClientFlightHandler {
         DragonStateHandler handler = DragonStateProvider.getData(player);
         if (!handler.isDragon()) return; // handler should never be null
 
+        FlightData data = FlightData.getData(player);
         while (Keybind.TOGGLE_FLIGHT.consumeClick()) {
-            toggleWingsManual(player, handler);
+            toggleWingsManual(player, data);
         }
 
         jumpFlyCooldown.tick();
@@ -482,7 +484,7 @@ public class ClientFlightHandler {
         if (isJumping && !lastJumpInputState) {
             // Cooldown already running - was a double jump
             if (!jumpFlyCooldown.trySet()) {
-                tryJumpToFly(player, handler);
+                tryJumpToFly(player, data);
             }
         }
         lastJumpInputState = isJumping;
@@ -494,14 +496,14 @@ public class ClientFlightHandler {
 
     private static void doSpin(LocalPlayer player) {
         if (ServerFlightHandler.isSpin(player)) return;
-        SpinData spin = SpinData.getData(player);
+        FlightData spin = FlightData.getData(player);
         if (spin.cooldown > 0) return;
         if (!spin.hasSpin) return;
 
         if (ServerFlightHandler.isFlying(player) || ServerFlightHandler.canSwimSpin(player)) {
             spin.duration = ServerFlightHandler.SPIN_DURATION;
             spin.cooldown = Functions.secondsToTicks(ServerFlightHandler.flightSpinCooldown);
-            PacketDistributor.sendToServer(new SpinStatus(player.getId(), spin.duration, spin.cooldown, spin.hasSpin));
+            PacketDistributor.sendToServer(new SpinDurationAndCooldown(player.getId(), spin.duration, spin.cooldown));
         }
     }
 
@@ -522,12 +524,12 @@ public class ClientFlightHandler {
      * Enables or disables wings. Sends error messages if unsuccessful.
      *
      * @param player  Target player.
-     * @param handler The player's dragon handler. Redundant, used for caching. Expected to be the handler of the player.
+     * @param data The player's flight data. Redundant, used for caching. Expected to be the handler of the player.
      * @return True if wings were toggled successfully
      */
     @SuppressWarnings({"DuplicateBranchesInSwitch", "UnusedReturnValue"})
-    private static boolean toggleWingsManual(LocalPlayer player, DragonStateHandler handler) {
-        WingsToggleResult result = handler.isWingsSpread() ? disableWings(player, handler) : enableWings(player, handler);
+    private static boolean toggleWingsManual(LocalPlayer player, FlightData data) {
+        WingsToggleResult result = data.isWingsSpread() ? disableWings(player, data) : enableWings(player, data);
         switch (result) {
             case SUCCESS_ENABLED, SUCCESS_DISABLED -> {
                 return true;
@@ -569,7 +571,7 @@ public class ClientFlightHandler {
      * Does not send error messages - use the return value to handle that.
      *
      * @param player  Target player.
-     * @param handler The player's dragon handler. Redundant, used for caching. Expected to be the handler of the player.
+     * @param data The player's flight data. Redundant, used for caching. Expected to be the data of the player.
      * @return Result of the attempt. One of:
      * <ul>
      *     <li>{@link WingsToggleResult#NO_WINGS NO_WINGS}</li>
@@ -579,13 +581,13 @@ public class ClientFlightHandler {
      *     <li>{@link WingsToggleResult#SUCCESS_ENABLED SUCCESS_ENABLED}</li>
      * </ul>
      */
-    private static WingsToggleResult enableWings(LocalPlayer player, DragonStateHandler handler) {
-        if (!handler.hasFlight()) {
+    private static WingsToggleResult enableWings(LocalPlayer player, FlightData data) {
+        if (!data.hasFlight()) {
             // Could technically trigger if the player somehow has wings spread but has no flight
             return WingsToggleResult.NO_WINGS;
         }
 
-        if (handler.isWingsSpread()) return WingsToggleResult.ALREADY_ENABLED;
+        if (data.isWingsSpread()) return WingsToggleResult.ALREADY_ENABLED;
         if (hasWingDisablingEffect(player)) return WingsToggleResult.WINGS_DISABLED;
 
         // Non-creative players need enough food to start flying
@@ -593,7 +595,7 @@ public class ClientFlightHandler {
             return WingsToggleResult.NO_HUNGER;
         }
 
-        PacketDistributor.sendToServer(new SyncFlyingStatus.Data(player.getId(), true));
+        PacketDistributor.sendToServer(new SyncWingsSpread.Data(player.getId(), true));
         return WingsToggleResult.SUCCESS_ENABLED;
     }
 
@@ -605,7 +607,7 @@ public class ClientFlightHandler {
      * Does not send error messages - use the return value to handle that.
      *
      * @param player  Target player.
-     * @param handler The player's dragon handler. Redundant, used for caching. Expected to be the handler of the player.
+     * @param data The player's flight data. Redundant, used for caching. Expected to be the handler of the player.
      * @return Result of the attempt. One of:
      * <ul>
      *     <li>{@link WingsToggleResult#NO_WINGS NO_WINGS}</li>
@@ -613,16 +615,16 @@ public class ClientFlightHandler {
      *     <li>{@link WingsToggleResult#SUCCESS_DISABLED SUCCESS_DISABLED}</li>
      * </ul>
      */
-    private static WingsToggleResult disableWings(LocalPlayer player, DragonStateHandler handler) {
-        if (!handler.hasFlight()) {
+    private static WingsToggleResult disableWings(LocalPlayer player, FlightData data) {
+        if (!data.hasFlight()) {
             // Could technically trigger if the player somehow has wings spread but has no flight
             return WingsToggleResult.NO_WINGS;
         }
 
-        if (!handler.isWingsSpread()) return WingsToggleResult.ALREADY_DISABLED;
+        if (!data.isWingsSpread()) return WingsToggleResult.ALREADY_DISABLED;
 
         // Always allow disabling wings (if the player has flight)
-        PacketDistributor.sendToServer(new SyncFlyingStatus.Data(player.getId(), false));
+        PacketDistributor.sendToServer(new SyncWingsSpread.Data(player.getId(), false));
         return WingsToggleResult.SUCCESS_DISABLED;
     }
 
@@ -632,11 +634,11 @@ public class ClientFlightHandler {
      * Handles error messages.
      *
      * @param player  The player to check.
-     * @param handler The player's dragon handler. Redundant, used for caching. Expected to be the handler of the player.
+     * @param data The player's flight data. Redundant, used for caching. Expected to be the data of the player.
      * @return True if wings were enabled.
      */
     @SuppressWarnings("UnusedReturnValue")
-    private static boolean tryJumpToFly(LocalPlayer player, DragonStateHandler handler) {
+    private static boolean tryJumpToFly(LocalPlayer player, FlightData data) {
         if (!jumpToFly) return false;
 
         // This only handles the requirements to trigger jump-to-fly. Other conditions are handled by enableWings()
@@ -647,7 +649,7 @@ public class ClientFlightHandler {
 
         if (player.isInLava() || player.isInWater()) return false;
 
-        switch (enableWings(player, handler)) {
+        switch (enableWings(player, data)) {
             case SUCCESS_ENABLED -> {
                 return true;
             }
@@ -666,7 +668,7 @@ public class ClientFlightHandler {
                 // Silent fail
                 return false;
             }
-            default -> throw new IllegalStateException("Unexpected value: " + enableWings(player, handler));
+            default -> throw new IllegalStateException("Unexpected value: " + enableWings(player, data));
         }
     }
 

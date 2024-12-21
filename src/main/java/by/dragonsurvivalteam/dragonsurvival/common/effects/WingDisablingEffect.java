@@ -2,7 +2,8 @@ package by.dragonsurvivalteam.dragonsurvival.common.effects;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncFlyingStatus;
+import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncWingsSpread;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.FlightData;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -19,8 +20,9 @@ public class WingDisablingEffect extends ModifiableMobEffect {
             DragonStateHandler handler = DragonStateProvider.getData(player);
 
             if (handler.isDragon()) {
-                handler.setWingsSpread(false);
-                PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncFlyingStatus.Data(player.getId(), false));
+                FlightData data = FlightData.getData(player);
+                data.areWingsSpread = false;
+                PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncWingsSpread.Data(player.getId(), false));
             }
         }
     }

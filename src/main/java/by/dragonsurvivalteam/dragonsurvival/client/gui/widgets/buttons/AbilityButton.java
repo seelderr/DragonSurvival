@@ -1,7 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons;
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.AbilityScreen;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Upgrade;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.upgrade.Upgrade;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.upgrade.ValueBasedUpgrade;
 import by.dragonsurvivalteam.dragonsurvival.magic.AbilityAndPenaltyTooltipRenderer;
 import by.dragonsurvivalteam.dragonsurvival.mixins.client.ScreenAccessor;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncSlotAssignment;
@@ -50,7 +51,7 @@ public class AbilityButton extends Button {
         this.isHotbar = false;
         this.scale = scale;
 
-        if (ability == null || ability.value().upgrade().map(Upgrade::type).orElse(null) != Upgrade.Type.MANUAL) {
+        if (ability == null || ability.value().upgrade().map(Upgrade::type).orElse(null) != ValueBasedUpgrade.Type.MANUAL) {
             return;
         }
 

@@ -187,7 +187,6 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
                 handler.setType(playerData.getType());
             }
 
-            handler.setHasFlight(true);
             handler.setStage(null, dragonStage);
 
             if (handler.getBody() == null) {

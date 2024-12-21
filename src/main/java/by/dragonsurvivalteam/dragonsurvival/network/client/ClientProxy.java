@@ -16,7 +16,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncDragonSkin
 import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncPlayerSkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SpinStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncDeltaMovement;
-import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncFlyingStatus;
+import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncWingsSpread;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.*;
 import by.dragonsurvivalteam.dragonsurvival.network.particle.SyncBreathParticles;
 import by.dragonsurvivalteam.dragonsurvival.network.particle.SyncParticleTrail;
@@ -169,14 +169,15 @@ public class ClientProxy {
         Minecraft.getInstance().setScreen(new DragonEditorScreen(Minecraft.getInstance().screen));
     }
 
-    public static void handleSyncFlyingStatus(final SyncFlyingStatus.Data message) {
+    public static void handleSyncWingsSpread(final SyncWingsSpread.Data message) {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
             Entity entity = localPlayer.level().getEntity(message.playerId());
 
             if (entity instanceof Player player) {
-                DragonStateProvider.getOptional(player).ifPresent(handler -> handler.setWingsSpread(message.state()));
+                FlightData data = FlightData.getData(player);
+                data.areWingsSpread = message.state();
             }
         }
     }
@@ -185,10 +186,9 @@ public class ClientProxy {
         Player localPlayer = Objects.requireNonNull(Minecraft.getInstance().player);
 
         if (localPlayer.level().getEntity(packet.playerId()) instanceof Player player) {
-            SpinData spin = SpinData.getData(player);
+            FlightData spin = FlightData.getData(player);
             spin.hasSpin = packet.hasSpin();
-            spin.cooldown = packet.cooldown();
-            spin.duration = packet.duration();
+            spin.swimSpinFluid = player.registryAccess().holderOrThrow(packet.swimSpinFluid());
             ClientFlightHandler.lastSync = player.tickCount;
         }
     }

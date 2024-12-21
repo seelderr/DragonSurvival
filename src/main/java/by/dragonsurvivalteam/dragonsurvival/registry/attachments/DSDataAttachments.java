@@ -18,7 +18,7 @@ public class DSDataAttachments {
     // TODO :: copy on death?
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<LightningHandler>> LIGHTNING_BOLT = DS_ATTACHMENT_TYPES.register("lightning_bolt_data", () -> AttachmentType.serializable(LightningHandler::new).build());
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<MovementData>> MOVEMENT = DS_ATTACHMENT_TYPES.register("movement_data", () -> AttachmentType.builder(MovementData::new).build());
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<SpinData>> SPIN = DS_ATTACHMENT_TYPES.register("spin_data", () -> AttachmentType.serializable(SpinData::new).copyOnDeath().build());
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<FlightData>> SPIN = DS_ATTACHMENT_TYPES.register("spin_data", () -> AttachmentType.serializable(FlightData::new).copyOnDeath().build());
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<ClawInventoryData>> CLAW_INVENTORY = DS_ATTACHMENT_TYPES.register("claw_inventory_data", () -> AttachmentType.serializable(ClawInventoryData::new).copyOnDeath().build());
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<TreasureRestData>> TREASURE_REST = DS_ATTACHMENT_TYPES.register("treasure_rest_data", () -> AttachmentType.serializable(TreasureRestData::new).build());
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<AltarData>> ALTAR = DS_ATTACHMENT_TYPES.register("altar_data", () -> AttachmentType.serializable(AltarData::new).copyOnDeath().build());

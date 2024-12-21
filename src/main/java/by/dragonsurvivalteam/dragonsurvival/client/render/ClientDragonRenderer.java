@@ -17,6 +17,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncDeltaMovement;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonMovement;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.FlightData;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MagicData;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MovementData;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
@@ -247,14 +248,15 @@ public class ClientDragonRenderer {
                 EntityRenderer<? super DragonEntity> dragonRenderer = minecraft.getEntityRenderDispatcher().getRenderer(playerAsDragon);
                 dragonModel.setOverrideTexture(texture);
 
-                if (player.isCrouching() && handler.isWingsSpread() && !player.onGround()) {
+                FlightData flightData = FlightData.getData(player);
+                if (player.isCrouching() && flightData.isWingsSpread() && !player.onGround()) {
                     poseStack.translate(0, -0.15, 0);
                 } else if (player.isCrouching()) {
                     // Needed to prevent the dragon model from sinking into the ground
                     // The formula is generated based on input / output pairs of various sizes which looked correct
                     double translate = 1 / (0.4 * Math.pow(size, 0.78) + 0.5);
                     poseStack.translate(0, translate, 0);
-                } else if (player.isSwimming() || player.isAutoSpinAttack() || handler.isWingsSpread() && !player.onGround() && !player.isInWater() && !player.isInLava()) {
+                } else if (player.isSwimming() || player.isAutoSpinAttack() || flightData.isWingsSpread() && !player.onGround() && !player.isInWater() && !player.isInLava()) {
                     // FIXME level
                     if (size > DragonStage.MAX_HANDLED_SIZE) {
                         poseStack.translate(0, -0.55, 0);

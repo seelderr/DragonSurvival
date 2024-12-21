@@ -196,7 +196,7 @@ public class DragonSoulItem extends Item {
                 tooltips.add(Component.translatable(HAS_SPIN));
             }
 
-            if (tag.getBoolean("hasWings")) {
+            if (tag.getBoolean("hasFlight")) {
                 tooltips.add(Component.translatable(HAS_FLIGHT));
             }
         } else {

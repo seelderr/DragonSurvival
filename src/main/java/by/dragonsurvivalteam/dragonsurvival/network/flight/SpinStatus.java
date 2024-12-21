@@ -1,27 +1,32 @@
 package by.dragonsurvivalteam.dragonsurvival.network.flight;
 
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
-import by.dragonsurvivalteam.dragonsurvival.registry.attachments.SpinData;
+import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncSlotAssignment;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.FlightData;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbility;
+import net.minecraft.core.Holder;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
-public record SpinStatus(int playerId, int duration, int cooldown, boolean hasSpin) implements CustomPacketPayload {
+public record SpinStatus(int playerId, boolean hasSpin, ResourceKey<FluidType> swimSpinFluid) implements CustomPacketPayload {
     public static final Type<SpinStatus> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "spin_status"));
 
     public static final StreamCodec<FriendlyByteBuf, SpinStatus> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.VAR_INT, SpinStatus::playerId,
-            ByteBufCodecs.INT, SpinStatus::duration,
-            ByteBufCodecs.INT, SpinStatus::cooldown,
             ByteBufCodecs.BOOL, SpinStatus::hasSpin,
+            ResourceKey.streamCodec(NeoForgeRegistries.FLUID_TYPES.key()), SpinStatus::swimSpinFluid,
             SpinStatus::new
     );
 
@@ -38,10 +43,9 @@ public record SpinStatus(int playerId, int duration, int cooldown, boolean hasSp
         Player sender = context.player();
 
         context.enqueueWork(() -> {
-                SpinData spin = SpinData.getData(sender);
+                FlightData spin = FlightData.getData(sender);
                 spin.hasSpin = packet.hasSpin();
-                spin.cooldown = packet.cooldown();
-                spin.duration = packet.duration();
+                spin.swimSpinFluid = sender.registryAccess().holderOrThrow(packet.swimSpinFluid());
         }).thenRun(() -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(sender, packet));
     }
 }

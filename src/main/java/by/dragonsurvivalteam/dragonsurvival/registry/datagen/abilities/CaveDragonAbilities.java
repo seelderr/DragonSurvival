@@ -5,15 +5,14 @@ import by.dragonsurvivalteam.dragonsurvival.common.codecs.*;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.ActionContainer;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Activation;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.ManaCost;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Upgrade;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.animation.AnimationLayer;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.animation.SimpleAbilityAnimation;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.upgrade.ItemBasedUpgrade;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.upgrade.Upgrade;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.upgrade.ValueBasedUpgrade;
 import by.dragonsurvivalteam.dragonsurvival.common.particles.LargeFireParticleOption;
 import by.dragonsurvivalteam.dragonsurvival.common.particles.SmallFireParticleOption;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSSounds;
+import by.dragonsurvivalteam.dragonsurvival.registry.*;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSBlockTags;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilities;
@@ -42,6 +41,8 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 import net.minecraft.world.level.material.Fluids;
+import net.neoforged.neoforge.common.NeoForgeMod;
+import net.neoforged.neoforge.common.data.internal.NeoForgeFluidTagsProvider;
 
 import java.util.List;
 import java.util.Optional;
@@ -154,7 +155,7 @@ public class CaveDragonAbilities {
                                 Optional.empty()
                         ))
                 ),
-                Optional.of(new Upgrade(Upgrade.Type.PASSIVE_LEVEL, 4, LevelBasedValue.lookup(List.of(0f, 20f, 40f, 45f), LevelBasedValue.perLevel(15)))),
+                Optional.of(new Upgrade(Either.left(new ValueBasedUpgrade(ValueBasedUpgrade.Type.PASSIVE_LEVEL, 4, LevelBasedValue.lookup(List.of(0f, 20f, 40f, 45f), LevelBasedValue.perLevel(15)))))),
                 Optional.of(EntityPredicate.Builder.entity().located(LocationPredicate.Builder.location().setFluid(FluidPredicate.Builder.fluid().of(Fluids.WATER))).build()),
                 List.of(new ActionContainer(new SelfTarget(Either.right(
                         new AbilityTargeting.EntityTargeting(
@@ -197,7 +198,7 @@ public class CaveDragonAbilities {
                                 Optional.empty()
                         ))
                 ),
-                Optional.of(new Upgrade(Upgrade.Type.PASSIVE_LEVEL, 4, LevelBasedValue.lookup(List.of(0f, 10f, 30f, 50f), LevelBasedValue.perLevel(15)))),
+                Optional.of(new Upgrade(Either.left(new ValueBasedUpgrade(ValueBasedUpgrade.Type.PASSIVE_LEVEL, 4, LevelBasedValue.lookup(List.of(0f, 10f, 30f, 50f), LevelBasedValue.perLevel(15)))))),
                 Optional.of(EntityPredicate.Builder.entity().located(LocationPredicate.Builder.location().setFluid(FluidPredicate.Builder.fluid().of(Fluids.WATER))).build()),
                 List.of(new ActionContainer(new DragonBreathTarget(Either.right(
                                 new AbilityTargeting.EntityTargeting(
@@ -267,7 +268,7 @@ public class CaveDragonAbilities {
                                 Optional.of(new SimpleAbilityAnimation("self_buff", AnimationLayer.BASE, 0, true, false))
                         ))
                 ),
-                Optional.of(new Upgrade(Upgrade.Type.PASSIVE_LEVEL, 4, LevelBasedValue.lookup(List.of(0f, 25f, 45f, 60f), LevelBasedValue.perLevel(15)))),
+                Optional.of(new Upgrade(Either.left(new ValueBasedUpgrade(ValueBasedUpgrade.Type.PASSIVE_LEVEL, 4, LevelBasedValue.lookup(List.of(0f, 25f, 45f, 60f), LevelBasedValue.perLevel(15)))))),
                 Optional.empty(),
                 List.of(new ActionContainer(new SelfTarget(Either.right(
                         new AbilityTargeting.EntityTargeting(
@@ -309,7 +310,7 @@ public class CaveDragonAbilities {
                                 Optional.of(new SimpleAbilityAnimation("mass_buff", AnimationLayer.BASE, 0, true, true))
                         ))
                 ),
-                Optional.of(new Upgrade(Upgrade.Type.PASSIVE_LEVEL, 3, LevelBasedValue.lookup(List.of(0f, 15f, 35f), LevelBasedValue.perLevel(15)))),
+                Optional.of(new Upgrade(Either.left(new ValueBasedUpgrade(ValueBasedUpgrade.Type.PASSIVE_LEVEL, 3, LevelBasedValue.lookup(List.of(0f, 15f, 35f), LevelBasedValue.perLevel(15)))))),
                 Optional.empty(),
                 List.of(new ActionContainer(new AreaTarget(Either.right(
                         new AbilityTargeting.EntityTargeting(
@@ -337,7 +338,7 @@ public class CaveDragonAbilities {
     private static void registerPassiveAbilities(final BootstrapContext<DragonAbility> context) {
         context.register(CAVE_ATHLETICS, new DragonAbility(
                 Activation.passive(),
-                Optional.of(new Upgrade(Upgrade.Type.MANUAL, 5, LevelBasedValue.perLevel(15))), // FIXME :: not the actual values
+                Optional.of(new Upgrade(Either.left(new ValueBasedUpgrade(ValueBasedUpgrade.Type.MANUAL, 5, LevelBasedValue.perLevel(15))))), // FIXME :: not the actual values
                 Optional.empty(),
                 List.of(new ActionContainer(new SelfTarget(Either.right(
                         new AbilityTargeting.EntityTargeting(
@@ -362,7 +363,7 @@ public class CaveDragonAbilities {
 
         context.register(BURN, new DragonAbility(
                 Activation.passive(),
-                Optional.of(new Upgrade(Upgrade.Type.MANUAL, 4, LevelBasedValue.perLevel(15))),
+                Optional.of(new Upgrade(Either.left(new ValueBasedUpgrade(ValueBasedUpgrade.Type.MANUAL, 4, LevelBasedValue.perLevel(15))))),
                 Optional.empty(),
                 List.of(new ActionContainer(new SelfTarget(Either.right(
                         new AbilityTargeting.EntityTargeting(
@@ -387,7 +388,7 @@ public class CaveDragonAbilities {
 
         context.register(CAVE_MAGIC, new DragonAbility(
                 Activation.passive(),
-                Optional.of(new Upgrade(Upgrade.Type.MANUAL, 10, LevelBasedValue.perLevel(15))),
+                Optional.of(new Upgrade(Either.left(new ValueBasedUpgrade(ValueBasedUpgrade.Type.MANUAL, 10, LevelBasedValue.perLevel(15))))),
                 Optional.empty(),
                 List.of(new ActionContainer(new SelfTarget(Either.right(
                         new AbilityTargeting.EntityTargeting(
@@ -424,7 +425,7 @@ public class CaveDragonAbilities {
 
         context.register(CONTRAST_SHOWER, new DragonAbility(
                 Activation.passive(),
-                Optional.of(new Upgrade(Upgrade.Type.MANUAL, 5, LevelBasedValue.perLevel(15))),
+                Optional.of(new Upgrade(Either.left(new ValueBasedUpgrade(ValueBasedUpgrade.Type.MANUAL, 5, LevelBasedValue.perLevel(15))))),
                 Optional.empty(),
                 List.of(new ActionContainer(new SelfTarget(Either.right(
                         new AbilityTargeting.EntityTargeting(
@@ -456,8 +457,8 @@ public class CaveDragonAbilities {
 
         context.register(CAVE_CLAWS_AND_TEETH, new DragonAbility(
                 Activation.passive(),
-                Optional.of(new Upgrade(
-                        Upgrade.Type.PASSIVE_GROWTH,
+                Optional.of(new Upgrade(Either.left(new ValueBasedUpgrade(
+                        ValueBasedUpgrade.Type.PASSIVE_GROWTH,
                         4,
                         LevelBasedValue.lookup(
                                 // FIXME :: This lookup throws an error during datagen. Why? We generate the DragonStages before abilities...
@@ -466,7 +467,7 @@ public class CaveDragonAbilities {
                                         40f,//(float)context.lookup(DragonStage.REGISTRY).getOrThrow(DragonStages.young).value().sizeRange().max(),
                                         60f),//(float)context.lookup(DragonStage.REGISTRY).getOrThrow(DragonStages.adult).value().sizeRange().max()),
                                 LevelBasedValue.perLevel(15)
-                ))),
+                ))))),
                 Optional.empty(),
                 List.of(new ActionContainer(new SelfTarget(Either.right(
                         new AbilityTargeting.EntityTargeting(
@@ -495,10 +496,21 @@ public class CaveDragonAbilities {
 
         context.register(CAVE_WINGS, new DragonAbility(
                 Activation.passive(),
-                // TODO :: Need yet another upgrade type, this time predicated on an item? Or going to the end?
+                Optional.of(new Upgrade(Either.right(new ItemBasedUpgrade(
+                        List.of(
+                                HolderSet.direct(DSItems.WING_GRANT_ITEM),
+                                HolderSet.direct(DSItems.SPIN_GRANT_ITEM)
+                        ),
+                        HolderSet.empty()
+                )))),
                 Optional.empty(),
-                Optional.empty(),
-                List.of(),
+                List.of(new ActionContainer(new SelfTarget(Either.right(
+                        new AbilityTargeting.EntityTargeting(
+                                Optional.empty(),
+                                List.of(new SpinOrFlightEffect(1, 2, NeoForgeMod.LAVA_TYPE)),
+                                AbilityTargeting.EntityTargetingMode.TARGET_ALLIES
+                        )
+                ), false), LevelBasedValue.constant(1))),
                 new LevelBasedResource(List.of(
                         new LevelBasedResource.TextureEntry(DragonSurvival.res("abilities/cave/cave_wings_0"), 0),
                         new LevelBasedResource.TextureEntry(DragonSurvival.res("abilities/cave/cave_wings_1"), 1)

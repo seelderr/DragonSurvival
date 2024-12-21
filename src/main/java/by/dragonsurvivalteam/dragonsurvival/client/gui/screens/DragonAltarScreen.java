@@ -167,7 +167,6 @@ public class DragonAltarScreen extends Screen {
             handler.setBody(DragonBody.random(null));
         }
 
-        handler.setHasFlight(true);
         //noinspection DataFlowIssue -> registry is expected to be present
         Holder.Reference<DragonStage> dragonStage = CommonHooks.resolveLookup(DragonStage.REGISTRY).getOrThrow(DragonStages.adult);
         handler.setStage(null, dragonStage);

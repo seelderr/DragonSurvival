@@ -6,16 +6,15 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
+import by.dragonsurvivalteam.dragonsurvival.network.flight.SpinDurationAndCooldown;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SpinStatus;
-import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncFlyingStatus;
+import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncWingsSpread;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
-import by.dragonsurvivalteam.dragonsurvival.registry.attachments.SpinData;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.FlightData;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -107,13 +106,19 @@ public class ServerFlightHandler {
         }
 
         DragonStateProvider.getOptional(livingEntity).ifPresent(handler -> {
-            if (!foldWingsOnLand || !handler.isDragon() || !handler.hasFlight()) {
+            if (!foldWingsOnLand || !handler.isDragon()) {
                 return;
             }
 
-            if (handler.isWingsSpread()) {
-                handler.setWingsSpread(false);
-                PacketDistributor.sendToPlayersTrackingEntityAndSelf(livingEntity, new SyncFlyingStatus.Data(livingEntity.getId(), false));
+            if (!(livingEntity instanceof Player player)) {
+                return;
+            }
+
+            FlightData data = FlightData.getData(player);
+
+            if (data.isWingsSpread()) {
+                FlightData.getData(player).areWingsSpread = false;
+                PacketDistributor.sendToPlayersTrackingEntityAndSelf(livingEntity, new SyncWingsSpread.Data(livingEntity.getId(), false));
             }
         });
     }
@@ -128,8 +133,9 @@ public class ServerFlightHandler {
 
         if(livingEntity instanceof Player player) {
             DragonStateProvider.getOptional(livingEntity).ifPresent(handler -> {
+                FlightData data = FlightData.getData(player);
                 // Don't use the helper functions here, as isFlying() will return false if the player is grounded
-                if (handler.isDragon() && handler.hasFlight() && handler.isWingsSpread() && player.isSprinting()) {
+                if (handler.isDragon() && data.hasFlight() && data.isWingsSpread() && player.isSprinting()) {
                     if (!enableFlightFallDamage
                             || verticalFlightSpeed <= 1
                             || (livingEntity.isPassenger() && DragonStateProvider.isDragon(livingEntity.getVehicle())))
@@ -150,8 +156,8 @@ public class ServerFlightHandler {
     }
 
     public static boolean isFlying(Player player) {
-        DragonStateHandler dragonStateHandler = DragonStateProvider.getData(player);
-        return dragonStateHandler.hasFlight() && dragonStateHandler.isWingsSpread() && !player.onGround() && !player.isInWater() && !player.isInLava();
+        FlightData data = FlightData.getData(player);
+        return data.hasFlight() && data.isWingsSpread() && !player.onGround() && !player.isInWater() && !player.isInLava();
     }
 
     private static Holder<MobEffect> getFlightEffectForType(Holder<DragonType> type) {
@@ -216,7 +222,8 @@ public class ServerFlightHandler {
         }
 
         // Handle flight icon
-        if (handler.isWingsSpread()) {
+        FlightData data = FlightData.getData(player);
+        if (data.isWingsSpread()) {
             if (!hasCorrectFlightEffect(player)) {
                 clearAllFlightEffects(player);
                 Holder<MobEffect> flightEffect = getFlightEffectForType(handler.getType());
@@ -248,8 +255,8 @@ public class ServerFlightHandler {
             if (damage > 0) {
                 player.playSound(player.getFallDamageSound((int) damage), 1, 1);
                 player.hurt(player.damageSources().flyIntoWall(), damage);
-                handler.setWingsSpread(false);
-                PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncFlyingStatus.Data(player.getId(), false));
+                FlightData.getData(player).areWingsSpread = false;
+                PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncWingsSpread.Data(player.getId(), false));
             }
         }
     }
@@ -264,12 +271,12 @@ public class ServerFlightHandler {
         }
 
         // TODO: Some strange choices on what is run clientside here. Are we sure this is safe?
-        SpinData spin = SpinData.getData(player);
+        FlightData spin = FlightData.getData(player);
         if (!player.level().isClientSide()) {
             if(spin.duration > 0) {
                 if (!isFlying(player) && !canSwimSpin(player)) {
                     spin.duration = 0;
-                    PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SpinStatus(player.getId(), spin.duration, spin.cooldown, spin.hasSpin));
+                    PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SpinDurationAndCooldown(player.getId(), spin.duration, spin.cooldown));
                 }
             }
         }
@@ -308,16 +315,16 @@ public class ServerFlightHandler {
             spin.duration--;
 
             if (!player.level().isClientSide()) {
-                PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SpinStatus(player.getId(), spin.duration, spin.cooldown, spin.hasSpin));
+                PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SpinDurationAndCooldown(player.getId(), spin.duration, spin.cooldown));
             }
         } else if (spin.cooldown > 0 && !player.level().isClientSide()) {
             spin.cooldown--;
-            PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SpinStatus(player.getId(), spin.duration, spin.cooldown, spin.hasSpin));
+            PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SpinDurationAndCooldown(player.getId(), spin.duration, spin.cooldown));
         }
     }
 
     public static boolean isSpin(Player entity) {
-        SpinData spin = SpinData.getData(entity);
+        FlightData spin = FlightData.getData(entity);
         if (isFlying(entity) || canSwimSpin(entity)) {
             return spin.duration > 0;
         }
@@ -326,10 +333,8 @@ public class ServerFlightHandler {
     }
 
     public static boolean canSwimSpin(Player player){
-        // FIXME :: not data driven
-        DragonStateHandler dragonStateHandler = DragonStateProvider.getData(player);
-        boolean validSwim = (DragonUtils.isType(dragonStateHandler, DragonTypes.SEA) || DragonUtils.isType(dragonStateHandler, DragonTypes.FOREST)) && player.isInWater() || player.isInLava() && DragonUtils.isType(dragonStateHandler, DragonTypes.CAVE);
-        return validSwim && dragonStateHandler.hasFlight() && !player.onGround();
+        FlightData data = FlightData.getData(player);
+        return data.swimSpinFluid != null && player.isEyeInFluidType(data.swimSpinFluid.value()) && data.hasFlight() && !player.onGround();
     }
 
     @SubscribeEvent
@@ -338,15 +343,15 @@ public class ServerFlightHandler {
 
         DragonStateProvider.getOptional(player).ifPresent(dragonStateHandler -> {
             if (dragonStateHandler.isDragon()) {
-                boolean wingsSpread = dragonStateHandler.isWingsSpread();
+                boolean wingsSpread = FlightData.getData(player).isWingsSpread();
 
                 if (wingsSpread) {
                     if (isFlying(player)) {
                         if (!player.level().isClientSide()) {
                             if (player.getFoodData().getFoodLevel() <= foldWingsThreshold && !player.isCreative()) {
                                 player.sendSystemMessage(Component.translatable(LangKey.MESSAGE_NO_HUNGER));
-                                dragonStateHandler.setWingsSpread(false);
-                                PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncFlyingStatus.Data(player.getId(), false));
+                                FlightData.getData(player).areWingsSpread = false;
+                                PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncWingsSpread.Data(player.getId(), false));
                                 return;
                             }
                         }

@@ -1,8 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.network.flight;
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.FlightData;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -14,16 +14,18 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
-public class SyncFlyingStatus implements IMessage<SyncFlyingStatus.Data> {
+public class SyncWingsSpread implements IMessage<SyncWingsSpread.Data> {
 
-    public static void handleClient(final SyncFlyingStatus.Data message, final IPayloadContext context) {
-        context.enqueueWork(() -> ClientProxy.handleSyncFlyingStatus(message));
+    public static void handleClient(final SyncWingsSpread.Data message, final IPayloadContext context) {
+        context.enqueueWork(() -> ClientProxy.handleSyncWingsSpread(message));
     }
 
-    public static void handleServer(final SyncFlyingStatus.Data message, final IPayloadContext context) {
+    public static void handleServer(final SyncWingsSpread.Data message, final IPayloadContext context) {
         Player sender = context.player();
-        context.enqueueWork(() -> DragonStateProvider.getOptional(sender).ifPresent(handler -> handler.setWingsSpread(message.state)))
-                .thenRun(() -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(sender, message));
+        context.enqueueWork(() -> {
+            FlightData data = FlightData.getData(sender);
+            data.areWingsSpread = message.state();
+        }).thenRun(() -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(sender, message));
     }
 
     public record Data(int playerId, boolean state) implements CustomPacketPayload {

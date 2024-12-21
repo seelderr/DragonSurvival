@@ -27,14 +27,13 @@ import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncPlayerSkin
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncAltarCooldown;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.SyncComplete;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.AltarData;
-import by.dragonsurvivalteam.dragonsurvival.registry.attachments.SpinData;
+import by.dragonsurvivalteam.dragonsurvival.registry.attachments.FlightData;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.body.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStage;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.stage.DragonStages;
-import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import com.mojang.datafixers.util.Pair;
@@ -455,7 +454,6 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
         preset = new SkinPreset();
         preset.deserializeNBT(Objects.requireNonNull(Minecraft.getInstance().player).registryAccess(), currentPreset.serializeNBT(Minecraft.getInstance().player.registryAccess()));
 
-        HANDLER.setHasFlight(true);
         HANDLER.setType(dragonType);
         HANDLER.setSize(null, dragonStage.value().sizeRange().min());
         HANDLER.setBody(dragonBody);
@@ -831,7 +829,6 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
         HANDLER.setBody(dragonBody);
         HANDLER.getSkinData().skinPreset = preset;
         HANDLER.setSize(null, dragonStage.value().sizeRange().min());
-        HANDLER.setHasFlight(true);
 
         if (selectedSaveSlot != lastSelected) {
             RegistryAccess access = Objects.requireNonNull(Minecraft.getInstance().player).registryAccess();
@@ -904,8 +901,7 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
                 data.setSize(minecraft.player, savedSize);
             }
 
-            data.setHasFlight(ServerFlightHandler.startWithFlight || ServerConfig.saveGrowthStage && data.hasFlight());
-            SpinData.getData(minecraft.player).hasSpin = ServerConfig.saveGrowthStage && SpinData.getData(minecraft.player).hasSpin;
+            FlightData.getData(minecraft.player).hasSpin = ServerConfig.saveGrowthStage && FlightData.getData(minecraft.player).hasSpin;
 
             HANDLER.getSkinData().skinPreset = save();
             data.getSkinData().renderCustomSkin = ClientDragonRenderer.renderCustomSkin;

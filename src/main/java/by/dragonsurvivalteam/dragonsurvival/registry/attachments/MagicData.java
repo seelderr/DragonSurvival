@@ -4,7 +4,8 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.hud.MagicHUD;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Activation;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Upgrade;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.upgrade.Upgrade;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.upgrade.ValueBasedUpgrade;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncAbilityLevel;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncCooldownState;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
@@ -19,12 +20,16 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.util.INBTSerializable;
+import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerXpEvent;
+import net.neoforged.neoforge.event.entity.player.UseItemOnBlockEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
@@ -101,6 +106,38 @@ public class MagicData implements INBTSerializable<CompoundTag> {
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void handleItemBasedLeveling(final PlayerInteractEvent.RightClickItem event) {
+        if (!(event.getEntity() instanceof ServerPlayer player) || !DragonStateProvider.isDragon(event.getEntity())) {
+            return;
+        }
+
+        MagicData magic = MagicData.getData(player);
+        magic.abilities.values().forEach(instance -> instance.value().upgrade().ifPresent(upgrade -> {
+            if (upgrade.isItemBased()) {
+                for(int i = 0; i < upgrade.asItemBased().itemsPerLevel().size(); i++) {
+                    if(instance.level() != i) {
+                        continue;
+                    }
+
+                    if(upgrade.asItemBased().itemsPerLevel().get(i).contains(event.getItemStack().getItemHolder())) {
+                        int level = i + 1;
+                        magic.changeAbilityLevel(player, instance.key(), level);
+                        PacketDistributor.sendToPlayer(player, new SyncAbilityLevel(instance.key(), level));
+
+                        if(!player.isCreative()) {
+                            event.getItemStack().shrink(1);
+                        }
+
+                        player.playSound(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, 1, 0);
+
+                        break;
+                    }
+                }
+            }
+        }));
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void handleLevelBasedPassiveLeveling(final PlayerXpEvent.LevelChange event) {
         if (!DragonStateProvider.isDragon(event.getEntity())) {
             return;
@@ -112,14 +149,19 @@ public class MagicData implements INBTSerializable<CompoundTag> {
         for (DragonAbilityInstance ability : magic.abilities.values()) {
             Upgrade upgrade = ability.value().upgrade().orElse(null);
 
-            if (upgrade == null || upgrade.type() != Upgrade.Type.PASSIVE_LEVEL) {
+            if (upgrade == null) {
+                continue;
+            }
+
+            ValueBasedUpgrade valueBasedUpgrade = upgrade.asLevelBased();
+            if(valueBasedUpgrade == null || valueBasedUpgrade.type() != ValueBasedUpgrade.Type.PASSIVE_GROWTH) {
                 continue;
             }
 
             int previousLevel = ability.level();
 
             for (int level = DragonAbilityInstance.MIN_LEVEL_FOR_CALCULATIONS; level <= upgrade.maximumLevel(); level++) {
-                float required = upgrade.requirementOrCost().calculate(level);
+                float required = valueBasedUpgrade.requirementOrCost().calculate(level);
 
                 if (newExperienceLevel < required) {
                     ability.setLevel(level - 1);
@@ -147,12 +189,17 @@ public class MagicData implements INBTSerializable<CompoundTag> {
         for (DragonAbilityInstance ability : abilities.values()) {
             Upgrade upgrade = ability.value().upgrade().orElse(null);
 
-            if (upgrade == null || upgrade.type() != Upgrade.Type.PASSIVE_GROWTH) {
+            if (upgrade == null) {
+                continue;
+            }
+
+            ValueBasedUpgrade valueBasedUpgrade = upgrade.asLevelBased();
+            if(valueBasedUpgrade == null || valueBasedUpgrade.type() != ValueBasedUpgrade.Type.PASSIVE_GROWTH) {
                 continue;
             }
 
             for (int level = DragonAbilityInstance.MIN_LEVEL_FOR_CALCULATIONS; level <= upgrade.maximumLevel(); level++) {
-                float required = upgrade.requirementOrCost().calculate(level);
+                float required = valueBasedUpgrade.requirementOrCost().calculate(level);
 
                 if (newSize < required) {
                     ability.setLevel(level - 1);
@@ -379,7 +426,7 @@ public class MagicData implements INBTSerializable<CompoundTag> {
 
         if(instance.level() + delta >= DragonAbilityInstance.MIN_LEVEL_FOR_CALCULATIONS) {
             return instance.value().upgrade()
-                    .map(upgrade -> upgrade.requirementOrCost().calculate(instance.level() + delta))
+                    .map(upgrade -> upgrade.isLevelBased() ? upgrade.asLevelBased().requirementOrCost().calculate(instance.level() + delta) : 0f)
                     .orElse(0f);
         } else {
             return 0;
@@ -412,7 +459,7 @@ public class MagicData implements INBTSerializable<CompoundTag> {
             return;
         }
 
-        if(instance.value().upgrade().isPresent() && instance.value().upgrade().get().type() == Upgrade.Type.MANUAL) {
+        if(instance.value().upgrade().isPresent() && instance.value().upgrade().get().type() == ValueBasedUpgrade.Type.MANUAL) {
             // Subtract the experience cost
             float cost = getCost(key, delta == 1 ? 1 : 0);
             cost = delta > 0 ? -cost : cost;

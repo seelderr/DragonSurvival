@@ -1,13 +1,11 @@
 package by.dragonsurvivalteam.dragonsurvival.magic;
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.AbilityTooltipPositioner;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.Upgrade;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.ability.upgrade.Upgrade;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
-import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbilityInstance;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.penalty.DragonPenalty;
 import by.dragonsurvivalteam.dragonsurvival.util.DSColors;
-import by.dragonsurvivalteam.dragonsurvival.util.ExperienceUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -116,18 +114,9 @@ public class AbilityAndPenaltyTooltipRenderer {
         List<Component> info = ability.getInfo(Minecraft.getInstance().player);
 
         Upgrade upgrade = ability.value().upgrade().orElse(null);
-
-        if (upgrade != null) {
+        if(upgrade != null) {
             rawDescription = FormattedText.composite(rawDescription, Component.empty().append("\n\n"));
-            int requirement = (int) upgrade.requirementOrCost().calculate(ability.level() + 1);
-
-            MutableComponent upgradeComponent = switch (upgrade.type()) {
-                // TODO :: added manual just to keep in line with the others - unsure if it should be kept
-                case MANUAL -> Component.translatable(LangKey.ABILITY_LEVEL_MANUAL_UPGRADE, requirement, ExperienceUtils.getLevel(requirement));
-                case PASSIVE_LEVEL -> Component.translatable(LangKey.ABILITY_LEVEL_AUTO_UPGRADE, requirement);
-                case PASSIVE_GROWTH -> Component.translatable(LangKey.ABILITY_GROWTH_AUTO_UPGRADE, requirement);
-            };
-
+            MutableComponent upgradeComponent = upgrade.getDescription(ability.level());
             rawDescription = FormattedText.composite(rawDescription, upgradeComponent.withColor(Color.GREEN.getColor()));
         }
 
