@@ -2,22 +2,17 @@ package by.dragonsurvivalteam.dragonsurvival.common.handlers.magic;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEnchantments;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachments;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSDamageTypeTags;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSEffectTags;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.EnchantmentUtils;
-import by.dragonsurvivalteam.dragonsurvival.util.TargetingFunctions;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.util.Mth;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -39,15 +34,11 @@ import java.util.Optional;
 
 @EventBusSubscriber
 public class EffectHandler {
-    // TODO: Delete this event and move its effects into the MobEffects themselves
     @SubscribeEvent
-    public static void processTickingMobEffects(EntityTickEvent.Post event){
+    public static void storeLastEntityPosForBurnEffect(EntityTickEvent.Post event){
         if(event.getEntity() instanceof LivingEntity entity) {
             EntityStateHandler data = entity.getData(DSDataAttachments.ENTITY_HANDLER);
-
             if (entity.tickCount % 20 == 0) {
-                MobEffectInstance drainEffect = entity.getEffect(DSEffects.DRAIN);
-
                 data.lastPos = entity.position();
             }
         }
@@ -56,6 +47,7 @@ public class EffectHandler {
     @SubscribeEvent
     public static void playerStruckByLightning(EntityStruckByLightningEvent event) {
         // TODO: I believe we can already do this with our ability system now
+        // Just give the sea dragon immunity to that damage type
         /*if (event.getEntity() instanceof Player player) {
 
             DragonStateProvider.getOptional(player).ifPresent(cap -> {
