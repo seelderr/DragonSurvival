@@ -42,7 +42,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.common.NeoForgeMod;
-import net.neoforged.neoforge.common.data.internal.NeoForgeFluidTagsProvider;
 
 import java.util.List;
 import java.util.Optional;

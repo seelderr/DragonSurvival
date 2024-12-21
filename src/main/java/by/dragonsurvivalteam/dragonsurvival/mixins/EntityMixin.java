@@ -6,13 +6,10 @@ import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachmen
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DamageModifications;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MovementData;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSEntityTypeTags;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
@@ -82,20 +79,14 @@ public abstract class EntityMixin {
     }
 
     /** Don't show fire animation (when burning) when being a cave dragon when rendered in the inventory */
-    @Inject(method = "displayFireAnimation()Z", at = @At(value = "HEAD"), cancellable = true)
-    private void dragonSurvival$hideCaveDragonFireAnimation(CallbackInfoReturnable<Boolean> callback) {
-        Entity entity = (Entity) (Object) this;
-
-        // Disable fire texture
-        if (entity instanceof ItemEntity item && item.getData(DSDataAttachments.ENTITY_HANDLER).isFireImmune) {
-            callback.setReturnValue(false);
+    @ModifyReturnValue(method = "displayFireAnimation()Z", at = @At("RETURN"))
+    private boolean dragonSurvival$hideCaveDragonFireAnimation(boolean displayAnimation) {
+        if (!displayAnimation) {
+            return false;
         }
 
-        DragonStateProvider.getOptional(entity).ifPresent(handler -> {
-            if (handler.isDragon() && DragonUtils.isType(handler, DragonTypes.CAVE)) {
-                callback.setReturnValue(false);
-            }
-        });
+        Entity entity = (Entity) (Object) this;
+        return !entity.fireImmune();
     }
 
     @Inject(method = "isVisuallyCrawling()Z", at = @At(value = "HEAD"), cancellable = true)

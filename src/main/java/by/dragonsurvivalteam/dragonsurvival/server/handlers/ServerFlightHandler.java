@@ -7,7 +7,6 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SpinDurationAndCooldown;
-import by.dragonsurvivalteam.dragonsurvival.network.flight.SpinStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncWingsSpread;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;

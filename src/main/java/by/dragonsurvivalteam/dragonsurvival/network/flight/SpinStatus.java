@@ -1,10 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.network.flight;
 
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
-import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncSlotAssignment;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.FlightData;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.ability.DragonAbility;
-import net.minecraft.core.Holder;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;

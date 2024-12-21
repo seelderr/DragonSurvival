@@ -11,6 +11,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.Entity;
@@ -52,31 +53,29 @@ public record DamageModificationEffect(List<DamageModification> modifications) i
                 name = Component.empty();
             }
 
-            if(damageModification.multiplier().calculate(ability.level()) == 0) {
+            float amount = damageModification.multiplier().calculate(ability.level());
+
+            if (amount == 0) {
                 name = name.append(Component.translatable(LangKey.ABILITY_IMMUNITY));
-                int numTypes = damageModification.damageTypes().size();
-                int count = 0;
-                for(Holder<DamageType> damageType : damageModification.damageTypes()) {
-                    name = name.append(Component.translatable(Translation.Type.DAMAGE_TYPE.wrap(damageType.getKey().location().getNamespace(), damageType.getKey().location().getPath())).withColor(DSColors.BLUE));
-                    count++;
-                    if(count == numTypes - 1) {
-                        name = name.append(" and ");
-                    } else if(count < numTypes - 1) {
-                        name = name.append(", ");
-                    }
-                }
+            } else if (amount < 1) {
+                name = name.append(Component.translatable(LangKey.ABILITY_DAMAGE_REDUCTION, DSColors.blue(NumberFormat.getPercentInstance().format(amount))));
             } else {
-                name = name.append(Component.translatable(LangKey.ABILITY_DAMAGE_REDUCTION, NumberFormat.getPercentInstance().format(damageModification.multiplier().calculate(ability.level()))));
-                int numTypes = damageModification.damageTypes().size();
-                int count = 0;
-                for(Holder<DamageType> damageType : damageModification.damageTypes()) {
-                    name = name.append(Component.translatable(Translation.Type.DAMAGE_TYPE.wrap(damageType.getKey().location().getNamespace(), damageType.getKey().location().getPath())).withColor(DSColors.BLUE));
-                    count++;
-                    if(count == numTypes - 1) {
-                        name = name.append(" and ");
-                    } else if(count < numTypes - 1) {
-                        name = name.append(", ");
-                    }
+                name = name.append(Component.translatable(LangKey.ABILITY_DAMAGE_INCREASE, DSColors.blue(NumberFormat.getPercentInstance().format(amount))));
+            }
+
+            int numTypes = damageModification.damageTypes().size();
+            int count = 0;
+
+            for (Holder<DamageType> damageType : damageModification.damageTypes()) {
+                //noinspection DataFlowIssue -> key is present
+                ResourceLocation location = damageType.getKey().location();
+                name = name.append(Component.translatable(Translation.Type.DAMAGE_TYPE.wrap(location.getNamespace(), location.getPath())).withColor(DSColors.BLUE));
+                count++;
+
+                if (count == numTypes - 1) {
+                    name = name.append(" and ");
+                } else if (count < numTypes - 1) {
+                    name = name.append(", ");
                 }
             }
 
