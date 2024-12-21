@@ -51,7 +51,7 @@ public class ChargedEffect extends ModifiableMobEffect {
     @ConfigOption(side = ConfigSide.SERVER, category = {"effects"}, key = "charged_effect_damage")
     public static Float damage = 1.f;
 
-    int duration;
+    private int duration;
 
     public ChargedEffect(MobEffectCategory type, int color, boolean incurable) {
         super(type, color, incurable);
