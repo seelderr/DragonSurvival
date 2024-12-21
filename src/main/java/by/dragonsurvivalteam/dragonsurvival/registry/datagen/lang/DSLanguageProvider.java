@@ -48,22 +48,9 @@ public class DSLanguageProvider extends LanguageProvider {
         handleParts();
     }
 
-    private String toCamelCase(String string) {
-        String[] parts = string.split("_");
-        StringBuilder camelCaseString = new StringBuilder();
-        for (int i = 0; i < parts.length; i++) {
-            camelCaseString.append(parts[i].substring(0, 1).toUpperCase()).append(parts[i].substring(1).toLowerCase());
-            if(i < parts.length - 1) {
-                camelCaseString.append(" ");
-            }
-        }
-
-        return camelCaseString.toString();
-    }
-
     private void handleDamageTypes() {
         for (ResourceKey<DamageType> damageType : ResourceHelper.keys(lookup.join(), Registries.DAMAGE_TYPE)) {
-            add(Translation.Type.DAMAGE_TYPE.wrap(damageType.location().getNamespace(), damageType.location().getPath()), toCamelCase(damageType.location().getPath()));
+            add(Translation.Type.DAMAGE_TYPE.wrap(damageType.location().getNamespace(), damageType.location().getPath()), capitalize(damageType.location().getPath().split("_")));
         }
     }
 

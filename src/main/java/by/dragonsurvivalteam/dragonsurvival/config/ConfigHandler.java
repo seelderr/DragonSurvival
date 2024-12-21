@@ -2,7 +2,6 @@ package by.dragonsurvivalteam.dragonsurvival.config;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.*;
 import by.dragonsurvivalteam.dragonsurvival.config.types.CustomConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
@@ -579,18 +578,15 @@ public class ConfigHandler {
             if (registry != null) {
                 List<?> list = parseResourceLocation(registry, string);
 
-                if (list != null) {
-                    if (field.getGenericType() instanceof List<?>) {
-                        return list.isEmpty() ? List.of(string) : list;
-                    } else {
-                        return list.isEmpty() ? null : string;
-                    }
+                if (field.getGenericType() instanceof List<?>) {
+                    return list.isEmpty() ? List.of(string) : list;
+                } else {
+                    return list.isEmpty() ? null : string;
                 }
             }
         }
 
         if (value instanceof Number number) {
-            //noinspection IfCanBeSwitch -> it can't due to the check for the primitive type
             if (field.getType().equals(double.class) || field.getType().equals(Double.class)) {
                 return number.doubleValue();
             }
@@ -647,8 +643,6 @@ public class ConfigHandler {
         }
 
         if (type == ModConfig.Type.SERVER) {
-            DragonFoodHandler.rebuildFoodMap();
-
             // Technically only relevant if the config spec belongs to us
             DragonConfigHandler.rebuildBlacklistedItems();
         }

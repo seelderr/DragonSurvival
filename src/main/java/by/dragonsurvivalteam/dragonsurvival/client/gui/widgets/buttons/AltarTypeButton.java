@@ -4,7 +4,6 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.DragonAltarScreen
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.DietComponent;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.SyncComplete;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
@@ -114,7 +113,7 @@ public class AltarTypeButton extends Button {
             List<Either<FormattedText, TooltipComponent>> components = new ArrayList<>();
 
             if (type != null) {
-                List<Item> foods = DragonFoodHandler.getEdibleFoods(type);
+                List<Item> foods = type.value().getDietItems();
 
                 if (foods.size() <= MAX_SHOWN) {
                     scroll = 0;

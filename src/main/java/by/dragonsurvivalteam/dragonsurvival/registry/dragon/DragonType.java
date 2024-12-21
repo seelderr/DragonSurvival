@@ -14,6 +14,7 @@ import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.*;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -27,6 +28,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.registries.DataPackRegistryEvent;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -40,6 +42,7 @@ public class DragonType implements AttributeModifierSupplier {
     public static final Codec<DragonType> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.DOUBLE.optionalFieldOf("starting_size").forGetter(DragonType::startingSize),
             // No defined stages means all are applicable
+            // TODO :: rename to stage_progression / custom_stage_progression or sth. like that?
             RegistryCodecs.homogeneousList(DragonStage.REGISTRY).optionalFieldOf("stages").forGetter(DragonType::stages),
             // No defined bodies means all are applicable
             RegistryCodecs.homogeneousList(DragonBody.REGISTRY).optionalFieldOf("bodies", HolderSet.empty()).forGetter(DragonType::bodies),
@@ -62,11 +65,7 @@ public class DragonType implements AttributeModifierSupplier {
     private final List<DietEntry> dietEntries;
     private final MiscDragonTextures miscResources;
 
-    // TODO :: not entirely sure how many instances of this would be present
-    //  resource key is a singleton (due to its internal VALUES map) but this object is probably not?
-    //  maybe have a global static list to reduce memory overhead? would the memory amount even be relevant enough to care about it?
-    //  that might run into concurrency issues on single player though (meaning we have to use concurrent hash map etc.)
-    private @Nullable Map<ResourceLocation, FoodProperties> diet;
+    private Map<ResourceLocation, FoodProperties> diet;
     private long lastDietUpdate;
 
     public DragonType(final Optional<Double> startingSize, final Optional<HolderSet<DragonStage>> stages, final HolderSet<DragonBody> bodies, final HolderSet<DragonAbility> abilities, final HolderSet<DragonPenalty> penalties, List<Modifier> modifiers, final List<DietEntry> dietEntries, final MiscDragonTextures miscResources) {
@@ -105,15 +104,26 @@ public class DragonType implements AttributeModifierSupplier {
         event.dataPackRegistry(REGISTRY, DIRECT_CODEC, DIRECT_CODEC);
     }
 
+    public List<Item> getDietItems() {
+        List<Item> items = new ArrayList<>();
+
+        updateDietMap();
+        diet.keySet().forEach(key -> items.add(BuiltInRegistries.ITEM.get(key)));
+
+        return items;
+    }
 
     public @Nullable FoodProperties getDiet(final Item item) {
+        updateDietMap();
+        //noinspection deprecation,DataFlowIssue -> ignore deprecated / key is present
+        return diet.get(item.builtInRegistryHolder().getKey().location());
+    }
+
+    private void updateDietMap() {
         if (diet == null || lastDietUpdate < DataReloadHandler.lastReload) {
             lastDietUpdate = System.currentTimeMillis();
             diet = DietEntry.map(dietEntries);
         }
-
-        //noinspection deprecation,DataFlowIssue -> ignore deprecated / key is present
-        return diet.get(item.builtInRegistryHolder().getKey().location());
     }
 
     @Override

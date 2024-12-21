@@ -56,7 +56,7 @@ public class DataGeneration {
         generator.addProvider(event.includeClient(), new DataBlockStateProvider(output, helper));
         generator.addProvider(event.includeClient(), new DataItemModelProvider(output, helper));
         generator.addProvider(event.includeClient(), new DataSpriteSourceProvider(output, lookup, helper));
-        generator.addProvider(event.includeClient(), new DSLanguageProvider(output, lookup,"en_us"));
+        generator.addProvider(event.includeClient(), new DSLanguageProvider(output, lookup, "en_us"));
 
         // Server
         LootTableProvider.SubProviderEntry blockLootTableSubProvider = new LootTableProvider.SubProviderEntry(

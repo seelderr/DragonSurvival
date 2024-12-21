@@ -4,8 +4,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncPlayerJump;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachments;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
@@ -19,7 +17,6 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.level.BlockDropsEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-
 @EventBusSubscriber
 public class DragonBonusHandler {
     @SubscribeEvent
@@ -31,9 +28,7 @@ public class DragonBonusHandler {
         /*DragonStateProvider.getOptional(living).ifPresent(handler -> {
             if (handler.isDragon()) {
                 if (DragonBonusConfig.bonusesEnabled) {
-                    if (CaveDragonConfig.caveFireImmunity && DragonUtils.isType(handler, DragonTypes.CAVE) && damageSource.is(DamageTypeTags.IS_FIRE)) {
-                        event.setCanceled(true);
-                    } else if (ForestDragonConfig.bushImmunity && DragonUtils.isType(handler, DragonTypes.FOREST) && damageSource == living.damageSources().sweetBerryBush()) {
+                    if (ForestDragonConfig.bushImmunity && DragonUtils.isType(handler, DragonTypes.FOREST) && damageSource == living.damageSources().sweetBerryBush()) {
                         event.setCanceled(true);
                     } else if (ForestDragonConfig.cactusImmunity && DragonUtils.isType(handler, DragonTypes.FOREST) && damageSource == living.damageSources().cactus()) {
                         event.setCanceled(true);
