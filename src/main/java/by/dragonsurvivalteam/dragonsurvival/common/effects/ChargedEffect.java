@@ -2,7 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.effects;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.MagicHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.EffectHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.particles.LargeLightningParticleOption;
 import by.dragonsurvivalteam.dragonsurvival.common.particles.SmallLightningParticleOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
@@ -25,28 +25,29 @@ import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public class ChargedEffect extends ModifiableMobEffect {
     @ConfigRange(max = 100)
     @Translation(key = "charged_effect_max_chain", type = Translation.Type.CONFIGURATION, comments = "Determines the max. amount of times the charged effect can chain. Set to -1 for infinite chaining")
-    @ConfigOption(side = ConfigSide.SERVER, category = {"effects"}, key = "charged_effect_max_chain")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"effects", "charged"}, key = "charged_effect_max_chain")
     public static Integer maxChain = 5;
 
     @ConfigRange(min = 0, max = 100)
     @Translation(key = "charged_effect_max_chain_targets", type = Translation.Type.CONFIGURATION, comments = "Amount of entities the charged effect can chain to at once")
-    @ConfigOption(side = ConfigSide.SERVER, category = {"effects"}, key = "charged_effect_max_chain_targets")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"effects", "charged"}, key = "charged_effect_max_chain_targets")
     public static Integer maxChainTargets = 2;
 
     @ConfigRange(min = 0.f, max = 100.f)
     @Translation(key = "charged_effect_spread_radius", type = Translation.Type.CONFIGURATION, comments = "Determines the radius of the charged effect spread")
-    @ConfigOption(side = ConfigSide.SERVER, category = {"effects"}, key = "charged_effect_spread_radius")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"effects", "charged"}, key = "charged_effect_spread_radius")
     public static Float spreadRadius = 3.f;
 
     @ConfigRange(min = 0.f, max = 100.f)
     @Translation(key = "charged_effect_damage", type = Translation.Type.CONFIGURATION, comments = "Determines the damage dealt by the charged effect")
-    @ConfigOption(side = ConfigSide.SERVER, category = {"effects"}, key = "charged_effect_damage")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"effects", "charged"}, key = "charged_effect_damage")
     public static Float damage = 1.f;
 
     private int duration;
@@ -62,15 +63,15 @@ public class ChargedEffect extends ModifiableMobEffect {
     }
 
     @Override
-    public boolean applyEffectTick(LivingEntity livingEntity, int amplifier) {
-        livingEntity.hurt(new DamageSource(DSDamageTypes.get(livingEntity.level(), DSDamageTypes.ELECTRIC)), damage);
-        if(!DragonStateProvider.isDragon(livingEntity)) {
-            ParticleOptions particle = new SmallLightningParticleOption(37F, false);
-            for (int i = 0; i < 4; i++) {
-                MagicHandler.renderEffectParticle(livingEntity, particle);
+    public boolean applyEffectTick(@NotNull LivingEntity livingEntity, int amplifier) {
+        if(duration % 20 == 0) {
+            livingEntity.hurt(new DamageSource(DSDamageTypes.get(livingEntity.level(), DSDamageTypes.ELECTRIC)), damage);
+            if(!DragonStateProvider.isDragon(livingEntity)) {
+                ParticleOptions particle = new SmallLightningParticleOption(37F, false);
+                for (int i = 0; i < 4; i++) {
+                    EffectHandler.renderEffectParticle(livingEntity, particle);
+                }
             }
-        }
-        if(duration % 10 == 0) {
             chargedEffectChain(livingEntity, damage);
         }
 

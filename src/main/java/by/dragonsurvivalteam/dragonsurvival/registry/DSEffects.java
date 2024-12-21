@@ -101,7 +101,7 @@ public class DSEffects { // TODO :: add descriptions for the missing N/A marked 
 
     @Translation(type = Translation.Type.EFFECT, comments = "Drain")
     @Translation(type = Translation.Type.EFFECT_DESCRIPTION, comments = "Forest dragons produce this poisonous gas. Plants will grow when exposed to their breath, while most other things will have their life drained.")
-    public static Holder<MobEffect> DRAIN = DS_MOB_EFFECTS.register("drain", () -> new ModifiableMobEffect(MobEffectCategory.HARMFUL, 0x0, false));
+    public static Holder<MobEffect> DRAIN = DS_MOB_EFFECTS.register("drain", () -> new DrainEffect(MobEffectCategory.HARMFUL, 0x0, false));
 
     @Translation(type = Translation.Type.EFFECT, comments = "Blood Siphon")
     @Translation(type = Translation.Type.EFFECT_DESCRIPTION, comments = "N/A") // TODO

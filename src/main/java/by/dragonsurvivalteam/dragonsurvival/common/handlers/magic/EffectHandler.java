@@ -38,7 +38,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @EventBusSubscriber
-public class MagicHandler {
+public class EffectHandler {
     // TODO: Delete this event and move its effects into the MobEffects themselves
     @SubscribeEvent
     public static void processTickingMobEffects(EntityTickEvent.Post event){
@@ -47,18 +47,6 @@ public class MagicHandler {
 
             if (entity.tickCount % 20 == 0) {
                 MobEffectInstance drainEffect = entity.getEffect(DSEffects.DRAIN);
-
-                if (drainEffect != null) {
-                    if (!DragonUtils.isType(entity, DragonTypes.FOREST)) {
-                        Player player = data.lastAfflicted != -1 && entity.level().getEntity(data.lastAfflicted) instanceof Player ? (Player) entity.level().getEntity(data.lastAfflicted) : null;
-
-                        if (player != null) {
-                            TargetingFunctions.attackTargets(player, ent -> ent.hurt(new DamageSource(DSDamageTypes.get(player.level(), DSDamageTypes.FOREST_DRAGON_DRAIN), player), drainEffect.getAmplifier() + 1), entity);
-                        } else {
-                            entity.hurt(entity.damageSources().magic(), drainEffect.getAmplifier() + 1);
-                        }
-                    }
-                }
 
                 data.lastPos = entity.position();
             }
@@ -143,43 +131,6 @@ public class MagicHandler {
                 }
             }
         }
-
-        // TODO: We need an ability that has a chance to passively proc effects on any attack
-        /*if (event.getSource().is(DSDamageTypeTags.DRAGON_BREATH)) {
-            return;
-        }
-
-        if (event.getSource().getEntity() instanceof Player player) {
-            DragonStateProvider.getOptional(player).ifPresent(handler -> {
-                if (!handler.isDragon()) {
-                    return;
-                }
-
-                if (DragonUtils.isType(handler, DragonTypes.SEA)) {
-                    int chance = DragonAbilities.getAbility(player, SpectralImpactAbility.class).map(SpectralImpactAbility::getChance).orElse(0);
-
-                    if (Functions.chance(player, chance)) {
-                        event.getEntity().hurt(new DamageSource(DSDamageTypes.get(player.level(), DSDamageTypes.SPECTRAL_IMPACT), player), (float) (event.getAmount() * 0.15));
-                        double d0 = -Mth.sin(player.getYRot() * ((float) Math.PI / 180F));
-                        double d1 = Mth.cos(player.getYRot() * ((float) Math.PI / 180F));
-
-                        if (player.level() instanceof ServerLevel serverLevel) {
-                            serverLevel.sendParticles(new SeaSweepParticleOption(0), player.getX() + d0, player.getY(0.5D), player.getZ() + d1, 0, d0, 0.0D, d1, 0.0D);
-                        }
-                    }
-                } else if (DragonUtils.isType(handler, DragonTypes.CAVE)) {
-                    int chance = DragonAbilities.getAbility(player, BurnAbility.class).map(BurnAbility::getChance).orElse(0);
-
-                    if (Functions.chance(player, chance)) {
-                        event.getEntity().getData(DSDataAttachments.ENTITY_HANDLER).lastAfflicted = player.getId();
-
-                        if (!player.level().isClientSide()) {
-                            event.getEntity().addEffect(new MobEffectInstance(DSEffects.BURN, Functions.secondsToTicks(30)));
-                        }
-                    }
-                }
-            });
-        }*/
     }
 
     @SubscribeEvent
