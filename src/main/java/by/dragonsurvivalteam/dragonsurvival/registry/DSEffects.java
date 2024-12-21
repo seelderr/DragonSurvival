@@ -1,10 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.registry;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
-import by.dragonsurvivalteam.dragonsurvival.common.effects.BurnEffect;
-import by.dragonsurvivalteam.dragonsurvival.common.effects.ModifiableMobEffect;
-import by.dragonsurvivalteam.dragonsurvival.common.effects.TradeEffect;
-import by.dragonsurvivalteam.dragonsurvival.common.effects.WingDisablingEffect;
+import by.dragonsurvivalteam.dragonsurvival.common.effects.*;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleOptions;
@@ -102,7 +99,7 @@ public class DSEffects { // TODO :: add descriptions for the missing N/A marked 
 
     @Translation(type = Translation.Type.EFFECT, comments = "Charged")
     @Translation(type = Translation.Type.EFFECT_DESCRIPTION, comments = "Produces arcs of electricity, damaging nearby mobs.")
-    public static Holder<MobEffect> CHARGED = DS_MOB_EFFECTS.register("charged", () -> new ModifiableMobEffect(MobEffectCategory.HARMFUL, 0x0, false));
+    public static Holder<MobEffect> CHARGED = DS_MOB_EFFECTS.register("charged", () -> new ChargedEffect(MobEffectCategory.HARMFUL, 0x0, false));
 
     @Translation(type = Translation.Type.EFFECT, comments = "Drain")
     @Translation(type = Translation.Type.EFFECT_DESCRIPTION, comments = "Forest dragons produce this poisonous gas. Plants will grow when exposed to their breath, while most other things will have their life drained.")

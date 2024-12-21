@@ -1,10 +1,11 @@
 package by.dragonsurvivalteam.dragonsurvival.common.effects;
 
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.MagicHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.particles.LargeLightningParticleOption;
 import by.dragonsurvivalteam.dragonsurvival.common.particles.SmallFireParticleOption;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.DSDataAttachments;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.util.Mth;
@@ -32,9 +33,11 @@ public class BurnEffect extends ModifiableMobEffect {
 
         EntityStateHandler data = livingEntity.getData(DSDataAttachments.ENTITY_HANDLER);
         if (!livingEntity.fireImmune()) {
-            ParticleOptions particle = new SmallFireParticleOption(37F, false);
-            for (int i = 0; i < 4; i++) {
-                MagicHandler.renderEffectParticle(livingEntity, particle);
+            if(!DragonStateProvider.isDragon(livingEntity)) {
+                ParticleOptions particle = new SmallFireParticleOption(37F, false);
+                for (int i = 0; i < 4; i++) {
+                    MagicHandler.renderEffectParticle(livingEntity, particle);
+                }
             }
 
             if (data.lastPos != null) {

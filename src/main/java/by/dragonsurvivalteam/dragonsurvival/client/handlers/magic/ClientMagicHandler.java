@@ -63,13 +63,6 @@ public class ClientMagicHandler {
                     renderEffectParticle(livingEntity, data);
                 }
             }
-
-            if (livingEntity.hasEffect(DSEffects.CHARGED)) {
-                ParticleOptions data = new LargeLightningParticleOption(37F, false);
-                for (int i = 0; i < 4; i++) {
-                    renderEffectParticle(livingEntity, data);
-                }
-            }
         }
     }
 

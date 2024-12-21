@@ -1,4 +1,4 @@
-// 1.21.1	2024-12-20T15:40:47.291973	Registries
+// 1.21.1	2024-12-20T19:54:04.990198	Registries
 011b2ee382ec961722c100bbf059b4aa460f44b0 data/dragonsurvival/damage_type/anti_dragon.json
 afb20257741b4a8be55ecf8e013125f113a9d486 data/dragonsurvival/damage_type/cave_dragon_breath.json
 7a732909707be826e322901b5c204e548e48a12b data/dragonsurvival/damage_type/cave_dragon_burn.json
@@ -6,6 +6,7 @@ bf0b9404ee90533adc52c7ca2412df66f17e0143 data/dragonsurvival/damage_type/crushed
 573f65f1958f5586b8b14944e42d91f2eb768180 data/dragonsurvival/damage_type/dehydration.json
 a85817a3aa673b1de6384d941d443a5ff6a05b9d data/dragonsurvival/damage_type/dragon_ball_lightning.json
 27d487c76b4b57406cc278f1ef101c4426671f68 data/dragonsurvival/damage_type/dragon_breath.json
+d255715ba936e2c4b3bd263a00719feaadfca176 data/dragonsurvival/damage_type/electric.json
 b444c940cf85abd2667d4a483e2dcdc342c09fa7 data/dragonsurvival/damage_type/forest_dragon_breath.json
 a00e3c820b682b55466d426777c46109965dda7e data/dragonsurvival/damage_type/forest_dragon_drain.json
 deed90b4724d21cdbf6bcc3d547ce88b8ebf220c data/dragonsurvival/damage_type/forest_dragon_spike.json

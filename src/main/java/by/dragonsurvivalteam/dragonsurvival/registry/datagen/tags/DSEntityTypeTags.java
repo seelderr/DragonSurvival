@@ -20,6 +20,7 @@ public class DSEntityTypeTags extends EntityTypeTagsProvider {
     public static final TagKey<EntityType<?>> ANIMAL_AVOID_BLACKLIST = key("animal_avoid_blacklist");
     public static final TagKey<EntityType<?>> VEHICLE_WHITELIST = key("vehicle_whitelist");
     public static final TagKey<EntityType<?>> HUNTER_TARGETS = key("hunter_targets");
+    public static final TagKey<EntityType<?>> CHARGED_SPREAD_BLACKLIST = key("charged_spread_blacklist");
 
     public DSEntityTypeTags(final PackOutput output, final CompletableFuture<HolderLookup.Provider> provider, @Nullable final ExistingFileHelper helper) {
         super(output, provider, DragonSurvival.MODID, helper);
@@ -75,6 +76,16 @@ public class DSEntityTypeTags extends EntityTypeTagsProvider {
                 .add(DSEntities.HUNTER_KNIGHT.value())
                 .add(DSEntities.HUNTER_LEADER.value())
                 .add(DSEntities.HUNTER_SPEARMAN.value());
+
+        tag(CHARGED_SPREAD_BLACKLIST)
+                .add(EntityType.ARMOR_STAND)
+                .add(EntityType.CAT)
+                .add(EntityType.MINECART)
+                .add(EntityType.GUARDIAN)
+                .add(EntityType.ELDER_GUARDIAN)
+                .add(EntityType.ENDERMAN)
+                .addOptional(ResourceLocation.fromNamespaceAndPath("upgrade_aquatic", "thrasher"))
+                .addOptional(ResourceLocation.fromNamespaceAndPath("upgrade_aquatic", "great_thrasher"));
 
         // TODO :: currently unused
         tag(key("other_dragons"))

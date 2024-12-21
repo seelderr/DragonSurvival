@@ -61,17 +61,6 @@ public class MagicHandler {
                     }
                 }
 
-                MobEffectInstance chargedEffect = entity.getEffect(DSEffects.CHARGED);
-
-                if (chargedEffect != null) {
-                    Player player = data.lastAfflicted != -1 && entity.level().getEntity(data.lastAfflicted) instanceof Player ? (Player) entity.level().getEntity(data.lastAfflicted) : null;
-                    if (!DragonUtils.isType(entity, DragonTypes.SEA)) {
-                        // FIXME
-                        //StormBreathAbility.chargedEffectSparkle(player, entity, StormBreathAbility.chargedChainRange, StormBreathAbility.chargedEffectChainCount, (chargedEffect.getAmplifier() + 1) * StormBreathAbility.chargedEffectDamageMultiplier);
-                    }
-                }
-
-
                 data.lastPos = entity.position();
             }
         }
