@@ -9,6 +9,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageType;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.modscan.ModAnnotation;
@@ -104,6 +105,14 @@ public class DSLanguageProvider extends LanguageProvider {
                     if (ResourceKey.class.isAssignableFrom(field.getType())) {
                         ResourceKey<?> resourceKey = (ResourceKey<?>) field.get(null);
                         add(type.wrap(resourceKey.location().getPath()), format(comments));
+
+                        continue;
+                    }
+
+                    if (ResourceLocation.class.isAssignableFrom(field.getType()))
+                    {
+                        ResourceLocation resourceLocation = (ResourceLocation) field.get(null);
+                        add(type.wrap(resourceLocation.getPath()), format(comments));
 
                         continue;
                     }

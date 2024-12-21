@@ -74,12 +74,10 @@ public class CaveDragonAbilities {
     @Translation(type = Translation.Type.ABILITY, comments = "Sturdy Skin") // TODO :: strong leather, tough skin or sturdy skin?
     public static final ResourceKey<DragonAbility> TOUGH_SKIN = DragonAbilities.key("tough_skin");
 
-    // TODO :: These should be interpreted from the ResourceLocation instead of manually defined
-    @Translation(type = Translation.Type.MODIFIER, comments = "Cave Athletics", key = "cave_athletics")
+    @Translation(type = Translation.Type.MODIFIER, comments = "Cave Athletics")
     public static final ResourceLocation CAVE_ATHLETICS_MODIFIER = DragonSurvival.res("cave_athletics");
 
-    // TODO :: These should be interpreted from the ResourceLocation instead of manually defined
-    @Translation(type = Translation.Type.MODIFIER, comments = "Sturdy Skin", key = "sturdy_skin")
+    @Translation(type = Translation.Type.MODIFIER, comments = "Sturdy Skin")
     public static final ResourceLocation STURDY_SKIN_MODIFIER = DragonSurvival.res("sturdy_skin");
 
     // --- Passive --- //
