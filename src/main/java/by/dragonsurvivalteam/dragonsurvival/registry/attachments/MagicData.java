@@ -152,7 +152,7 @@ public class MagicData implements INBTSerializable<CompoundTag> {
             }
 
             ValueBasedUpgrade valueBasedUpgrade = upgrade.asLevelBased();
-            if(valueBasedUpgrade == null || valueBasedUpgrade.type() != ValueBasedUpgrade.Type.PASSIVE_GROWTH) {
+            if(valueBasedUpgrade == null || valueBasedUpgrade.type() != ValueBasedUpgrade.Type.PASSIVE_LEVEL) {
                 continue;
             }
 
