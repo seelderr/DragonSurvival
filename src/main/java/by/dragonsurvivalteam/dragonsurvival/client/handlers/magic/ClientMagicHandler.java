@@ -57,13 +57,6 @@ public class ClientMagicHandler {
                 return;
             }
 
-            if (livingEntity.hasEffect(DSEffects.BURN)) {
-                ParticleOptions data = new SmallFireParticleOption(37F, false);
-                for (int i = 0; i < 4; i++) {
-                    renderEffectParticle(livingEntity, data);
-                }
-            }
-
             if (livingEntity.hasEffect(DSEffects.DRAIN)) {
                 ParticleOptions data = new SmallPoisonParticleOption(37F, false);
                 for (int i = 0; i < 4; i++) {

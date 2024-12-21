@@ -14,6 +14,7 @@ import by.dragonsurvivalteam.dragonsurvival.util.EnchantmentUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.TargetingFunctions;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
@@ -30,6 +31,7 @@ import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.event.entity.EntityStruckByLightningEvent;
 import net.neoforged.neoforge.event.entity.living.LivingExperienceDropEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
+import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,12 +45,6 @@ public class MagicHandler {
     public static void processTickingMobEffects(EntityTickEvent.Post event){
         if(event.getEntity() instanceof LivingEntity entity) {
             EntityStateHandler data = entity.getData(DSDataAttachments.ENTITY_HANDLER);
-
-            if (entity.hasEffect(DSEffects.BURN)) {
-                if (entity.isEyeInFluidType(NeoForgeMod.WATER_TYPE.value()) || entity.isInWaterRainOrBubble()) {
-                    entity.removeEffect(DSEffects.BURN);
-                }
-            }
 
             if (entity.tickCount % 20 == 0) {
                 MobEffectInstance drainEffect = entity.getEffect(DSEffects.DRAIN);
@@ -75,29 +71,6 @@ public class MagicHandler {
                     }
                 }
 
-                MobEffectInstance burnEffect = entity.getEffect(DSEffects.BURN);
-
-                if (burnEffect != null) {
-                    if (!entity.fireImmune()) {
-                        if (data.lastPos != null) {
-                            double distance = entity.distanceToSqr(data.lastPos);
-                            float damage = (burnEffect.getAmplifier() + 1) * Mth.clamp((float) distance, 0, 10);
-
-                            if (damage > 0) {
-                                if (!entity.isOnFire()) {
-                                    // Short enough fire duration to not cause fire damage but still drop cooked items
-                                    entity.setRemainingFireTicks(1);
-                                }
-                                Player player = data.lastAfflicted != -1 && entity.level().getEntity(data.lastAfflicted) instanceof Player ? (Player) entity.level().getEntity(data.lastAfflicted) : null;
-                                if (player != null) {
-                                    TargetingFunctions.attackTargets(player, ent -> ent.hurt(new DamageSource(DSDamageTypes.get(player.level(), DSDamageTypes.CAVE_DRAGON_BURN), player), damage), entity);
-                                } else {
-                                    entity.hurt(entity.damageSources().onFire(), damage);
-                                }
-                            }
-                        }
-                    }
-                }
 
                 data.lastPos = entity.position();
             }
@@ -119,6 +92,12 @@ public class MagicHandler {
                 }
             });
         }*/
+    }
+
+    @SubscribeEvent
+    public static void markLastAfflictedOnApplyEffect(MobEffectEvent.Added event) {
+        EntityStateHandler data = event.getEntity().getData(DSDataAttachments.ENTITY_HANDLER);
+        data.lastAfflicted = event.getEffectSource() != null ? event.getEffectSource().getId() : -1;
     }
 
     public static MobEffectInstance modifyEffect(final Player affected, final MobEffectInstance instance, @Nullable final Entity applier) {
@@ -229,5 +208,16 @@ public class MagicHandler {
 
             event.setDroppedExperience((int) (droppedExperience * player.getAttributeValue(DSAttributes.EXPERIENCE)));
         }
+    }
+
+    public static void renderEffectParticle(final LivingEntity entity, final ParticleOptions particle) {
+        double d0 = (double) entity.getRandom().nextFloat() * entity.getBbWidth();
+        double d1 = (double) entity.getRandom().nextFloat() * entity.getBbHeight();
+        double d2 = (double) entity.getRandom().nextFloat() * entity.getBbWidth();
+        double x = entity.getX() + d0 - entity.getBbWidth() / 2;
+        double y = entity.getY() + d1;
+        double z = entity.getZ() + d2 - entity.getBbWidth() / 2;
+
+        entity.level().addParticle(particle, x, y, z, 0, 0, 0);
     }
 }

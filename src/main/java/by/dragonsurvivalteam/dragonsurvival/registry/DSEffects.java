@@ -1,14 +1,17 @@
 package by.dragonsurvivalteam.dragonsurvival.registry;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
+import by.dragonsurvivalteam.dragonsurvival.common.effects.BurnEffect;
 import by.dragonsurvivalteam.dragonsurvival.common.effects.ModifiableMobEffect;
 import by.dragonsurvivalteam.dragonsurvival.common.effects.TradeEffect;
 import by.dragonsurvivalteam.dragonsurvival.common.effects.WingDisablingEffect;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import net.minecraft.core.Holder;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -95,7 +98,7 @@ public class DSEffects { // TODO :: add descriptions for the missing N/A marked 
 
     @Translation(type = Translation.Type.EFFECT, comments = "Burn")
     @Translation(type = Translation.Type.EFFECT_DESCRIPTION, comments = "The target takes fire damage. Damage dealt depends on the speed of the target.")
-    public static Holder<MobEffect> BURN = DS_MOB_EFFECTS.register("burn", () -> new ModifiableMobEffect(MobEffectCategory.HARMFUL, 0x0, false));
+    public static Holder<MobEffect> BURN = DS_MOB_EFFECTS.register("burn", () -> new BurnEffect(MobEffectCategory.HARMFUL, 0x0, false));
 
     @Translation(type = Translation.Type.EFFECT, comments = "Charged")
     @Translation(type = Translation.Type.EFFECT_DESCRIPTION, comments = "Produces arcs of electricity, damaging nearby mobs.")
@@ -124,6 +127,4 @@ public class DSEffects { // TODO :: add descriptions for the missing N/A marked 
     @Translation(type = Translation.Type.EFFECT, comments = "Forest Dragon Wings")
     @Translation(type = Translation.Type.EFFECT_DESCRIPTION, comments = "Grants forest dragons the ability to fly.")
     public static Holder<MobEffect> FOREST_DRAGON_WINGS = DS_MOB_EFFECTS.register("forest_dragon_wings", () -> new ModifiableMobEffect(MobEffectCategory.BENEFICIAL, 0x0, true));
-
-    public static Holder<MobEffect> CUSTOM_MODIFIER_PLACEHOLDER_EFFECT = DS_MOB_EFFECTS.register("custom_modifier_placeholder_effect", () -> new ModifiableMobEffect(MobEffectCategory.NEUTRAL, 0x0, true));
 }
