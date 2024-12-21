@@ -309,9 +309,7 @@ public class DSItems {
 
     @Translation(type = Translation.Type.ITEM, comments = "Spin Grant")
     @Translation(type = Translation.Type.DESCRIPTION, comments = "■§7 This item gives your dragon the ability to spin while flying. Consumed on use. Can be used again to remove the ability.")
-    public static final Holder<Item> SPIN_GRANT_ITEM = DS_ITEMS.register("spin_grant", location -> new TooltipItem(new Properties(), location.getPath()){
-
-    });
+    public static final Holder<Item> SPIN_GRANT_ITEM = DS_ITEMS.register("spin_grant", location -> new TooltipItem(new Properties(), location.getPath()));
 
     public static final Holder<Item> DRAGON_SOUL = DS_ITEMS.register("dragon_soul", () -> new DragonSoulItem(new Properties().rarity(Rarity.EPIC)));
 
