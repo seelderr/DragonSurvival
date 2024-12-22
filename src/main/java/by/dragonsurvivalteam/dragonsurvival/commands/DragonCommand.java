@@ -82,7 +82,7 @@ public class DragonCommand {
     }
 
     private static int runCommand(Holder<DragonType> type, @Nullable Holder<DragonBody> dragonBody, @Nullable Holder<DragonStage> dragonStage, ServerPlayer player) {
-        DragonStateHandler cap = DragonStateProvider.getData(player);
+        DragonStateHandler data = DragonStateProvider.getData(player);
 
         if (type != null && dragonBody == null) {
             dragonBody = DragonBody.random(player.registryAccess());
@@ -92,22 +92,23 @@ public class DragonCommand {
             dragonStage = player.registryAccess().holderOrThrow(DragonStages.newborn);
         }
 
-        if (type == null && cap.getType() != null) {
+        if (type == null && data.getType() != null) {
             reInsertClawTools(player);
         }
 
-        cap.setType(type, player);
-        cap.setBody(dragonBody, player);
-        if(dragonStage != null) {
-            cap.setStage(player, dragonStage);
+        data.setType(type, player);
+        data.setBody(dragonBody, player);
+
+        if (dragonStage != null) {
+            data.setStage(player, dragonStage);
         } else {
-            cap.setSize(player, DragonStateHandler.NO_SIZE);
+            data.setSize(player, DragonStateHandler.NO_SIZE);
         }
 
-        cap.setPassengerId(-1);
-        cap.isGrowing = true;
+        data.setPassengerId(-1);
+        data.isGrowing = true;
 
-        PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncComplete.Data(player.getId(), cap.serializeNBT(player.registryAccess())));
+        PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncComplete.Data(player.getId(), data.serializeNBT(player.registryAccess())));
         player.refreshDimensions();
         return 1;
     }

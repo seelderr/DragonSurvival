@@ -21,6 +21,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -120,7 +121,7 @@ public class MagicData implements INBTSerializable<CompoundTag> {
                     event.getItemStack().shrink(1);
                 }
 
-                player.playSound(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, 1, 0);
+                player.playNotifySound(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundSource.PLAYERS, 1, 0);
             }
         }));
     }
@@ -139,17 +140,12 @@ public class MagicData implements INBTSerializable<CompoundTag> {
                 continue;
             }
 
-            int previousLevel = ability.level();
-            upgrade.attemptUpgrade(ability, ValueBasedUpgrade.InputData.passive(experienceLevels));
-
-            if (previousLevel == ability.level()) {
-                continue;
-            }
-
-            if (player instanceof ServerPlayer serverPlayer) {
-                PacketDistributor.sendToPlayer(serverPlayer, new SyncAbilityLevel(ability.key(), ability.level()));
-            } else {
-                PacketDistributor.sendToServer(new SyncAbilityLevel(ability.key(), ability.level()));
+            if (upgrade.attemptUpgrade(ability, ValueBasedUpgrade.InputData.passive(experienceLevels))) {
+                if (player instanceof ServerPlayer serverPlayer) {
+                    PacketDistributor.sendToPlayer(serverPlayer, new SyncAbilityLevel(ability.key(), ability.level()));
+                } else {
+                    PacketDistributor.sendToServer(new SyncAbilityLevel(ability.key(), ability.level()));
+                }
             }
         }
     }
@@ -162,17 +158,12 @@ public class MagicData implements INBTSerializable<CompoundTag> {
                 continue;
             }
 
-            int previousLevel = ability.level();
-            upgrade.attemptUpgrade(ability, ValueBasedUpgrade.InputData.passiveGrowth((int) newSize));
-
-            if (previousLevel == ability.level()) {
-                continue;
-            }
-
-            if (player instanceof ServerPlayer serverPlayer) {
-                PacketDistributor.sendToPlayer(serverPlayer, new SyncAbilityLevel(ability.key(), ability.level()));
-            } else {
-                PacketDistributor.sendToServer(new SyncAbilityLevel(ability.key(), ability.level()));
+            if (upgrade.attemptUpgrade(ability, ValueBasedUpgrade.InputData.passiveGrowth((int) newSize))) {
+                if (player instanceof ServerPlayer serverPlayer) {
+                    PacketDistributor.sendToPlayer(serverPlayer, new SyncAbilityLevel(ability.key(), ability.level()));
+                } else {
+                    PacketDistributor.sendToServer(new SyncAbilityLevel(ability.key(), ability.level()));
+                }
             }
         }
     }
@@ -330,10 +321,14 @@ public class MagicData implements INBTSerializable<CompoundTag> {
     }
 
     public void refresh(final Holder<DragonType> type, final Player player) {
+        if (type == null) {
+            return;
+        }
+
         // Make sure we remove any passive effects for abilities that are no longer available
-        if(!player.level().isClientSide()) {
+        if (player instanceof ServerPlayer serverPlayer) {
             for (DragonAbilityInstance instance : abilities.values()) {
-                instance.setActive(false, (ServerPlayer)player);
+                instance.setActive(false, serverPlayer);
             }
         }
 
@@ -344,7 +339,8 @@ public class MagicData implements INBTSerializable<CompoundTag> {
 
         for (Holder<DragonAbility> ability : type.value().abilities()) {
             DragonAbilityInstance instance;
-            if(ability.value().upgrade().isEmpty()) {
+
+            if (ability.value().upgrade().isEmpty()) {
                 instance = new DragonAbilityInstance(ability, 1);
             } else {
                 instance = new DragonAbilityInstance(ability, DragonAbilityInstance.MIN_LEVEL);

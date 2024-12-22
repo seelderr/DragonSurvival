@@ -11,6 +11,7 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.MagicData;
 import by.dragonsurvivalteam.dragonsurvival.registry.attachments.PenaltySupply;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonType;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.core.Holder;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
@@ -37,7 +38,13 @@ public class SyncComplete implements IMessage<SyncComplete.Data> {
         if (entity instanceof Player player) {
             context.enqueueWork(() -> {
                 DragonStateHandler handler = DragonStateProvider.getData(player);
+                Holder<DragonType> oldType = handler.getType();
                 handler.deserializeNBT(player.registryAccess(), message.nbt);
+
+                if (!DragonUtils.isType(oldType, handler.getType())) {
+                    MagicData.getData(player).refresh(handler.getType(), player);
+                }
+
                 DSModifiers.updateAllModifiers(player);
                 player.refreshDimensions();
             });

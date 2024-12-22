@@ -33,15 +33,13 @@ public class ItemBasedUpgrade extends UpgradeType<Item> {
 
     @Override
     public boolean upgrade(final DragonAbilityInstance ability, final Item input) {
-        int nextLevel = ability.level() + 1;
-
-        if (nextLevel >= itemsPerLevel.size()) {
+        if (ability.level() >= itemsPerLevel.size()) {
             return false;
         }
 
         //noinspection deprecation -> ignore
-        if (itemsPerLevel.get(nextLevel).contains(input.builtInRegistryHolder())) {
-            ability.setLevel(nextLevel);
+        if (itemsPerLevel.get(ability.level()).contains(input.builtInRegistryHolder())) {
+            ability.setLevel(ability.level() + 1);
             return true;
         }
 

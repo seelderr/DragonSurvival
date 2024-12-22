@@ -212,10 +212,10 @@ public class DragonAbilityInstance {
         this.isActive = isActive;
     }
 
-    // TODO :: Call this somewhere when we disable passive abilities
     public void setActive(boolean isActive, ServerPlayer player) {
         setActive(isActive);
-        if(ability.value().activation().type() == Activation.Type.PASSIVE) {
+
+        if (ability.value().activation().type() == Activation.Type.PASSIVE) {
             // Also makes sure to remove any affects that are applied by the ability
             ability.value().actions().forEach(action -> action.remove(player, this));
         }
