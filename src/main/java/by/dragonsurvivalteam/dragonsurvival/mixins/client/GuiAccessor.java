@@ -1,4 +1,4 @@
-package by.dragonsurvivalteam.dragonsurvival.mixins;
+package by.dragonsurvivalteam.dragonsurvival.mixins.client;
 
 import net.minecraft.client.gui.Gui;
 import net.minecraft.resources.ResourceLocation;

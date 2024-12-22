@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.api.jei;
 
-import by.dragonsurvivalteam.dragonsurvival.mixins.EffectRenderingInventoryScreenAccessor;
+import by.dragonsurvivalteam.dragonsurvival.mixins.client.EffectRenderingInventoryScreenAccessor;
 import mezz.jei.api.gui.handlers.IGuiContainerHandler;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.client.renderer.Rect2i;

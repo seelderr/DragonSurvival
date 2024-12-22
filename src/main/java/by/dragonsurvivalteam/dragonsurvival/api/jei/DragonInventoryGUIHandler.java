@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.api.jei;
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.DragonInventoryScreen;
-import by.dragonsurvivalteam.dragonsurvival.mixins.EffectRenderingInventoryScreenAccessor;
+import by.dragonsurvivalteam.dragonsurvival.mixins.client.EffectRenderingInventoryScreenAccessor;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.DragonContainer;
 import mezz.jei.api.constants.RecipeTypes;
 import mezz.jei.api.gui.handlers.IGuiContainerHandler;

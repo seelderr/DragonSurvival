@@ -106,7 +106,7 @@
   "dragon_ability.dragonsurvival.general.ability_cone": " in a %s block cone",
   "dragon_ability.dragonsurvival.general.ability_growth_auto_upgrade": "Next level will be unlocked at size %s",
   "dragon_ability.dragonsurvival.general.ability_level_auto_upgrade": "Next level will be unlocked at experience level %s",
-  "dragon_ability.dragonsurvival.general.ability_level_manual_upgrade": "Next level requires %s experience points (about level %s)",
+  "dragon_ability.dragonsurvival.general.ability_level_manual_upgrade": "Next level requires %s experience points (roughly level %s)",
   "dragon_ability.dragonsurvival.general.ability_lookat": " to %s being looked at ",
   "dragon_ability.dragonsurvival.general.ability_target_self": "self",
   "dragon_ability.dragonsurvival.general.ability_to_target": " to %s",

@@ -90,12 +90,14 @@ public class DragonStateHandler extends EntityStateHandler {
     public void setSize(@Nullable final Player player, double size) {
         double oldSize = this.size;
         Holder<DragonStage> oldStage = dragonStage;
-        updateSizeAndStage(player != null ? player.registryAccess() : null, size, player);
+        updateSizeAndStage(player != null ? player.registryAccess() : null, size);
 
         if (player == null) {
             return;
         }
 
+        MagicData magicData = MagicData.getData(player);
+        magicData.handleGrowthAbilityUpgrades(player, this.size);
         player.refreshDimensions();
 
         if (dragonStage == null) {
@@ -118,7 +120,7 @@ public class DragonStateHandler extends EntityStateHandler {
         }
     }
 
-    private void updateSizeAndStage(@Nullable final HolderLookup.Provider provider, double size, @Nullable final Player player) {
+    private void updateSizeAndStage(@Nullable final HolderLookup.Provider provider, double size) {
         if (size == NO_SIZE) {
             dragonStage = null;
             this.size = NO_SIZE;
@@ -128,10 +130,7 @@ public class DragonStateHandler extends EntityStateHandler {
         double newSize = DragonStage.getValidSize(size);
         dragonStage = DragonStage.getStage(dragonType.value().getStages(provider), newSize);
         newSize = dragonStage.value().getBoundedSize(newSize);
-        if(player != null) {
-            MagicData magicData = MagicData.getData(player);
-            magicData.handleSizeBasedPassiveLeveling(newSize);
-        }
+
         this.size = newSize;
     }
 

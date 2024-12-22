@@ -27,7 +27,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.util.INBTSerializable;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerXpEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
@@ -109,40 +108,29 @@ public class MagicData implements INBTSerializable<CompoundTag> {
             return;
         }
 
-        MagicData magic = MagicData.getData(player);
-        magic.abilities.values().forEach(instance -> instance.value().upgrade().ifPresent(upgrade -> {
-            if (upgrade.isItemBased()) {
-                for(int i = 0; i < upgrade.asItemBased().itemsPerLevel().size(); i++) {
-                    if(instance.level() != i) {
-                        continue;
-                    }
+        MagicData.getData(player).abilities.values().forEach(instance -> instance.value().upgrade().ifPresent(upgrade -> {
+            if (event.getItemStack().isEmpty()) {
+                return;
+            }
 
-                    if(upgrade.asItemBased().itemsPerLevel().get(i).contains(event.getItemStack().getItemHolder())) {
-                        int level = i + 1;
-                        magic.changeAbilityLevel(player, instance.key(), level);
-                        PacketDistributor.sendToPlayer(player, new SyncAbilityLevel(instance.key(), level));
+            if (upgrade.attemptUpgrade(instance, event.getItemStack().getItem())) {
+                PacketDistributor.sendToPlayer(player, new SyncAbilityLevel(instance.key(), instance.level()));
 
-                        if(!player.isCreative()) {
-                            event.getItemStack().shrink(1);
-                        }
-
-                        player.playSound(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, 1, 0);
-
-                        break;
-                    }
+                if (!player.isCreative()) {
+                    event.getItemStack().shrink(1);
                 }
+
+                player.playSound(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, 1, 0);
             }
         }));
     }
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void handleLevelBasedPassiveLeveling(final PlayerXpEvent.LevelChange event) {
-        if (!DragonStateProvider.isDragon(event.getEntity())) {
+    public static void handlePassiveAbilityUpgrades(final Player player, int experienceLevels) {
+        if (!DragonStateProvider.isDragon(player)) {
             return;
         }
 
-        MagicData magic = MagicData.getData(event.getEntity());
-        int newExperienceLevel = Math.max(0, event.getEntity().experienceLevel + event.getLevels());
+        MagicData magic = MagicData.getData(player);
 
         for (DragonAbilityInstance ability : magic.abilities.values()) {
             Upgrade upgrade = ability.value().upgrade().orElse(null);
@@ -151,31 +139,14 @@ public class MagicData implements INBTSerializable<CompoundTag> {
                 continue;
             }
 
-            ValueBasedUpgrade valueBasedUpgrade = upgrade.asLevelBased();
-            if(valueBasedUpgrade == null || valueBasedUpgrade.type() != ValueBasedUpgrade.Type.PASSIVE_LEVEL) {
+            int previousLevel = ability.level();
+            upgrade.attemptUpgrade(ability, ValueBasedUpgrade.InputData.passive(experienceLevels));
+
+            if (previousLevel == ability.level()) {
                 continue;
             }
 
-            int previousLevel = ability.level();
-
-            for (int level = DragonAbilityInstance.MIN_LEVEL_FOR_CALCULATIONS; level <= upgrade.maximumLevel(); level++) {
-                float required = valueBasedUpgrade.requirementOrCost().calculate(level);
-
-                if (newExperienceLevel < required) {
-                    ability.setLevel(level - 1);
-                    break;
-                }
-
-                if (newExperienceLevel >= required) {
-                    ability.setLevel(level);
-                }
-            }
-
-            if (previousLevel == ability.level()) {
-                return;
-            }
-
-            if (event.getEntity() instanceof ServerPlayer serverPlayer) {
+            if (player instanceof ServerPlayer serverPlayer) {
                 PacketDistributor.sendToPlayer(serverPlayer, new SyncAbilityLevel(ability.key(), ability.level()));
             } else {
                 PacketDistributor.sendToServer(new SyncAbilityLevel(ability.key(), ability.level()));
@@ -183,7 +154,7 @@ public class MagicData implements INBTSerializable<CompoundTag> {
         }
     }
 
-    public void handleSizeBasedPassiveLeveling(double newSize) {
+    public void handleGrowthAbilityUpgrades(final Player player, double newSize) {
         for (DragonAbilityInstance ability : abilities.values()) {
             Upgrade upgrade = ability.value().upgrade().orElse(null);
 
@@ -191,22 +162,17 @@ public class MagicData implements INBTSerializable<CompoundTag> {
                 continue;
             }
 
-            ValueBasedUpgrade valueBasedUpgrade = upgrade.asLevelBased();
-            if(valueBasedUpgrade == null || valueBasedUpgrade.type() != ValueBasedUpgrade.Type.PASSIVE_GROWTH) {
+            int previousLevel = ability.level();
+            upgrade.attemptUpgrade(ability, ValueBasedUpgrade.InputData.passiveGrowth((int) newSize));
+
+            if (previousLevel == ability.level()) {
                 continue;
             }
 
-            for (int level = DragonAbilityInstance.MIN_LEVEL_FOR_CALCULATIONS; level <= upgrade.maximumLevel(); level++) {
-                float required = valueBasedUpgrade.requirementOrCost().calculate(level);
-
-                if (newSize < required) {
-                    ability.setLevel(level - 1);
-                    break;
-                }
-
-                if (newSize >= required) {
-                    ability.setLevel(level);
-                }
+            if (player instanceof ServerPlayer serverPlayer) {
+                PacketDistributor.sendToPlayer(serverPlayer, new SyncAbilityLevel(ability.key(), ability.level()));
+            } else {
+                PacketDistributor.sendToServer(new SyncAbilityLevel(ability.key(), ability.level()));
             }
         }
     }
@@ -393,14 +359,12 @@ public class MagicData implements INBTSerializable<CompoundTag> {
         }
 
         // Check for passive levelling abilities
-        handleSizeBasedPassiveLeveling(DragonStateProvider.getData(player).getSize());
-        handleLevelBasedPassiveLeveling(new PlayerXpEvent.LevelChange(player, player.experienceLevel));
+        handleGrowthAbilityUpgrades(player, DragonStateProvider.getData(player).getSize());
+        handlePassiveAbilityUpgrades(player, player.experienceLevel);
     }
 
     public List<DragonAbilityInstance> getActiveAbilities() {
-        return abilities.values().stream().filter(
-                instance -> instance.ability().value().activation().type() != Activation.Type.PASSIVE
-        ).toList();
+        return abilities.values().stream().filter(instance -> instance.ability().value().activation().type() != Activation.Type.PASSIVE).toList();
     }
 
     public List<DragonAbilityInstance> getPassiveAbilities() {
@@ -409,26 +373,18 @@ public class MagicData implements INBTSerializable<CompoundTag> {
         ).sorted((a, b) -> Boolean.compare(b.isManuallyUpgraded(), a.isManuallyUpgraded())).toList();
     }
 
-    // TODO :: Do we really have to clutter this class with methods that get used in 1 (or 2 at max) places?
-    public float getUpgradeCost(final ResourceKey<DragonAbility> key) {
-        return getCost(key, 1);
-    }
-
-    public float getDowngradeCost(final ResourceKey<DragonAbility> key) {
-        return -getCost(key, 0);
-    }
-
     /** Returns the amount of experience gained / lost when down- or upgrading the ability */
-    private float getCost(final ResourceKey<DragonAbility> key, int delta) {
+    public float getCost(final ResourceKey<DragonAbility> key, int delta) {
         DragonAbilityInstance instance = abilities.get(key);
+        int newLevel = instance.level() + delta;
 
-        if(instance.level() + delta >= DragonAbilityInstance.MIN_LEVEL_FOR_CALCULATIONS) {
-            return instance.value().upgrade()
-                    .map(upgrade -> upgrade.isLevelBased() ? upgrade.asLevelBased().requirementOrCost().calculate(instance.level() + delta) : 0f)
-                    .orElse(0f);
-        } else {
-            return 0;
-        }
+        // TODO :: the calculation kind of breaks once the delta is more than 1 level
+        //  probably needs a loop to add together the xp cost for each level?
+
+        // The +1 is a bandaid
+        // When going from 3 to 2 we need to refund the cost for going from 2 to 3
+        // Without the +1 it would calculate the cost for reaching 2 (not 3)
+        return instance.value().upgrade().map(upgrade -> upgrade.getExperienceCost(delta < 0 ? newLevel + 1 : newLevel)).orElse(0f);
     }
 
     public void moveAbilityToSlot(final ResourceKey<DragonAbility> key, int newSlot) {
@@ -442,9 +398,7 @@ public class MagicData implements INBTSerializable<CompoundTag> {
         }
     }
 
-    // TODO :: is this generic method really needed when we only interact with levels in two spots (1 for manual and 1 for passive)?
-    //  feels cleaner to leave it in these spots to have the dedicated passive and active leveling logic there
-    public void changeAbilityLevel(final Player player, final ResourceKey<DragonAbility> key, int newLevel) {
+    public void handleManualUpgrade(final Player player, final ResourceKey<DragonAbility> key, int newLevel) {
         DragonAbilityInstance instance = abilities.get(key);
 
         if (instance == null || instance.value().upgrade().isEmpty()) {
@@ -457,9 +411,9 @@ public class MagicData implements INBTSerializable<CompoundTag> {
             return;
         }
 
-        if(instance.value().upgrade().isPresent() && instance.value().upgrade().get().type() == ValueBasedUpgrade.Type.MANUAL) {
+        if (instance.value().upgrade().isPresent() && instance.value().upgrade().get().type() == ValueBasedUpgrade.Type.MANUAL) {
             // Subtract the experience cost
-            float cost = getCost(key, delta == 1 ? 1 : 0);
+            float cost = getCost(key, delta);
             cost = delta > 0 ? -cost : cost;
             player.giveExperiencePoints((int) cost);
         }

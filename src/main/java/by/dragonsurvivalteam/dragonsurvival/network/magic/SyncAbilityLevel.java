@@ -23,14 +23,14 @@ public record SyncAbilityLevel(ResourceKey<DragonAbility> abilityToChangeLevel, 
     public static void handleServer(final SyncAbilityLevel packet, final IPayloadContext context) {
         context.enqueueWork(() -> {
             MagicData data = MagicData.getData(context.player());
-            data.changeAbilityLevel(context.player(), packet.abilityToChangeLevel(), packet.newLevel());
+            data.handleManualUpgrade(context.player(), packet.abilityToChangeLevel(), packet.newLevel());
         });
     }
 
     public static void handleClient(final SyncAbilityLevel packet, final IPayloadContext context) {
         context.enqueueWork(() -> {
             MagicData data = MagicData.getData(context.player());
-            data.changeAbilityLevel(context.player(), packet.abilityToChangeLevel(), packet.newLevel());
+            data.handleManualUpgrade(context.player(), packet.abilityToChangeLevel(), packet.newLevel());
         });
     }
 
