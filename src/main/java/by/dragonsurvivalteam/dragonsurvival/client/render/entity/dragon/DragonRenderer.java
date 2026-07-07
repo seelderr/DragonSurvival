@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon;
 
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRenderer;
+import by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon.ik.GeoIkController;
 import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
@@ -23,19 +24,22 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Matrix4f;
 import org.joml.Vector3d;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
+import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import software.bernie.geckolib.util.Color;
+import software.bernie.geckolib.util.RenderUtil;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
     public static final Map<Integer, Map<String, Vec3>> BONE_POSITIONS = new HashMap<>();
     private static final List<String> BONES = List.of("BreathSource");
+
+    private final List<GeoIkController<DragonEntity>> ikControllers = new ArrayList<>();
 
     private static final Color RENDER_COLOR = Color.ofRGB(255, 255, 255);
     private static final Color TRANSPARENT_RENDER_COLOR = Color.ofRGBA(1, 1, 1, HunterHandler.MIN_ALPHA);
@@ -61,6 +65,22 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
         if (ModID.SOPHISTICATED_BACKPACKS.isLoaded()) {
             getRenderLayers().add(new DragonBackpackRenderLayer(this));
         }
+
+        ikControllers.add(new GeoIkController<DragonEntity>()
+                .addChain("BackLegLeftFoot", "BackLegLeftUpper")
+                .targetGround(0.1));
+
+//        ikControllers.add(new GeoIkController<DragonEntity>()
+//                .addChain("BackLegRightFoot", "BackLegRightUpper")
+//                .targetGround(0.1));
+//
+//        ikControllers.add(new GeoIkController<DragonEntity>()
+//                .addChain("FrontLegRightFoot", "FrontLegRightUpper")
+//                .targetGround(0.1));
+//
+//        ikControllers.add(new GeoIkController<DragonEntity>()
+//                .addChain("FrontLegLeftFoot", "FrontLegLeftUpper")
+//                .targetGround(0.1));
     }
 
     /**
@@ -82,6 +102,55 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
         }
 
         return positions.getOrDefault(name, Vec3.ZERO);
+    }
+
+    public void dragonSurvival$applyIk(final PoseStack poseStack, final DragonEntity animatable,
+                                       final BakedGeoModel model, final MultiBufferSource bufferSource,
+                                       final float partialTick) {
+
+        for (GeoIkController<DragonEntity> ikController : ikControllers)
+        {
+            Set<GeoBone> matrixUpdatePath = ikController.matrixUpdatePath(model);
+
+            for (GeoBone bone : model.topLevelBones()) {
+                dragonSurvival$updatePreIkMatrices(poseStack, animatable, bone, matrixUpdatePath);
+            }
+
+            ikController.applyIk(poseStack, animatable, model, bufferSource, partialTick);
+        }
+    }
+
+    private void dragonSurvival$updatePreIkMatrices(final PoseStack poseStack, final DragonEntity animatable,
+                                                    final GeoBone bone, final Set<GeoBone> matrixUpdatePath) {
+        if (!matrixUpdatePath.contains(bone)) {
+            return;
+        }
+
+        poseStack.pushPose();
+        RenderUtil.translateMatrixToBone(poseStack, bone);
+        RenderUtil.translateToPivotPoint(poseStack, bone);
+        RenderUtil.rotateMatrixAroundBone(poseStack, bone);
+        RenderUtil.scaleMatrixForBone(poseStack, bone);
+
+        if (bone.isTrackingMatrices()) {
+            Matrix4f poseState = new Matrix4f(poseStack.last().pose());
+            Matrix4f localMatrix = RenderUtil.invertAndMultiplyMatrices(poseState, this.entityRenderTranslations);
+
+            bone.setModelSpaceMatrix(RenderUtil.invertAndMultiplyMatrices(poseState, this.modelRenderTranslations));
+            bone.setLocalSpaceMatrix(RenderUtil.translateMatrix(localMatrix, getRenderOffset(animatable, 1).toVector3f()));
+            bone.setWorldSpaceMatrix(RenderUtil.translateMatrix(
+                    new Matrix4f(localMatrix),
+                    animatable.position().toVector3f()
+            ));
+        }
+
+        RenderUtil.translateAwayFromPivotPoint(poseStack, bone);
+
+        for (GeoBone child : bone.getChildBones()) {
+            dragonSurvival$updatePreIkMatrices(poseStack, animatable, child, matrixUpdatePath);
+        }
+
+        poseStack.popPose();
     }
 
     @Override
@@ -122,11 +191,13 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
         // Need to store the positions per entity ourselves
         // Since the model is a singleton, and it stores the bones
         BONES.forEach(name -> model.getBone(name).ifPresent(bone -> {
-            Vector3d worldPosition = bone.getWorldPosition();
-            Vec3 position = new Vec3(worldPosition.x(), worldPosition.y(), worldPosition.z()).subtract(getModelOffset(animatable, 1));
-            BONE_POSITIONS.computeIfAbsent(animatable.getId(), key -> new HashMap<>()).put(bone.getName(), position);
+            BONE_POSITIONS.computeIfAbsent(animatable.getId(), key -> new HashMap<>()).put(bone.getName(), getOffsetWorldPosition(bone, animatable, 1));
         }));
 
+        for (GeoIkController<DragonEntity> ikController : ikControllers)
+        {
+            ikController.restorePreIkRotations();
+        }
         Minecraft.getInstance().getProfiler().pop();
     }
 
@@ -174,7 +245,12 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
         }
     }
 
-    private Vec3 getModelOffset(final DragonEntity dragon, float partialTicks) {
+    public static Vec3 getOffsetWorldPosition(GeoBone bone, DragonEntity animatable, float partialTick) {
+        Vector3d worldPosition = bone.getWorldPosition();
+        return (new Vec3(worldPosition.x(), worldPosition.y(), worldPosition.z())).subtract(getModelOffset(animatable, partialTick));
+    }
+
+    public static Vec3 getModelOffset(final DragonEntity dragon, float partialTicks) {
         Player player = dragon.getPlayer();
 
         if (player == null) {
